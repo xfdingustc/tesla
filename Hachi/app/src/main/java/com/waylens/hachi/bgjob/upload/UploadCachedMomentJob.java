@@ -3,7 +3,6 @@ package com.waylens.hachi.bgjob.upload;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
@@ -11,6 +10,7 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.service.upload.UploadAPI;
 import com.waylens.hachi.service.upload.UploadProgressListener;
@@ -24,6 +24,7 @@ import com.waylens.hachi.ui.entities.LocalMoment;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
@@ -35,8 +36,6 @@ import retrofit2.Call;
  */
 public class UploadCachedMomentJob extends UploadMomentJob {
     private static final String TAG = UploadCachedMomentJob.class.getSimpleName();
-
-
 
 
     public UploadCachedMomentJob(LocalMoment moment) {
@@ -54,8 +53,6 @@ public class UploadCachedMomentJob extends UploadMomentJob {
     }
 
 
-
-
     @Override
     public void onRun() throws Throwable {
         Logger.t(TAG).d("on run " + getId());
@@ -63,19 +60,22 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_ADDED, this));
         mState = UploadMomentJob.UPLOAD_STATE_WAITING_FOR_NETWORK_AVAILABLE;
 
-        CreateMomentResponse response;
+
         while (true) {
-            response = getCloudInfo();
-            if (response == null) {
-                Thread.sleep(10000);
-            } else {
+            boolean cloudAvailabe = checkCloudStorageAvailable();
+            if (cloudAvailabe) {
                 break;
+            } else {
+                Thread.sleep(10000);
             }
         }
-        Logger.t(TAG).d("upload server: " + response.uploadServer.toString());
-        mLocalMoment.updateUploadInfo(response);
+
 
         try {
+
+            CreateMomentResponse response = getCloudInfo();
+            Logger.t(TAG).d("upload server: " + response.uploadServer.toString());
+            mLocalMoment.updateUploadInfo(response);
             SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
             String date = format.format(System.currentTimeMillis()) + " GMT";
 
@@ -190,6 +190,32 @@ public class UploadCachedMomentJob extends UploadMomentJob {
     }
 
 
+    private boolean checkCloudStorageAvailable() {
+        try {
+            HachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
+            Call<CloudStorageInfo> createMomentResponseCall = hachiApi.getCloudStorageInfo();
+            CloudStorageInfo cloudStorageInfo = createMomentResponseCall.execute().body();
+            int clipLength = 0;
+            for (LocalMoment.Segment segment : mLocalMoment.mSegments) {
+                clipLength += segment.uploadURL.lengthMs;
+            }
+
+            Logger.t(TAG).d("used: " + cloudStorageInfo.current.durationUsed + "total: " + cloudStorageInfo.current.plan.durationQuota);
+            if (cloudStorageInfo.current.durationUsed + clipLength > cloudStorageInfo.current.plan.durationQuota) {
+                mError = UPLOAD_ERROR_UPLOAD_EXCEED;
+                return false;
+            }
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+    }
+
+
     @Override
     public void cancelUpload() {
 
@@ -203,7 +229,6 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         int percentage = index * 100 / totalSegment + percentageInThisClip;
         setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, percentage);
     }
-
 
 
 }

@@ -402,21 +402,8 @@ public class ShareActivity extends ClipPlayActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.share:
-                        if (mVdtCamera.getWifiMode() == VdtCamera.WIFI_MODE_AP) {
-                            DialogHelper.showUploadCacheConfirmDialog(ShareActivity.this, new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    doCacheHighlights();
-                                }
-                            }, new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        doShareMoment(true);
 
-                                }
-                            });
-                        } else {
-                            shareMoment();
-                        }
 
                         break;
                 }
@@ -427,42 +414,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     }
 
-    private void doCacheHighlights() {
-        doShareMoment(true);
-    }
 
-    private void shareMoment() {
-
-        Call<CloudStorageInfo> createMomentResponseCall = mHachi.getCloudStorageInfo();
-        createMomentResponseCall.enqueue(new Callback<CloudStorageInfo>() {
-            @Override
-            public void onResponse(Call<CloudStorageInfo> call, retrofit2.Response<CloudStorageInfo> response) {
-                if (response.body() != null) {
-                    CloudStorageInfo cloudStorageInfo = response.body();
-                    int currentClipLength = ClipSetManager.getManager().getClipSet(mPlayListId).getTotalLengthMs();
-                    Logger.t(TAG).d("used: " + cloudStorageInfo.current.durationUsed + "total: " + cloudStorageInfo.current.plan.durationQuota);
-                    if (cloudStorageInfo.current.durationUsed + currentClipLength > cloudStorageInfo.current.plan.durationQuota) {
-                        MaterialDialog dialog = new MaterialDialog.Builder(getParent())
-                            .content(R.string.no_clould_space)
-                            .positiveText(R.string.ok)
-                            .negativeText(R.string.cancel)
-                            .show();
-                    } else {
-                        doShareMoment(true);
-                    }
-
-                }
-                Logger.t(TAG).d("error code: " + response.code() + response.body().current.durationUsed);
-            }
-
-            @Override
-            public void onFailure(Call<CloudStorageInfo> call, Throwable t) {
-
-            }
-        });
-
-
-    }
 
 
     private void setupParallex() {
