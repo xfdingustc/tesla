@@ -1,6 +1,8 @@
 package com.waylens.hachi.rest.response;
 
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.User;
+
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class RaceQueryResponse {
     public class LeaderBoardItem {
         public int cursor;
         public Moment moment;
-        public MomentInfo.Owner owner;
+        public User owner;
     }
 
     public class UserRankItem {

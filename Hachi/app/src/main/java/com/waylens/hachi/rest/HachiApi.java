@@ -22,6 +22,7 @@ import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
+import com.waylens.hachi.rest.response.MomentListResponse2;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
@@ -71,6 +72,9 @@ public interface HachiApi {
 
     @GET("/api/users/{userId}/moments")
     Call<MomentListResponse> getUserMoments(@Path("userId") String userId, @Query("cursor") int cursor);
+
+    @GET("/api/moments/myfeed")
+    Observable<MomentListResponse2> getMyFeed(@Query("cursor") int cursor, @Query("count") int count, @Query("order") String order);
 
 
     @GET("/api/moments/{momentId}")

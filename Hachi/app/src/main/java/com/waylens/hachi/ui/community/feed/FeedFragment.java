@@ -1,7 +1,5 @@
 package com.waylens.hachi.ui.community.feed;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,63 +9,56 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.MomentListResponse2;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.utils.VolleyUtil;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
-
+/**
+ * Created by Xiaofei on 2016/9/13.
+ */
 public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
     Refreshable, FragmentNavigator {
     private static final String TAG = FeedFragment.class.getSimpleName();
+
+    @Override
+    protected String getRequestTag() {
+        return TAG;
+    }
+
+
     static final int DEFAULT_COUNT = 10;
 
-    static final String TAG_REQUEST_MY_FEED = "TAG_request.my.feed";
-    static final String TAG_REQUEST_ME = "TAG_request.me";
-    static final String TAG_REQUEST_MY_LIKE = "TAG_request.my.like";
-    static final String TAG_REQUEST_STAFF_PICKS = "TAG_request.staff.picks";
-
-    private static final String FEED_TAG = "feed_tag";
 
     private static final int CHILD_SIGNUP_ENTRY = 0;
     private static final int CHILD_MOMENTS = 1;
 
-    public static final int FEED_TAG_MY_FEED = 0;
-    public static final int FEED_TAG_LATEST = 2;
-    public static final int FEED_TAG_STAFF_PICKS = 4;
 
+    private FeedListAdapter mAdapter;
 
-    private MomentsListAdapter mAdapter;
-
-    private RequestQueue mRequestQueue;
 
     private LinearLayoutManager mLinearLayoutManager;
 
 
     private int mCurrentCursor;
 
-    private int mFeedTag;
 
     @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
@@ -85,10 +76,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
 
-    public static FeedFragment newInstance(int tag) {
-
+    public static FeedFragment newInstance() {
         Bundle args = new Bundle();
-        args.putInt(FEED_TAG, tag);
         FeedFragment fragment = new FeedFragment();
         fragment.setArguments(args);
         return fragment;
@@ -98,12 +87,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_MY_FEED);
-        }
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-        mAdapter = new MomentsListAdapter(getActivity());
+        mAdapter = new FeedListAdapter(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
     }
@@ -112,18 +96,15 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public void onStart() {
         super.onStart();
-        if (this.isLoginRequired() && !SessionManager.getInstance().isLoggedIn()) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
             mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
             Logger.t(TAG).d("show sign up entry");
-        }
-        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
+        } else {
             if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
                 mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
                 Logger.t(TAG).d("show loading progress");
                 onRefresh();
-
             }
-
         }
     }
 
@@ -132,6 +113,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_feed, savedInstanceState);
+        Logger.t(TAG).d("create feed view");
         mRvVideoList.setAdapter(mAdapter);
         mRvVideoList.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
@@ -141,12 +123,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 loadFeed(mCurrentCursor, false);
             }
         });
-        if (this.isLoginRequired()) {
-            mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
-        } else {
-            mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
-        }
 
+
+        mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;
@@ -156,97 +135,51 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
-        if (!this.isLoginRequired()) {
-            loadFeed(mCurrentCursor, true);
-        }
-        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
+
+        if (SessionManager.getInstance().isLoggedIn()) {
             loadFeed(mCurrentCursor, true);
         }
     }
 
 
     private void loadFeed(int cursor, final boolean isRefresh) {
-        String url = getFeedURL(cursor);
-        if (url == null) {
-            return;
-        }
-        Logger.t(TAG).d("Load url: " + url);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(url)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<MomentListResponse2>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    onLoadFeedSuccessful(response, isRefresh);
+                public void onCompleted() {
+
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    onLoadFeedFailed(error);
+                public void onError(Throwable e) {
+                    Logger.t(TAG).d(e.toString());
                 }
-            }).build();
-        request.setTag(getRequestTag());
-        mRequestQueue.add(request);
+
+                @Override
+                public void onNext(MomentListResponse2 momentListResponse) {
+                    onLoadFeedSuccessful(momentListResponse, isRefresh);
+                }
+            });
 
     }
 
-    @Override
-    protected String getRequestTag() {
-        switch (mFeedTag) {
-            case FEED_TAG_MY_FEED:
-                return TAG_REQUEST_MY_FEED;
-            case FEED_TAG_STAFF_PICKS:
-                return TAG_REQUEST_STAFF_PICKS;
-            default:
-                return "";
-        }
-    }
 
-    private String getFeedURL(int cursor) {
-        String url = null;
-        switch (mFeedTag) {
-            case FEED_TAG_MY_FEED:
-                url = Constants.API_MOMENTS_MY_FEED;
-                break;
-            case FEED_TAG_LATEST:
-                url = Constants.API_MOMENTS;
-                break;
-            case FEED_TAG_STAFF_PICKS:
-                url = Constants.API_MOMENTS_FEATURED;
-                break;
-        }
-        if (url != null) {
-            Uri uri = Uri.parse(url).buildUpon()
-                .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
-                .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
-                .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
-                .build();
-            return uri.toString();
-        } else {
-            return null;
-        }
-    }
-
-    private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
+    private void onLoadFeedSuccessful(MomentListResponse2 momentList, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
-//        Logger.t(TAG).json(response.toString());
-        JSONArray jsonMoments = response.optJSONArray("moments");
-        if (jsonMoments == null) {
-            return;
-        }
-        ArrayList<Moment> momentList = new ArrayList<>();
-        for (int i = 0; i < jsonMoments.length(); i++) {
-            momentList.add(Moment.fromJson(jsonMoments.optJSONObject(i)));
-        }
+
+
         if (isRefresh) {
-            mAdapter.setMoments(momentList);
+            mAdapter.setMoments(momentList.moments);
         } else {
-            mAdapter.addMoments(momentList);
+            mAdapter.addMoments(momentList.moments);
         }
 
         mRvVideoList.setIsLoadingMore(false);
-        mCurrentCursor += momentList.size();
-        if (!response.optBoolean("hasMore")) {
+        mCurrentCursor += momentList.moments.size();
+        if (!momentList.hasMore) {
             mRvVideoList.setEnableLoadMore(false);
             mAdapter.setHasMore(false);
         } else {
@@ -267,10 +200,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         mCurrentCursor = 0;
         mRvVideoList.setEnableLoadMore(true);
-        if (!this.isLoginRequired()) {
-            loadFeed(mCurrentCursor, true);
-        }
-        if (this.isLoginRequired() && SessionManager.getInstance().isLoggedIn()) {
+
+        if (SessionManager.getInstance().isLoggedIn()) {
             loadFeed(mCurrentCursor, true);
         }
     }
@@ -291,17 +222,5 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         return false;
     }
 
-
-    public boolean isLoginRequired() {
-        int tag = mFeedTag;
-        switch (tag) {
-            case FEED_TAG_MY_FEED:
-                return true;
-            case FEED_TAG_STAFF_PICKS:
-                return false;
-            default:
-                return false;
-        }
-    }
 
 }

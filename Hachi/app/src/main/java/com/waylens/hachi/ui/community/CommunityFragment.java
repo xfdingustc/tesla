@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.community;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
@@ -17,20 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
 import com.lapism.searchview.SearchAdapter;
 import com.lapism.searchview.SearchHistoryTable;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.community.feed.FeedFragment;
+import com.waylens.hachi.ui.community.feed.MomentListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.activities.NotificationActivity;
-import com.waylens.hachi.utils.VolleyUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,9 +164,9 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     private void setupViewPager() {
         mFeedPageAdapter = new FeedPageAdapter(getChildFragmentManager());
-        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_MY_FEED), getString(R.string.my_feed));
-        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_LATEST), getString(R.string.latest));
-        mFeedPageAdapter.addFragment(FeedFragment.newInstance(FeedFragment.FEED_TAG_STAFF_PICKS), getString(R.string
+        mFeedPageAdapter.addFragment(FeedFragment.newInstance(), getString(R.string.my_feed));
+        mFeedPageAdapter.addFragment(MomentListFragment.newInstance(MomentListFragment.FEED_TAG_LATEST), getString(R.string.latest));
+        mFeedPageAdapter.addFragment(MomentListFragment.newInstance(MomentListFragment.FEED_TAG_STAFF_PICKS), getString(R.string
             .staff_picks));
         mFeedPageAdapter.addFragment(PerformanceTestFragment.newInstance(0), getString(R.string.performance_test));
         mViewPager.setAdapter(mFeedPageAdapter);

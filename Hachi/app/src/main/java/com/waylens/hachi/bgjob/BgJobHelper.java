@@ -3,6 +3,7 @@ package com.waylens.hachi.bgjob;
 import com.birbit.android.jobqueue.JobManager;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
+import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
 import com.waylens.hachi.bgjob.timelapse.TimeLapseJob;
@@ -20,6 +21,12 @@ public class BgJobHelper {
     public static void deleteMoment(long momentId) {
         JobManager jobManager = BgJobManager.getManager();
         DeleteMomentJob job = new DeleteMomentJob(momentId);
+        jobManager.addJobInBackground(job);
+    }
+
+    public static void addLike(long momentId, boolean isCancel) {
+        JobManager jobManager = BgJobManager.getManager();
+        LikeJob job = new LikeJob(momentId, isCancel);
         jobManager.addJobInBackground(job);
     }
 

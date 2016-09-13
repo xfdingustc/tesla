@@ -122,6 +122,7 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
         mRvNotificationList.setAdapter(mAdapter);
         mRvNotificationList.setOnLoadMoreListener(this);
         mRvNotificationList.setLayoutManager(new LinearLayoutManager(this));
+        mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

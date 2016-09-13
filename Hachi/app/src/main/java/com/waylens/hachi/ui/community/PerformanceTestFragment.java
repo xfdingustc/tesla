@@ -273,6 +273,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
         mSpinnerRaceType.setSelection(1);
+        mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
                 android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;
@@ -332,7 +333,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     for (int i = 0; i < raceQueryResponse.leaderboard.size(); i++) {
                         Moment moment = raceQueryResponse.leaderboard.get(i).moment;
                         moment.owner = new User();
-                        MomentInfo.Owner owner = raceQueryResponse.leaderboard.get(i).owner;
+                        User owner = raceQueryResponse.leaderboard.get(i).owner;
                         moment.owner.userID = owner.userID;
                         moment.owner.avatarUrl = owner.avatarUrl;
                         moment.owner.userName = owner.userName;

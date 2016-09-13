@@ -2,6 +2,8 @@ package com.waylens.hachi.rest.response;
 
 
 
+
+import com.waylens.hachi.ui.entities.User;
 import com.xfdingustc.snipe.utils.ToStringUtils;
 
 import java.io.Serializable;
@@ -14,7 +16,7 @@ import java.util.Map;
 public class MomentInfo implements Serializable {
     public MomentBasicInfo moment;
 
-    public Owner owner;
+    public User owner;
 
     public ArrayList<RawDataUrl> rawDataurl;
 
@@ -53,15 +55,6 @@ public class MomentInfo implements Serializable {
         }
     }
 
-    public static class Owner implements Serializable {
-        public String userID;
-
-        public String userName;
-
-        public String avatarUrl;
-
-        public boolean isVerified;
-    }
 
     public static class RawDataUrl implements Serializable {
         public String captureTime;

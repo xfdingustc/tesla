@@ -202,10 +202,8 @@ public class MomentActivity extends BaseActivity {
         if (!checkUserVerified()) {
             return;
         }
-        boolean isCancel = mMomentInfo.moment.isLiked;
-        JobManager jobManager = BgJobManager.getManager();
-        LikeJob job = new LikeJob(mMomentInfo.moment.id, isCancel);
-        jobManager.addJobInBackground(job);
+
+        BgJobHelper.addLike(mMomentInfo.moment.id, mMomentInfo.moment.isLiked);
         mMomentInfo.moment.isLiked = !mMomentInfo.moment.isLiked;
         if (mMomentInfo.moment.isLiked) {
             mMomentInfo.moment.likesCount++;
