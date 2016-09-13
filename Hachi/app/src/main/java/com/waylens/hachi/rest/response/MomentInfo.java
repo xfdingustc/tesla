@@ -47,6 +47,10 @@ public class MomentInfo implements Serializable {
 
         public boolean isLiked;
 
+        @Override
+        public String toString() {
+            return ToStringUtils.getString(this);
+        }
     }
 
     public static class Owner implements Serializable {

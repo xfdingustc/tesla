@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -39,7 +40,9 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
 
 
 
-    private EventBus mEventBus = EventBus.getDefault();
+    private static final int VIEW_ANIMATOR_LOADING_PROGRESS = 0;
+    private static final int VIEW_ANIMATOR_MOMENT_LIST = 1;
+    private static final int VIEW_ANIMATOR_EMPTY_VIEW = 2;
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MyMomentActivity.class);
@@ -50,6 +53,9 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
     @BindView(R.id.moment_list)
     RecyclerView mRvMomentList;
 
+    @BindView(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
 
 
 
@@ -59,24 +65,24 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
         init();
     }
 
-    @Override
-    public void finish() {
-        if (UploadManager.getManager().getUploadingJobCount() > 0) {
-            MaterialDialog dialog = new MaterialDialog.Builder(MyMomentActivity.this)
-                .content(R.string.exit_video_upload_confirm)
-                .negativeText(R.string.stay)
-                .positiveText(R.string.leave_anyway)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        MyMomentActivity.super.finish();
-                    }
-                })
-                .show();
-        } else {
-            MyMomentActivity.super.finish();
-        }
-    }
+//    @Override
+//    public void finish() {
+//        if (UploadManager.getManager().getUploadingJobCount() > 0) {
+//            MaterialDialog dialog = new MaterialDialog.Builder(MyMomentActivity.this)
+//                .content(R.string.exit_video_upload_confirm)
+//                .negativeText(R.string.stay)
+//                .positiveText(R.string.leave_anyway)
+//                .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                    @Override
+//                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                        MyMomentActivity.super.finish();
+//                    }
+//                })
+//                .show();
+//        } else {
+//            MyMomentActivity.super.finish();
+//        }
+//    }
 
     @Override
     protected void init() {
@@ -142,7 +148,13 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+
                     List<Moment> momentList = Moment.parseMomentArray(response);
+                    if (momentList.size() > 0) {
+                        mViewAnimator.setDisplayedChild(VIEW_ANIMATOR_MOMENT_LIST);
+                    } else {
+                        mViewAnimator.setDisplayedChild(VIEW_ANIMATOR_EMPTY_VIEW);
+                    }
                     mVideoItemAdapter.setUploadedMomentList(momentList);
                 }
             })

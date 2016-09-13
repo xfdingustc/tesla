@@ -21,23 +21,15 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.android.volley.Cache;
-import com.android.volley.NetworkResponse;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.DiskBasedCache;
-import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
-import com.google.zxing.common.StringUtils;
-import com.googlecode.javacpp.annotation.Raw;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.CachedJsonRequest;
 import com.waylens.hachi.library.player.HachiPlayer;
 import com.waylens.hachi.library.player.HlsRendererBuilder;
@@ -61,7 +53,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -366,9 +357,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-
-
-
     @Override
     public void onStop() {
         super.onStop();
@@ -386,11 +374,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         mRawDataState = RAW_DATA_STATE_UNKNOWN;
         releasePlayer();
     }
+
     public void doGaugeSetting(MomentInfo momentInfo, ArrayList<Long> timePoints) {
         if (!momentInfo.moment.overlay.isEmpty()) {
             Logger.t(TAG).d("setting gauge!!!");
             for (Map.Entry<String, String> entry : momentInfo.moment.overlay.entrySet()) {
-                Logger.t(TAG).d("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//                Logger.t(TAG).d("Key = " + entry.getKey() + ", Value = " + entry.getValue());
             }
             if (momentInfo.moment.momentType != null && momentInfo.moment.momentType.startsWith("RACING")) {
                 momentInfo.moment.overlay.put("CountDown", "S");
@@ -573,7 +562,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             return;
         }
 
-        Observable<MomentInfo> observableMomentInfo  = mHachi.getMomentInfoRx(mMomentId);
+        Observable<MomentInfo> observableMomentInfo = mHachi.getMomentInfoRx(mMomentId);
 
         Observable<MomentPlayInfo> observableMomentPlayInfo = mHachi.getMomentPlayInfo(mMomentId);
 
@@ -582,82 +571,85 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             @Override
             public MomentPlayInfo call(MomentInfo momentInfo, MomentPlayInfo momentPlayInfo) {
                 Logger.t(TAG).d("set momentInfo " + momentInfo);
+                Logger.t(TAG).d("moment play info: " + momentPlayInfo.toString());
                 mMoment = momentInfo;
                 //Logger.t(TAG).d(momentInfo.moment.overlay.toString());
                 return momentPlayInfo;
             }
         }).subscribeOn(Schedulers.io())
-          .observeOn(AndroidSchedulers.mainThread())
-          .subscribe(new Observer<MomentPlayInfo>() {
-              @Override
-              public void onCompleted() {
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<MomentPlayInfo>() {
+                @Override
+                public void onCompleted() {
 
-              }
+                }
 
-              @Override
-              public void onError(Throwable e) {
-                  Logger.t(TAG).d(e.getMessage());
+                @Override
+                public void onError(Throwable e) {
+                    Logger.t(TAG).d(e.toString());
 
-              }
+                }
 
-              @Override
-              public void onNext(MomentPlayInfo momentPlayInfo) {
-                  Logger.t(TAG).d("Get moment play info");
+                @Override
+                public void onNext(MomentPlayInfo momentPlayInfo) {
 //                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
-                  mMomentPlayInfo = momentPlayInfo;
-                  Logger.t(TAG).d("moment play inf:" + momentPlayInfo.beginTime);
-                  MomentInfo.MomentBasicInfo momentBasicInfo = mMoment.moment;
-                  Logger.t(TAG).d("Moment Play Fragment!");
-                  long momentCaptureTime = -1;
-                  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                  try {
-                      Date date = dateFormat.parse(mMoment.moment.captureTime);
-                      momentCaptureTime = date.getTime();
-                  } catch (ParseException e) {
-                      e.printStackTrace();
-                  }
-                  Logger.t(TAG).d(momentBasicInfo.momentType);
-                  ArrayList<Long> arrayList = null;
-                  if (momentBasicInfo.momentType != null && momentBasicInfo.momentType.startsWith("RACING") ) {
-                      arrayList = new ArrayList<Long>(6);
-                      if (momentBasicInfo.momentType.startsWith("RACING_AU")) {
-                          arrayList.add(0, (long)-1);
-                          arrayList.add(1, momentBasicInfo.momentTimingInfo.t2);
-                          arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_2 + arrayList.get(1));
-                          arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_2 + arrayList.get(1));
-                          if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
-                              arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_2 + arrayList.get(1));
-                          } else {
-                              arrayList.add(4, (long)-1);
-                          }
-                          if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
-                              arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_2 + arrayList.get(1));
-                          } else {
-                              arrayList.add(5, (long)-1);
-                          }
-                      } else if (momentBasicInfo.momentType.startsWith("RACING_CD")){
-                          arrayList.add(0, momentBasicInfo.momentTimingInfo.t1);
-                          arrayList.add(1, (long)-1);
-                          arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_1 + arrayList.get(0));
-                          arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_1 + arrayList.get(0));
-                          if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
-                              arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_1 + arrayList.get(0));
-                          } else {
-                              arrayList.add(4, (long)-1);
-                          }
-                          if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
-                              arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_1 + arrayList.get(0));
-                          } else {
-                              arrayList.add(5, (long)-1);
-                          }
-                      }
-                  }
-                  doGaugeSetting(mMoment, arrayList);
-                  calcRawDataTimeInfo();
-                  loadRawData(0);
+                    mMomentPlayInfo = momentPlayInfo;
+                    Logger.t(TAG).d("moment play inf:" + momentPlayInfo.beginTime);
+                    MomentInfo.MomentBasicInfo momentBasicInfo = mMoment.moment;
+                    Logger.t(TAG).d("Moment Play Fragment! " + mMoment.moment.toString());
+                    long momentCaptureTime = -1;
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    try {
+                        Date date = dateFormat.parse(mMoment.moment.captureTime);
+                        momentCaptureTime = date.getTime();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
 
-              }
-          });
+//                      Logger.t(TAG).d(momentBasicInfo.momentType);
+
+                    Logger.t(TAG).d("1");
+                    ArrayList<Long> arrayList = null;
+                    if (momentBasicInfo.momentType != null && momentBasicInfo.momentType.startsWith("RACING")) {
+                        arrayList = new ArrayList<Long>(6);
+                        if (momentBasicInfo.momentType.startsWith("RACING_AU")) {
+                            arrayList.add(0, (long) -1);
+                            arrayList.add(1, momentBasicInfo.momentTimingInfo.t2);
+                            arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_2 + arrayList.get(1));
+                            arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_2 + arrayList.get(1));
+                            if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
+                                arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_2 + arrayList.get(1));
+                            } else {
+                                arrayList.add(4, (long) -1);
+                            }
+                            if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
+                                arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_2 + arrayList.get(1));
+                            } else {
+                                arrayList.add(5, (long) -1);
+                            }
+                        } else if (momentBasicInfo.momentType.startsWith("RACING_CD")) {
+                            arrayList.add(0, momentBasicInfo.momentTimingInfo.t1);
+                            arrayList.add(1, (long) -1);
+                            arrayList.add(2, momentBasicInfo.momentTimingInfo.t3_1 + arrayList.get(0));
+                            arrayList.add(3, momentBasicInfo.momentTimingInfo.t4_1 + arrayList.get(0));
+                            if (momentBasicInfo.momentTimingInfo.t5_2 > 0) {
+                                arrayList.add(4, momentBasicInfo.momentTimingInfo.t5_1 + arrayList.get(0));
+                            } else {
+                                arrayList.add(4, (long) -1);
+                            }
+                            if (momentBasicInfo.momentTimingInfo.t6_2 > 0) {
+                                arrayList.add(5, momentBasicInfo.momentTimingInfo.t6_1 + arrayList.get(0));
+                            } else {
+                                arrayList.add(5, (long) -1);
+                            }
+                        }
+                    }
+                    doGaugeSetting(mMoment, arrayList);
+                    calcRawDataTimeInfo();
+                    loadRawData(0);
+
+                }
+            });
 
 
 /*        mHachi.getMomentPlayInfo(mMomentId)
@@ -949,7 +941,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty()) {
-                Logger.t(TAG).d("update raw data!");
+//                Logger.t(TAG).d("update raw data!");
 
                 mGaugeView.updateRawDateItem(rawDataItemList);
             }
@@ -961,9 +953,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 return null;
             }
             int low = 0;
-            int high = list.size() -1;
+            int high = list.size() - 1;
             int mid, res = -1;
-            if (list.get(low).getPtsMs() > currentTime || list.get(high).getPtsMs() < currentTime ) {
+            if (list.get(low).getPtsMs() > currentTime || list.get(high).getPtsMs() < currentTime) {
                 return null;
             }
             while (low < high) {
@@ -971,7 +963,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 if (list.get(mid).getPtsMs() == currentTime) {
                     res = mid;
                     break;
-                } else if (list.get(mid).getPtsMs() < currentTime){
+                } else if (list.get(mid).getPtsMs() < currentTime) {
                     low = mid + 1;
                 } else {
                     high = mid - 1;
