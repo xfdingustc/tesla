@@ -274,7 +274,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         });
         mSpinnerRaceType.setSelection(1);
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
-        mRefreshLayout.setColorSchemeResources(R.color.style_color_primary, android.R.color.holo_green_light,
+        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
                 android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;
     }

@@ -73,6 +73,9 @@ public interface HachiApi {
     @GET("/api/users/{userId}/moments")
     Call<MomentListResponse> getUserMoments(@Path("userId") String userId, @Query("cursor") int cursor);
 
+    @GET("/api/users/{userId}/moments")
+    Observable<MomentListResponse> getUserMomentsRx(@Path("userId") String userId, @Query("cursor") int cursor);
+
     @GET("/api/moments/myfeed")
     Observable<MomentListResponse2> getMyFeed(@Query("cursor") int cursor, @Query("count") int count, @Query("order") String order);
 
@@ -83,9 +86,14 @@ public interface HachiApi {
     @GET("/api/friends/{userId}")
     Call<FollowInfo> getFollowInfo(@Path("userId") String userId);
 
+    @GET("/api/friends/{userId}")
+    Observable<FollowInfo> getFollowInfoRx(@Path("userId") String userId);
 
     @GET("/api/users/{userId}")
     Call<UserInfo> getUserInfo(@Path("userId") String userId);
+
+    @GET("/api/users/{userId}")
+    Observable<UserInfo> getUserInfoRx(@Path("userId") String userId);
 
     @GET("/api/users/me")
     Call<UserInfo> getMyUserInfo();

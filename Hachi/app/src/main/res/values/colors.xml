@@ -3,7 +3,7 @@
 
 
     <color name="style_color_primary_dark">@android:color/black</color>
-    <color name="style_color_primary">@color/material_deep_orange_a200</color>
+    <color name="style_color_primary">#212121</color>
     <color name="style_color_accent">@color/material_deep_orange_a200</color>
 
     <color name="toolbar_color">#212121</color>

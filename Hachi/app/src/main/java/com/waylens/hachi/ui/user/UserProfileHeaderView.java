@@ -75,54 +75,7 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
             .dontAnimate()
             .into(holder.civUserAvatar);
 
-        Target blurTarget = new SimpleTarget() {
-            @Override
-            public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
-                if (!(resource instanceof Bitmap)) {
-                    return;
-                }
 
-                Bitmap bitmap = (Bitmap) resource;
-
-                float aspectRatio = (float)holder.mBlurAvatar.getWidth() / holder.mBlurAvatar.getHeight();
-                int cropHeight = (int)(bitmap.getWidth() / aspectRatio);
-                Logger.t(TAG).d("ratio: " + aspectRatio + " cropHeight: " + cropHeight);
-                Bitmap cropBitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - cropHeight) /2 , bitmap.getWidth(), cropHeight);
-                Palette.generateAsync(cropBitmap, 24, new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        Palette.Swatch vibrant = palette.getVibrantSwatch();
-                        if (vibrant != null) {
-                            ((BaseActivity)mActivity).getToolbar().setBackgroundColor(vibrant.getRgb());
-                        } else {
-                            Logger.t(TAG).d("failed to get virant");
-                        }
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-                            Palette.Swatch darkvibrant = palette.getDarkVibrantSwatch();
-                            if (darkvibrant != null) {
-                                Window window = mActivity.getWindow();
-                                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                window.setStatusBarColor(darkvibrant.getRgb());
-                            }
-                        }
-
-
-                    }
-                });
-                Bitmap blurBitmap = FastBlurUtil.doBlur(cropBitmap, 8, true);
-                holder.mBlurAvatar.setImageBitmap(blurBitmap);
-
-            }
-        };
-
-        Glide.with(mActivity)
-            .load(mUserInfo.avatarUrl)
-            .asBitmap()
-            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-            .into(blurTarget);
 
 
         holder.mUserName.setText(mUserInfo.displayName);
@@ -143,7 +96,8 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
 
     private void updateFollowInfo(UserProfileHeaderViewHolder viewHolder) {
         Resources resources = Hachi.getContext().getResources();
-        viewHolder.mTvFollowersCount.setText("" + mFollowInfo.followers + " " + resources.getString(R.string.followers));
+        viewHolder.mTvFollowersCount.setText(Integer.toString(mFollowInfo.followers));
+        viewHolder.followingCount.setText(Integer.toString(mFollowInfo.followings));
         if (mFollowInfo.isMyFollowing) {
             viewHolder.mBtnFollow.setText(R.string.followed);
             viewHolder.mBtnFollow.setTextColor(resources.getColor(R.color.app_text_color_disabled));
@@ -163,6 +117,9 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
         @BindView(R.id.btnFollowersCount)
         TextView mTvFollowersCount;
 
+        @BindView(R.id.following_count)
+        TextView followingCount;
+
 
         @BindView(R.id.btnFollow)
         TextView mBtnFollow;
@@ -173,8 +130,7 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
         @BindView(R.id.btn_account_setting)
         ImageButton mBtnAccountSetting;
 
-        @BindView(R.id.image_blur)
-        ImageView mBlurAvatar;
+
 
         @OnClick(R.id.btnFollowersCount)
         public void onBtnFollowerCountClicked() {

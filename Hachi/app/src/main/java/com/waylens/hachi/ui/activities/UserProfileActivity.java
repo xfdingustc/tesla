@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -17,11 +20,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
@@ -31,26 +37,25 @@ import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.community.feed.IMomentListAdapterHeaderView;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
-import com.waylens.hachi.ui.user.UserProfileHeaderView;
+import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import butterknife.BindView;
-import retrofit2.Call;
-import retrofit2.Callback;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
@@ -63,14 +68,11 @@ public class UserProfileActivity extends BaseActivity {
     private String mUserID;
     private MomentsListAdapter mMomentRvAdapter;
 
-    private UserInfo mUserInfo;
-
     private String mReportReason;
 
     private HachiApi mHachiApi = HachiService.createHachiApiService();
 
-
-    private FollowInfo mFollowInfo;
+    private UserProfileZip mUserInfoEx;
 
     private int mCurrentCursor;
 
@@ -85,6 +87,58 @@ public class UserProfileActivity extends BaseActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activity.startActivity(intent);
 
+    }
+
+    @BindView(R.id.userAvatar)
+    CircleImageView civUserAvatar;
+
+    @BindView(R.id.btnFollowersCount)
+    TextView mTvFollowersCount;
+
+    @BindView(R.id.following_count)
+    TextView followingCount;
+
+    @BindView(R.id.btnFollow)
+    Button mBtnFollow;
+
+    @BindView(R.id.user_name)
+    TextView mUserName;
+
+    @BindView(R.id.user_cover)
+    ImageView userCover;
+
+
+    @OnClick(R.id.btnFollowersCount)
+    public void onBtnFollowerCountClicked() {
+        FollowListActivity.launch(this, mUserID, true);
+    }
+
+
+    @OnClick(R.id.btnFollow)
+    public void onBtnFollowClicked() {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(this);
+            return;
+        }
+
+        if (SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
+            ProfileSettingActivity.launch(this);
+            return;
+        }
+
+        if (!SessionManager.checkUserVerified(this)) {
+            return;
+        }
+        JobManager jobManager = BgJobManager.getManager();
+        FollowJob job = new FollowJob(mUserID, !mUserInfoEx.followInfo.isMyFollowing);
+        jobManager.addJobInBackground(job);
+        mUserInfoEx.followInfo.isMyFollowing = !mUserInfoEx.followInfo.isMyFollowing;
+        if (!mUserInfoEx.followInfo.isMyFollowing) {
+            mUserInfoEx.followInfo.followers--;
+        } else {
+            mUserInfoEx.followInfo.followers++;
+        }
+        updateFollowInfo();
     }
 
 
@@ -107,7 +161,7 @@ public class UserProfileActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
-        setupToolbar();
+//        setupToolbar();
         mRvUserMomentList.setVisibility(View.VISIBLE);
         mMomentRvAdapter = new MomentsListAdapter(this);
 
@@ -121,32 +175,28 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void fetchUserProfile() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
+        Observable<UserInfo> userInfoObservable = mHachiApi.getUserInfoRx(mUserID);
 
+        Observable<FollowInfo> followInfoObservable = mHachiApi.getFollowInfoRx(mUserID);
+
+//        Observable<MomentListResponse> momentListResponseObservable = mHachiApi.getUserMomentsRx(mUserID, mCurrentCursor);
+
+        Observable.zip(userInfoObservable, followInfoObservable, new Func2<UserInfo, FollowInfo, UserProfileZip>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                Call<UserInfo> userInfoCall = mHachiApi.getUserInfo(mUserID);
-                try {
-                    mUserInfo = userInfoCall.execute().body();
-                } catch (IOException e) {
-                    subscriber.onError(e);
-                }
-
-
-                Call<FollowInfo> followInfoCall = mHachiApi.getFollowInfo(mUserID);
-                try {
-                    mFollowInfo = followInfoCall.execute().body();
-                } catch (IOException e) {
-                    subscriber.onError(e);
-                }
-
-                subscriber.onNext(0);
-
+            public UserProfileZip call(UserInfo userInfo, FollowInfo followInfo) {
+                UserProfileZip userInfoEx = new UserProfileZip();
+                userInfoEx.userInfo = userInfo;
+                userInfoEx.followInfo = followInfo;
+//                userInfoEx.momentList = momentListResponse;
+                return userInfoEx;
             }
+
+
         })
+
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Integer>() {
+            .subscribe(new Observer<UserProfileZip>() {
                 @Override
                 public void onCompleted() {
 
@@ -154,25 +204,37 @@ public class UserProfileActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-                    e.printStackTrace();
+
                 }
 
                 @Override
-                public void onNext(Integer integer) {
-                    mToolbar.setTitle(mUserInfo.displayName);
-
+                public void onNext(UserProfileZip userInfoEx) {
+                    mUserInfoEx = userInfoEx;
                     setupUserProfileHeaderView();
 
                     loadUserMoment(mCurrentCursor, true);
                 }
-
-
             });
+
+
     }
 
     private void setupUserProfileHeaderView() {
-        IMomentListAdapterHeaderView headerView = new UserProfileHeaderView(this, mUserID, mUserInfo, mFollowInfo);
-        mMomentRvAdapter.setHeaderView(headerView);
+        Glide.with(this)
+            .load(mUserInfoEx.userInfo.avatarUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(R.drawable.menu_profile_photo_default)
+            .dontAnimate()
+            .into(civUserAvatar);
+
+
+        mUserName.setText(mUserInfoEx.userInfo.displayName);
+
+        if (SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
+            mBtnFollow.setText(R.string.edit_profile);
+        }
+
+        updateFollowInfo();
     }
 
 
@@ -255,46 +317,86 @@ public class UserProfileActivity extends BaseActivity {
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {
         Logger.t(TAG).d("load user moment, cursor: " + cursor);
-        Call<MomentListResponse> momentListResponseCall = mHachiApi.getUserMoments(mUserID, cursor);
-        momentListResponseCall.enqueue(new Callback<MomentListResponse>() {
-            @Override
-            public void onResponse(Call<MomentListResponse> call, retrofit2.Response<MomentListResponse> response) {
-                MomentListResponse momentListResponse = response.body();
-                for (Moment moment : momentListResponse.moments) {
-                    moment.owner = new User();
-                    moment.owner.userID = mUserID;
-                    moment.owner.avatarUrl = mUserInfo.avatarUrl;
-                    Logger.t(TAG).d(moment.toString());
+        mHachiApi.getUserMomentsRx(mUserID, cursor)
+            .map(new Func1<MomentListResponse, MomentListResponse>() {
+                @Override
+                public MomentListResponse call(MomentListResponse momentInfo) {
+                    for (Moment moment : momentInfo.moments) {
+                        moment.owner = new User();
+                        moment.owner.userID = mUserID;
+                        moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
+                    }
+                    return momentInfo;
+                }
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<MomentListResponse>() {
+                @Override
+                public void onCompleted() {
+
                 }
 
-                mCurrentCursor += momentListResponse.moments.size();
-                if (isRefresh) {
-                    mMomentRvAdapter.setMoments(momentListResponse.moments);
-                } else {
-                    mMomentRvAdapter.addMoments(momentListResponse.moments);
+                @Override
+                public void onError(Throwable e) {
+
                 }
 
-                mRvUserMomentList.setIsLoadingMore(false);
-                if (!momentListResponse.hasMore) {
-                    mRvUserMomentList.setEnableLoadMore(false);
-                    mMomentRvAdapter.setHasMore(false);
-                } else {
-                    mMomentRvAdapter.setHasMore(true);
-                    mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-                        @Override
-                        public void loadMore() {
-                            loadUserMoment(mCurrentCursor, false);
-                        }
-                    });
+                @Override
+                public void onNext(MomentListResponse momentListResponse) {
+                    if (momentListResponse.moments.size() > 0) {
+                        int random = (int) (Math.random() * momentListResponse.moments.size());
+                        Logger.t(TAG).d("Display: " + momentListResponse.moments.get(random).thumbnail);
+                        Glide.with(UserProfileActivity.this)
+                            .load(momentListResponse.moments.get(random).thumbnail)
+                            .crossFade()
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .into(userCover);
+                    }
+
+                    mCurrentCursor += momentListResponse.moments.size();
+                    if (isRefresh) {
+                        mMomentRvAdapter.setMoments(momentListResponse.moments);
+                    } else {
+                        mMomentRvAdapter.addMoments(momentListResponse.moments);
+                    }
+
+                    mRvUserMomentList.setIsLoadingMore(false);
+                    if (!momentListResponse.hasMore) {
+                        mRvUserMomentList.setEnableLoadMore(false);
+                        mMomentRvAdapter.setHasMore(false);
+                    } else {
+                        mMomentRvAdapter.setHasMore(true);
+                        mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+                            @Override
+                            public void loadMore() {
+                                loadUserMoment(mCurrentCursor, false);
+                            }
+                        });
+                    }
                 }
+            });
+
+
+    }
+
+    private void updateFollowInfo() {
+        mTvFollowersCount.setText(Integer.toString(mUserInfoEx.followInfo.followers));
+        followingCount.setText(Integer.toString(mUserInfoEx.followInfo.followings));
+        if (!SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
+            if (mUserInfoEx.followInfo.isMyFollowing) {
+                mBtnFollow.setText(R.string.followed);
+            } else {
+                mBtnFollow.setText(R.string.follow);
             }
+        }
 
-            @Override
-            public void onFailure(Call<MomentListResponse> call, Throwable t) {
+    }
 
-            }
-        });
-
+    public class UserProfileZip {
+        UserInfo userInfo;
+        FollowInfo followInfo;
+        MomentListResponse momentList;
     }
 
 

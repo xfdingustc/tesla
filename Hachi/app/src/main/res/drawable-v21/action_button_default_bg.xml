@@ -2,5 +2,5 @@
 <!--drawable-v21/btn_feed_action.xml-->
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
         android:color="?attr/colorPrimaryDark">
-    <item android:drawable="@color/style_color_primary"/>
+    <item android:drawable="@color/style_color_accent"/>
 </ripple>

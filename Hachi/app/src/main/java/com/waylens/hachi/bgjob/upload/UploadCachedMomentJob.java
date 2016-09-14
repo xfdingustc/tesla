@@ -20,6 +20,7 @@ import com.waylens.hachi.service.upload.rest.response.InitUploadResponse;
 import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -79,7 +80,10 @@ public class UploadCachedMomentJob extends UploadMomentJob {
             SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
             String date = format.format(System.currentTimeMillis()) + " GMT";
 
-            final String authorization = HachiAuthorizationHelper.getAuthoriztion("tscastle.cam2cloud.com:35021",
+            String server = StringUtils.getHostNameWithoutPrefix(response.uploadServer.url);
+            Logger.t(TAG).d("server: " + server);
+
+            final String authorization = HachiAuthorizationHelper.getAuthoriztion(server,
                 SessionManager.getInstance().getUserId() + "/android",
                 mLocalMoment.momentID,
                 date,

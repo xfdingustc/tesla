@@ -21,6 +21,19 @@ public class StringUtils {
     }
 
 
+    public static String getHostNameWithoutPrefix(String urlString) {
+        int index = urlString.indexOf("://");
+        if (index != -1) {
+            urlString = urlString.substring(index + 3);
+        }
+        index = urlString.indexOf("/");
+        if (index != -1) {
+            urlString = urlString.substring(0, index);
+        }
+        return urlString;
+    }
+
+
     public static String getFileName(String urlString) {
         int index = urlString.lastIndexOf("/");
         if (index != -1) {
