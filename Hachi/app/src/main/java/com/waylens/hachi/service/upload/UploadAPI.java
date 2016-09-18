@@ -40,8 +40,12 @@ public class UploadAPI {
     private static final int DEFAULT_TIMEOUT = 15;
     private Retrofit mRetrofit;
 
-
     public UploadAPI(String baseUrl, final String date, final String authorization) {
+        this(baseUrl, date, authorization, DEFAULT_TIMEOUT);
+    }
+
+
+    public UploadAPI(String baseUrl, final String date, final String authorization, int timeOut) {
 
 
         TrustManager[] trustManager = new TrustManager[]{
@@ -82,7 +86,7 @@ public class UploadAPI {
                         return chain.proceed(newReq);
                     }
                 })
-                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+
                 .sslSocketFactory(sslSocketFactory)
                 .hostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -90,6 +94,10 @@ public class UploadAPI {
                         return true;
                     }
                 });
+
+            if (timeOut > 0) {
+                clientBuilder.connectTimeout(timeOut, TimeUnit.SECONDS);
+            }
 
             OkHttpClient client = clientBuilder.build();
 
@@ -172,6 +180,18 @@ public class UploadAPI {
         } catch (Exception e) {
             e.printStackTrace();
             return;
+        }
+    }
+
+
+    public UploadDataResponse uploadAvatarSync(RequestBody requestBody, String sha1) {
+        try {
+            Call<UploadDataResponse> uploadAvatarCall = mRetrofit.create(UploadService.class)
+                .uploadAvatar(SessionManager.getInstance().getUserId(), sha1, requestBody);
+            return uploadAvatarCall.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.waylens.hachi.service.upload;
 
 import com.waylens.hachi.service.upload.rest.body.InitUploadBody;
-import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 import com.waylens.hachi.service.upload.rest.response.InitUploadResponse;
+import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -45,6 +45,12 @@ public interface UploadService {
 
     @PUT("/v.1.0/upload_videos/{userId}/android")
     Call<Void> finishUpload(@Path("userId") String userId,
-                                            @Query("upload_phase") String uploadPhase,
-                                            @Query("moment_id") long momentId);
+                            @Query("upload_phase") String uploadPhase,
+                            @Query("moment_id") long momentId);
+
+
+    @PUT("/v.1.0/upload_avatar/{userId}/android")
+    Call<UploadDataResponse> uploadAvatar(@Path("userId") String userId,
+                                          @Query("file_sha1") String fileSha1,
+                                          @Body RequestBody requestBody);
 }

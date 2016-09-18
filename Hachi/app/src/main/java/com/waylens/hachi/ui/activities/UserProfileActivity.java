@@ -350,7 +350,7 @@ public class UserProfileActivity extends BaseActivity {
                 @Override
                 public void onNext(MomentListResponse momentListResponse) {
                     if (momentListResponse.moments.size() > 0) {
-                        int random = (int) (Math.random() * momentListResponse.moments.size());
+                        int random = (int) (Math.random() * (momentListResponse.moments.size() - 1));
                         Logger.t(TAG).d("Display: " + momentListResponse.moments.get(random).thumbnail);
                         Glide.with(UserProfileActivity.this)
                             .load(momentListResponse.moments.get(random).thumbnail)

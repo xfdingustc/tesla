@@ -14,11 +14,12 @@ import java.security.NoSuchAlgorithmException;
 public class HachiAuthorizationHelper {
     private static final String TAG = HachiAuthorizationHelper.class.getSimpleName();
 
-    public static String getAuthoriztion(String host, String userId, long momentId, String date, String privateKey) {
+
+    public static String getAuthoriztion(String host, String userId, String momentId, String content, String date, String privateKey) {
         try {
             String checkSum = computeCheckSum(host, userId, momentId, date);
             Log.d(TAG, "checkSum = " + checkSum);
-            String stringToSign = "WAYLENS-HMAC-SHA256&waylens_cfs&upload_videos&" + checkSum;
+            String stringToSign = "WAYLENS-HMAC-SHA256&waylens_cfs&" + content + "&" + checkSum;
             String signingKey = Hex.encodeHexString(HashUtils2.encodeHMAC256(privateKey, "waylens_cfs&" + date));
             Log.d(TAG, "signingKey: " + signingKey);
 
@@ -32,7 +33,12 @@ public class HachiAuthorizationHelper {
     }
 
 
-    private static String computeCheckSum(String host, String userId, long momentId, String date) throws NoSuchAlgorithmException {
+    public static String getAuthoriztion(String host, String userId, long momentId, String date, String privateKey) {
+       return getAuthoriztion(host, userId, Long.toString(momentId), "upload_videos", date, privateKey);
+    }
+
+
+    private static String computeCheckSum(String host, String userId, String momentId, String date) throws NoSuchAlgorithmException {
         String sum = host + userId + momentId + date;
         Log.d(TAG, "sum = " + sum);
         byte[] sumBytes = sum.getBytes();

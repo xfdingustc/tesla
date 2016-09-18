@@ -1,11 +1,9 @@
 package com.waylens.hachi.rest;
 
 import com.waylens.hachi.rest.body.CreateMomentBody;
-import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
-import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
@@ -28,13 +26,12 @@ import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
-import com.waylens.hachi.rest.response.RawDataResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
 import com.waylens.hachi.rest.response.SignUpResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
+import com.waylens.hachi.rest.response.UploadAvatarResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.rest.response.SignInResponse;
-import com.waylens.hachi.ui.entities.UserProfile;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -55,6 +52,9 @@ public interface HachiApi {
 
 //    @GET("/api/moments/play/{momentId}")
 //    Call<MomentPlayInfo> getRawDataUrl(@Path("momentId") long momentId);
+
+    @GET("/api/users/start_upload_avatar")
+    Call<UploadAvatarResponse> getAvatarUploadServer();
 
     @GET("/api/moments/play/{momentId}")
     Observable<MomentPlayInfo> getMomentPlayInfo(@Path("momentId") long momentId);

@@ -34,7 +34,7 @@ import com.xfdingustc.snipe.vdb.urls.UploadUrl;
 public class MomentUploader {
     private static final String TAG = MomentUploader.class.getSimpleName();
 
-    private CloudInfo mCloudInfo;
+    private UploadServer mCloudInfo;
     private Socket mSocket;
     private OutputStream mOutputStream;
 
@@ -54,14 +54,14 @@ public class MomentUploader {
     }
 
     private void init() throws IOException {
-        mSocket = new Socket(mCloudInfo.getAddress(), mCloudInfo.getPort());
+        mSocket = new Socket(mCloudInfo.ip, mCloudInfo.port);
         mOutputStream = mSocket.getOutputStream();
     }
 
     private int login(byte deviceType) throws IOException {
 //        mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN));
         mUploadJob.setUploadState(CacheMomentJob.UPLOAD_STATE_LOGIN);
-        CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mCloudInfo.getPrivateKey(), deviceType);
+        CrsUserLogin loginCmd = new CrsUserLogin(mUserId, mMomentID, mCloudInfo.privateKey, deviceType);
         sendData(loginCmd.getEncodedCommand());
         CrsCommandResponse response = receiveData();
 //        mEventBus.post(new UploadEvent(UploadEvent.UPLOAD_WHAT_LOGIN_SUCCEED));
@@ -70,7 +70,7 @@ public class MomentUploader {
     }
 
     private int createMomentDesc(LocalMoment localMoment) throws IOException {
-        CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId, mMomentID, "background music", mCloudInfo.getPrivateKey());
+        CrsMomentDescription momentDescription = new CrsMomentDescription(mUserId, mMomentID, "background music", mCloudInfo.privateKey);
         for (LocalMoment.Segment segment : localMoment.mSegments) {
             momentDescription.addFragment(new CrsFragment(segment.clip.getVdbId(),
                 segment.getClipCaptureTime(),
@@ -101,7 +101,7 @@ public class MomentUploader {
             duration = uploadUrl.lengthMs;
         }
         CrsUserStartUpload startUpload = new CrsUserStartUpload(mUserId, guid, mMomentID, fileSha1,
-            dataType, fileSize, startTime, offset, duration, mCloudInfo.getPrivateKey());
+            dataType, fileSize, startTime, offset, duration, mCloudInfo.privateKey);
         sendData(startUpload.getEncodedCommand());
         CrsCommandResponse response = receiveData();
         Logger.t(TAG).d("jid " + response.jidExt + " moment id: " + response.momentID + " offset: " + response.offset + " response code: " + response.responseCode);
@@ -170,7 +170,7 @@ public class MomentUploader {
 //            Logger.t(TAG).d("upload one block " + length + " total length: " + totalLength);
 
             CrsClientTranData tranData = new CrsClientTranData(mUserId, guid, mMomentID, fileSha1,
-                blockSha1, dataType, seqNum, 0, (short) length, data, mCloudInfo.getPrivateKey());
+                blockSha1, dataType, seqNum, 0, (short) length, data, mCloudInfo.privateKey);
 
             sendData(tranData.getEncodedCommand());
             seqNum++;
@@ -207,7 +207,7 @@ public class MomentUploader {
     }
 
     private int stopUpload(String guid) throws IOException {
-        CrsUserStopUpload crsUserStopUpload = new CrsUserStopUpload(mUserId, guid, mCloudInfo.getPrivateKey());
+        CrsUserStopUpload crsUserStopUpload = new CrsUserStopUpload(mUserId, guid, mCloudInfo.privateKey);
         sendData(crsUserStopUpload.getEncodedCommand());
         return receiveData().responseCode;
     }
@@ -234,7 +234,7 @@ public class MomentUploader {
     }
 
     private void logOut() throws IOException {
-        CrsUserLogout logout = new CrsUserLogout(mUserId, mCloudInfo.getPrivateKey());
+        CrsUserLogout logout = new CrsUserLogout(mUserId, mCloudInfo.privateKey);
         sendData(logout.getEncodedCommand());
     }
 
@@ -393,7 +393,7 @@ public class MomentUploader {
 
     }
 
-    public void upload(CloudInfo cloudInfo, String file) {
+    public void upload(UploadServer cloudInfo, String file) {
         mCloudInfo = cloudInfo;
         updateFile(file);
     }

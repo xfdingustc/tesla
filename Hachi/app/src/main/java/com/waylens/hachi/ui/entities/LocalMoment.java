@@ -1,7 +1,7 @@
 package com.waylens.hachi.ui.entities;
 
 
-import com.waylens.hachi.bgjob.upload.CloudInfo;
+import com.waylens.hachi.bgjob.upload.UploadServer;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.xfdingustc.snipe.utils.DateTime;
 import com.xfdingustc.snipe.vdb.Clip;
@@ -47,7 +47,7 @@ public class LocalMoment implements Serializable {
     public String momentType = null;
 
 
-    public CloudInfo cloudInfo;
+    public UploadServer cloudInfo;
 
     public long momentID;
 
@@ -84,13 +84,13 @@ public class LocalMoment implements Serializable {
 
     public void updateUploadInfo(CreateMomentResponse response) {
         this.momentID = response.momentID;
-        CreateMomentResponse.UploadServer uploadServer = response.uploadServer;
-        this.cloudInfo = new CloudInfo(uploadServer.ip, uploadServer.port, uploadServer.privateKey);
+        UploadServer uploadServer = response.uploadServer;
+        this.cloudInfo = new UploadServer(uploadServer.ip, uploadServer.port, uploadServer.privateKey);
     }
 
     public void updateUploadInfo(long momentID, String address, int port, String privateKey) {
         this.momentID = momentID;
-        cloudInfo = new CloudInfo(address, port, privateKey);
+        cloudInfo = new UploadServer(address, port, privateKey);
     }
 
     public boolean isPrepared() {

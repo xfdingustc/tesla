@@ -1,26 +1,34 @@
 package com.waylens.hachi.bgjob.upload;
 
-import android.content.Context;
 import android.support.annotation.Nullable;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.RequestFuture;
-import com.android.volley.toolbox.Volley;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.service.upload.UploadAPI;
+import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.utils.HashUtils2;
+import com.waylens.hachi.utils.Hex;
+import com.waylens.hachi.utils.StringUtils;
 
-import org.json.JSONObject;
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 
 /**
  * Created by Xiaofei on 2016/4/27.
  */
 public class UploadAvatarJob extends Job {
     private static final String TAG = UploadAvatarJob.class.getSimpleName();
-    private CloudInfo mCloudInfo;
 
     private final String file;
 
@@ -38,21 +46,43 @@ public class UploadAvatarJob extends Job {
     public void onRun() throws Throwable {
         Logger.t(TAG).d("on Run file: " + file);
 
-        Context context = getApplicationContext();
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        RequestFuture<JSONObject > future = RequestFuture.newFuture();
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(Constants.API_START_UPLOAD_AVATAR, future, future);
 
-        requestQueue.add(request);
-        JSONObject response = future.get();
+        try {
+            HachiApi hachiApi = HachiService.createHachiApiService();
+            UploadServer uploadServer = hachiApi.getAvatarUploadServer().execute().body().uploadServer;
+
+            EventBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));
+            Logger.t(TAG).d("get upload server: " + uploadServer.toString());
 
 
-        mCloudInfo = CloudInfo.parseFromJson(response);
-        Logger.t(TAG).d("get CloudinfO: " + mCloudInfo.toString());
-        AvatarUploader uploader = new AvatarUploader();
-//        mCloudInfo = new CloudInfo("52.74.236.46", 35020, "qwertyuiopasdfgh");
-        uploader.upload(mCloudInfo, file);
+            String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(new File(file)));
 
+            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
+            String date = format.format(System.currentTimeMillis()) + " GMT";
+            String server = StringUtils.getHostNameWithoutPrefix(uploadServer.url);
+
+            final String authorization = HachiAuthorizationHelper.getAuthoriztion(server,
+                SessionManager.getInstance().getUserId() + "/android",
+                fileSha1,
+                "upload_avatar",
+                date,
+                uploadServer.privateKey);
+            EventBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));
+
+            UploadAPI uploadAPI = new UploadAPI(uploadServer.url + "/", date, authorization, -1);
+
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), new File(file));
+
+            UploadDataResponse response = uploadAPI.uploadAvatarSync(requestBody, fileSha1);
+
+            Logger.t(TAG).d("response: " + response);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        EventBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_FINISHED));
 //        Logger.t(TAG).d("Start upload");
     }
 
@@ -60,7 +90,6 @@ public class UploadAvatarJob extends Job {
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
 
     }
-
 
 
     @Override

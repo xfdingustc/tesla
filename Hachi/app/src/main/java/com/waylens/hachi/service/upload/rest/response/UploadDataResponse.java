@@ -6,10 +6,10 @@ import com.xfdingustc.snipe.utils.ToStringUtils;
  * Created by Xiaofei on 2016/9/8.
  */
 public class UploadDataResponse {
-    public int result;//": int,
-    public String jid;//    "jid": string,
-    public String guid;//    "guid": string,
-    public int moment_id;//    "moment_id": int,
+    public int result;
+    public String jid;
+    public String guid;
+    public int moment_id;
 
     @Override
     public String toString() {
