@@ -15,6 +15,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.HashUtils2;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
+import com.xfdingustc.rxutils.library.RxBus;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -51,7 +52,7 @@ public class UploadAvatarJob extends Job {
             HachiApi hachiApi = HachiService.createHachiApiService();
             UploadServer uploadServer = hachiApi.getAvatarUploadServer().execute().body().uploadServer;
 
-            EventBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));
+            RxBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));
             Logger.t(TAG).d("get upload server: " + uploadServer.toString());
 
 
@@ -67,7 +68,7 @@ public class UploadAvatarJob extends Job {
                 "upload_avatar",
                 date,
                 uploadServer.privateKey);
-            EventBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));
+            RxBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));
 
             UploadAPI uploadAPI = new UploadAPI(uploadServer.url + "/", date, authorization, -1);
 
@@ -82,8 +83,7 @@ public class UploadAvatarJob extends Job {
             e.printStackTrace();
         }
 
-        EventBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_FINISHED));
-//        Logger.t(TAG).d("Start upload");
+        RxBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_FINISHED));
     }
 
     @Override

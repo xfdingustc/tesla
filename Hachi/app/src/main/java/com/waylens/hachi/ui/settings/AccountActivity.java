@@ -38,6 +38,8 @@ import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.utils.FastBlurUtil;
+import com.xfdingustc.rxutils.library.RxBus;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,6 +53,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -64,6 +67,8 @@ public class AccountActivity extends BaseActivity {
 
 
     private HachiApi mHachi = HachiService.createHachiApiService();
+
+    private Subscription mAvatarUploadSubscription;
 
 
     @BindView(R.id.avatar)
@@ -138,21 +143,6 @@ public class AccountActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventUpload(UploadAvatarEvent event) {
-        switch (event.getWhat()) {
-            case UploadAvatarEvent.UPLOAD_WHAT_START:
-            case UploadAvatarEvent.UPLOAD_WHAT_PROGRESS:
-                if (mAvatarUploadProgress.getVisibility() != View.VISIBLE) {
-                    mAvatarUploadProgress.setVisibility(View.VISIBLE);
-                }
-                break;
-            case UploadAvatarEvent.UPLOAD_WHAT_FINISHED:
-                mAvatarUploadProgress.setVisibility(View.GONE);
-                fetchUserProfile();
-                break;
-        }
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -164,13 +154,33 @@ public class AccountActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+        mAvatarUploadSubscription = RxBus.getDefault().toObserverable(UploadAvatarEvent.class)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<UploadAvatarEvent>() {
+                @Override
+                public void onNext(UploadAvatarEvent uploadAvatarEvent) {
+                    switch (uploadAvatarEvent.getWhat()) {
+                        case UploadAvatarEvent.UPLOAD_WHAT_START:
+                        case UploadAvatarEvent.UPLOAD_WHAT_PROGRESS:
+                            if (mAvatarUploadProgress.getVisibility() != View.VISIBLE) {
+                                mAvatarUploadProgress.setVisibility(View.VISIBLE);
+                            }
+                            break;
+                        case UploadAvatarEvent.UPLOAD_WHAT_FINISHED:
+                            mAvatarUploadProgress.setVisibility(View.GONE);
+                            fetchUserProfile();
+                            break;
+                    }
+                }
+            });
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+        if (!mAvatarUploadSubscription.isUnsubscribed()) {
+            mAvatarUploadSubscription.unsubscribe();
+        }
 
     }
 
