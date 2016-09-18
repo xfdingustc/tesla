@@ -4,77 +4,40 @@
                                     xmlns:tools="http://schemas.android.com/tools"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginBottom="8dp"
-                                    android:layout_marginTop="8dp"
+                                    android:layout_margin="8dp"
                                     android:background="@color/windowBackground"
                                     android:orientation="vertical"
                                     app:cardCornerRadius="2dp">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/windowBackground"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        tools:background="@color/material_grey_700">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="16dp"
+            tools:src="@drawable/menu_profile_photo_default"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
+            android:id="@+id/time_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="72dp"
+            android:layout_alignParentRight="true"
             android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_avatar"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginRight="8dp"
-                tools:src="@drawable/menu_profile_photo_default"/>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/user_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/app_text_color_primary"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-                    tools:text="xfding"/>
-
-                <LinearLayout
-                    android:id="@+id/place_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!--<ImageView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:src="@drawable/ic_place"-->
-                        <!--android:layout_gravity="center_vertical"/>-->
-
-                    <TextView
-                        android:id="@+id/place"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:textColor="@color/app_text_color_secondary"
-                        tools:text="Shanghai China"/>
-
-                </LinearLayout>
-            </LinearLayout>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignTop="@id/user_avatar"
                 android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
                 android:layout_marginRight="8dp"
                 android:src="@drawable/ic_schedule"/>
 
@@ -82,17 +45,62 @@
                 android:id="@+id/upload_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/user_avatar"
                 android:layout_gravity="center_vertical"
+                android:layout_marginRight="16dp"
                 android:textColor="@color/app_text_color_secondary"
                 tools:text="5 hours ago"/>
 
-
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/HachiTextViewSubHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_avatar"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/user_avatar"
+            android:layout_gravity="top"
+            android:layout_toLeftOf="@id/time_icon"
+            android:layout_toRightOf="@id/user_avatar"
+            android:textColor="@color/app_text_color_primary"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            tools:text="xfding"/>
+
+
+        <TextView
+            android:id="@+id/place"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/user_avatar"
+            android:layout_below="@id/user_name"
+            android:layout_gravity="center_vertical"
+            android:layout_toLeftOf="@id/time_icon"
+            android:layout_toRightOf="@id/user_avatar"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/app_text_color_secondary"
+            tools:text="Shanghai China"/>
 
         <com.xfdingustc.far.FixedAspectRatioFrameLayout
             android:id="@+id/video_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_below="@id/title"
             app:farfl_xratio="16dp"
             app:farfl_yratio="9dp">
 
@@ -117,108 +125,12 @@
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
         <LinearLayout
+            android:id="@+id/ll_action_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/title"
-                style="@style/HachiTextViewSubHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
-                tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/comment1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/comment_user1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@color/style_color_accent"
-                tools:text="xfding"/>
-
-            <TextView
-                android:id="@+id/comment_content1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/app_text_color_secondary"
-                tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/comment2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/comment_user2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@color/style_color_accent"
-                tools:text="xfding"/>
-
-            <TextView
-                android:id="@+id/comment_content2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/app_text_color_secondary"
-                tools:text="beatiful"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/comment3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/comment_user3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="@color/style_color_accent"
-                tools:text="xfding"/>
-
-            <TextView
-                android:id="@+id/comment_content3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/app_text_color_secondary"
-                tools:text="beatiful"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_below="@id/video_fragment_container"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
@@ -263,6 +175,11 @@
                 android:layout_marginLeft="8dp"
                 tools:text="999"/>
 
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"></LinearLayout>
+
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
@@ -274,7 +191,90 @@
 
         </LinearLayout>
 
+        <View
+            android:id="@+id/separator"
+            style="@style/HachiSepatator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/ll_action_bar"
+            android:layout_marginTop="8dp"/>
 
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/comment_user1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/separator"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+            tools:text="xfding"
+            tools:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/comment_content1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/separator"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@id/comment_user1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/app_text_color_secondary"
+            tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
+            tools:visibility="gone"/>
+
+
+        <TextView
+            android:id="@+id/comment_user2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/comment_user1"
+            android:layout_marginLeft="16dp"
+            android:textStyle="bold"
+            tools:text="xfding"
+            tools:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/comment_content2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/comment_user1"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_toRightOf="@id/comment_user2"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/app_text_color_secondary"
+            tools:text="beatiful"
+            tools:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/comment_user3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/comment_user2"
+            android:layout_marginLeft="16dp"
+            android:textStyle="bold"
+            tools:text="xfding"
+            tools:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/comment_content3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/comment_user2"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_toRightOf="@id/comment_user3"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/app_text_color_secondary"
+            tools:text="beatiful"
+            tools:visibility="gone"/>
+
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

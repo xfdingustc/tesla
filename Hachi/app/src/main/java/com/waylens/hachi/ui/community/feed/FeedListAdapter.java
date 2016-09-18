@@ -19,7 +19,6 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.session.SessionManager;
@@ -28,7 +27,6 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
-import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
@@ -38,7 +36,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.ocpsoft.prettytime.PrettyTime;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -207,25 +204,37 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
 
-        holder.comment1.setVisibility(View.GONE);
-        holder.comment2.setVisibility(View.GONE);
-        holder.comment3.setVisibility(View.GONE);
+        holder.commentUser1.setVisibility(View.GONE);
+        holder.commentUser2.setVisibility(View.GONE);
+        holder.commentUser3.setVisibility(View.GONE);
+        holder.commentContent1.setVisibility(View.GONE);
+        holder.commentContent2.setVisibility(View.GONE);
+        holder.commentContent3.setVisibility(View.GONE);
 
+
+        if (momentEx.lastComments.size() == 0) {
+            holder.separator.setVisibility(View.GONE);
+        } else {
+            holder.separator.setVisibility(View.VISIBLE);
+        }
 
         if (momentEx.lastComments.size() > 0) {
-            holder.comment1.setVisibility(View.VISIBLE);
+            holder.commentUser1.setVisibility(View.VISIBLE);
+            holder.commentContent1.setVisibility(View.VISIBLE);
             holder.commentUser1.setText(momentEx.lastComments.get(0).author.userName);
             holder.commentContent1.setText(momentEx.lastComments.get(0).content);
         }
 
         if (momentEx.lastComments.size() > 1) {
-            holder.comment2.setVisibility(View.VISIBLE);
+            holder.commentUser2.setVisibility(View.VISIBLE);
+            holder.commentContent2.setVisibility(View.VISIBLE);
             holder.commentUser2.setText(momentEx.lastComments.get(1).author.userName);
             holder.commentContent2.setText(momentEx.lastComments.get(1).content);
         }
 
         if (momentEx.lastComments.size() > 2) {
-            holder.comment3.setVisibility(View.VISIBLE);
+            holder.commentUser3.setVisibility(View.VISIBLE);
+            holder.commentContent3.setVisibility(View.VISIBLE);
             holder.commentUser3.setText(momentEx.lastComments.get(2).author.userName);
             holder.commentContent3.setText(momentEx.lastComments.get(2).content);
         }
@@ -289,7 +298,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.START);
+                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_moment, popupMenu.getMenu());
                 if (momentEx.owner.userID.equals(SessionManager.getInstance().getUserId())) {
                     popupMenu.getMenu().removeItem(R.id.report);
@@ -341,8 +350,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-
-
     private void onDeleteClick(final long momentId, final int position) {
         DialogHelper.showDeleteMomentConfirmDialog(mContext, momentId, new DialogHelper.onPositiveClickListener() {
             @Override
@@ -363,9 +370,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public int getItemCount() {
         return mMoments.size() + 1 + (mHeaderView == null ? 0 : 1);
     }
-
-
-
 
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
@@ -395,17 +399,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.place)
         TextView place;
 
-        @BindView(R.id.place_layout)
-        View placeLayout;
-
-        @BindView(R.id.comment1)
-        View comment1;
-
-        @BindView(R.id.comment2)
-        View comment2;
-
-        @BindView(R.id.comment3)
-        View comment3;
 
         @BindView(R.id.comment_user1)
         TextView commentUser1;
@@ -433,6 +426,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.tv_comment_count)
         TextView commentCount;
+
+        @BindView(R.id.separator)
+        View separator;
 
 
         public MomentViewHolder(View itemView) {
