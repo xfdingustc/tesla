@@ -77,6 +77,9 @@ public interface HachiApi {
     @GET("/api/users/{userId}/moments")
     Observable<MomentListResponse> getUserMomentsRx(@Path("userId") String userId, @Query("cursor") int cursor);
 
+    @GET("/api/moments/recommend")
+    Observable<MomentListResponse2> getRecommendedMomentsRx(@Query("count") int count);
+
     @GET("/api/moments/myfeed")
     Observable<MomentListResponse2> getMyFeed(@Query("cursor") int cursor, @Query("count") int count, @Query("order") String order);
 

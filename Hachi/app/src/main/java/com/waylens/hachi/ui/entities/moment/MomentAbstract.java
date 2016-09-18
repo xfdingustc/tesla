@@ -30,6 +30,8 @@ public class MomentAbstract {
 
     public boolean isLiked;
 
+    public boolean isRecommended;
+
     @Override
     public String toString() {
         return ToStringUtils.getString(this);

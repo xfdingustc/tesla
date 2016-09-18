@@ -19,6 +19,7 @@ import com.waylens.hachi.rest.response.MomentListResponse2;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
@@ -27,8 +28,11 @@ import com.waylens.hachi.utils.ServerMessage;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 /**
@@ -144,7 +148,28 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     private void loadFeed(int cursor, final boolean isRefresh) {
         HachiApi hachiApi = HachiService.createHachiApiService();
-        hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME)
+
+        Observable<MomentListResponse2> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
+            .map(new Func1<MomentListResponse2, MomentListResponse2>() {
+                @Override
+                public MomentListResponse2 call(MomentListResponse2 momentListResponse2) {
+                    for (MomentEx momentEx : momentListResponse2.moments) {
+                        momentEx.moment.isRecommended = true;
+                    }
+                    return momentListResponse2;
+                }
+            });
+
+        Observable<MomentListResponse2> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME);
+
+        Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse2, MomentListResponse2, MomentListResponse2>() {
+            @Override
+            public MomentListResponse2 call(MomentListResponse2 recommendMoment, MomentListResponse2 feedMoment) {
+                Logger.t(TAG).d("recommend moment: " + recommendMoment.moments.size());
+                feedMoment.moments.addAll(0, recommendMoment.moments);
+                return feedMoment;
+            }
+        })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Subscriber<MomentListResponse2>() {
