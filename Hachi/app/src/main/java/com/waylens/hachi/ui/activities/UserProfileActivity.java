@@ -108,9 +108,14 @@ public class UserProfileActivity extends BaseActivity {
     ImageView userCover;
 
 
-    @OnClick(R.id.btnFollowersCount)
+    @OnClick(R.id.ll_followers)
     public void onBtnFollowerCountClicked() {
         FollowListActivity.launch(this, mUserID, true);
+    }
+
+    @OnClick(R.id.ll_following)
+    public void onFollowingCountClicked() {
+        FollowListActivity.launch(this, mUserID, false);
     }
 
 

@@ -18,6 +18,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.utils.ImageUtils;
 import com.waylens.hachi.utils.VolleyUtil;
@@ -39,12 +40,9 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final Context mContext;
     private List<User> mUserList;
-    private RequestQueue mRequestQueue;
 
     public UserListRvAdapter(Context context) {
         this.mContext = context;
-        this.mRequestQueue = VolleyUtil.newVolleyRequestQueue(context);
-        mRequestQueue.start();
     }
 
     public void setUserList(List<User> userList) {
@@ -71,6 +69,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             .load(userInfo.avatarUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .crossFade()
+            .placeholder(R.drawable.menu_profile_photo_default)
             .into(viewHolder.mUserAvater);
 
         if (userInfo.getIsFollowing()) {
@@ -85,11 +84,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        if (mUserList != null) {
-            return mUserList.size();
-        }
-
-        return 0;
+        return mUserList != null ? mUserList.size() : 0;
     }
 
     @Override
@@ -109,70 +104,25 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void followUser(final String userID, final UserListViewHolder viewHolder) {
-        String requestUrl = Constants.API_FRIENDS_FOLLOW;
-        JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put(JsonKey.USER_ID, userID);
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
-                requestUrl, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).d("Follow user: " + userID);
-                    setFollowButton(viewHolder, true);
-                    setUserIsFollowing(viewHolder, true);
-                    viewHolder.mTvFollow.setEnabled(true);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-            mRequestQueue.add(request);
-            viewHolder.mTvFollow.setEnabled(false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        BgJobHelper.followUser(userID, true);
+        setFollowButton(viewHolder, true);
+        setUserIsFollowing(viewHolder, true);
     }
 
     public void unfollowUser(final String userID, final UserListViewHolder viewHolder) {
-        String requestUrl = Constants.API_FRIENDS_UNFOLLOW;
-        JSONObject requestBody = new JSONObject();
-
-        try {
-            requestBody.put(JsonKey.USER_ID, userID);
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST,
-                requestUrl, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    setFollowButton(viewHolder, false);
-                    setUserIsFollowing(viewHolder, false);
-                    Logger.t(TAG).d("Unfollow user: " + userID);
-                    viewHolder.mTvFollow.setEnabled(true);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-            mRequestQueue.add(request);
-            viewHolder.mTvFollow.setEnabled(false);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        BgJobHelper.followUser(userID, false);
+        setFollowButton(viewHolder, false);
+        setUserIsFollowing(viewHolder, false);
     }
 
     private void setFollowButton(UserListViewHolder viewHolder, boolean isFollowing) {
         if (isFollowing) {
             viewHolder.mTvFollow.setText(R.string.following);
-            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.windowBackground));
-            viewHolder.mTvFollow.setBackgroundResource(R.color.app_text_color_primary);
+            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(android.R.color.white));
+            viewHolder.mTvFollow.setBackgroundResource(R.drawable.round_rectangle_button);
         } else {
-            viewHolder.mTvFollow.setText(R.string.follow);
-            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.app_text_color_primary));
+            viewHolder.mTvFollow.setText(R.string.add_follow);
+            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.style_color_accent));
             viewHolder.mTvFollow.setBackgroundResource(R.drawable.button_with_stroke);
         }
     }

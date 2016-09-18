@@ -120,6 +120,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/ll_followers"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -142,6 +143,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/ll_following"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"

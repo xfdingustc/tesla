@@ -18,6 +18,7 @@ import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
+import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.MomentInfo;
@@ -121,6 +122,9 @@ public interface HachiApi {
 
 //    @POST("/api/devices/login")
 //    Call<SignInResponse> deviceLogin(@Body DeviceLoginBody deviceLoginBody);
+
+    @GET("/api/friends/{follow}")
+    Observable<FriendList> getFriendListRx(@Path("follow") String follow, @Query("u") String userId);
 
 
     @DELETE("/api/moments/{momentId}")

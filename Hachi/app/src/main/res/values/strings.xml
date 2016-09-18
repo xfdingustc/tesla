@@ -465,4 +465,5 @@
 	<string name="switch_to_english_units">Switch To English Units</string>
 	<string name="uploading">Uploading</string>
 	<string name="edit_profile">Edit profile</string>
+	<string name="add_follow">"+ follow"</string>
 </resources>

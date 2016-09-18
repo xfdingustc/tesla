@@ -7,28 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ViewAnimator;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.ui.adapters.UserListRvAdapter;
-import com.waylens.hachi.ui.entities.User;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -43,10 +33,12 @@ public class FollowListActivity extends BaseActivity {
     private String mUserId;
     private boolean mIsFollowers;
 
-    private List<User> mUserList;
 
     private UserListRvAdapter mUserListAdatper;
 
+
+    @BindView(R.id.view_animator)
+    ViewAnimator viewAnimator;
 
     @BindView(R.id.rvFollowList)
     RecyclerView mRvFollowList;
@@ -101,54 +93,34 @@ public class FollowListActivity extends BaseActivity {
         mUserListAdatper = new UserListRvAdapter(this);
         mRvFollowList.setAdapter(mUserListAdatper);
 
-        String requestUrl;
+        String follow;
         if (mIsFollowers) {
-            requestUrl = Constants.API_FRIENDS + "followers";
+            follow = "followers";
         } else {
-            requestUrl = Constants.API_FRIENDS + "followings";
+            follow = "followings";
         }
-        requestUrl += "?u=" + mUserId;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(requestUrl, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-                mUserList = parseUserList(response);
-                refreshUserList();
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        hachiApi.getFriendListRx(follow, mUserId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<FriendList>() {
+                @Override
+                public void onCompleted() {
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                }
 
-            }
-        });
-        mRequestQueue.add(request);
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(FriendList friendList) {
+                    mUserListAdatper.setUserList(friendList.friends);
+                    viewAnimator.setDisplayedChild(1);
+                }
+            });
     }
 
-    private void refreshUserList() {
-        mUserListAdatper.setUserList(mUserList);
-    }
 
-    private List<User> parseUserList(JSONObject response) {
-        try {
-            JSONArray userArray = response.getJSONArray("friends");
-            List<User> userList;
-
-            Gson gson = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-
-            Type type = new TypeToken<ArrayList<User>>() {}.getType();
-
-            userList = gson.fromJson(userArray.toString(), type);
-
-
-            return userList;
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 }

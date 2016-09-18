@@ -1,7 +1,5 @@
 package com.waylens.hachi.ui.entities;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.waylens.hachi.session.SessionManager;
 import com.xfdingustc.snipe.utils.ToStringUtils;
 
@@ -14,31 +12,24 @@ import java.io.Serializable;
  */
 
 public class User implements Serializable {
-    @Expose
     public String userID;
 
-    @Expose
     public String userName;
 
-    @Expose
     public String avatarUrl;
 
-    @Expose
     public String name;
 
     public boolean isVerified;
 
-    @Expose
-    @SerializedName("followersCnt")
-    private int mFollowersCount;
+    public int followersCnt;
 
-    @Expose
-    @SerializedName("followingsCnt")
-    private int mFollowingsCount;
+    public int followingsCnt;
 
-    @Expose
-    @SerializedName("isMyFollowing")
-    private boolean mIsFollowing;
+    public boolean isMyFollowing;
+
+    public boolean isMutual;
+
 
     public static User fromJson(JSONObject jsonOwner) {
         if (jsonOwner == null) {
@@ -65,19 +56,19 @@ public class User implements Serializable {
     }
 
     public int getFollowersCount() {
-        return mFollowersCount;
+        return followersCnt;
     }
 
     public int getFollowingsCount() {
-        return mFollowingsCount;
+        return followingsCnt;
     }
 
     public boolean getIsFollowing() {
-        return mIsFollowing;
+        return isMyFollowing;
     }
 
     public void setIsFollowing(boolean isFollowing) {
-        mIsFollowing = isFollowing;
+        isMyFollowing = isFollowing;
     }
 
 
