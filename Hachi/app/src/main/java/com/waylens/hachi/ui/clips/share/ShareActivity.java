@@ -34,15 +34,18 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
+import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
+import com.waylens.hachi.ui.clips.player.RawDataLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.ui.settings.ShareSettingActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.utils.ViewUtils;
@@ -50,12 +53,15 @@ import com.xfdingustc.snipe.control.VdtCamera;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
+import com.xfdingustc.snipe.vdb.rawdata.GpsData;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
+import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -80,6 +86,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     private static final int REQUEST_CODE_FACEBOOK = 0x100;
     private static final int REQUEST_CODE_YOUTUBE = 0x101;
+    private static final int REQUEST_SHARE_SETTING = 0x102;
 
     private int mPlayListId;
 
@@ -94,6 +101,8 @@ public class ShareActivity extends ClipPlayActivity {
     public String mVehicleModel = null;
 
     public int mVehicleYear;
+
+    private String mLocation;
 
     public ArrayList<Long> timingPoints = null;
 
@@ -112,6 +121,12 @@ public class ShareActivity extends ClipPlayActivity {
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
+    @BindView(R.id.user_vehicle_info)
+    TextView mTvUserVehicleInfo;
+
+    @BindView(R.id.geo_info)
+    TextView mTvGeoInfo;
+
     @BindView(R.id.race_layout)
     LinearLayout mRaceLayout;
 
@@ -127,9 +142,6 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.user_name)
     TextView mUserName;
-
-    @BindView(R.id.user_email)
-    TextView mUserEmail;
 
     @BindView(R.id.root_scroll_view)
     ScrollView mRootScrollView;
@@ -154,6 +166,12 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.btn_youtube)
     ImageView mBtnYoutube;
+
+    @OnClick(R.id.info_edit)
+    public void onBtnInfoEditClicked() {
+        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, REQUEST_SHARE_SETTING);
+
+    }
 
     @OnClick(R.id.btn_facebook)
     public void onBtnFackBookChecked() {
@@ -218,7 +236,33 @@ public class ShareActivity extends ClipPlayActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_SHARE_SETTING:
+                if (resultCode == Activity.RESULT_OK) {
+                    boolean isLocationChecked = data.getBooleanExtra(ShareSettingActivity.LOCATION_CHECKED, true);
+                    boolean isVehicleChecked = data.getBooleanExtra(ShareSettingActivity.VEHICLE_CHECKED, true);
+                    mVehicleMaker = data.getStringExtra(ShareSettingActivity.VEHICLE_MAKER);
+                    mVehicleModel = data.getStringExtra(ShareSettingActivity.VEHICLE_MODEL);
+                    mVehicleYear = data.getIntExtra(ShareSettingActivity.VEHICLE_YEAR, -1);
 
+                    Logger.t(TAG).d("isLocation:" + isLocationChecked + "isVehicle:" + isVehicleChecked);
+                    if (!isLocationChecked) {
+                        mTvGeoInfo.setVisibility(View.GONE);
+                    }
+
+                    if (isVehicleChecked) {
+                        if (mVehicleMaker != null) {
+                            mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+                        }
+                    } else {
+                        mTvVehicleInfo.setVisibility(View.GONE);
+                    }
+                    Logger.t(TAG).d("maker:" + mVehicleMaker + mVehicleModel + mVehicleYear);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -245,19 +289,20 @@ public class ShareActivity extends ClipPlayActivity {
                 ClipSet clipSet = null;
                 try {
                     clipSet = mPlaylistEditor.doGetPlaylistInfoDetailed();
+                    Clip clip = null;
+                    if (mRaceType >= 0 && clipSet.getCount() == 1) {
+                        clip = clipSet.getClip(0);
+                        clip.raceTimingPoints = timingPoints;
+                        clip.typeRace = mRaceType;
+                        subscriber.onNext(clip);
+                    } else {
+                        mVin = clipSet.getClip(0).getVin();
+                    }
                 } catch (Exception e) {
                     Logger.t(TAG).d(e.getMessage());
                     subscriber.onError(e);
                 }
-                Clip clip = null;
-                if (clipSet.getCount() == 1) {
-                    clip = clipSet.getClip(0);
-                    clip.raceTimingPoints = timingPoints;
-                    clip.typeRace = mRaceType;
-                    subscriber.onNext(clip);
-                } else {
-                    return;
-                }
+
                 if (mVin != null) {
                     String vin = mVin.substring(0, 8) + mVin.substring(9, 11);
                     try {
@@ -277,6 +322,23 @@ public class ShareActivity extends ClipPlayActivity {
                         Logger.t(TAG).d(e.getMessage());
                     }
                 }
+                RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId(), mVdbRequestQueue);
+                try {
+                    RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clipSet.getClip(0), RawDataItem.DATA_TYPE_GPS);
+                    GpsData gpsData = (GpsData) rawDataBlock.getRawDataItem(0).data;
+                    double lat = gpsData.coord.lat;
+                    double lng = gpsData.coord.lng;
+                    Call<GeoInfoResponse> geoInfoResponseCall = mHachi.getGeoInfo(lng, lat);
+                    Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
+                    if (response.isSuccessful()) {
+                        mLocation = response.body().city + ", " +response.body().country;
+                    }
+                } catch (NullPointerException e) {
+                    Logger.t(TAG).d(e.getMessage());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
@@ -287,7 +349,9 @@ public class ShareActivity extends ClipPlayActivity {
                 if (mVehicleMaker != null) {
                     mTvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
                 }
-
+                if (mLocation != null) {
+                    mTvGeoInfo.setText(mLocation);
+                }
             }
 
             @Override
@@ -300,7 +364,7 @@ public class ShareActivity extends ClipPlayActivity {
             public void onNext(Clip clip) {
                 Logger.t(TAG).d("typeRace:" + clip.typeRace);
                 Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
-                mRaceLayout.setVisibility(View.VISIBLE);
+                //mRaceLayout.setVisibility(View.VISIBLE);
                 switch (clip.typeRace & Clip.MASK_RACE) {
                     case Clip.TYPE_RACE_AU3T:
                         momentType = "RACING_AU3T";
@@ -341,7 +405,6 @@ public class ShareActivity extends ClipPlayActivity {
             .crossFade()
             .into(mUserAvatar);
         mUserName.setText(sessionManager.getUserName());
-        mUserEmail.setText(sessionManager.getEmail());
 
 
         Logger.t(TAG).d("is linked with facebook: " + sessionManager.getIsLinked());
@@ -403,15 +466,11 @@ public class ShareActivity extends ClipPlayActivity {
                 switch (item.getItemId()) {
                     case R.id.share:
                         doShareMoment(true);
-
-
                         break;
                 }
                 return true;
             }
         });
-
-
     }
 
 
@@ -468,11 +527,6 @@ public class ShareActivity extends ClipPlayActivity {
             Logger.t(TAG).d(momentType);
             String vehicleDescription = mVehicleDesc.getEditableText().toString();
             localMoment.momentType = momentType;
-            if (mVehicleMaker != null) {
-                localMoment.mVehicleMaker = mVehicleMaker;
-                localMoment.mVehicleModel = mVehicleModel;
-                localMoment.mVehicleYear = mVehicleYear;
-            }
             localMoment.mVehicleDesc = vehicleDescription;
             localMoment.mTimingPoints = timingPoints;
         } else {
@@ -482,7 +536,15 @@ public class ShareActivity extends ClipPlayActivity {
                 localMoment.momentType = "NORMAL_SINGLE";
             }
         }
-
+        if (mVehicleMaker != null) {
+            localMoment.mVehicleMaker = mVehicleMaker;
+            localMoment.mVehicleModel = mVehicleModel;
+            localMoment.mVehicleYear = mVehicleYear;
+        } else {
+            if (mVin != null) {
+                localMoment.vin = mVin.substring(0, 8) + mVin.substring(9, 11);
+            }
+        }
         BgJobHelper.uploadMoment(localMoment);
         UploadingMomentActivity.launch(this);
         finish();

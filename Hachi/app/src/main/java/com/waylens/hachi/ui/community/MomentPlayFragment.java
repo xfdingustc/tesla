@@ -941,9 +941,10 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty()) {
-//                Logger.t(TAG).d("update raw data!");
-
+                Logger.t(TAG).d("update raw data!");
                 mGaugeView.updateRawDateItem(rawDataItemList);
+            } else {
+                Logger.t(TAG).d("raw data empty!");
             }
         }
 
@@ -977,8 +978,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
 
             long startTime = getRawDataIndex(currentTime);
-            updateItem.setPtsMs(startTime + updateItem.getPtsMs());
-            return updateItem;
+            if ( Math.abs(updateItem.getPtsMs() - currentTime) <= 5000 ) {
+                updateItem.setPtsMs(startTime + updateItem.getPtsMs());
+                return updateItem;
+            } else {
+                return null;
+            }
 
 /*            for (int i = 0; i < list.size(); i++) {
                 RawDataItem item = list.get(i);

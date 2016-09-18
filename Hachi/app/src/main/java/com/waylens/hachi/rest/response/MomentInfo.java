@@ -72,7 +72,7 @@ public class MomentInfo implements Serializable {
     public static class VehicleInfo implements Serializable {
         public String vehicleMaker;
         public String vehicleModel;
-        public String vehicleYear;
+        public int vehicleYear;
         public String vehicleDescription;
     }
 

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <SwitchPreference
+        android:key="driving_location"
+        android:title="@string/where_i_drove"
+        tools:summary="New York, USA"
+        android:checked="true"
+        />
+
+    <PreferenceCategory android:title="@string/vehicle">
+        <SwitchPreference
+            android:key="vehicle_info"
+            android:title="@string/my_vehicle_info"
+            android:checked="true"
+            />
+        <Preference
+            android:key="vehicle_maker"
+            android:title="@string/maker"
+            />
+
+        <Preference
+            android:key="vehicle_model"
+            android:title="@string/model"
+            />
+
+        <Preference
+            android:key="vehicle_year"
+            android:title="@string/year"
+            />
+    </PreferenceCategory>
+</PreferenceScreen>

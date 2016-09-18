@@ -494,6 +494,4 @@ public class CameraSettingFragment extends PreferenceFragment {
             return false;
         }
     }
-
-
 }

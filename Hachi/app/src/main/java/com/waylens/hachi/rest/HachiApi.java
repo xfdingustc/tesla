@@ -17,6 +17,7 @@ import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.FriendList;
+import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.MomentInfo;
@@ -172,4 +173,6 @@ public interface HachiApi {
     @GET("/api/moments/race")
     Call<RaceQueryResponse>  queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("count") int count);
 
+    @GET("/api/place")
+    Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
 }

@@ -413,7 +413,7 @@
 	<string name="search_hint">Search</string>
 	<string name="video_buffer">Video Buffer</string>
 	<string name="profile_setting">Profile setting</string>
-	<string name="my_videos">Exported clips</string>
+	<string name="my_videos">My videos</string>
 	<string name="username_update_failed">Failed to update new username</string>
 	<string name="birthday_update_failed">Failed to update birthday</string>
 	<string name="screen_saver">Screen saver</string>
@@ -448,7 +448,7 @@
 	<string name="vehicle_information">Vehicle Information</string>
 	<string name="vehicle_description">Vehicle Description</string>
 	<string name="cache_start">Exporting moments </string>
-	<string name="downloaded_progress">%1$d %% downloaded</string>
+	<string name="downloaded_progress">%1$d %% dowloaded</string>
 	<string name="buy_waylens_camera"><u>Buy Waylens camera</u></string>
 	<string name="waiting_for_network">Waiting for Internet access available</string>
 	<string name="uploaded_progress">%1$d %% uploaded</string>
@@ -458,12 +458,18 @@
 	<string name="mph60">0-60 mph</string>
 	<string name="kmh50">0-50 km/h</string>
 	<string name="kmh100">0-100 km/h</string>
-	<string name="no_race_data">No one ever did this. \nCome to be the first \none!</string>
+	<string name="no_race_data">No one ever did this.\nCome to be the first one!</string>
 	<string name="finish_100_race_data">Top 100 have already been \n shown.</string>
 	<string name="performance_test">Performance Test</string>
 	<string name="switch_to_metric_units">Switch To Metric Units</string>
 	<string name="switch_to_english_units">Switch To English Units</string>
+	<string name="my_vehicle_info">My Vehicle Info</string>
+	<string name="maker">Maker</string>
+	<string name="model">Model</string>
+	<string name="year">Year</string>
+	<string name="leaderboard">Leaderboard</string>
+	<string name="where_i_drove">Where I drove</string>
 	<string name="uploading">Uploading</string>
 	<string name="edit_profile">Edit profile</string>
-	<string name="add_follow">"+ follow"</string>
+	<string name="add_follow">"+" follow</string>
 </resources>

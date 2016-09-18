@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +9,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ViewAnimator;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
@@ -17,11 +17,9 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCommonAdapter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +35,15 @@ public class VehiclePickActivity extends BaseActivity {
     public static final int STEP_MODEL = 1;
     public static final int STEP_YEAR = 2;
 
+    public static final String VEHICLE_MAKER = "vehicleMaker";
+    public static final String VEHICLE_MODEL = "vehicleModel";
+    public static final String VEHICLE_YEAR = "vehicleYear";
+
+
     private int mCurrentStep = STEP_MAKER;
+    private String vehicleMaker;
+    private String vehicleModel;
+    private int vehicleYear;
 
     List<Maker> mMakerList = new ArrayList<>();
     List<Model> mModelList = new ArrayList<>();
@@ -51,6 +57,11 @@ public class VehiclePickActivity extends BaseActivity {
     public static void launch(Activity activity, int requestCode) {
         Intent intent = new Intent(activity, VehiclePickActivity.class);
         activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static void launch(Fragment fragment, int requestCode) {
+        Intent intent = new Intent(fragment.getActivity(), VehiclePickActivity.class);
+        fragment.startActivityForResult(intent, requestCode);
     }
 
     @BindView(R.id.va)
@@ -158,6 +169,7 @@ public class VehiclePickActivity extends BaseActivity {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Maker maker = mMakerAdapter.getItem(position);
                 if (maker != null) {
+                    vehicleMaker = maker.getName();
                     getModelList(maker.makerID);
                 }
             }
@@ -205,6 +217,7 @@ public class VehiclePickActivity extends BaseActivity {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Model model = mModelAdapter.getItem(position);
                 if (model != null) {
+                    vehicleModel = model.getName();
                     getYearList(model.modelID);
                 }
             }
@@ -253,6 +266,7 @@ public class VehiclePickActivity extends BaseActivity {
                 ModelYear modelYear = mYearAdapter.getItem(position);
                 if (modelYear != null) {
                     addVehicle(modelYear.modelYearID);
+                    vehicleYear = modelYear.year;
                 }
             }
         });
@@ -267,7 +281,13 @@ public class VehiclePickActivity extends BaseActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     Logger.t(TAG).json(response.toString());
-                    setResult(RESULT_OK);
+                    Intent intent = getIntent();
+                    intent.putExtra(VEHICLE_MAKER, vehicleMaker);
+                    intent.putExtra(VEHICLE_MODEL, vehicleModel);
+                    intent.putExtra(VEHICLE_YEAR, vehicleYear);
+                    setResult(RESULT_OK, intent);
+                    Logger.t(TAG).d("set result");
+                    Logger.t(TAG).d(vehicleMaker + vehicleModel + vehicleYear);
                     finish();
                 }
             })
@@ -275,7 +295,11 @@ public class VehiclePickActivity extends BaseActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Logger.t(TAG).d(error.toString());
-                    setResult(RESULT_CANCELED);
+                    Intent intent = getIntent();
+                    intent.putExtra(VEHICLE_MAKER, vehicleMaker);
+                    intent.putExtra(VEHICLE_MODEL, vehicleModel);
+                    intent.putExtra(VEHICLE_YEAR, vehicleYear);
+                    setResult(RESULT_CANCELED, intent);
                     finish();
                 }
             })
