@@ -40,8 +40,9 @@
                 tools:src="@drawable/menu_profile_photo_default"/>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_weight="0.9"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="16dp">
 
@@ -52,17 +53,46 @@
                     android:layout_height="wrap_content"
                     tools:text="user name"/>
 
-
-                <TextView
-                    android:id="@+id/user_email"
-                    style="@style/HachiTextViewSubHeader"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/app_text_color_secondary"
-                    android:textSize="12sp"
-                    tools:text="email"/>
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/user_vehicle_info"
+                        style="@style/HachiTextViewSubHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_text_color_secondary"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:text="|"
+                        />
+
+                    <TextView
+                        android:id="@+id/geo_info"
+                        style="@style/HachiTextViewSubHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/app_text_color_secondary"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/info_edit"
+                style="@style/HachiTextViewSubHeader"
+                android:layout_gravity="end|bottom"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="14dp"
+                android:src="@drawable/navbar_edit_album_n"/>
 
         </LinearLayout>
 

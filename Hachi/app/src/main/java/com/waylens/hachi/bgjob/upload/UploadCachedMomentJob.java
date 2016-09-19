@@ -10,6 +10,7 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.body.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.service.upload.UploadAPI;
@@ -31,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by Xiaofei on 2016/9/6.
@@ -71,6 +73,19 @@ public class UploadCachedMomentJob extends UploadMomentJob {
             }
         }
 
+        if (mLocalMoment.mVehicleMaker == null && mLocalMoment.vin != null) {
+            HachiApi hachiApi = HachiService.createHachiApiService();
+            Call<VinQueryResponse> vinQueryResponseCall = hachiApi.queryByVin(mLocalMoment.vin);
+            Response<VinQueryResponse> response = vinQueryResponseCall.execute();
+            VinQueryResponse vinQueryResponse = response.body();
+            Logger.t(TAG).d(response.code() + response.message());
+            if (vinQueryResponse != null) {
+                mLocalMoment.mVehicleMaker = vinQueryResponse.makerName;
+                mLocalMoment.mVehicleModel = vinQueryResponse.modelName;
+                mLocalMoment.mVehicleYear = vinQueryResponse.year;
+                Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
+            }
+        }
 
         try {
 

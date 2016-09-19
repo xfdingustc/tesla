@@ -61,6 +61,8 @@ public class LocalMoment implements Serializable {
 
     public boolean cache;
 
+    public String vin;
+
 
     public LocalMoment(int playlistId, String title, String description, String[] tags,
                        String accessLevel, int audioID, Map<String, String> gaugeSettings,

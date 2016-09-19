@@ -365,6 +365,8 @@ public class GaugeView extends FrameLayout {
             }
             if (pts == 0) {
                 pts = System.currentTimeMillis();
+            } else {
+                Logger.t(TAG).d("pts of raw data");
             }
             String date = mDateFormat.format(pts);
             data = "numericMonthDate('" + date + "')";
