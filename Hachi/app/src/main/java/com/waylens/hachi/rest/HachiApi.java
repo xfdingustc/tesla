@@ -82,7 +82,7 @@ public interface HachiApi {
     Observable<MomentListResponse2> getRecommendedMomentsRx(@Query("count") int count);
 
     @GET("/api/moments/myfeed")
-    Observable<MomentListResponse2> getMyFeed(@Query("cursor") int cursor, @Query("count") int count, @Query("order") String order);
+    Observable<MomentListResponse2> getMyFeed(@Query("cursor") long cursor, @Query("count") int count, @Query("order") String order);
 
 
     @GET("/api/moments/{momentId}")

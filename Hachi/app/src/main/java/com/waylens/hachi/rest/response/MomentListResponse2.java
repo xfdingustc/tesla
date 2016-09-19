@@ -10,5 +10,5 @@ import java.util.List;
 public class MomentListResponse2 {
     public List<MomentEx> moments;
 
-    public boolean hasMore;
+    public long nextCursor;
 }

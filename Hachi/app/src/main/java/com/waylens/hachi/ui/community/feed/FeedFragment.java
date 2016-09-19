@@ -61,7 +61,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     private LinearLayoutManager mLinearLayoutManager;
 
 
-    private int mCurrentCursor;
+    private long mCurrentCursor;
 
 
     @BindView(R.id.view_animator)
@@ -146,31 +146,40 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
 
-    private void loadFeed(int cursor, final boolean isRefresh) {
+    private void loadFeed(long cursor, final boolean isRefresh) {
         HachiApi hachiApi = HachiService.createHachiApiService();
 
-        Observable<MomentListResponse2> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
-            .map(new Func1<MomentListResponse2, MomentListResponse2>() {
-                @Override
-                public MomentListResponse2 call(MomentListResponse2 momentListResponse2) {
-                    for (MomentEx momentEx : momentListResponse2.moments) {
-                        momentEx.moment.isRecommended = true;
-                    }
-                    return momentListResponse2;
-                }
-            });
+
 
         Observable<MomentListResponse2> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME);
 
-        Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse2, MomentListResponse2, MomentListResponse2>() {
-            @Override
-            public MomentListResponse2 call(MomentListResponse2 recommendMoment, MomentListResponse2 feedMoment) {
-                Logger.t(TAG).d("recommend moment: " + recommendMoment.moments.size());
-                feedMoment.moments.addAll(0, recommendMoment.moments);
-                return feedMoment;
-            }
-        })
-            .subscribeOn(Schedulers.io())
+        Observable<MomentListResponse2> feedObservable;
+
+        if (isRefresh) {
+            feedObservable = feedMoment;
+        } else {
+            Observable<MomentListResponse2> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
+                .map(new Func1<MomentListResponse2, MomentListResponse2>() {
+                    @Override
+                    public MomentListResponse2 call(MomentListResponse2 momentListResponse2) {
+                        for (MomentEx momentEx : momentListResponse2.moments) {
+                            momentEx.moment.isRecommended = true;
+                        }
+                        return momentListResponse2;
+                    }
+                });
+            feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse2, MomentListResponse2, MomentListResponse2>() {
+                @Override
+                public MomentListResponse2 call(MomentListResponse2 recommendMoment, MomentListResponse2 feedMoment) {
+                    Logger.t(TAG).d("recommend moment: " + recommendMoment.moments.size());
+                    feedMoment.moments.addAll(0, recommendMoment.moments);
+                    return feedMoment;
+                }
+            });
+        }
+
+
+        feedObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Subscriber<MomentListResponse2>() {
                 @Override
@@ -204,11 +213,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         mRvVideoList.setIsLoadingMore(false);
         mCurrentCursor += momentList.moments.size();
-        if (!momentList.hasMore) {
+        if (momentList.nextCursor != 0) {
+            mAdapter.setHasMore(true);
+            mCurrentCursor = momentList.nextCursor;
+        } else {
             mRvVideoList.setEnableLoadMore(false);
             mAdapter.setHasMore(false);
-        } else {
-            mAdapter.setHasMore(true);
         }
 
     }
