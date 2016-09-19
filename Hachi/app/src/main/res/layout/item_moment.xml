@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              app:cardCornerRadius="2dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:cardCornerRadius="2dp">
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
         android:id="@+id/video_fragment_container"
@@ -41,58 +41,58 @@
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/video_fragment_container"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:orientation="horizontal">
+        android:layout_marginRight="16dp"
+        tools:src="@drawable/menu_profile_photo_default"/>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="16dp"
-            tools:src="@drawable/menu_profile_photo_default"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+    <ImageButton
+        android:id="@+id/btn_more"
+        style="@style/SelectableRippleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/video_fragment_container"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/social_more"/>
 
-            <TextView
-                android:id="@+id/title"
-                style="@style/HachiTextViewSubHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="2"
-                android:ellipsize="end"
-                tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
 
-            <TextView
-                android:id="@+id/user_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/app_text_color_secondary"
-                android:textSize="14dp"
-                tools:text="xfding"/>
-        </LinearLayout>
+    <TextView
+        android:id="@+id/title"
+        style="@style/HachiTextViewSubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/video_fragment_container"
+        android:layout_toLeftOf="@id/btn_more"
+        android:layout_toRightOf="@id/user_avatar"
+        android:ellipsize="end"
+        android:maxLines="2"
+        tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
 
-        <ImageButton
-            android:id="@+id/btn_more"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/social_more"
-            style="@style/SelectableRippleButton"/>
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_toLeftOf="@id/btn_more"
+        android:layout_toRightOf="@id/user_avatar"
+        android:textColor="@color/app_text_color_secondary"
+        android:textSize="14dp"
+        tools:text="xfding"/>
 
-    </LinearLayout>
 
     <View
-        android:background="@color/settings_line_separator"
         android:layout_width="match_parent"
-        android:layout_height="1dp"></View>
+        android:layout_height="1dp"
+        android:layout_below="@id/user_name"
+        android:layout_marginTop="16dp"
+        android:background="@color/settings_line_separator"></View>
 
-</LinearLayout>
+</RelativeLayout>
