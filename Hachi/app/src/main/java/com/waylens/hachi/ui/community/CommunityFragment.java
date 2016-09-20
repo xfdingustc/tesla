@@ -22,28 +22,32 @@ import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
+import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.community.feed.FeedFragment;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.activities.NotificationActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
  * Created by Xiaofei on 2016/1/22.
  */
-public class CommunityFragment extends BaseFragment implements FragmentNavigator{
+public class CommunityFragment extends BaseFragment implements FragmentNavigator {
     private static final String TAG = CommunityFragment.class.getSimpleName();
 
     private SimpleFragmentPagerAdapter mFeedPageAdapter;
 
     private SearchHistoryTable mHistoryDatabase;
+
+    private static final int REQUEST_CODE_CHOOSE_CLIP = 1000;
 
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
@@ -51,17 +55,17 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @BindView(R.id.searchView)
     SearchView mSearchView;
 
+    @OnClick(R.id.fab_create)
+    public void onFabCreateClicked() {
+        ClipChooserActivity.launch(getActivity(), false);
+    }
+
 
     @Override
     protected String getRequestTag() {
         return TAG;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Nullable
     @Override
@@ -154,7 +158,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     public boolean onInterceptBackPressed() {
         Fragment fragment = mFeedPageAdapter.getItem(mViewPager.getCurrentItem());
         if (fragment instanceof FragmentNavigator) {
-            return ((FragmentNavigator)fragment).onInterceptBackPressed();
+            return ((FragmentNavigator) fragment).onInterceptBackPressed();
         }
         return false;
     }
@@ -168,7 +172,6 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             .staff_picks));
         mFeedPageAdapter.addFragment(PerformanceTestFragment.newInstance(0), getString(R.string.leaderboard));
         mViewPager.setAdapter(mFeedPageAdapter);
-
 
 
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

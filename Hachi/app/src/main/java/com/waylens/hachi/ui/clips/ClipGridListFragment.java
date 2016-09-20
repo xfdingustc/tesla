@@ -62,10 +62,10 @@ import rx.Subscriber;
  * Created by Xiaofei on 2016/2/18.
  */
 public class ClipGridListFragment extends BaseLazyFragment implements FragmentNavigator, ClipGridListView {
-
     private static final String ARG_CLIP_SET_TYPE = "clip.set.type";
     private static final String ARG_IS_MULTIPLE_MODE = "is.multiple.mode";
     private static final String ARG_IS_ADD_MORE = "is.add.more";
+    private static final String ARG_IS_TO_SHARE = "is.to.share";
 
     public static final String ACTION_RETRIEVE_CLIPS = "action.retrieve.clips";
 
@@ -76,6 +76,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private boolean mIsMultipleMode;
 
     private boolean mIsAddMore;
+
+    private boolean mIsToShare;
 
     private LoadingHandler mLoadingHandler;
 
@@ -132,22 +134,27 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
 
     public static ClipGridListFragment newInstance(int clipSetType) {
-        return newInstance(clipSetType, false, false);
+        return newInstance(clipSetType, false, false, false);
     }
 
     public static ClipGridListFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore) {
+        return newInstance(clipSetType, isMultipleSelectionMode, isAddMore, false);
+    }
+
+    public static ClipGridListFragment newInstance(int clipSetType, boolean isMultipleSelectionMode, boolean isAddMore, boolean isToShare) {
         ClipGridListFragment fragment = new ClipGridListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_CLIP_SET_TYPE, clipSetType);
         args.putBoolean(ARG_IS_MULTIPLE_MODE, isMultipleSelectionMode);
         args.putBoolean(ARG_IS_ADD_MORE, isAddMore);
+        args.putBoolean(ARG_IS_TO_SHARE, isToShare);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     protected String getRequestTag() {
-        return TAG;
+        return ClipGridListFragment.class.getSimpleName();
     }
 
     @Override
@@ -158,6 +165,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             mClipSetType = args.getInt(ARG_CLIP_SET_TYPE, Clip.TYPE_MARKED);
             mIsMultipleMode = args.getBoolean(ARG_IS_MULTIPLE_MODE, false);
             mIsAddMore = args.getBoolean(ARG_IS_ADD_MORE, false);
+            mIsToShare = args.getBoolean(ARG_IS_TO_SHARE, false);
         }
 
         if (mIsAddMore) {
@@ -179,7 +187,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
             attr = Clip.CLIP_ATTR_MANUALLY;
         }
-        mPresenter = new ClipGridListPresenterImpl(getActivity(), TAG, mClipSetType, flag, attr, this);
+        mPresenter = new ClipGridListPresenterImpl(getActivity(), getRequestTag(), mClipSetType, flag, attr, this);
         mLoadingHandler = new LoadingHandler(this);
         initViews();
     }
@@ -540,13 +548,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
 
     private void toEnhance() {
-        if (mIsAddMore) {
-            Intent intent = new Intent();
-            intent.putParcelableArrayListExtra(EnhanceActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
-            Logger.t(TAG).d("add clip size: " + mAdapter.getSelectedClipList().size());
-            getActivity().setResult(Activity.RESULT_OK, intent);
-            getActivity().finish();
-        } else {
+        Logger.t(TAG).d("isAddMore: " + mIsAddMore + " isToShare: " + mIsToShare);
+        if (!mIsAddMore) {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 
             mRefreshLayout.setRefreshing(true);
@@ -559,8 +562,14 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 .subscribe(new Subscriber<Void>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
-                        EnhanceActivity.launch(getActivity(), playlistId);
+                        if (mIsToShare) {
+                            mRefreshLayout.setRefreshing(false);
+                            ShareActivity.launch(getActivity(), playlistId, -1);
+                            getActivity().finish();
+                        } else {
+                            mRefreshLayout.setRefreshing(false);
+                            EnhanceActivity.launch(getActivity(), playlistId);
+                        }
                     }
 
                     @Override
@@ -574,6 +583,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     }
                 });
 
+        } else {
+            Intent intent = new Intent();
+            intent.putParcelableArrayListExtra(EnhanceActivity.EXTRA_CLIPS_TO_APPEND, mAdapter.getSelectedClipList());
+            Logger.t(TAG).d("add clip size: " + mAdapter.getSelectedClipList().size());
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
         }
     }
 

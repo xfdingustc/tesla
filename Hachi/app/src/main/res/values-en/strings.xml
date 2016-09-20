@@ -472,4 +472,5 @@
 	<string name="uploading">Uploading</string>
 	<string name="edit_profile">Edit profile</string>
 	<string name="add_follow">"+" follow</string>
+	<string name="choose_clips">Choose clips</string>
 </resources>

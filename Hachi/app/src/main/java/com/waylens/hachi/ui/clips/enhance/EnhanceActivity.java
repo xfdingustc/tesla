@@ -186,8 +186,8 @@ public class EnhanceActivity extends ClipPlayActivity {
         if (mViewAnimator.getDisplayedChild() != ACTION_ADD_VIDEO) {
             configureActionUI(ACTION_NONE, false);
         }
-        Intent intent = new Intent(this, ClipChooserActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_ENHANCE);
+
+        ClipChooserActivity.launch(this, REQUEST_CODE_ENHANCE);
     }
 
 
