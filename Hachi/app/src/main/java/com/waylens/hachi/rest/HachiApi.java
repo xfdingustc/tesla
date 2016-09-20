@@ -11,7 +11,9 @@ import com.waylens.hachi.rest.body.RepostBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
-import com.waylens.hachi.rest.body.VinQueryResponse;
+import com.waylens.hachi.rest.response.MakerResponse;
+import com.waylens.hachi.rest.response.ModelResponse;
+import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
@@ -171,8 +173,15 @@ public interface HachiApi {
     Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
 
     @GET("/api/moments/race")
-    Call<RaceQueryResponse>  queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("count") int count);
+    Call<RaceQueryResponse>  queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("maker") String maker, @Query("model") String model, @Query("count") int count);
 
     @GET("/api/place")
     Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
+
+    @GET("api/vehicle/makers")
+    Call<MakerResponse> getAllMaker();
+
+    @GET("api/vehicle/models")
+    Call<ModelResponse> getModelByMaker(@Query("maker") long makerID);
+
 }

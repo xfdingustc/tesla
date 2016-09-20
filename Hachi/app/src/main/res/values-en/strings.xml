@@ -473,4 +473,7 @@
 	<string name="edit_profile">Edit profile</string>
 	<string name="add_follow">"+" follow</string>
 	<string name="choose_clips">Choose clips</string>
+	<string name="all_car">All car</string>
+	<string name="same_car">Same car with mine</string>
+>>>>>>> refine performance test page
 </resources>

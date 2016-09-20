@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -29,6 +30,9 @@ import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import org.greenrobot.eventbus.EventBus;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -132,6 +136,8 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.userName.setText(moment.owner.userName);
         if (moment.momentVehicleInfo.vehicleMaker != null) {
             holder.vehicleInfo.setText(moment.momentVehicleInfo.vehicleMaker + " " + moment.momentVehicleInfo.vehicleModel + " " + moment.momentVehicleInfo.vehicleYear);
+        } else {
+            holder.vehicleInfo.setText("");
         }
         double raceTime = 0.0;
         switch (mRaceType) {
@@ -166,10 +172,14 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             default:
                 break;
         }
-        holder.raceTime.setText(raceTime + "s");
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        holder.raceTime.setText(formatter.format(raceTime) + "s");
         holder.userRank.setText(String.valueOf(position + 1));
         if (position >= 0 && position <= 2 && position < mMoments.size()) {
+            Logger.t(TAG).d("position:" + position);
             holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape_top));
+        } else {
+            holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape));
         }
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {

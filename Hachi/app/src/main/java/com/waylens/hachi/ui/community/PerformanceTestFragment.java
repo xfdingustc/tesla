@@ -10,6 +10,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -34,6 +35,8 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.RaceQueryBody;
+import com.waylens.hachi.rest.response.MakerResponse;
+import com.waylens.hachi.rest.response.ModelResponse;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -46,18 +49,27 @@ import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
+import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
+import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 public class PerformanceTestFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
@@ -102,6 +114,16 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private int mLeaderBoardEnd;
 
+    private MomentInfo.VehicleInfo myVehicleInfo;
+
+    private String mMaker;
+
+    private String mModel;
+
+    private List<Pair<MakerResponse.Maker, ModelResponse.Model>> mMakerModelList;
+
+    private ArrayAdapter<String> mAdapterCarModel;
+
     private int mLeaderBoardItemCount;
 
     @BindView(R.id.spinner1)
@@ -109,6 +131,9 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     @BindView(R.id.spinner2)
     Spinner mSpinnerRaceType;
+
+    @BindView(R.id.car_model_spinner)
+    Spinner mSpinnerCarModel;
 
     @BindView(R.id.leaderboard_list_view)
     RecyclerViewExt mRvLeaderboardList;
@@ -142,6 +167,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     @BindView(R.id.layout_no_data)
     LinearLayout mNoDataLayout;
+
 
     public static PerformanceTestFragment newInstance(int tag) {
 
@@ -182,7 +208,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         mRvLeaderboardList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
             @Override
             public void loadMore() {
-                loadLeaderBoard(mCurrentCursor, false);
+                //loadLeaderBoard(mCurrentCursor, false);
             }
         });
         ArrayAdapter<String> adapterTestMode = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.test_mode));
@@ -273,9 +299,94 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
         mSpinnerRaceType.setSelection(1);
+
+        mAdapterCarModel = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test);
+        mAdapterCarModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mAdapterCarModel.add(getResources().getString(R.string.all_car));
+        mSpinnerCarModel.setAdapter(mAdapterCarModel);
+        mSpinnerCarModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i) {
+                    case 0:
+                        mMaker = null;
+                        mModel = null;
+                        break;
+                    case 1:
+                        if (mAdapterCarModel.getItem(1).equals(getResources().getString(R.string.same_car))) {
+                            mMaker = myVehicleInfo.vehicleMaker;
+                            mModel = myVehicleInfo.vehicleModel;
+                        } else {
+                            mMaker = mMakerModelList.get(1).first.makerName;
+                            mModel = mMakerModelList.get(1).second.modelName;
+                        }
+                        break;
+                    default:
+                        mMaker = mMakerModelList.get(i-1).first.makerName;
+                        mModel = mMakerModelList.get(i-1).second.modelName;
+                        break;
+                }
+                loadLeaderBoard(0, true);
+                onRefresh();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
                 android.R.color.holo_orange_light, android.R.color.holo_red_light);
+
+        mMakerModelList = new ArrayList<>();
+
+        Observable.create(new Observable.OnSubscribe<List<Pair<MakerResponse.Maker, ModelResponse.Model>>>() {
+            @Override
+            public void call(Subscriber<? super List<Pair<MakerResponse.Maker, ModelResponse.Model>>> subscriber) {
+                Call<MakerResponse> makerResponseCall = hachiApi.getAllMaker();
+                try {
+                    MakerResponse makerResponse = makerResponseCall.execute().body();
+                    for( MakerResponse.Maker maker : makerResponse.makers) {
+                        Call<ModelResponse> modelResponseCall = hachiApi.getModelByMaker(maker.makerID);
+                        ModelResponse modelResponse = modelResponseCall.execute().body();
+                        List<Pair<MakerResponse.Maker, ModelResponse.Model>> makerModelList = new ArrayList<>();
+                        for ( ModelResponse.Model model : modelResponse.models) {
+                            makerModelList.add(new Pair<>(maker, model));
+                        }
+                        if (!makerModelList.isEmpty()) {
+                            subscriber.onNext(makerModelList);
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Observer<List<Pair<MakerResponse.Maker,ModelResponse.Model>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(List<Pair<MakerResponse.Maker, ModelResponse.Model>> pairs) {
+                mMakerModelList.addAll(pairs);
+                List<String> stringList = new ArrayList<>();
+                for (Pair<MakerResponse.Maker, ModelResponse.Model> item : pairs) {
+                    stringList.add(item.first.makerName + " " + item.second.modelName);
+                }
+                mAdapterCarModel.addAll(stringList);
+                mAdapterCarModel.notifyDataSetChanged();
+            }
+        });
         return view;
     }
 
@@ -313,14 +424,14 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         }
         raceQueryBody.end = mLeaderBoardEnd;
         raceQueryBody.count = mLeaderBoardItemCount = 100;
-        Call<RaceQueryResponse> raceQueryResponseCall = hachiApi.queryRace(raceQueryBody.mode, raceQueryBody.start, raceQueryBody.end, raceQueryBody.count);
+        Call<RaceQueryResponse> raceQueryResponseCall = hachiApi.queryRace(raceQueryBody.mode, raceQueryBody.start, raceQueryBody.end, mMaker, mModel, raceQueryBody.count);
         raceQueryResponseCall.enqueue(new Callback<RaceQueryResponse>() {
             @Override
             public void onResponse(Call<RaceQueryResponse> call, retrofit2.Response<RaceQueryResponse> response) {
                 mRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful()) {
                     Logger.t(TAG).d("get RaceQueryResponse");
-/*                    try {
+/*                  try {
                         Logger.t(TAG).d(response.raw().body().string());
                     } catch (IOException e) {
                         Logger.t(TAG).d(e.getMessage());
@@ -337,7 +448,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         moment.owner.userID = owner.userID;
                         moment.owner.avatarUrl = owner.avatarUrl;
                         moment.owner.userName = owner.userName;
-                        momentList.add(raceQueryResponse.leaderboard.get(i).moment);
+                        momentList.add(moment);
+                        Logger.t(TAG).d("i:" + i + " vehicle info:" + moment.momentVehicleInfo.vehicleMaker);
                     }
 
                     Logger.t(TAG).d("moment list size:" + momentList.size());
@@ -367,10 +479,20 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     if (rank > 0 && bestRankIndex >= 0) {
                         mMyTestLayout.setVisibility(View.VISIBLE);
                         initMyTestView(raceQueryResponse.userRankings.get(bestRankIndex));
+                        String maker = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleMaker;
+                        String model = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleModel;
+                        if (maker != null && model != null) {
+                            myVehicleInfo = new MomentInfo.VehicleInfo();
+                            myVehicleInfo.vehicleMaker = maker;
+                            myVehicleInfo.vehicleModel = model;
+                            if ( !mAdapterCarModel.getItem(1).equals(getResources().getString(R.string.same_car)) ) {
+                                mAdapterCarModel.insert(getResources().getString(R.string.same_car), 1);
+                                mAdapterCarModel.notifyDataSetChanged();
+                            }
+                        }
                     } else {
                         mMyTestLayout.setVisibility(View.GONE);
                     }
-
                     mRvLeaderboardList.setIsLoadingMore(false);
                     mCurrentCursor += momentList.size();
 

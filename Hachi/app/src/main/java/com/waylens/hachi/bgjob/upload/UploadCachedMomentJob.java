@@ -10,7 +10,7 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
-import com.waylens.hachi.rest.body.VinQueryResponse;
+import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.service.upload.UploadAPI;

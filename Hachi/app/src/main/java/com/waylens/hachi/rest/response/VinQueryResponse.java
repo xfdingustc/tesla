@@ -1,4 +1,4 @@
-package com.waylens.hachi.rest.body;
+package com.waylens.hachi.rest.response;
 
 /**
  * Created by laina on 16/8/17.

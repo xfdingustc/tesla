@@ -44,11 +44,8 @@
             <TextView
                 android:id="@+id/user_name"
                 style="@style/HachiTextViewSubHeader"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                tools:text="Abey Smith"/>
+                android:layout_width="wrap_content"
+                android:layout_height="20dp" />
 
 
         </LinearLayout>
