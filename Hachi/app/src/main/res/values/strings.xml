@@ -475,4 +475,9 @@
 	<string name="choose_clips">Choose clips</string>
 	<string name="all_car">All car</string>
 	<string name="same_car">Same car with mine</string>
+	<string name="from_waylens_camera">Choose clips from Waylens camera</string>
+	<string name="from_phone_galley">Select picture from cell phone</string>
+	<string name="take_picture">Take picture</string>
+	<string name="write_a_caption">"Write a caption..."</string>
+	<string name="publish">Publish</string>
 </resources>

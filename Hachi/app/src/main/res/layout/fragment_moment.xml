@@ -2,6 +2,7 @@
 <android.support.v4.widget.DrawerLayout android:id="@+id/drawerLayout"
                                         xmlns:android="http://schemas.android.com/apk/res/android"
                                         xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        xmlns:fab="http://schemas.android.com/apk/res-auto"
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:fitsSystemWindows="true">
@@ -13,13 +14,13 @@
         android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar_layout"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            android:background="?attr/toolbarColor">
+            android:background="?attr/toolbarColor"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -43,16 +44,48 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_create"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/fab_menu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="bottom|right"
             android:layout_margin="16dp"
-            android:src="@drawable/ic_add"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp"/>
+            fab:menu_animationDelayPerItem="0"
+            fab:menu_labels_style="@style/MenuLabelsStyle"
+            fab:menu_colorNormal="@color/style_color_accent"
+            fab:menu_colorPressed="@color/material_deep_orange_a400"
+            fab:menu_colorRipple="@color/material_deep_orange_a700"
+            fab:menu_labels_hideAnimation="@anim/jump_to_down"
+            fab:menu_labels_showAnimation="@anim/jump_from_down"
+            fab:menu_shadowColor="#444">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_from_waylens"
+                style="@style/MenuButtonsStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add"
+                fab:fab_label="@string/from_waylens_camera"/>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_from_gallery"
+                style="@style/MenuButtonsStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add"
+                fab:fab_label="@string/from_phone_galley"/>
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/fab_from_camera"
+                style="@style/MenuButtonsStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add"
+                fab:fab_label="@string/take_picture"/>
+
+        </com.github.clans.fab.FloatingActionMenu>
+
 
     </android.support.design.widget.CoordinatorLayout>
 

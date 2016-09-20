@@ -10,11 +10,8 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
+
 import com.waylens.hachi.library.crs_svr.CrsCommand;
-import com.waylens.hachi.rest.HachiApi;
-import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.body.CreateMomentBody;
-import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.xfdingustc.snipe.VdbCommand;
 import com.xfdingustc.snipe.VdbRequestFuture;
@@ -34,8 +31,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.CancellationException;
 
-import retrofit2.Call;
-
 /**
  * Created by Xiaofei on 2016/5/2.
  */
@@ -47,8 +42,6 @@ public class CacheMomentJob extends UploadMomentJob {
 
 
     private VdbRequestQueue mVdbRequestQueue;
-
-    private MomentUploader mUploader = null;
 
 
     public CacheMomentJob(LocalMoment moment) {
@@ -133,25 +126,9 @@ public class CacheMomentJob extends UploadMomentJob {
         checkIfCancelled();
 
 
-        if (!mLocalMoment.cache) {
-            // Step5: create moment in server:
-            HachiApi hachiApi = HachiService.createHachiApiService();
-            CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
-            Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
-            CreateMomentResponse response = createMomentResponseCall.execute().body();
-
-            Logger.t(TAG).d("Get moment response: ");
-            mLocalMoment.updateUploadInfo(response);
-            setUploadState(UPLOAD_STATE_CREATE_MOMENT);
-            checkIfCancelled();
-            mUploader = new MomentUploader(this);
-            mUploader.upload(mLocalMoment);
-            Logger.t(TAG).d("updatestate: " + mState);
-        } else {
-            MomentUploadCacher cacher = new MomentUploadCacher(this);
-            cacher.cacheMoment(mLocalMoment);
-            BgJobHelper.uploadCachedMoment(mLocalMoment);
-        }
+        MomentUploadCacher cacher = new MomentUploadCacher(this);
+        cacher.cacheMoment(mLocalMoment);
+        BgJobHelper.uploadCachedMoment(mLocalMoment);
 
         if (mState != UPLOAD_STATE_CANCELLED || mState != UPLOAD_STATE_ERROR) {
             Logger.t(TAG).d("finished");
@@ -174,10 +151,6 @@ public class CacheMomentJob extends UploadMomentJob {
     @Override
     public void cancelUpload() {
         this.mIsCancel = true;
-        if (mUploader != null) {
-            mUploader.cancel();
-        }
-
     }
 
 

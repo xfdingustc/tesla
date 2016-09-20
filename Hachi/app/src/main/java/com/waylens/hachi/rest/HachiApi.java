@@ -40,6 +40,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -138,6 +140,10 @@ public interface HachiApi {
 
     @POST("/api/moments")
     Call<CreateMomentResponse> createMoment(@Body CreateMomentBody createMomentBody);
+
+    @FormUrlEncoded
+    @POST("/api/moments/picture/finish")
+    Call<SimpleBoolResponse> finishUploadPictureMoment(@Field("momentID") long momentId, @Field("pictureNum") int pictureNum);
 
     @GET("/api/cloud/usage")
     Call<CloudStorageInfo> getCloudStorageInfo();

@@ -171,7 +171,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse2, MomentListResponse2, MomentListResponse2>() {
                 @Override
                 public MomentListResponse2 call(MomentListResponse2 recommendMoment, MomentListResponse2 feedMoment) {
-                    Logger.t(TAG).d("recommend moment: " + recommendMoment.moments.size());
+                    for (MomentEx momentEx : feedMoment.moments) {
+                        Logger.t(TAG).d("");
+                    }
                     feedMoment.moments.addAll(0, recommendMoment.moments);
                     return feedMoment;
                 }

@@ -2,8 +2,12 @@ package com.waylens.hachi.ui.community;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -16,11 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionMenu;
 import com.lapism.searchview.SearchAdapter;
 import com.lapism.searchview.SearchHistoryTable;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
@@ -47,6 +54,11 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     private SearchHistoryTable mHistoryDatabase;
 
+    private final static int TAKE_PHOTO = 1;
+    private final static int FROM_LOCAL = 2;
+
+    private Uri mPictureUri;
+
     private static final int REQUEST_CODE_CHOOSE_CLIP = 1000;
 
     @BindView(R.id.viewpager)
@@ -55,9 +67,34 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @BindView(R.id.searchView)
     SearchView mSearchView;
 
-    @OnClick(R.id.fab_create)
-    public void onFabCreateClicked() {
+    @BindView(R.id.fab_menu)
+    FloatingActionMenu mFabMenu;
+
+    @OnClick(R.id.fab_from_waylens)
+    public void onFabFromWaylensClicked() {
         ClipChooserActivity.launch(getActivity(), false);
+        mFabMenu.close(false);
+    }
+
+    @OnClick(R.id.fab_from_camera)
+    public void onFabFromCameraClicked() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        ContentValues values = new ContentValues(2);
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        //mAvatarUri = Uri.fromFile(new File(GlobalVariables.getPictureName()));
+        mPictureUri = GlobalVariables.getPictureUri();
+        Logger.t(TAG).d(mPictureUri.getPath());
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mPictureUri);
+        startActivityForResult(intent, TAKE_PHOTO);
+        mFabMenu.close(false);
+    }
+
+    @OnClick(R.id.fab_from_gallery)
+    public void onFabFromGalleryClicked() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, FROM_LOCAL);
+        mFabMenu.close(false);
     }
 
 
@@ -75,6 +112,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         setupViewPager();
         return view;
     }
+
 
     private void setupSearchView() {
         mHistoryDatabase = new SearchHistoryTable(getActivity());
@@ -193,7 +231,23 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
+
+        if (requestCode == FROM_LOCAL) {
+            Uri imageUri = data.getData();
+            Logger.t(TAG).d("image selected path " + imageUri.getPath());
+
+            String[] projection = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getActivity().getContentResolver().query(imageUri, projection, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String imageUrl = cursor.getString(column_index);
+            PublishActivity.launch(getActivity(), imageUrl);
+        } else if (requestCode == TAKE_PHOTO) {
+            PublishActivity.launch(getActivity(), mPictureUri.getPath());
+        } else if (requestCode == SearchView.SPEECH_REQUEST_CODE) {
             List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             if (results != null && results.size() > 0) {
                 String searchWrd = results.get(0);

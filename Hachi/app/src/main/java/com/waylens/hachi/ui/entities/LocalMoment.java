@@ -63,6 +63,10 @@ public class LocalMoment implements Serializable {
 
     public String vin;
 
+    public LocalMoment(String title, String momentType) {
+        this.title = title;
+        this.momentType = momentType;
+    }
 
     public LocalMoment(int playlistId, String title, String description, String[] tags,
                        String accessLevel, int audioID, Map<String, String> gaugeSettings,

@@ -194,4 +194,17 @@ public class UploadAPI {
             return null;
         }
     }
+
+    public UploadDataResponse uploadPictureSync(RequestBody requestBody, long momentId, String sha1) {
+
+        try {
+            Call<UploadDataResponse> uploadPictureCall = mRetrofit.create(UploadService.class)
+                .uploadPicture(SessionManager.getInstance().getUserId(), momentId, sha1, "public", requestBody);
+            return uploadPictureCall.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 }

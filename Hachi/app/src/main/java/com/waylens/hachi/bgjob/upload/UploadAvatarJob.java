@@ -17,8 +17,6 @@ import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
 import com.xfdingustc.rxutils.library.RxBus;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 

@@ -16,13 +16,16 @@ import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
-import com.waylens.hachi.library.crs_svr.HashUtils;
 import com.waylens.hachi.service.download.DownloadServiceRx;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.utils.HashUtils2;
+import com.waylens.hachi.utils.Hex;
 import com.xfdingustc.snipe.control.VdtCamera;
 
 import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import butterknife.BindView;
 import rx.Observable;
@@ -140,12 +143,20 @@ public class FirmwareUpdateActivity extends BaseActivity {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 subscriber.onNext(0);
-                final String downloadFileMd5 = HashUtils.MD5String(file);
-                if (downloadFileMd5.equals(mFirmwareInfo.getMd5())) {
-                    subscriber.onNext(1);
-                } else {
-                    subscriber.onNext(-1);
+
+                try {
+                    final String downloadFileMd5 = Hex.encodeHexString(HashUtils2.encodeMD5(file));
+                    if (downloadFileMd5.equals(mFirmwareInfo.getMd5())) {
+                        subscriber.onNext(1);
+                    } else {
+                        subscriber.onNext(-1);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
                 }
+
             }
 
         })

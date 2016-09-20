@@ -43,6 +43,10 @@ public class CreateMomentBody {
 
     public String momentType = null;
 
+    public CreateMomentBody() {
+
+    }
+
     public CreateMomentBody(LocalMoment localMoment) {
         this.title = localMoment.title;
         this.desc = localMoment.description;

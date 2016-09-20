@@ -53,4 +53,14 @@ public interface UploadService {
     Call<UploadDataResponse> uploadAvatar(@Path("userId") String userId,
                                           @Query("file_sha1") String fileSha1,
                                           @Body RequestBody requestBody);
+
+
+    @PUT("/v.1.0/upload_picture/{userId}/android")
+    Call<UploadDataResponse> uploadPicture(@Path("userId") String userId,
+                                           @Query("moment_id") long momentId,
+                                           @Query("file_sha1") String fileSha1,
+                                           @Query("access_level") String accessLevel,
+                                           @Body RequestBody requestBody);
+
+
 }

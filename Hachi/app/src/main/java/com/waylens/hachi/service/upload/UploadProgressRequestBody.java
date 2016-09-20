@@ -29,7 +29,7 @@ public class UploadProgressRequestBody extends RequestBody {
         return new UploadProgressRequestBody(requestBody, listener);
     }
 
-    private UploadProgressRequestBody(RequestBody requestBody, UploadProgressListener listener) {
+    public UploadProgressRequestBody(RequestBody requestBody, UploadProgressListener listener) {
         this.mRequestBody = requestBody;
         this.mProgressListener = listener;
     }

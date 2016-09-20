@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.avatar;
 
 import android.app.Activity;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,25 +16,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.afollestad.materialdialogs.GravityEnum;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
-import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.manualsetup.qrcode.util.CommonUtils;
 import com.waylens.hachi.ui.views.ClipImageView;
 import com.waylens.hachi.utils.ImageUtils;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -107,7 +97,6 @@ public class AvatarActivity extends BaseActivity {
         intent.setType("image/*");
         startActivityForResult(intent, FROM_LOCAL);
     }
-
 
 
     @Override
@@ -242,7 +231,7 @@ public class AvatarActivity extends BaseActivity {
             }
             Bitmap bitmap = BitmapFactory.decodeFile(srcImgPath);
             Matrix m = new Matrix();
-            switch(orientation) {
+            switch (orientation) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                     m.postRotate(90);
                     bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, true);
