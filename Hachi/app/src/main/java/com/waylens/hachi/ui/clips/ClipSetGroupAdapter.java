@@ -198,6 +198,12 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             .crossFade()
             .into(viewHolder.ivClipCover);
 
+        if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
+            viewHolder.performanceIcon.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.performanceIcon.setVisibility(View.GONE);
+        }
+
         if (viewHolder.mBtnSelect != null) {
             if (mMultiSelectedMode == true) {
                 viewHolder.mBtnSelect.setVisibility(View.VISIBLE);
@@ -371,6 +377,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @Nullable
         @BindView(R.id.selectedMask)
         View mSelectedMask;
+
+        @BindView(R.id.performance_icon)
+        View performanceIcon;
 
 
         @OnClick({R.id.btnSelect, R.id.ivClipCover})

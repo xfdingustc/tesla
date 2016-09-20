@@ -173,7 +173,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         int attr;
 
         if (true || mClipSetType == Clip.TYPE_MARKED) {
-            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC;
+            flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA;
             attr = 0;
         } else {
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
