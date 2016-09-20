@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--drawable-v21/btn_feed_action.xml-->
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-        android:color="?attr/colorPrimaryDark">
-    <item android:drawable="@color/style_color_accent"/>
-</ripple>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle" >
+    <solid android:color="@color/style_color_accent" />
+    <corners android:radius="2dip" />
+
+    <ripple xmlns:android="http://schemas.android.com/apk/res/android"
+            android:color="?attr/colorPrimaryDark">
+        <item android:drawable="@color/style_color_accent"/>
+    </ripple>
+</shape>
+
+

@@ -256,7 +256,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             }
         });
 
-        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 4 : 2;
+        int spanCount = mClipSetType == Clip.TYPE_MARKED ? 3 : 2;
         int layoutRes = mClipSetType == Clip.TYPE_MARKED ? R.layout.item_clip_set_grid : R.layout.item_clip_set_card;
         mRvClipGroupList.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
         mAdapter = new ClipSetGroupAdapter(getActivity(), layoutRes, mVdbRequestQueue, null, new ClipSetGroupAdapter.OnClipClickListener() {

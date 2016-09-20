@@ -186,7 +186,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.title.setVisibility(View.GONE);
         }
 
-        holder.uploadTime.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
 
         if (!TextUtils.isEmpty(momentEx.owner.userName)) {
             holder.userName.setText(momentEx.owner.userName);
@@ -197,10 +196,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String placeInfo = momentEx.moment.place.city + " " + momentEx.moment.place.region + " " + momentEx.moment.place.country;
 
         if (TextUtils.isEmpty(momentEx.moment.place.city) && TextUtils.isEmpty(momentEx.moment.place.region) && TextUtils.isEmpty(momentEx.moment.place.country)) {
-            holder.place.setVisibility(View.GONE);
+            holder.place.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         } else {
-            holder.place.setVisibility(View.VISIBLE);
-            holder.place.setText(placeInfo.trim());
+            holder.place.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)) + " • " + placeInfo.trim());
         }
 
 
@@ -216,6 +214,12 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.separator.setVisibility(View.GONE);
         } else {
             holder.separator.setVisibility(View.VISIBLE);
+        }
+
+        if (moment.isRecommended) {
+            holder.recommend.setVisibility(View.VISIBLE);
+        } else {
+            holder.recommend.setVisibility(View.GONE);
         }
 
         if (momentEx.lastComments.size() > 0) {
@@ -393,8 +397,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.user_name)
         TextView userName;
 
-        @BindView(R.id.upload_time)
-        TextView uploadTime;
+        @BindView(R.id.recommend)
+        ImageView recommend;
+
 
         @BindView(R.id.place)
         TextView place;

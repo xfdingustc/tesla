@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:background="@color/windowBackground"
         android:orientation="vertical"
-        android:paddingBottom="16dp"
+        android:paddingBottom="8dp"
         tools:background="@color/material_grey_700">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -26,36 +26,6 @@
             android:layout_margin="16dp"
             tools:src="@drawable/menu_profile_photo_default"/>
 
-        <LinearLayout
-            android:id="@+id/time_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_alignParentRight="true"
-            android:visibility="gone"
-            android:orientation="horizontal">
-
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/user_avatar"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/ic_schedule"/>
-
-            <TextView
-                android:id="@+id/upload_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@id/user_avatar"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="16dp"
-                android:textColor="@color/app_text_color_secondary"
-                tools:text="5 hours ago"/>
-
-        </LinearLayout>
 
 
         <TextView
@@ -77,7 +47,6 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@id/user_avatar"
             android:layout_gravity="top"
-            android:layout_toLeftOf="@id/time_icon"
             android:layout_toRightOf="@id/user_avatar"
             android:textColor="@color/app_text_color_primary"
             android:textSize="16dp"
@@ -92,13 +61,12 @@
             android:layout_alignBottom="@id/user_avatar"
             android:layout_below="@id/user_name"
             android:layout_gravity="center_vertical"
-            android:layout_toLeftOf="@id/time_icon"
             android:layout_toRightOf="@id/user_avatar"
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/app_text_color_secondary"
-            tools:text="Shanghai China"/>
+            tools:text="4 days ago  • Shanghai China"/>
 
         <com.xfdingustc.far.FixedAspectRatioFrameLayout
             android:id="@+id/video_fragment_container"
@@ -115,6 +83,13 @@
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
                 android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:id="@+id/recommend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_recommend_for_you"
+               />
 
 
             <TextView
@@ -133,25 +108,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/video_fragment_container"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btn_like"
                 style="@style/SelectableRippleButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:scaleType="fitXY"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:src="@drawable/social_like"/>
 
             <TextSwitcher
                 android:id="@+id/ts_like_counter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp">
+                android:layout_gravity="center_vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -167,10 +139,9 @@
             <ImageButton
                 android:id="@+id/btn_comment"
                 style="@style/SelectableRippleButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="24dp"
-                android:scaleType="fitXY"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="8dp"
                 android:src="@drawable/social_comment"/>
 
             <TextView
@@ -178,7 +149,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp"
                 tools:text="999"/>
 
             <LinearLayout
@@ -189,11 +159,10 @@
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="16dp"
-                android:scaleType="fitXY"
                 android:src="@drawable/social_more"/>
 
         </LinearLayout>
@@ -204,7 +173,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@id/ll_action_bar"
-            android:layout_marginTop="16dp"/>
+            />
 
 
         <TextView

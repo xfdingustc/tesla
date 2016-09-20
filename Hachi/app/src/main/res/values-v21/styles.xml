@@ -46,7 +46,6 @@
     <style name="ActionButton" parent="Base.TextAppearance.AppCompat.Button">
         <item name="android:background">@drawable/action_button_default_bg</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="SelectableRippleButton" parent="Base.TextAppearance.AppCompat.Button">
@@ -54,7 +53,7 @@
         <item name="android:textSize">14sp</item>
     </style>
 
-    <style name="SelectableRippleLayout" >
+    <style name="SelectableRippleLayout">
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 
@@ -77,13 +76,16 @@
     <style name="HachiTextViewTitle" parent="HachiTextView">
         <item name="android:textSize">20sp</item>
     </style>
+
     <style name="HachiTextViewSubHeader" parent="HachiTextView">
         <item name="android:textSize">16sp</item>
     </style>
+
     <style name="HachiTextViewBody" parent="HachiTextView">
         <item name="android:fontFamily">sans-serif-thin</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="HachiTextViewCaption" parent="HachiTextView">
         <item name="android:fontFamily">sans-serif-thin</item>
         <item name="android:textSize">12sp</item>

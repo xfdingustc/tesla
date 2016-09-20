@@ -155,7 +155,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         Observable<MomentListResponse2> feedObservable;
 
-        if (isRefresh) {
+        if (cursor != 0) {
             feedObservable = feedMoment;
         } else {
             Observable<MomentListResponse2> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
