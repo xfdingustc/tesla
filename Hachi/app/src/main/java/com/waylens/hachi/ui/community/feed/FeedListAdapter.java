@@ -19,6 +19,7 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.session.SessionManager;
@@ -244,12 +245,32 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
 
 
-        Glide.with(mContext)
-            .load(moment.thumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(holder.videoCover);
-        holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
+        if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
+//            Logger.t(TAG).d("picture: " + momentEx.pictureUrls.get(0).toString());
+            if (momentEx.pictureUrls != null && !momentEx.pictureUrls.isEmpty()) {
+                Glide.with(mContext)
+                    .load(momentEx.pictureUrls.get(0).smallThumbnail)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .crossFade()
+                    .into(holder.videoCover);
+            }
+            holder.videoDuration.setVisibility(View.GONE);
+            holder.videoCover.setOnClickListener(null);
+        } else {
+            Glide.with(mContext)
+                .load(moment.thumbnail)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(holder.videoCover);
+            holder.videoDuration.setVisibility(View.VISIBLE);
+            holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
+            holder.videoCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover);
+                }
+            });
+        }
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,12 +283,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             }
         });
 
-        holder.videoCover.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover);
-            }
-        });
+
 
         if (moment.isLiked) {
             holder.btnLike.setImageResource(R.drawable.social_like_click);

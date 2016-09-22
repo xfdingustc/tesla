@@ -76,7 +76,7 @@ public class PublishActivity extends BaseActivity {
                     case R.id.share:
                         BgJobHelper.uploadPictureMoment(mTitle.getEditableText().toString(), mPhotoUrl);
                         finish();
-                        UploadingMomentActivity.launch(PublishActivity.this);
+                        UploadingMomentActivity.launch(PublishActivity.this, true);
                         break;
                 }
 

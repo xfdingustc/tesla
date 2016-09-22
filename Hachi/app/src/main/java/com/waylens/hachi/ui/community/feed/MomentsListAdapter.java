@@ -176,10 +176,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             .into(holder.userAvatar);
 
         if (!TextUtils.isEmpty(moment.title)) {
-            holder.title.setVisibility(View.VISIBLE);
             holder.title.setText(moment.title);
         } else {
-            holder.title.setVisibility(View.GONE);
+            holder.title.setText(R.string.no_title);
         }
 
         if (!TextUtils.isEmpty(moment.owner.userName)) {
@@ -205,6 +204,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
             List<MomentPicture> momentPictures = moment.pictureUrls;
             if (!momentPictures.isEmpty()) {
+                Logger.t(TAG).d("picture: " + momentPictures.get(0).toString());
                 Glide.with(mContext)
                     .load(momentPictures.get(0).original)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

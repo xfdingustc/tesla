@@ -157,7 +157,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
 
 
-        Observable<MomentListResponse2> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME);
+        Observable<MomentListResponse2> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME, true);
 
         Observable<MomentListResponse2> feedObservable;
 
@@ -177,9 +177,6 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
             feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse2, MomentListResponse2, MomentListResponse2>() {
                 @Override
                 public MomentListResponse2 call(MomentListResponse2 recommendMoment, MomentListResponse2 feedMoment) {
-                    for (MomentEx momentEx : feedMoment.moments) {
-                        Logger.t(TAG).d("");
-                    }
                     feedMoment.moments.addAll(0, recommendMoment.moments);
                     return feedMoment;
                 }

@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.entities.moment;
 
 import com.waylens.hachi.ui.entities.Comment;
+import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.User;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public class MomentEx {
     public User lastLike;
 
     public List<Comment> lastComments;
+
+    public List<MomentPicture> pictureUrls;
 }

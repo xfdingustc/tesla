@@ -174,6 +174,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
                 .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
                 .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
                 .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
+                .appendQueryParameter("showPic", String.valueOf(true))
                 .build();
             return uri.toString();
         } else {
@@ -183,7 +184,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
-//        Logger.t(TAG).json(response.toString());
+        Logger.t(TAG).json(response.toString());
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
             return;

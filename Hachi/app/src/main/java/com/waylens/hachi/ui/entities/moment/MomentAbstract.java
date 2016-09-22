@@ -32,6 +32,8 @@ public class MomentAbstract {
 
     public boolean isRecommended;
 
+    public String momentType;
+
     @Override
     public String toString() {
         return ToStringUtils.getString(this);
