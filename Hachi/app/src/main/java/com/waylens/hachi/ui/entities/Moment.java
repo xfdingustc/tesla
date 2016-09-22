@@ -160,7 +160,6 @@ public class Moment implements Serializable {
                   oneMomentPicture.original = onePicture.optString("original");
                   oneMomentPicture.smallThumbnail = onePicture.optString("smallThumbnail");
                   oneMomentPicture.bigThumbnail = onePicture.optString("bigThumbnail");
-                  Logger.t(TAG).d("add one moment picture: " + oneMomentPicture.toString());
                   moment.pictureUrls.add(oneMomentPicture);
               }
           }

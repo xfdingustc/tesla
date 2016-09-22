@@ -16,6 +16,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -23,6 +24,7 @@ import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.xfdingustc.rxutils.library.RxBus;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -130,6 +132,9 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
             .listner(new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
+                    if (isRefresh) {
+                        RxBus.getDefault().post(new ScrollEvent(false));
+                    }
                     onLoadFeedSuccessful(response, isRefresh);
                 }
             })
@@ -178,7 +183,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
-        Logger.t(TAG).json(response.toString());
+//        Logger.t(TAG).json(response.toString());
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
             return;

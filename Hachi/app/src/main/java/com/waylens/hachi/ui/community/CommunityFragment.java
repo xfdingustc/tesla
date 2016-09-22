@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
@@ -32,16 +33,21 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
+import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.community.feed.FeedFragment;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.xfdingustc.rxutils.library.RxBus;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 
 /**
@@ -60,6 +66,8 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     private Uri mPictureUri;
 
     private static final int REQUEST_CODE_CHOOSE_CLIP = 1000;
+
+    private Subscription mListScrollSubscription;
 
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
@@ -110,9 +118,45 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
         setupSearchView();
         setupViewPager();
+//        mFabMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fab_scale_up));
+
         return view;
     }
 
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mFabMenu.setClosedOnTouchOutside(true);
+
+        mFabMenu.hideMenuButton(false);
+//        mFabMenu.showMenuButton(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mListScrollSubscription = RxBus.getDefault().toObserverable(ScrollEvent.class)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ScrollEvent>() {
+                @Override
+                public void onNext(ScrollEvent scrollEvent) {
+                    if (scrollEvent.shouldHide) {
+                        mFabMenu.hideMenuButton(true);
+                    } else {
+                        mFabMenu.showMenuButton(true);
+                    }
+                }
+            });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (!mListScrollSubscription.isUnsubscribed()) {
+            mListScrollSubscription.unsubscribe();
+        }
+    }
 
     private void setupSearchView() {
         mHistoryDatabase = new SearchHistoryTable(getActivity());

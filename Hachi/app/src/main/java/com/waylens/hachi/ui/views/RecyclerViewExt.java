@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.ui.community.event.ScrollEvent;
+import com.xfdingustc.rxutils.library.RxBus;
 
 /**
  * Created by Richard on 9/2/15.
@@ -17,20 +19,31 @@ public class RecyclerViewExt extends RecyclerView {
 
     private OnLoadMoreListener mOnLoadMoreListener;
 
+    private OnScrollListener mOnFabScrollListener = new FabScrollListener();
+
+    private int mPreviousVisibleItem;
+
     private boolean isLoadingMore;
 
     private boolean isLoadMoreEnabled;
 
     public RecyclerViewExt(Context context) {
         super(context);
+        init();
     }
 
     public RecyclerViewExt(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public RecyclerViewExt(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init();
+    }
+
+    private void init() {
+        addOnScrollListener(mOnFabScrollListener);
     }
 
     public interface OnLoadMoreListener {
@@ -79,6 +92,31 @@ public class RecyclerViewExt extends RecyclerView {
                 isLoadingMore = true;
                 mOnLoadMoreListener.loadMore();
             }
+
+            if (firstVisibleItemPosition > mPreviousVisibleItem) {
+
+                RxBus.getDefault().post(new ScrollEvent(true));
+            } else if (firstVisibleItemPosition < mPreviousVisibleItem) {
+                RxBus.getDefault().post(new ScrollEvent(false));
+            }
+            mPreviousVisibleItem = firstVisibleItemPosition;
+        }
+    }
+
+
+    class FabScrollListener extends OnScrollListener {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+
+            if (firstVisibleItemPosition > mPreviousVisibleItem) {
+                RxBus.getDefault().post(new ScrollEvent(true));
+            } else if (firstVisibleItemPosition < mPreviousVisibleItem) {
+                RxBus.getDefault().post(new ScrollEvent(false));
+            }
+            mPreviousVisibleItem = firstVisibleItemPosition;
         }
     }
 

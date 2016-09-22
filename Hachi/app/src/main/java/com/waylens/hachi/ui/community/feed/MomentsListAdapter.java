@@ -202,7 +202,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         });
-        Logger.t(TAG).d("moment type: " + moment.momentType);
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
             List<MomentPicture> momentPictures = moment.pictureUrls;
             if (!momentPictures.isEmpty()) {

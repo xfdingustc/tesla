@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,14 @@ import com.waylens.hachi.rest.response.MomentListResponse2;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
+import com.xfdingustc.rxutils.library.RxBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -62,6 +65,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
 
     private long mCurrentCursor;
+
 
 
     @BindView(R.id.view_animator)
@@ -132,6 +136,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
+
+
         return view;
     }
 
@@ -196,6 +202,9 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
                 @Override
                 public void onNext(MomentListResponse2 momentListResponse) {
+                    if (isRefresh) {
+                        RxBus.getDefault().post(new ScrollEvent(false));
+                    }
                     onLoadFeedSuccessful(momentListResponse, isRefresh);
                 }
             });
