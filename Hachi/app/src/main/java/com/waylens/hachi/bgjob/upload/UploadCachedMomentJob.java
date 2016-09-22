@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
@@ -92,7 +93,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
             CreateMomentResponse response = getCloudInfo();
             Logger.t(TAG).d("upload server: " + response.uploadServer.toString());
             mLocalMoment.updateUploadInfo(response);
-            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss", Locale.US);
             String date = format.format(System.currentTimeMillis()) + " GMT";
 
             String server = StringUtils.getHostNameWithoutPrefix(response.uploadServer.url);

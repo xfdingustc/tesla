@@ -1,6 +1,7 @@
 package com.waylens.hachi.rest;
 
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
@@ -141,9 +142,9 @@ public interface HachiApi {
     @POST("/api/moments")
     Call<CreateMomentResponse> createMoment(@Body CreateMomentBody createMomentBody);
 
-    @FormUrlEncoded
+
     @POST("/api/moments/picture/finish")
-    Call<SimpleBoolResponse> finishUploadPictureMoment(@Field("momentID") long momentId, @Field("pictureNum") int pictureNum);
+    Call<SimpleBoolResponse> finishUploadPictureMoment(@Body FinishUploadBody finishUploadBody);
 
     @GET("/api/cloud/usage")
     Call<CloudStorageInfo> getCloudStorageInfo();

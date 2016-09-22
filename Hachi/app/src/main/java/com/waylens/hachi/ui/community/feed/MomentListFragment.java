@@ -178,7 +178,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
-//        Logger.t(TAG).json(response.toString());
+        Logger.t(TAG).json(response.toString());
         JSONArray jsonMoments = response.optJSONArray("moments");
         if (jsonMoments == null) {
             return;

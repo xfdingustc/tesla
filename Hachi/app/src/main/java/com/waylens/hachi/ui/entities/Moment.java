@@ -1,10 +1,12 @@
 package com.waylens.hachi.ui.entities;
 
+import android.graphics.Picture;
 import android.text.Spannable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.xfdingustc.snipe.utils.ToStringUtils;
@@ -20,7 +22,7 @@ import java.util.List;
 
 
 public class Moment implements Serializable {
-
+    private static final String TAG = Moment.class.getSimpleName();
     public static final long INVALID_MOMENT_ID = -1;
 
     public static final int TYPE_WAYLENS = 0;
@@ -90,6 +92,10 @@ public class Moment implements Serializable {
 
     public MomentInfo.TimingInfo momentTimingInfo;
 
+    public String momentType;
+
+    public List<MomentPicture> pictureUrls;
+
     public static final String PROVIDER_WAYLENS = "waylens";
     public static final String PROVIDER_YOUTUBE = "youtube";
     public static final String YOUTUBE_THUMBNAIL = "https://i1.ytimg.com/vi/%s/hqdefault.jpg";
@@ -131,6 +137,7 @@ public class Moment implements Serializable {
         moment.likesCount = jsonMoment.optInt("likesCount");
         moment.commentsCount = jsonMoment.optInt("commentsCount");
         moment.isLiked = jsonMoment.optBoolean("isLiked");
+        moment.momentType = jsonMoment.optString("momentType");
 
         JSONObject ownerInfo = jsonObject.optJSONObject("owner");
         if (ownerInfo == null) {
@@ -141,6 +148,23 @@ public class Moment implements Serializable {
 
         moment.parseGPSInfo(jsonMoment.optJSONObject("gps"));
         moment.parsePlace(jsonMoment.optJSONObject("place"));
+
+        moment.pictureUrls = new ArrayList<>();
+        JSONArray pictures = jsonObject.optJSONArray("pictureUrls");
+        if (pictures != null) {
+          for (int i = 0; i < pictures.length(); i++) {
+              JSONObject onePicture = pictures.optJSONObject(i);
+              if (onePicture != null) {
+                  MomentPicture oneMomentPicture = new MomentPicture();
+                  oneMomentPicture.pictureID = onePicture.optLong("pictureID");
+                  oneMomentPicture.original = onePicture.optString("original");
+                  oneMomentPicture.smallThumbnail = onePicture.optString("smallThumbnail");
+                  oneMomentPicture.bigThumbnail = onePicture.optString("bigThumbnail");
+                  Logger.t(TAG).d("add one moment picture: " + oneMomentPicture.toString());
+                  moment.pictureUrls.add(oneMomentPicture);
+              }
+          }
+        }
 
         return moment;
     }

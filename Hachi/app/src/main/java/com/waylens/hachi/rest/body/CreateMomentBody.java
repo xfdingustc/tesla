@@ -65,6 +65,12 @@ public class CreateMomentBody {
             timingPoints.t4 = localMoment.mTimingPoints.get(3);
             timingPoints.t5 = localMoment.mTimingPoints.get(4);
             timingPoints.t6 = localMoment.mTimingPoints.get(5);
+        } else {
+            if (localMoment.mSegments.size() > 1) {
+                momentType = "NORMAL_SINGLE";
+            } else {
+                momentType = "NORMAL_MULTI";
+            }
         }
         if (localMoment.mVehicleMaker != null) {
             vehicleMaker = localMoment.mVehicleMaker;

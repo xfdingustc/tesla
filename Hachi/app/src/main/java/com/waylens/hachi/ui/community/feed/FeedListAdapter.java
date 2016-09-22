@@ -193,7 +193,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.userName.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         }
 
-        String placeInfo = momentEx.moment.place.city + " " + momentEx.moment.place.region + " " + momentEx.moment.place.country;
+        String placeInfo = momentEx.moment.place.city + " " + momentEx.moment.place.country;
 
         if (TextUtils.isEmpty(momentEx.moment.place.city) && TextUtils.isEmpty(momentEx.moment.place.region) && TextUtils.isEmpty(momentEx.moment.place.country)) {
             holder.place.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));

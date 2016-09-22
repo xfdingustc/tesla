@@ -18,6 +18,7 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -28,6 +29,7 @@ import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.MomentPicture;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -187,11 +189,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
 
-        Glide.with(mContext)
-            .load(moment.thumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(holder.videoCover);
+
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,13 +202,33 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         });
-
-        holder.videoCover.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover);
+        Logger.t(TAG).d("moment type: " + moment.momentType);
+        if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
+            List<MomentPicture> momentPictures = moment.pictureUrls;
+            if (!momentPictures.isEmpty()) {
+                Glide.with(mContext)
+                    .load(momentPictures.get(0).original)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .crossFade()
+                    .into(holder.videoCover);
             }
-        });
+            holder.videoCover.setOnClickListener(null);
+            holder.videoDuration.setVisibility(View.GONE);
+
+        } else {
+            Glide.with(mContext)
+                .load(moment.thumbnail)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(holder.videoCover);
+            holder.videoCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover);
+                }
+            });
+            holder.videoDuration.setVisibility(View.VISIBLE);
+        }
 
 
         holder.btnMore.setOnClickListener(new View.OnClickListener() {

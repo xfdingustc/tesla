@@ -13,6 +13,7 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.service.upload.UploadAPI;
@@ -28,6 +29,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -79,7 +81,7 @@ public class PictureUploadJob extends UploadMomentJob {
 
             String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(new File(mPictureUrl)));
 
-            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss", Locale.US);
             String date = format.format(System.currentTimeMillis()) + " GMT";
             String server = StringUtils.getHostNameWithoutPrefix(response.uploadServer.url);
 
@@ -109,7 +111,10 @@ public class PictureUploadJob extends UploadMomentJob {
             Logger.t(TAG).d("response: " + uploadData);
 
 
-            Call<SimpleBoolResponse> finishUploadResponse = hachiApi.finishUploadPictureMoment(response.momentID, 1);
+            FinishUploadBody uploadBody = new FinishUploadBody();
+            uploadBody.momentID = response.momentID;
+            uploadBody.pictureNum = 1;
+            Call<SimpleBoolResponse> finishUploadResponse = hachiApi.finishUploadPictureMoment(uploadBody);
             finishUploadResponse.execute();
 
 

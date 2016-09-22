@@ -19,6 +19,7 @@ import com.xfdingustc.rxutils.library.RxBus;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -56,7 +57,7 @@ public class UploadAvatarJob extends Job {
 
             String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(new File(file)));
 
-            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss", Locale.US);
             String date = format.format(System.currentTimeMillis()) + " GMT";
             String server = StringUtils.getHostNameWithoutPrefix(uploadServer.url);
 
