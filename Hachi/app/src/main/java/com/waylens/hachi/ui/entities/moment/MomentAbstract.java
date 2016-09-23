@@ -20,6 +20,7 @@ public class MomentAbstract {
     public int duration;
 
     public Gps gps;
+    public boolean withGeoTag;
 
     public Place place;
 

@@ -66,7 +66,7 @@
                 style="@style/MenuButtonsStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_fab_video"
+                android:src="@drawable/ic_videocam_white"
                 android:tint="@android:color/white"
                 fab:fab_label="@string/from_waylens_camera"/>
 
@@ -75,7 +75,7 @@
                 style="@style/MenuButtonsStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_fab_albums"
+                android:src="@drawable/ic_photo_library"
                 fab:fab_label="@string/from_phone_galley"/>
 
             <com.github.clans.fab.FloatingActionButton
@@ -83,7 +83,7 @@
                 style="@style/MenuButtonsStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_fab_camera"
+                android:src="@drawable/ic_camera"
                 fab:fab_label="@string/take_picture"/>
 
         </com.github.clans.fab.FloatingActionMenu>
