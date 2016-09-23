@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/action_example"
+        android:title="count down"
+        app:showAsAction="withText|ifRoom"/>
+    <item android:id="@+id/action_settings"
+        android:icon="@drawable/btn_leaderboard_auto"
+        android:title="@string/auto_mode"
+        app:showAsAction="always"/>
+</menu>

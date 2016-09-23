@@ -547,8 +547,16 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
             .errorListener(new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                    Snackbar.make(getView(), new String(error.networkResponse.data), Snackbar.LENGTH_SHORT).show();
+                    Logger.t(TAG).d(new String(error.networkResponse.data));
+                    if (error.networkResponse.statusCode == 400) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(new String(error.networkResponse.data));
+                            String msg = jsonObject.optString("msg", "Failed to update username.");
+                            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             })
             .build();

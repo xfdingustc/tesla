@@ -12,6 +12,9 @@
         <item android:id="@+id/moments" android:title="@string/moments"
               android:icon="@drawable/moments_tab"/>
 
+        <item android:id="@+id/leaderBoard" android:title="@string/leaderboard"
+              android:icon="@drawable/icon_leaderboard_no_data"/>
+
     </group>
 
 

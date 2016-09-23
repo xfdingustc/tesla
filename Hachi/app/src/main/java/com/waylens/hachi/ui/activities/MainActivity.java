@@ -30,6 +30,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
+import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.ui.settings.AccountActivity;
@@ -54,7 +55,8 @@ public class MainActivity extends BaseActivity {
     public static final int TAB_TAG_VIDEO = 0;
     public static final int TAB_TAG_LIVE_VIEW = 1;
     public static final int TAB_TAG_MOMENTS = 2;
-    public static final int TAB_TAG_SETTINGS = 3;
+    public static final int TAB_TAG_LEADERBOARD = 3;
+    public static final int TAB_TAG_SETTINGS = 4;
 
     public static final int REQUEST_CODE_SIGN_UP_FROM_MOMENTS = 100;
 
@@ -68,7 +70,9 @@ public class MainActivity extends BaseActivity {
         new ClipVideoFragment(),
         new CameraPreviewFragment(),
         new CommunityFragment(),
-        new SettingsFragment()
+        new PerformanceTestFragment(),
+        new SettingsFragment(),
+
     };
 
     private Fragment mCurrentFragment = null;
@@ -127,11 +131,13 @@ public class MainActivity extends BaseActivity {
         mMenuId2Tab.put(R.id.moments, TAB_TAG_MOMENTS);
         mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
         mMenuId2Tab.put(R.id.video, TAB_TAG_VIDEO);
+        mMenuId2Tab.put(R.id.leaderBoard, TAB_TAG_LEADERBOARD);
         mMenuId2Tab.put(R.id.liveView, TAB_TAG_LIVE_VIEW);
 
         mTab2MenuId.put(TAB_TAG_MOMENTS, R.id.moments);
         mTab2MenuId.put(TAB_TAG_SETTINGS, R.id.setting);
         mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
+        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderBoard);
         mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.liveView);
 
         initViews();
@@ -395,7 +401,5 @@ public class MainActivity extends BaseActivity {
             mReturnSnackBar = Snackbar.make(mDrawerLayout, getText(R.string.backpressed_hint), Snackbar.LENGTH_LONG);
             mReturnSnackBar.show();
         }
-
-
     }
 }
