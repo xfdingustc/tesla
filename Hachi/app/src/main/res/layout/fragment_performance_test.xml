@@ -10,85 +10,25 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <com.yyydjk.library.DropDownMenu
-        android:id="@+id/dropDownMenu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:ddmenuTextSize="14sp"
-        app:ddtextUnselectedColor="@color/app_color_control_activated"
-        app:ddtextSelectedColor="@color/app_color_control_activated"
-        app:dddividerColor="@color/windowBackground"
-        app:ddunderlineColor="@color/settings_line_separator"
-        app:ddmenuSelectedIcon="@drawable/drop_down_unselected_icon"
-        app:ddmenuUnselectedIcon="@drawable/drop_down_unselected_icon"
-        app:ddmenuBackgroundColor="@color/windowBackground"
-        app:ddmaskColor="@color/transparent_mask"
-    />
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            >
-            <ImageView
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_gravity="center"
-                android:id="@+id/test_mode_pic"
-                android:src = "@drawable/btn_leaderboard_auto"/>
-
-
-            <Spinner
-                android:layout_marginStart="8dp"
-                android:id="@+id/spinner1"
-                android:layout_marginEnd="16dp"
-                android:textSize="14sp"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:entries="@array/test_mode"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="0.3"
-            android:layout_height="48dp"
-            >
-
-            <Spinner
-                android:id="@+id/spinner2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:entries="@array/race_type_english"
-                android:layout_gravity="center"
-                />
-        </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_weight="0.6"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center"
-            >
-            <Spinner
-                android:id="@+id/car_model_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:dropDownWidth="200dp"
-                android:layout_gravity="center"
-                />
-        </RelativeLayout>
-
+        android:orientation="horizontal">
+        <com.waylens.hachi.ui.views.DropDownMenu
+            android:id="@+id/dropDownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:ddmenuTextSize="14sp"
+            app:ddtextUnselectedColor="@color/app_color_control_activated"
+            app:ddtextSelectedColor="@color/app_color_control_activated"
+            app:dddividerColor="@color/windowBackground"
+            app:ddunderlineColor="@color/settings_line_separator"
+            app:ddmenuSelectedIcon="@drawable/drop_down_unselected_icon"
+            app:ddmenuUnselectedIcon="@drawable/drop_down_unselected_icon"
+            app:ddmenuBackgroundColor="@color/windowBackground"
+            app:ddmaskColor="@color/transparent_mask"
+        />
     </LinearLayout>
-
 
 
     <FrameLayout

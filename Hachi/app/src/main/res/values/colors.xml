@@ -20,12 +20,22 @@
 
     <color name="color_line_break">#E6404245</color>
 
+    <color name="white">#ffffff</color>
+    <color name="gray">#cccccc</color>
+
+    <color name="drop_down_selected">#7B1FA2</color>
+    <color name="drop_down_unselected">#111111</color>
+
+    <color name="mask_color">#88888888</color>
+    <color name="check_bg">#f2f2f2</color>
+    <color name="un_press_color">#9C27B0</color>
+
     <!-- TO BE REMOVED START -->
     <color name="edit_background">#FF2F2F2F</color>
     <color name="text_camera_info">#A4A6A6</color>
     <color name="text_enhance">#9B9B9B</color>
     <color name="text_enhance_highlight">#FFECECEC</color>
-    
+
     <color name="text_color_title">#C4C5C5</color>
 
     <color name="transparent_mask">#10404245</color>
@@ -34,7 +44,7 @@
 
     <color name="second_progress_color">#690008</color>
 
-    
+
 
     <color name="bg_content">#FF1D1F23</color>
     <color name="settings_item_bg_normal">#FF222428</color>

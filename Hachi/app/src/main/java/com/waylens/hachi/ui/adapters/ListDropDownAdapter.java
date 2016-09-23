@@ -50,7 +50,11 @@ public class ListDropDownAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        if (position < getCount()) {
+            return list.get(position);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -75,6 +79,13 @@ public class ListDropDownAdapter extends BaseAdapter {
     public void add(String item) {
         synchronized (mLock) {
             list.add(item);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void insert(String item, int index) {
+        synchronized (mLock) {
+            list.add(index, item);
         }
         notifyDataSetChanged();
     }

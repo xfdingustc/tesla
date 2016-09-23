@@ -47,7 +47,7 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.yyydjk.library.DropDownMenu;
+import com.waylens.hachi.ui.views.DropDownMenu;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private int mUnits = UNIT_ENGLISH;
 
-    private int mRaceType = RACE_TYPE_60MPH;
+    private int mRaceType = RACE_TYPE_30MPH;
 
     private int mLeaderBoardStart;
 
@@ -114,13 +114,19 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private List<Pair<MakerResponse.Maker, ModelResponse.Model>> mMakerModelList;
 
-    private ArrayAdapterSpinner<String> mAdapterCarModel;
-
     private int mLeaderBoardItemCount;
 
     private List<View> popupViews = new ArrayList<>();
 
     private String headers[] = {"mode", "type", "model"};
+
+    private ListDropDownAdapter modeAdapter;
+
+    private ListDropDownAdapter typeAdapterEnglish;
+
+    private ListDropDownAdapter typeAdapterMetric;
+
+    private ListDropDownAdapter modelAdapter;
 
     @BindView(R.id.main_layout)
     FrameLayout mLayoutMain;
@@ -128,23 +134,11 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     @BindView(R.id.dropDownMenu)
     DropDownMenu mDropDownMenu;
 
-    @BindView(R.id.spinner1)
-    Spinner mSpinnerTestMode;
-
-    @BindView(R.id.spinner2)
-    Spinner mSpinnerRaceType;
-
-    @BindView(R.id.car_model_spinner)
-    Spinner mSpinnerCarModel;
-
     @BindView(R.id.leaderboard_list_view)
     RecyclerViewExt mRvLeaderboardList;
 
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
-
-    @BindView(R.id.test_mode_pic)
-    ImageView mTestModePic;
 
     @BindView(R.id.my_avatar)
     CircleImageView mMyAvatar;
@@ -216,18 +210,18 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
         final ListView modeView = new ListView(getActivity());
         modeView.setDividerHeight(0);
-        final ListDropDownAdapter modeAdapter = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.test_mode)));
+        modeAdapter = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.test_mode)));
         modeView.setAdapter(modeAdapter);
 
         final ListView typeView = new ListView(getActivity());
         typeView.setDividerHeight(0);
-        final ListDropDownAdapter typeAdapterEnglish = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_english)));
+        typeAdapterEnglish = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_english)));
         typeView.setAdapter(typeAdapterEnglish);
-        final ListDropDownAdapter typeAdapterMetric = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_metric)));
+        typeAdapterMetric = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_metric)));
 
         final ListView modelView = new ListView(getActivity());
         modelView.setDividerHeight(0);
-        ListDropDownAdapter modelAdapter = new ListDropDownAdapter(getActivity());
+        modelAdapter = new ListDropDownAdapter(getActivity());
         modelView.setAdapter(modelAdapter);
         modelAdapter.add(getResources().getString(R.string.all_car));
 
@@ -240,16 +234,38 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         contentView.setAlpha(0);
 
         mDropDownMenu.setDropDownMenu(Arrays.asList(headers), popupViews, contentView);
+        mDropDownMenu.setTabTextAt((String)modeAdapter.getItem(1), 0);
+        modeAdapter.setCheckItem(1);
 
         modeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 modeAdapter.setCheckItem(position);
+                Logger.t(TAG).d((String)modeAdapter.getItem(position));
                 mDropDownMenu.setTabText((String)modeAdapter.getItem(position));
                 mDropDownMenu.closeMenu();
+                int mode = -1;
+                switch (position) {
+                    case 0:
+                        mode = TEST_MODE_COUNTDOWN;
+                        mDropDownMenu.setImageHeader(getResources().getDrawable(R.drawable.btn_leaderboard_count_down));
+                        break;
+                    case 1:
+                        mode = TEST_MODE_AUTO;
+                        mDropDownMenu.setImageHeader(getResources().getDrawable(R.drawable.btn_leaderboard_auto));
+                        break;
+                    default:
+                        break;
+                }
+                if (mode >= 0 && mode != mLeaderBoardMode) {
+                    mLeaderBoardMode = mode;
+                    loadLeaderBoard(0, true);
+                }
             }
         });
 
+        mDropDownMenu.setTabTextAt((String)typeAdapterEnglish.getItem(0), 1);
+        typeAdapterEnglish.setCheckItem(0);
         typeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -264,10 +280,10 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             type = RACE_TYPE_60MPH;
                             break;
                         case 2:
-                            type = RACE_TYPE_100KMH;
+                            type = RACE_TYPE_50KMH;
                             typeView.setAdapter(typeAdapterMetric);
-                            typeAdapterMetric.setCheckItem(1);
-                            mDropDownMenu.setTabText((String)typeAdapterMetric.getItem(1));
+                            typeAdapterMetric.setCheckItem(0);
+                            mDropDownMenu.setTabText((String)typeAdapterMetric.getItem(0));
                             mUnits = UNIT_METRIC;
                             break;
                     }
@@ -284,17 +300,17 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             type = RACE_TYPE_100KMH;
                             break;
                         case 2:
-                            type = RACE_TYPE_60MPH;
+                            type = RACE_TYPE_30MPH;
                             typeView.setAdapter(typeAdapterEnglish);
-                            typeAdapterEnglish.setCheckItem(1);
-                            mDropDownMenu.setTabText((String)typeAdapterEnglish.getItem(1));
+                            typeAdapterEnglish.setCheckItem(0);
+                            mDropDownMenu.setTabText((String)typeAdapterEnglish.getItem(0));
                             mUnits = UNIT_ENGLISH;
                             break;
                         default:
                             break;
                     }
                     if (position < 2) {
-                        typeAdapterEnglish.setCheckItem(position);
+                        typeAdapterMetric.setCheckItem(position);
                         mDropDownMenu.setTabText((String)typeAdapterMetric.getItem(position));
                     }
 
@@ -307,113 +323,19 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
 
+        mDropDownMenu.setTabTextAt((String)modelAdapter.getItem(0), 2);
+        modelAdapter.setCheckItem(0);
 
-
-
-
-        ArrayAdapter<String> adapterTestMode = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.test_mode));
-        adapterTestMode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerTestMode.setAdapter(adapterTestMode);
-        mSpinnerTestMode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        modelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int mode = -1;
-                switch (position) {
-                    case 0:
-                        mode = TEST_MODE_COUNTDOWN;
-                        mTestModePic.setImageResource(R.drawable.btn_leaderboard_count_down);
-
-                        break;
-                    case 1:
-                        mode = TEST_MODE_AUTO;
-                        mTestModePic.setImageResource(R.drawable.btn_leaderboard_auto);
-                        break;
-                    default:
-                        break;
-                }
-                if (mode >= 0 && mode != mLeaderBoardMode) {
-                    mLeaderBoardMode = mode;
-                    loadLeaderBoard(0, true);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        ArrayAdapter<String> adapterRaceType = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.race_type_english));
-        adapterRaceType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mSpinnerRaceType.setAdapter(adapterRaceType);
-        mSpinnerRaceType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                int type = -1;
-                if (mUnits == UNIT_ENGLISH) {
-                    switch (i) {
-                        case 0:
-                            type = RACE_TYPE_30MPH;
-                            break;
-                        case 1:
-                            type = RACE_TYPE_60MPH;
-                            break;
-                        case 2:
-                            type = RACE_TYPE_100KMH;
-                            ArrayAdapter<String> adapterRaceType = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.race_type_metric));
-                            adapterRaceType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            mSpinnerRaceType.setAdapter(adapterRaceType);
-                            mSpinnerRaceType.setSelection(1);
-                            mUnits = UNIT_METRIC;
-                            break;
-                    }
-                } else if(mUnits == UNIT_METRIC) {
-                    switch (i) {
-                        case 0:
-                            type = RACE_TYPE_50KMH;
-                            break;
-                        case 1:
-                            type = RACE_TYPE_100KMH;
-                            break;
-                        case 2:
-                            type = RACE_TYPE_60MPH;
-                            ArrayAdapter<String> adapterRaceType = new ArrayAdapter<>(getActivity(), R.layout.item_spinner_test, getResources().getStringArray(R.array.race_type_english));
-                            adapterRaceType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            mSpinnerRaceType.setAdapter(adapterRaceType);
-                            mSpinnerRaceType.setSelection(1);
-                            mUnits = UNIT_ENGLISH;
-                            break;
-                        default:
-                            break;
-                    }
-
-                }
-                if (type != mRaceType) {
-                    mRaceType = type;
-                    loadLeaderBoard(0, true);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        mSpinnerRaceType.setSelection(1);
-
-        mAdapterCarModel = new ArrayAdapterSpinner<>(getActivity(), R.layout.item_spinner_test);
-        mAdapterCarModel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mAdapterCarModel.add(getResources().getString(R.string.all_car));
-        mSpinnerCarModel.setAdapter(mAdapterCarModel);
-        mSpinnerCarModel.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 switch (i) {
                     case 0:
                         mMaker = null;
                         mModel = null;
                         break;
                     case 1:
-                        if (mAdapterCarModel.getItem(1).equals(getResources().getString(R.string.same_car))) {
+                        if (modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
                             mMaker = myVehicleInfo.vehicleMaker;
                             mModel = myVehicleInfo.vehicleModel;
                         } else {
@@ -422,7 +344,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         }
                         break;
                     default:
-                        if (mAdapterCarModel.getItem(1).equals(getResources().getString(R.string.same_car))) {
+                        if (modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
                             mMaker = mMakerModelList.get(i - 2).first.makerName;
                             mModel = mMakerModelList.get(i - 2).second.modelName;
                         } else {
@@ -431,15 +353,14 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         }
                         break;
                 }
+                modelAdapter.setCheckItem(i);
+                mDropDownMenu.setTabText((String)modelAdapter.getItem(i));
+                mDropDownMenu.closeMenu();
                 loadLeaderBoard(0, true);
                 onRefresh();
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
+
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
                 android.R.color.holo_orange_light, android.R.color.holo_red_light);
@@ -488,8 +409,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 for (Pair<MakerResponse.Maker, ModelResponse.Model> item : pairs) {
                     stringList.add(item.first.makerName + " " + item.second.modelName);
                 }
-                mAdapterCarModel.addAll(stringList);
-                mAdapterCarModel.notifyDataSetChanged();
+                modelAdapter.addAll(stringList);
+                modelAdapter.notifyDataSetChanged();
             }
         });
         return view;
@@ -590,9 +511,9 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             myVehicleInfo = new VehicleInfo();
                             myVehicleInfo.vehicleMaker = maker;
                             myVehicleInfo.vehicleModel = model;
-                            if ( !mAdapterCarModel.getItem(1).equals(getResources().getString(R.string.same_car)) ) {
-                                mAdapterCarModel.insert(getResources().getString(R.string.same_car), 1);
-                                mAdapterCarModel.notifyDataSetChanged();
+                            if ( !modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car)) ) {
+                                modelAdapter.insert(getResources().getString(R.string.same_car), 1);
+                                modelAdapter.notifyDataSetChanged();
                             }
                         }
                     } else {
