@@ -1,5 +1,7 @@
 package com.waylens.hachi.rest;
 
+import com.waylens.hachi.rest.bean.MomentAmount;
+import com.waylens.hachi.rest.bean.MomentSummary;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
@@ -14,6 +16,7 @@ import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.MakerResponse;
 import com.waylens.hachi.rest.response.ModelResponse;
+import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
@@ -104,6 +107,12 @@ public interface HachiApi {
 
     @GET("/api/users/{userId}")
     Observable<UserInfo> getUserInfoRx(@Path("userId") String userId);
+
+    @GET("/api/users/{userId}/moments/amount")
+    Observable<MomentAmount> getUserMomentAmountRx(@Path("userId") String userId);
+
+    @GET("/api/moments/summary")
+    Observable<MomentSummaryResponse> getMomentSummaryRx();
 
     @GET("/api/users/me")
     Call<UserInfo> getMyUserInfo();

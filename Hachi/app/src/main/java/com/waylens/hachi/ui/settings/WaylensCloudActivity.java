@@ -16,7 +16,9 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
+import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +29,8 @@ import java.util.Date;
 import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/13.
@@ -95,30 +99,21 @@ public class WaylensCloudActivity extends BaseActivity {
 
 
     private void getWaylensCloudInfo() {
-        String url = Constants.API_MOMENTS_SUMMARY;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest(url, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Logger.t(TAG).json(response.toString());
-
-                try {
-                    JSONObject all = response.getJSONObject("all");
-                    mVideoDuration.setText(String.valueOf(all.getLong("duration") / 1000) + "s");
-                    mVideoSize.setText(String.valueOf(all.getLong("size") / (1024 * 1024)) + "MB");
-                    mVideoCount.setText(String.valueOf(all.getInt("count")));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        mRequestQueue.add(request);
 
         HachiApi mHachi = HachiService.createHachiApiService();
+
+        mHachi.getMomentSummaryRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MomentSummaryResponse>() {
+                @Override
+                public void onNext(MomentSummaryResponse response) {
+                    mVideoDuration.setText(String.valueOf(response.all.duration / 1000) + "s");
+                    mVideoSize.setText(String.valueOf(response.all.size / (1024 * 1024)) + "MB");
+                    mVideoCount.setText(String.valueOf(response.all.count));
+                }
+            });
+
         Call<CloudStorageInfo> createMomentResponseCall = mHachi.getCloudStorageInfo();
         createMomentResponseCall.enqueue(new Callback<CloudStorageInfo>() {
             @Override

@@ -39,6 +39,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,7 +80,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public MomentsListAdapter(Context context) {
         this.mContext = context;
-        mPrettyTime = new PrettyTime();
+        mPrettyTime = new PrettyTime(Locale.US);
 
         EventBus.getDefault().register(this);
 

@@ -234,8 +234,23 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (moment.isRecommended) {
             holder.recommend.setVisibility(View.VISIBLE);
+            if (!momentEx.owner.isMyFollowing) {
+                holder.btnFollow.setVisibility(View.VISIBLE);
+                holder.btnFollow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        BgJobHelper.followUser(momentEx.owner.userID, true);
+                        holder.btnFollow.setVisibility(View.GONE);
+                        momentEx.owner.isMyFollowing = true;
+                    }
+                });
+            } else {
+                holder.btnFollow.setVisibility(View.GONE);
+            }
+
         } else {
             holder.recommend.setVisibility(View.GONE);
+            holder.btnFollow.setVisibility(View.GONE);
         }
 
         if (momentEx.lastComments.size() > 0) {
@@ -333,7 +348,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.END);
+                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.START);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_moment, popupMenu.getMenu());
                 if (momentEx.owner.userID.equals(SessionManager.getInstance().getUserId())) {
                     popupMenu.getMenu().removeItem(R.id.report);
@@ -431,6 +446,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.recommend)
         ImageView recommend;
 
+        @BindView(R.id.btn_follow)
+        TextView btnFollow;
 
         @BindView(R.id.place)
         TextView place;

@@ -93,8 +93,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:progressTint="@color/style_color_primary"
-            android:thumbTint="@color/style_color_primary"
+            android:progressTint="@color/style_color_accent"
+            android:thumbTint="@color/style_color_accent"
             tools:progress="50"/>
 
         <TextView

@@ -31,9 +31,11 @@ import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
+import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -56,6 +58,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
+import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
 /**
@@ -106,6 +109,9 @@ public class UserProfileActivity extends BaseActivity {
 
     @BindView(R.id.user_cover)
     ImageView userCover;
+
+    @BindView(R.id.moment_count)
+    TextView momentCount;
 
 
     @OnClick(R.id.ll_followers)
@@ -184,21 +190,22 @@ public class UserProfileActivity extends BaseActivity {
 
         Observable<FollowInfo> followInfoObservable = mHachiApi.getFollowInfoRx(mUserID);
 
+        Observable<MomentAmount> getMomentAmount = mHachiApi.getUserMomentAmountRx(mUserID);
+
 //        Observable<MomentListResponse> momentListResponseObservable = mHachiApi.getUserMomentsRx(mUserID, mCurrentCursor);
 
-        Observable.zip(userInfoObservable, followInfoObservable, new Func2<UserInfo, FollowInfo, UserProfileZip>() {
+        Observable.zip(userInfoObservable, followInfoObservable, getMomentAmount, new Func3<UserInfo, FollowInfo,  MomentAmount, UserProfileZip>() {
+
             @Override
-            public UserProfileZip call(UserInfo userInfo, FollowInfo followInfo) {
+            public UserProfileZip call(UserInfo userInfo, FollowInfo followInfo, MomentAmount amount) {
                 UserProfileZip userInfoEx = new UserProfileZip();
                 userInfoEx.userInfo = userInfo;
                 userInfoEx.followInfo = followInfo;
+                userInfoEx.amount = amount;
 //                userInfoEx.momentList = momentListResponse;
                 return userInfoEx;
             }
-
-
         })
-
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<UserProfileZip>() {
@@ -215,6 +222,7 @@ public class UserProfileActivity extends BaseActivity {
                 @Override
                 public void onNext(UserProfileZip userInfoEx) {
                     mUserInfoEx = userInfoEx;
+                    Logger.t(TAG).d("get user info ex");
                     setupUserProfileHeaderView();
 
                     loadUserMoment(mCurrentCursor, true);
@@ -234,6 +242,7 @@ public class UserProfileActivity extends BaseActivity {
 
 
         mUserName.setText(mUserInfoEx.userInfo.displayName);
+        momentCount.setText(String.valueOf(mUserInfoEx.amount.amount));
 
         if (SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
             mBtnFollow.setText(R.string.edit_profile);
@@ -401,6 +410,7 @@ public class UserProfileActivity extends BaseActivity {
     public class UserProfileZip {
         UserInfo userInfo;
         FollowInfo followInfo;
+        MomentAmount amount;
         MomentListResponse momentList;
     }
 

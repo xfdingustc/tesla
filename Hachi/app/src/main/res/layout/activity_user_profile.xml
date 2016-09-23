@@ -73,18 +73,17 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:textSize="24sp"
+                                android:textColor="@android:color/white"
                                 tools:text="xfding"/>
-
-
 
 
                             <Button
                                 android:id="@+id/btnFollow"
+                                style="@style/ActionButton"
                                 android:layout_width="match_parent"
                                 android:layout_height="24dp"
                                 android:layout_marginRight="24dp"
                                 android:layout_marginTop="16dp"
-                                android:background="@drawable/btn_following"
                                 android:textSize="12sp"
                                 tools:text="Follow"/>
 
@@ -95,6 +94,7 @@
                         android:id="@+id/vUserStats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp">
 
@@ -103,19 +103,21 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:orientation="vertical"
-                            android:visibility="gone">
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/moment_count"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="20sp"
+                                android:textColor="@android:color/white"
+                                tools:text="1167"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1167"
-                                android:textSize="20sp"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="posts"
+                                android:text="@string/moments"
+                                android:textColor="@android:color/white"
                                 android:textSize="12sp"/>
                         </LinearLayout>
 
@@ -133,12 +135,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="20sp"
+                                android:textColor="@android:color/white"
                                 tools:text="888"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/followers"
+                                android:textColor="@android:color/white"
                                 android:textSize="12sp"/>
                         </LinearLayout>
 
@@ -155,12 +159,14 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textSize="20sp"
+                                android:textColor="@android:color/white"
                                 tools:text="485"/>
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/following"
+                                android:textColor="@android:color/white"
                                 android:textSize="12sp"/>
                         </LinearLayout>
                     </LinearLayout>
