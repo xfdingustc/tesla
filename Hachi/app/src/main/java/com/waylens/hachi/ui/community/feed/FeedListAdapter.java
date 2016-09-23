@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
@@ -41,6 +42,7 @@ import org.ocpsoft.prettytime.PrettyTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,7 +85,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public FeedListAdapter(Context context) {
         this.mContext = context;
-        mPrettyTime = new PrettyTime();
+        mPrettyTime = new PrettyTime(Locale.US);
 
         EventBus.getDefault().register(this);
 
@@ -196,11 +198,24 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         String placeInfo = momentEx.moment.place.city + " " + momentEx.moment.place.country;
 
-        if (TextUtils.isEmpty(momentEx.moment.place.city) && TextUtils.isEmpty(momentEx.moment.place.region) && TextUtils.isEmpty(momentEx.moment.place.country)) {
-            holder.place.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
-        } else {
-            holder.place.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)) + " • " + placeInfo.trim());
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
+            VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
+            stringBuilder.append(vehicleInfo.vehicleMaker).append(" ")
+                .append(vehicleInfo.vehicleModel).append(" ")
+                .append(vehicleInfo.vehicleYear);
+            if (moment.withGeoTag) {
+                stringBuilder.append(" • ");
+            }
         }
+        if (moment.withGeoTag) {
+            stringBuilder.append(momentEx.moment.place.city).append(" ")
+                .append(momentEx.moment.place.country).append(" • ");
+
+        }
+        stringBuilder.append(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        holder.place.setText(stringBuilder.toString());
+
 
 
         holder.commentUser1.setVisibility(View.GONE);

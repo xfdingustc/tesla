@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.entities.moment;
 
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.xfdingustc.snipe.utils.ToStringUtils;
 
 import java.util.List;
@@ -34,6 +35,8 @@ public class MomentAbstract {
     public boolean isRecommended;
 
     public String momentType;
+
+    public VehicleInfo momentVehicleInfo;
 
     @Override
     public String toString() {

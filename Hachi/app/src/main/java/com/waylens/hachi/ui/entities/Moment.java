@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.xfdingustc.snipe.utils.ToStringUtils;
 
@@ -88,7 +89,7 @@ public class Moment implements Serializable {
 
     public String country;
 
-    public MomentInfo.VehicleInfo momentVehicleInfo;
+    public VehicleInfo momentVehicleInfo;
 
     public MomentInfo.TimingInfo momentTimingInfo;
 

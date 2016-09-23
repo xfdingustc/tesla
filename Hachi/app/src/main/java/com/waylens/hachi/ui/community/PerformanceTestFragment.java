@@ -4,19 +4,12 @@ package com.waylens.hachi.ui.community;
  * Created by lshw on 16/9/2.
  */
 
-import android.app.Activity;
-import android.content.Context;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,17 +18,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
-
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.response.MakerResponse;
 import com.waylens.hachi.rest.response.ModelResponse;
@@ -53,20 +45,16 @@ import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
-import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.yyydjk.library.DropDownMenu;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,7 +62,6 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -119,7 +106,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private int mLeaderBoardEnd;
 
-    private MomentInfo.VehicleInfo myVehicleInfo;
+    private VehicleInfo myVehicleInfo;
 
     private String mMaker;
 
@@ -600,7 +587,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         String maker = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleMaker;
                         String model = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleModel;
                         if (maker != null && model != null) {
-                            myVehicleInfo = new MomentInfo.VehicleInfo();
+                            myVehicleInfo = new VehicleInfo();
                             myVehicleInfo.vehicleMaker = maker;
                             myVehicleInfo.vehicleModel = model;
                             if ( !mAdapterCarModel.getItem(1).equals(getResources().getString(R.string.same_car)) ) {

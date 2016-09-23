@@ -3,6 +3,7 @@ package com.waylens.hachi.rest.response;
 
 
 
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.ui.entities.User;
 import com.xfdingustc.snipe.utils.ToStringUtils;
 
@@ -69,12 +70,7 @@ public class MomentInfo implements Serializable {
         return ToStringUtils.getString(this);
     }
 
-    public static class VehicleInfo implements Serializable {
-        public String vehicleMaker;
-        public String vehicleModel;
-        public int vehicleYear;
-        public String vehicleDescription;
-    }
+
 
     public static class TimingInfo implements Serializable {
         public long t1;

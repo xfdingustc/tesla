@@ -1,5 +1,6 @@
 package com.waylens.hachi.rest.response;
 
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
 
@@ -21,7 +22,7 @@ public class RaceQueryResponse {
     }
 
     public class UserRankItem {
-        public MomentInfo.VehicleInfo vehicle;
+        public VehicleInfo vehicle;
         public MomentInfo.MomentBasicInfo moment;
         public int rank;
     }
