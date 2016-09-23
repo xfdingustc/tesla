@@ -37,7 +37,8 @@ public abstract class UploadMomentJob extends Job {
     public static final int UPLOAD_ERROR_UPLOAD_VIDEO = 0x103;
     public static final int UPLOAD_ERROR_UPLOAD_THUMBNAIL = 0x104;
     public static final int UPLOAD_ERROR_IO = 0x105;
-    public static final int UPLOAD_ERROR_UPLOAD_EXCEED = 0x106;
+    public static final int UPLOAD_ERROR_MALFORMED_DATA = 0x106;
+    public static final int UPLOAD_ERROR_UPLOAD_EXCEED = 0x107;
 
     protected LocalMoment mLocalMoment;
 

@@ -119,68 +119,46 @@ public class UploadAPI {
     }
 
 
-    public InitUploadResponse initUploadSync(long momentId, InitUploadBody body) {
-        try {
-            Call<InitUploadResponse> initUploadResponseCall = mRetrofit.create(UploadService.class)
-                .initUpload(SessionManager.getInstance().getUserId(), "init", momentId, body);
-            Logger.t(TAG).d("url: " + initUploadResponseCall.request().url().toString());
-            return initUploadResponseCall.execute().body();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public InitUploadResponse initUploadSync(long momentId, InitUploadBody body) throws IOException {
+        Call<InitUploadResponse> initUploadResponseCall = mRetrofit.create(UploadService.class)
+            .initUpload(SessionManager.getInstance().getUserId(), "init", momentId, body);
+        Logger.t(TAG).d("url: " + initUploadResponseCall.request().url().toString());
+        return initUploadResponseCall.execute().body();
     }
 
-    public UploadDataResponse uploadChunkSync(RequestBody requestBody, long momentId, LocalMoment.Segment segment) {
-        try {
-            Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(UploadService.class)
-                .uploadData(SessionManager.getInstance().getUserId(),
-                    "transfer",
-                    momentId,
-                    segment.dataType,
-                    segment.clip.getVdbId(),
-                    segment.uploadURL.realTimeMs,
-                    0,
-                    segment.uploadURL.lengthMs,
-                    requestBody);
-            return uploadDataResponseCall.execute().body();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public UploadDataResponse uploadChunkSync(RequestBody requestBody, long momentId, LocalMoment.Segment segment) throws IOException {
+        Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(UploadService.class)
+            .uploadData(SessionManager.getInstance().getUserId(),
+                "transfer",
+                momentId,
+                segment.dataType,
+                segment.clip.getVdbId(),
+                segment.uploadURL.realTimeMs,
+                0,
+                segment.uploadURL.lengthMs,
+                requestBody);
+        return uploadDataResponseCall.execute().body();
     }
 
 
-    public UploadDataResponse uploadThumbnail(RequestBody requestBody, long momentId) {
-        try {
-            Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(UploadService.class)
-                .uploadData(SessionManager.getInstance().getUserId(),
-                    "transfer",
-                    momentId,
-                    256,
-                    requestBody);
-            return uploadDataResponseCall.execute().body();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public UploadDataResponse uploadThumbnail(RequestBody requestBody, long momentId) throws IOException {
+        Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(UploadService.class)
+            .uploadData(SessionManager.getInstance().getUserId(),
+                "transfer",
+                momentId,
+                256,
+                requestBody);
+        return uploadDataResponseCall.execute().body();
     }
 
 
-    public void finishUpload(long momentId) {
-        try {
-            Call<Void> finishUploadResponseCall = mRetrofit.create(UploadService.class)
-                .finishUpload(SessionManager.getInstance().getUserId(),
-                    "finish",
-                    momentId
-                );
-            finishUploadResponseCall.execute().body();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
+    public void finishUpload(long momentId) throws IOException {
+        Call<Void> finishUploadResponseCall = mRetrofit.create(UploadService.class)
+            .finishUpload(SessionManager.getInstance().getUserId(),
+                "finish",
+                momentId
+            );
+        finishUploadResponseCall.execute().body();
     }
 
 

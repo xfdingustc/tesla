@@ -2,17 +2,20 @@ package com.waylens.hachi.bgjob.upload;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
-import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
+import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.service.upload.UploadAPI;
 import com.waylens.hachi.service.upload.UploadProgressListener;
 import com.waylens.hachi.service.upload.UploadProgressRequestBody;
@@ -140,7 +143,6 @@ public class UploadCachedMomentJob extends UploadMomentJob {
                 UploadDataResponse uploadDataResponse = uploadAPI.uploadChunkSync(newRequest, mLocalMoment.momentID, segment);
 
                 Logger.t(TAG).d("uploadDataResponse: " + uploadDataResponse);
-
             }
 
             // Step3: upload thumbnail;
@@ -161,10 +163,11 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
         } catch (Exception e) {
             e.printStackTrace();
+            setUploadState(UPLOAD_STATE_ERROR, UPLOAD_ERROR_MALFORMED_DATA);
         }
 
-        if (mState != UPLOAD_STATE_CANCELLED || mState != UPLOAD_STATE_ERROR) {
-            Logger.t(TAG).d("finished");
+        if (mState != UPLOAD_STATE_CANCELLED && mState != UPLOAD_STATE_ERROR) {
+            Logger.t(TAG).d("finished " + mState);
             setUploadState(UPLOAD_STATE_FINISHED);
 
             for (LocalMoment.Segment segment : mLocalMoment.mSegments) {
@@ -175,9 +178,12 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
             File file = new File(mLocalMoment.thumbnailPath);
             file.delete();
+            EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
+            Toast.makeText(Hachi.getContext(), R.string.upload_success, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(Hachi.getContext(), R.string.upload_failed, Toast.LENGTH_LONG).show();
         }
 
-        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
 
     }
 
@@ -192,21 +198,16 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         return new RetryConstraint(false);
     }
 
-    private CreateMomentResponse getCloudInfo() {
+    private CreateMomentResponse getCloudInfo() throws IOException {
 
-        try {
-            HachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
-            CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
-            Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
+        HachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
+        CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
+        Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
 
-            CreateMomentResponse response = createMomentResponseCall.execute().body();
+        CreateMomentResponse response = createMomentResponseCall.execute().body();
 
-            return response;
+        return response;
 
-        } catch (Exception e) {
-            Logger.t(TAG).d("failed to fetch moment body");
-            return null;
-        }
     }
 
 

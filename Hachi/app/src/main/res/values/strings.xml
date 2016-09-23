@@ -480,4 +480,6 @@
 	<string name="take_picture">Take picture</string>
 	<string name="write_a_caption">"Write a caption..."</string>
 	<string name="publish">Publish</string>
+	<string name="upload_success">Upload successfully</string>
+	<string name="upload_failed">Upload failed</string>
 </resources>

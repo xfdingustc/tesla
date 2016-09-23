@@ -98,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="8dp"
+                android:textColor="@android:color/white"
                 android:background="@drawable/round_rectangle_background"
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
