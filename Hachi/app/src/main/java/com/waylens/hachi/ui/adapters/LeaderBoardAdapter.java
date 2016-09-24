@@ -160,7 +160,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         double raceTime = 0.0;
         raceTime = getRaceTime(moment);
         NumberFormat formatter = new DecimalFormat("#0.00");
-        holder.raceTime.setText(formatter.format(raceTime) + "s");
+        holder.raceTime.setText(String.format(mContext.getString(R.string.race_time), formatter.format(raceTime)));
         holder.userRank.setText(String.valueOf(mRankings.get(position)));
         if (mRankings.get(position) <= 3 && position < mMoments.size()) {
             Logger.t(TAG).d("position:" + position);

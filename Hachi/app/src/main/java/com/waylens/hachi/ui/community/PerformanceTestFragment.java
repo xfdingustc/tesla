@@ -50,6 +50,8 @@ import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.ui.views.DropDownMenu;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -511,9 +513,13 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             myVehicleInfo = new VehicleInfo();
                             myVehicleInfo.vehicleMaker = maker;
                             myVehicleInfo.vehicleModel = model;
-                            if ( !modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car)) ) {
-                                modelAdapter.insert(getResources().getString(R.string.same_car), 1);
-                                modelAdapter.notifyDataSetChanged();
+                            if ( modelAdapter.getCount() >= 2 ) {
+                                if (!modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
+                                    modelAdapter.insert(1, getResources().getString(R.string.same_car));
+                                    modelAdapter.notifyDataSetChanged();
+                                }
+                            } else {
+                                modelAdapter.add(getResources().getString(R.string.same_car));
                             }
                         }
                     } else {
@@ -585,7 +591,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             default:
                 break;
         }
-        mMyRaceTime.setText(raceTime + "s");
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        mMyRaceTime.setText(String.format(getString(R.string.race_time), formatter.format(raceTime)));
         mMyRank.setText(String.valueOf(userRankItem.rank));
 
         mMyAvatar.setOnClickListener(new View.OnClickListener() {

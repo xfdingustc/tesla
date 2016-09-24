@@ -13,9 +13,10 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.response.GeoInfoResponse;
+import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
-import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.service.upload.UploadAPI;
 import com.waylens.hachi.service.upload.UploadProgressListener;
 import com.waylens.hachi.service.upload.UploadProgressRequestBody;
@@ -76,18 +77,30 @@ public class UploadCachedMomentJob extends UploadMomentJob {
                 Thread.sleep(10000);
             }
         }
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        if (mLocalMoment.withCarInfo && mLocalMoment.vin != null && mLocalMoment.mVehicleMaker == null) {
 
-        if (mLocalMoment.mVehicleMaker == null && mLocalMoment.vin != null) {
-            HachiApi hachiApi = HachiService.createHachiApiService();
             Call<VinQueryResponse> vinQueryResponseCall = hachiApi.queryByVin(mLocalMoment.vin);
             Response<VinQueryResponse> response = vinQueryResponseCall.execute();
-            VinQueryResponse vinQueryResponse = response.body();
-            Logger.t(TAG).d(response.code() + response.message());
-            if (vinQueryResponse != null) {
-                mLocalMoment.mVehicleMaker = vinQueryResponse.makerName;
-                mLocalMoment.mVehicleModel = vinQueryResponse.modelName;
-                mLocalMoment.mVehicleYear = vinQueryResponse.year;
-                Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
+            if (response.isSuccessful()) {
+                VinQueryResponse vinQueryResponse = response.body();
+                Logger.t(TAG).d(response.code() + response.message());
+                if (vinQueryResponse != null) {
+                    mLocalMoment.mVehicleMaker = vinQueryResponse.makerName;
+                    mLocalMoment.mVehicleModel = vinQueryResponse.modelName;
+                    mLocalMoment.mVehicleYear = vinQueryResponse.year;
+                    Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
+                }
+            }
+        }
+
+        if (mLocalMoment.withGeoTag && mLocalMoment.geoInfo.country == null) {
+            Call<GeoInfoResponse> geoInfoResponseCall = hachiApi.getGeoInfo(mLocalMoment.geoInfo.longitude, mLocalMoment.geoInfo.latitude);
+            Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
+            if (response.isSuccessful()) {
+                mLocalMoment.geoInfo.city = response.body().city;
+                mLocalMoment.geoInfo.country = response.body().country;
+                mLocalMoment.geoInfo.region = response.body().region;
             }
         }
 

@@ -30,6 +30,7 @@ import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.GeoInfo;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
@@ -97,6 +98,8 @@ public class ShareActivity extends ClipPlayActivity {
 
     private String mLocation;
 
+    private GeoInfo mGeoInfo = new GeoInfo();
+
     public ArrayList<Long> timingPoints = null;
 
     public String momentType = null;
@@ -106,7 +109,12 @@ public class ShareActivity extends ClipPlayActivity {
     private String[] mSupportedPrivacy;
 
     private boolean mIsFacebookShareChecked = false;
+
     private boolean mIsYoutubeShareChecked = false;
+
+    private boolean mIsLocationChecked = true;
+
+    private boolean mIsVehicleInfoChecked = true;
 
     private LinkedAccounts mLinkedAccounts;
 
@@ -116,6 +124,9 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.user_vehicle_info)
     TextView mTvUserVehicleInfo;
+
+    @BindView(R.id.info_separator)
+    View mInfoSeparator;
 
     @BindView(R.id.geo_info)
     TextView mTvGeoInfo;
@@ -232,23 +243,25 @@ public class ShareActivity extends ClipPlayActivity {
         switch (requestCode) {
             case REQUEST_SHARE_SETTING:
                 if (resultCode == Activity.RESULT_OK) {
-                    boolean isLocationChecked = data.getBooleanExtra(ShareSettingActivity.LOCATION_CHECKED, true);
-                    boolean isVehicleChecked = data.getBooleanExtra(ShareSettingActivity.VEHICLE_CHECKED, true);
+                    mIsLocationChecked = data.getBooleanExtra(ShareSettingActivity.LOCATION_CHECKED, true);
+                    mIsVehicleInfoChecked = data.getBooleanExtra(ShareSettingActivity.VEHICLE_CHECKED, true);
                     mVehicleMaker = data.getStringExtra(ShareSettingActivity.VEHICLE_MAKER);
                     mVehicleModel = data.getStringExtra(ShareSettingActivity.VEHICLE_MODEL);
                     mVehicleYear = data.getIntExtra(ShareSettingActivity.VEHICLE_YEAR, -1);
 
-                    Logger.t(TAG).d("isLocation:" + isLocationChecked + "isVehicle:" + isVehicleChecked);
-                    if (!isLocationChecked) {
+                    Logger.t(TAG).d("isLocation:" + mIsLocationChecked + "isVehicle:" + mIsVehicleInfoChecked);
+                    if (!mIsLocationChecked) {
                         mTvGeoInfo.setVisibility(View.GONE);
+                        mInfoSeparator.setVisibility(View.GONE);
                     }
 
-                    if (isVehicleChecked) {
+                    if (mIsVehicleInfoChecked) {
                         if (mVehicleMaker != null) {
                             mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
                         }
                     } else {
                         mTvVehicleInfo.setVisibility(View.GONE);
+                        mInfoSeparator.setVisibility(View.GONE);
                     }
                     Logger.t(TAG).d("maker:" + mVehicleMaker + mVehicleModel + mVehicleYear);
                 }
@@ -321,10 +334,15 @@ public class ShareActivity extends ClipPlayActivity {
                     GpsData gpsData = (GpsData) rawDataBlock.getRawDataItem(0).data;
                     double lat = gpsData.coord.lat;
                     double lng = gpsData.coord.lng;
+                    mGeoInfo.latitude = lat;
+                    mGeoInfo.longitude = lng;
                     Call<GeoInfoResponse> geoInfoResponseCall = mHachi.getGeoInfo(lng, lat);
                     Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
                     if (response.isSuccessful()) {
                         mLocation = response.body().city + ", " +response.body().country;
+                        mGeoInfo.city = response.body().city;
+                        mGeoInfo.country = response.body().country;
+                        mGeoInfo.region = response.body().region;
                     }
                 } catch (NullPointerException e) {
                     Logger.t(TAG).d(e.getMessage());
@@ -529,15 +547,24 @@ public class ShareActivity extends ClipPlayActivity {
                 localMoment.momentType = "NORMAL_SINGLE";
             }
         }
-        if (mVehicleMaker != null) {
+        if (mIsVehicleInfoChecked) {
+            localMoment.withCarInfo = true;
             localMoment.mVehicleMaker = mVehicleMaker;
             localMoment.mVehicleModel = mVehicleModel;
             localMoment.mVehicleYear = mVehicleYear;
-        } else {
             if (mVin != null) {
                 localMoment.vin = mVin.substring(0, 8) + mVin.substring(9, 11);
             }
+        } else {
+            localMoment.withCarInfo = false;
         }
+        if (mIsLocationChecked) {
+            localMoment.withGeoTag = true;
+            localMoment.geoInfo = mGeoInfo;
+        } else {
+            localMoment.withGeoTag = false;
+        }
+        ToStringUtils.getString(localMoment);
         BgJobHelper.uploadMoment(localMoment);
         UploadingMomentActivity.launch(this);
         finish();

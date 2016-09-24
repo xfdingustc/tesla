@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.entities;
 
 
 import com.waylens.hachi.bgjob.upload.UploadServer;
+import com.waylens.hachi.rest.body.GeoInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.xfdingustc.snipe.utils.DateTime;
 import com.xfdingustc.snipe.vdb.Clip;
@@ -62,6 +63,12 @@ public class LocalMoment implements Serializable {
     public boolean cache;
 
     public String vin;
+
+    public boolean withGeoTag;
+
+    public boolean withCarInfo;
+
+    public GeoInfo geoInfo;
 
     public LocalMoment(String title, String momentType) {
         this.title = title;

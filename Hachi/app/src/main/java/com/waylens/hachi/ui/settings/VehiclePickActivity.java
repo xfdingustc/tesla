@@ -299,7 +299,7 @@ public class VehiclePickActivity extends BaseActivity {
                     intent.putExtra(VEHICLE_MAKER, vehicleMaker);
                     intent.putExtra(VEHICLE_MODEL, vehicleModel);
                     intent.putExtra(VEHICLE_YEAR, vehicleYear);
-                    setResult(RESULT_CANCELED, intent);
+                    setResult(RESULT_OK, intent);
                     finish();
                 }
             })

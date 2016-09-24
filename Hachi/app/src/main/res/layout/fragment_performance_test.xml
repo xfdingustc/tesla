@@ -124,9 +124,7 @@
                     android:id="@+id/my_name"
                     style="@style/HachiTextViewSubHeader"
                     android:layout_width="match_parent"
-                    android:layout_height="20dp"
-                    android:ellipsize="end"
-                    android:maxLines="2" />
+                    android:layout_height="20dp" />
             </LinearLayout>
 
             <TextView

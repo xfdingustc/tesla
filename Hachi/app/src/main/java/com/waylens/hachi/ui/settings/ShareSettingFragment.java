@@ -136,7 +136,7 @@ public class ShareSettingFragment extends PreferenceFragment{
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_PICKCAR:
-                if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
+                if (resultCode == Activity.RESULT_OK) {
                     mShareMaker = data.getStringExtra(VehiclePickActivity.VEHICLE_MAKER);
                     mShareModel = data.getStringExtra(VehiclePickActivity.VEHICLE_MODEL);
                     mShareYear = data.getIntExtra(VehiclePickActivity.VEHICLE_YEAR, 0);

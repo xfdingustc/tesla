@@ -482,4 +482,5 @@
 	<string name="publish">Publish</string>
 	<string name="upload_success">Upload successfully</string>
 	<string name="upload_failed">Upload failed</string>
+	<string name="race_time">%1$s</string>
 </resources>

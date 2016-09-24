@@ -83,7 +83,7 @@ public class ListDropDownAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void insert(String item, int index) {
+    public void insert(int index, String item) {
         synchronized (mLock) {
             list.add(index, item);
         }

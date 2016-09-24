@@ -43,6 +43,10 @@ public class CreateMomentBody {
 
     public String momentType = null;
 
+    public boolean withGeoTag;
+
+    public GeoInfo geoInfo;
+
     public CreateMomentBody() {
 
     }
@@ -72,12 +76,17 @@ public class CreateMomentBody {
                 momentType = "NORMAL_MULTI";
             }
         }
-        if (localMoment.mVehicleMaker != null) {
+        if (localMoment.withCarInfo) {
             vehicleMaker = localMoment.mVehicleMaker;
             vehicleModel = localMoment.mVehicleModel;
             vehicleYear = localMoment.mVehicleYear;
         }
         vehicleDesc = localMoment.mVehicleDesc;
+
+        withGeoTag = localMoment.withGeoTag;
+        if (withGeoTag) {
+            geoInfo = localMoment.geoInfo;
+        }
 
 //        Logger.d("after overlay setting");
 
@@ -95,9 +104,6 @@ public class CreateMomentBody {
         if (localMoment.isYoutubeShare) {
             shareProviders.add(SocialProvider.YOUTUBE);
         }
-
-
-
     }
 
     public class TimingPointsList {
@@ -113,4 +119,5 @@ public class CreateMomentBody {
     public String toString() {
         return ToStringUtils.getString(this);
     }
+
 }

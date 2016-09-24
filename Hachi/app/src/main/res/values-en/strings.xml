@@ -475,5 +475,5 @@
 	<string name="choose_clips">Choose clips</string>
 	<string name="all_car">All car</string>
 	<string name="same_car">Same car with mine</string>
->>>>>>> refine performance test page
+	<string name="race_time">%1$s</string>
 </resources>
