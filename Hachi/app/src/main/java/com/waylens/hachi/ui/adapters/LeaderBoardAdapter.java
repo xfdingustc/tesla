@@ -53,6 +53,8 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private List<Moment> mMoments = new ArrayList<>();
 
+    private List<Integer> mRankings = new ArrayList<>();
+
     private final Context mContext;
 
     private int mRaceType;
@@ -71,6 +73,22 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         mMoments = moments;
         mRaceType = raceType;
         mTestMode = testMode;
+        double raceTime = -1;
+        int rank = 0;
+        if (moments == null) {
+            return;
+        }
+        for (int i = 0; i < mMoments.size(); i++) {
+            Moment moment = mMoments.get(i);
+            double curTime = getRaceTime(moment);
+            if (curTime > raceTime) {
+                rank = i + 1;
+                mRankings.add(i, rank);
+                raceTime = curTime;
+            } else if (curTime == raceTime){
+                mRankings.add(i, rank);
+            }
+        }
         notifyDataSetChanged();
     }
 
@@ -140,42 +158,11 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.vehicleInfo.setText("");
         }
         double raceTime = 0.0;
-        switch (mRaceType) {
-            case PerformanceTestFragment.RACE_TYPE_30MPH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t3_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t3_1) / 1000;
-                }
-                break;
-            case PerformanceTestFragment.RACE_TYPE_50KMH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t4_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t4_1) / 1000;
-                }
-                break;
-            case PerformanceTestFragment.RACE_TYPE_60MPH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t5_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t5_1) / 1000;
-                }
-                break;
-            case PerformanceTestFragment.RACE_TYPE_100KMH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t6_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t6_1) / 1000;
-                }
-                break;
-            default:
-                break;
-        }
+        raceTime = getRaceTime(moment);
         NumberFormat formatter = new DecimalFormat("#0.00");
         holder.raceTime.setText(formatter.format(raceTime) + "s");
-        holder.userRank.setText(String.valueOf(position + 1));
-        if (position >= 0 && position <= 2 && position < mMoments.size()) {
+        holder.userRank.setText(String.valueOf(mRankings.get(position)));
+        if (mRankings.get(position) <= 3 && position < mMoments.size()) {
             Logger.t(TAG).d("position:" + position);
             holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape_top));
         } else {
@@ -230,6 +217,43 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             return mMoments.size();
         }
+    }
+
+    public double getRaceTime(Moment moment) {
+        double raceTime = 0.0;
+        switch (mRaceType) {
+            case PerformanceTestFragment.RACE_TYPE_30MPH:
+                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+                    raceTime = (double) (moment.momentTimingInfo.t3_2) / 1000;
+                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                    raceTime = (double) (moment.momentTimingInfo.t3_1) / 1000;
+                }
+                break;
+            case PerformanceTestFragment.RACE_TYPE_50KMH:
+                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+                    raceTime = (double) (moment.momentTimingInfo.t4_2) / 1000;
+                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                    raceTime = (double) (moment.momentTimingInfo.t4_1) / 1000;
+                }
+                break;
+            case PerformanceTestFragment.RACE_TYPE_60MPH:
+                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+                    raceTime = (double) (moment.momentTimingInfo.t5_2) / 1000;
+                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                    raceTime = (double) (moment.momentTimingInfo.t5_1) / 1000;
+                }
+                break;
+            case PerformanceTestFragment.RACE_TYPE_100KMH:
+                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+                    raceTime = (double) (moment.momentTimingInfo.t6_2) / 1000;
+                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                    raceTime = (double) (moment.momentTimingInfo.t6_1) / 1000;
+                }
+                break;
+            default:
+                break;
+        }
+        return raceTime;
     }
 
 

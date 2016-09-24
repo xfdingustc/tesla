@@ -149,6 +149,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         for (int i = 0; i < response.length(); i++) {
             try {
                 final FirmwareInfo firmwareInfo = FirmwareInfo.fromJson(response.getJSONObject(i));
+                Logger.t(TAG).d(response.getJSONObject(i).toString());
                 if (firmwareInfo.getName().equals(mVdtCamera.getHardwareName())) {
                     Logger.t(TAG).d("Found our hardware");
                     FirmwareVersion versionFromServer = new FirmwareVersion(firmwareInfo.getVersion());

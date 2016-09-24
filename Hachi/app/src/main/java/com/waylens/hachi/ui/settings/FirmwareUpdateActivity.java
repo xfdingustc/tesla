@@ -133,6 +133,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
 
     private void doDownloadFirmware() {
 //        InetDownloadService.start(this, mFirmwareInfo.getUrl());
+        Logger.t(TAG).d(mFirmwareInfo.getUrl());
         DownloadServiceRx.start(this, mFirmwareInfo.getUrl(), DownloadHelper.getFirmwareDownloadPath());
         mTvBottomText.setText(R.string.download_firmware);
     }
