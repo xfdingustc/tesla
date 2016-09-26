@@ -28,6 +28,7 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
+import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
@@ -275,13 +276,18 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            Logger.t(TAG).d("picture: " + momentEx.pictureUrls.get(0).toString());
             if (momentEx.pictureUrls != null && !momentEx.pictureUrls.isEmpty()) {
                 Glide.with(mContext)
-                    .load(momentEx.pictureUrls.get(0).smallThumbnail)
+                    .load(momentEx.pictureUrls.get(0).original)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .crossFade()
                     .into(holder.videoCover);
             }
             holder.videoDuration.setVisibility(View.GONE);
-            holder.videoCover.setOnClickListener(null);
+            holder.videoCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PhotoViewActivity.launch((BaseActivity)mContext, momentEx.pictureUrls.get(0).original);
+                }
+            });
         } else {
             Glide.with(mContext)
                 .load(moment.thumbnail)
