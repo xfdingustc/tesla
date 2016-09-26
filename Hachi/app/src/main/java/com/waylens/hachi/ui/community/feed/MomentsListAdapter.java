@@ -27,6 +27,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
+import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
@@ -203,7 +204,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         });
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
-            List<MomentPicture> momentPictures = moment.pictureUrls;
+            final List<MomentPicture> momentPictures = moment.pictureUrls;
             if (!momentPictures.isEmpty()) {
                 Logger.t(TAG).d("picture: " + momentPictures.get(0).toString());
                 Glide.with(mContext)
@@ -212,7 +213,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .crossFade()
                     .into(holder.videoCover);
             }
-            holder.videoCover.setOnClickListener(null);
+            holder.videoCover.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PhotoViewActivity.launch((BaseActivity)mContext, momentPictures.get(0).original);
+                }
+            });
             holder.videoDuration.setVisibility(View.GONE);
 
         } else {

@@ -129,8 +129,9 @@
             android:name=".ui.settings.CameraSettingActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.community.PublishActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.community.PublishActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.SpaceInfoActivity"
@@ -228,6 +229,10 @@
 
         <activity
             android:name=".ui.settings.WaylensCloudActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.community.PhotoViewActivity"
             android:screenOrientation="portrait"/>
 
         <activity
