@@ -5,15 +5,20 @@ import android.support.annotation.Nullable;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
+import com.googlecode.javacv.CanvasFrame;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 
+import java.io.IOException;
+
 import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by Xiaofei on 2016/6/14.
@@ -23,6 +28,7 @@ public class ReportJob extends Job {
     public static final int REPORT_TYPE_MOMENT = 0;
     public static final int REPORT_TYPE_COMMENT = 1;
     public static final int REPORT_TYPE_USER = 2;
+    public static final int REPORT_TYPE_FEEDBACK = 4;
 
     private int mtype;
     private Object mReportBody;
@@ -59,6 +65,12 @@ public class ReportJob extends Job {
                 ReportUserBody reportUserBody = (ReportUserBody) mReportBody;
                 response = hachiApi.report(reportUserBody);
                 Logger.t(TAG).d("response: " + response.execute().body().result);
+                break;
+            case REPORT_TYPE_FEEDBACK:
+                ReportFeedbackBody reportFeedbackBody = (ReportFeedbackBody) mReportBody;
+                response = hachiApi.report(reportFeedbackBody);
+                Response<SimpleBoolResponse> simpleBoolResponse = response.execute();
+                Logger.t(TAG).d("response: " + simpleBoolResponse.message());
                 break;
             default:
                 break;

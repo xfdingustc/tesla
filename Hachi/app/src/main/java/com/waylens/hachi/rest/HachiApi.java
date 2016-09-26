@@ -1,13 +1,13 @@
 package com.waylens.hachi.rest;
 
 import com.waylens.hachi.rest.bean.MomentAmount;
-import com.waylens.hachi.rest.bean.MomentSummary;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
+import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.body.RepostBody;
@@ -128,6 +128,9 @@ public interface HachiApi {
 
     @POST("/api/reports")
     Call<SimpleBoolResponse> report(@Body ReportUserBody reportBody);
+
+    @POST("/api/reports")
+    Call<SimpleBoolResponse> report(@Body ReportFeedbackBody reportBody);
 
     @POST("/api/users/signin")
     Call<SignInResponse> signin(@Body SignInPostBody signInPostBody);

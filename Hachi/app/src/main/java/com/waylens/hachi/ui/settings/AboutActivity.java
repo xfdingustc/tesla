@@ -43,6 +43,11 @@ public class AboutActivity extends BaseActivity{
         VersionCheckActivity.launch(this);
     }
 
+    @OnClick(R.id.feed_back)
+    public void onFeedbackClicked() {
+        FeedbackActivity.launch(this);
+    }
+
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, AboutActivity.class);

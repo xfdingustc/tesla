@@ -117,7 +117,43 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="48dp"/>
 
+    <LinearLayout
+        android:id="@+id/feed_back"
+        style="@style/SelectableRippleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:text="Feedback"
+                android:textColor="?attr/appTextColorPrimary"
+                android:textSize="18sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        style="@style/HachiSepatator"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"></View>
 
     <LinearLayout
         android:id="@+id/version"
@@ -144,9 +180,7 @@
                 android:textColor="?attr/appTextColorPrimary"
                 android:textSize="18sp"/>
 
-
         </LinearLayout>
-
 
     </LinearLayout>
 

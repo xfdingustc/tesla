@@ -5,7 +5,7 @@ package com.waylens.hachi.rest.body;
  */
 public class ReportCommentBody {
     public long commentID;
-//    public long userID;
+    //public long userID;
     public String reason;
     public String detail;
 }

@@ -324,8 +324,6 @@ public class UserProfileActivity extends BaseActivity {
 
         ReportJob job = new ReportJob(reportUserBody, ReportJob.REPORT_TYPE_USER);
         jobManager.addJobInBackground(job);
-
-
     }
 
 
