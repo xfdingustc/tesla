@@ -19,7 +19,6 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.bean.VehicleInfo;
@@ -196,7 +195,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.userName.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         }
 
-        String placeInfo = momentEx.moment.place.city + " " + momentEx.moment.place.country;
 
         StringBuilder stringBuilder = new StringBuilder();
         if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
@@ -208,14 +206,12 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 stringBuilder.append(" • ");
             }
         }
-        if (moment.withGeoTag) {
-            stringBuilder.append(momentEx.moment.place.city).append(" ")
-                .append(momentEx.moment.place.country).append(" • ");
-
+        if (moment.withGeoTag && !TextUtils.isEmpty(momentEx.moment.place.toString())) {
+            stringBuilder.append(momentEx.moment.place.toString()).append(" • ");
         }
+
         stringBuilder.append(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         holder.place.setText(stringBuilder.toString());
-
 
 
         holder.commentUser1.setVisibility(View.GONE);
@@ -312,7 +308,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             }
         });
-
 
 
         if (moment.isLiked) {
