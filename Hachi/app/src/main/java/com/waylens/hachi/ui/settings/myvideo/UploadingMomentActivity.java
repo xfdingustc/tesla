@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
@@ -17,8 +18,8 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2016/9/12.
  */
-public class UploadingMomentActivity extends BaseActivity {
-
+public class UploadingMomentActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
+    private static final String TAG = UploadingMomentActivity.class.getSimpleName();
     private UploadItemAdapter mUploadItemAdapter;
 
     private static final String EXTRA_AUTO_EXIT = "extra.auto.exit";
@@ -49,25 +50,26 @@ public class UploadingMomentActivity extends BaseActivity {
     protected void init() {
         super.init();
         mAutoExit = getIntent().getBooleanExtra(EXTRA_AUTO_EXIT, false);
-        UploadManager.getManager().addOnUploadJobStateChangedListener(new UploadManager.OnUploadJobStateChangeListener() {
-            @Override
-            public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-
-            }
-
-            @Override
-            public void onUploadJobAdded() {
-
-            }
-
-            @Override
-            public void onUploadJobRemoved() {
-                if (mAutoExit && mUploadItemAdapter.getItemCount() == 0) {
-                    finish();
-                }
-            }
-        });
+        UploadManager.getManager().addOnUploadJobStateChangedListener(this);
         initViews();
+    }
+
+    @Override
+    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
+
+    }
+
+    @Override
+    public void onUploadJobAdded() {
+
+    }
+
+    @Override
+    public void onUploadJobRemoved() {
+        Logger.t(TAG).d("auto exit: " + mAutoExit + " count: " + mUploadItemAdapter);
+        if (mAutoExit && mUploadItemAdapter.getItemCount() == 0) {
+            finish();
+        }
     }
 
     private void initViews() {

@@ -487,4 +487,5 @@
 	<string name="feedback_hint">Text here</string>
 	<string name="feedback_empty">Please input your feedback.</string>
 	<string name="feedback_success">Thanks for your feedback.</string>
+	<string name="moment_upload_sucess">Moment has been uploaded</string>
 </resources>

@@ -4,9 +4,9 @@
                                     xmlns:tools="http://schemas.android.com/tools"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"
                                     android:layout_marginLeft="8dp"
                                     android:layout_marginRight="8dp"
+                                    android:layout_marginTop="8dp"
                                     android:background="@color/windowBackground"
                                     android:orientation="vertical"
                                     app:cardCornerRadius="2dp">
@@ -24,7 +24,6 @@
             android:layout_height="40dp"
             android:layout_margin="16dp"
             tools:src="@drawable/menu_profile_photo_default"/>
-
 
 
         <TextView
@@ -60,8 +59,8 @@
             android:layout_alignBottom="@id/user_avatar"
             android:layout_below="@id/user_name"
             android:layout_gravity="center_vertical"
-            android:layout_toRightOf="@id/user_avatar"
             android:layout_marginRight="16dp"
+            android:layout_toRightOf="@id/user_avatar"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/app_text_color_secondary"
@@ -88,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/icon_recommend_for_you"
-               />
+                />
 
 
             <TextView
@@ -98,8 +97,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="8dp"
-                android:textColor="@android:color/white"
                 android:background="@drawable/round_rectangle_background"
+                android:textColor="@android:color/white"
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
@@ -108,9 +107,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/video_fragment_container"
+            android:orientation="horizontal"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:orientation="horizontal">
+            android:paddingRight="8dp">
 
             <ImageButton
                 android:id="@+id/btn_like"
@@ -152,7 +151,6 @@
                 tools:text="999"/>
 
 
-
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
@@ -171,11 +169,12 @@
                 android:id="@+id/btn_follow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/style_color_accent"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
                 android:text="@string/follow"
                 android:textAllCaps="true"
-                android:padding="8dp"
-                android:layout_gravity="center_vertical"/>
+                android:textColor="@color/style_color_accent"
+                android:visibility="gone"/>
 
         </LinearLayout>
 
@@ -197,7 +196,7 @@
             android:layout_marginTop="8dp"
             android:textStyle="bold"
             tools:text="xfding"
-            tools:visibility="gone"/>
+            />
 
         <TextView
             android:id="@+id/comment_content1"
@@ -212,7 +211,7 @@
             android:maxLines="1"
             android:textColor="@color/app_text_color_secondary"
             tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
-            tools:visibility="gone"/>
+            />
 
 
         <TextView
@@ -223,7 +222,7 @@
             android:layout_marginLeft="16dp"
             android:textStyle="bold"
             tools:text="xfding"
-            tools:visibility="gone"/>
+            />
 
         <TextView
             android:id="@+id/comment_content2"
@@ -237,7 +236,7 @@
             android:maxLines="1"
             android:textColor="@color/app_text_color_secondary"
             tools:text="beatiful"
-            tools:visibility="gone"/>
+            />
 
         <TextView
             android:id="@+id/comment_user3"
@@ -247,7 +246,7 @@
             android:layout_marginLeft="16dp"
             android:textStyle="bold"
             tools:text="xfding"
-            tools:visibility="gone"/>
+            />
 
         <TextView
             android:id="@+id/comment_content3"
@@ -260,8 +259,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/app_text_color_secondary"
-            tools:text="beatiful"
-            tools:visibility="gone"/>
+            tools:text="beatiful"/>
 
     </RelativeLayout>
 

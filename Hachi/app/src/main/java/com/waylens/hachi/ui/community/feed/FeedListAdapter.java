@@ -231,19 +231,19 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (moment.isRecommended) {
             holder.recommend.setVisibility(View.VISIBLE);
-            if (!momentEx.owner.isMyFollowing) {
-                holder.btnFollow.setVisibility(View.VISIBLE);
-                holder.btnFollow.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        BgJobHelper.followUser(momentEx.owner.userID, true);
-                        holder.btnFollow.setVisibility(View.GONE);
-                        momentEx.owner.isMyFollowing = true;
-                    }
-                });
-            } else {
-                holder.btnFollow.setVisibility(View.GONE);
-            }
+//            if (!momentEx.owner.isMyFollowing) {
+//                holder.btnFollow.setVisibility(View.VISIBLE);
+//                holder.btnFollow.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        BgJobHelper.followUser(momentEx.owner.userID, true);
+//                        holder.btnFollow.setVisibility(View.GONE);
+//                        momentEx.owner.isMyFollowing = true;
+//                    }
+//                });
+//            } else {
+//                holder.btnFollow.setVisibility(View.GONE);
+//            }
 
         } else {
             holder.recommend.setVisibility(View.GONE);
@@ -280,14 +280,17 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .crossFade()
                     .into(holder.videoCover);
+                holder.videoCover.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PhotoViewActivity.launch((BaseActivity)mContext, momentEx.pictureUrls.get(0).original);
+                    }
+                });
+            } else {
+                holder.videoCover.setOnClickListener(null);
             }
             holder.videoDuration.setVisibility(View.GONE);
-            holder.videoCover.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PhotoViewActivity.launch((BaseActivity)mContext, momentEx.pictureUrls.get(0).original);
-                }
-            });
+
         } else {
             Glide.with(mContext)
                 .load(moment.thumbnail)

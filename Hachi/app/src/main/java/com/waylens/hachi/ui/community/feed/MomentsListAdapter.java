@@ -212,13 +212,16 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .crossFade()
                     .into(holder.videoCover);
+                holder.videoCover.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PhotoViewActivity.launch((BaseActivity)mContext, momentPictures.get(0).original);
+                    }
+                });
+            } else {
+                holder.videoCover.setOnClickListener(null);
             }
-            holder.videoCover.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    PhotoViewActivity.launch((BaseActivity)mContext, momentPictures.get(0).original);
-                }
-            });
+
             holder.videoDuration.setVisibility(View.GONE);
 
         } else {
