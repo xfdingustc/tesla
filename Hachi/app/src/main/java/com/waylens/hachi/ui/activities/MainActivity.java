@@ -131,13 +131,13 @@ public class MainActivity extends BaseActivity {
         mMenuId2Tab.put(R.id.moments, TAB_TAG_MOMENTS);
         mMenuId2Tab.put(R.id.setting, TAB_TAG_SETTINGS);
         mMenuId2Tab.put(R.id.video, TAB_TAG_VIDEO);
-        mMenuId2Tab.put(R.id.leaderBoard, TAB_TAG_LEADERBOARD);
+        //mMenuId2Tab.put(R.id.leaderBoard, TAB_TAG_LEADERBOARD);
         mMenuId2Tab.put(R.id.liveView, TAB_TAG_LIVE_VIEW);
 
         mTab2MenuId.put(TAB_TAG_MOMENTS, R.id.moments);
         mTab2MenuId.put(TAB_TAG_SETTINGS, R.id.setting);
         mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
-        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderBoard);
+        //mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderBoard);
         mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.liveView);
 
         initViews();
