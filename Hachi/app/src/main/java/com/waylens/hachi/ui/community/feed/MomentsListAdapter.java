@@ -206,16 +206,25 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
             final List<MomentPicture> momentPictures = moment.pictureUrls;
             if (!momentPictures.isEmpty()) {
+                MomentPicture momentPicture = momentPictures.get(0);
+                final String cover;
+                if (!TextUtils.isEmpty(momentPicture.bigThumbnail)) {
+                    cover = momentPicture.bigThumbnail;
+                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)){
+                    cover = momentPicture.smallThumbnail;
+                } else {
+                    cover = momentPicture.original;
+                }
                 Logger.t(TAG).d("picture: " + momentPictures.get(0).toString());
                 Glide.with(mContext)
-                    .load(momentPictures.get(0).original)
+                    .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .crossFade()
                     .into(holder.videoCover);
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PhotoViewActivity.launch((BaseActivity)mContext, momentPictures.get(0).original);
+                        PhotoViewActivity.launch((BaseActivity)mContext, cover);
                     }
                 });
             } else {

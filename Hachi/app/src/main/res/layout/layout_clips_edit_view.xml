@@ -21,10 +21,10 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:minHeight="2dp"
-            custom:connectingLineColor="@color/style_color_primary"
+            custom:connectingLineColor="@color/style_color_accent"
             custom:rangeBarColor="@color/app_primary_text"
-            custom:selectorColor="@color/style_color_primary"
-            custom:pinColor="@color/style_color_primary"
+            custom:selectorColor="@color/style_color_accent"
+            custom:pinColor="@color/style_color_accent"
             custom:tickHeight="0dp"
             custom:tickInterval="1"/>
 

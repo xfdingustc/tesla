@@ -31,6 +31,7 @@ import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 
@@ -275,15 +276,24 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
 //            Logger.t(TAG).d("picture: " + momentEx.pictureUrls.get(0).toString());
             if (momentEx.pictureUrls != null && !momentEx.pictureUrls.isEmpty()) {
+                MomentPicture momentPicture = momentEx.pictureUrls.get(0);
+                final String cover;
+                if (!TextUtils.isEmpty(momentPicture.bigThumbnail)) {
+                    cover = momentPicture.bigThumbnail;
+                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)){
+                    cover = momentPicture.smallThumbnail;
+                } else {
+                    cover = momentPicture.original;
+                }
                 Glide.with(mContext)
-                    .load(momentEx.pictureUrls.get(0).original)
+                    .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .crossFade()
                     .into(holder.videoCover);
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PhotoViewActivity.launch((BaseActivity)mContext, momentEx.pictureUrls.get(0).original);
+                        PhotoViewActivity.launch((BaseActivity)mContext, cover);
                     }
                 });
             } else {

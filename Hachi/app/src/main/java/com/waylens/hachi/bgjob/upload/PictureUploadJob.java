@@ -110,15 +110,19 @@ public class PictureUploadJob extends UploadMomentJob {
 
             Logger.t(TAG).d("response: " + uploadData);
 
+            if (uploadData.result == 0) {
+                FinishUploadBody uploadBody = new FinishUploadBody();
+                uploadBody.momentID = response.momentID;
+                uploadBody.pictureNum = 1;
+                Call<SimpleBoolResponse> finishUploadResponse = hachiApi.finishUploadPictureMoment(uploadBody);
+                finishUploadResponse.execute();
+                EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
+            } else {
+                setUploadState(UPLOAD_STATE_ERROR, UPLOAD_ERROR_MALFORMED_DATA);
+            }
 
-            FinishUploadBody uploadBody = new FinishUploadBody();
-            uploadBody.momentID = response.momentID;
-            uploadBody.pictureNum = 1;
-            Call<SimpleBoolResponse> finishUploadResponse = hachiApi.finishUploadPictureMoment(uploadBody);
-            finishUploadResponse.execute();
 
 
-            EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
         } catch (Exception e) {
             e.printStackTrace();
         }
