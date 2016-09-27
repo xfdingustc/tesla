@@ -1,6 +1,8 @@
 package com.waylens.hachi.bgjob.upload;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -28,6 +30,7 @@ import com.waylens.hachi.utils.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -79,7 +82,17 @@ public class PictureUploadJob extends UploadMomentJob {
             CreateMomentResponse response = createMomentResponseCall.execute().body();
             Logger.t(TAG).d("response: " + response.uploadServer.toString());
 
-            String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(new File(mPictureUrl)));
+            File cacheDir = Hachi.getContext().getExternalCacheDir();
+            File jpeg = new File(cacheDir, StringUtils.getFileName(mPictureUrl) + ".jpg");
+
+            FileOutputStream out = new FileOutputStream(jpeg);
+            Bitmap originBitmap = BitmapFactory.decodeFile(mPictureUrl);
+            if (originBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                out.flush();
+                out.close();
+            }
+
+            String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(jpeg));
 
             SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss", Locale.US);
             String date = format.format(System.currentTimeMillis()) + " GMT";
@@ -96,7 +109,7 @@ public class PictureUploadJob extends UploadMomentJob {
 
             UploadAPI uploadAPI = new UploadAPI(response.uploadServer.url + "/", date, authorization, -1);
 
-            RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), new File(mPictureUrl));
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), jpeg);
             UploadProgressRequestBody progressRequestBody = new UploadProgressRequestBody(requestBody, new UploadProgressListener() {
                 @Override
                 public void update(long bytesWritten, long contentLength, boolean done) {
@@ -110,7 +123,7 @@ public class PictureUploadJob extends UploadMomentJob {
 
             Logger.t(TAG).d("response: " + uploadData);
 
-            if (uploadData.result == 0) {
+            if (uploadData.result == 2) {
                 FinishUploadBody uploadBody = new FinishUploadBody();
                 uploadBody.momentID = response.momentID;
                 uploadBody.pictureNum = 1;
@@ -121,6 +134,10 @@ public class PictureUploadJob extends UploadMomentJob {
                 setUploadState(UPLOAD_STATE_ERROR, UPLOAD_ERROR_MALFORMED_DATA);
             }
 
+
+            if (jpeg != null) {
+                jpeg.delete();
+            }
 
 
         } catch (Exception e) {
