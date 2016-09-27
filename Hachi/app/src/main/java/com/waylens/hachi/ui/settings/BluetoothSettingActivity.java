@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -20,9 +22,12 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.xfdingustc.rxutils.library.RxBus;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 import com.xfdingustc.snipe.control.BtDevice;
 import com.xfdingustc.snipe.control.VdtCamera;
 import com.xfdingustc.snipe.control.events.BluetoothEvent;
+import com.xfdingustc.snipe.control.events.CameraStateChangeEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,6 +39,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/5/11.
@@ -48,11 +55,25 @@ public class BluetoothSettingActivity extends BaseActivity {
     private BtDeviceListAdapter mObdDeviceListAdapter;
     private BtDeviceListAdapter mRemoteCtrlDeviceListAdapter;
 
+    private Subscription mCameraStateChangeEventSubscription;
+
     @BindView(R.id.obd_name)
     TextView mObdName;
 
+    @BindView(R.id.obd_mac)
+    TextView mObdMac;
+
+    @BindView(R.id.obd_status)
+    TextView mObdStatus;
+
     @BindView(R.id.remote_ctrl_name)
     TextView mRemoteCtrlName;
+
+    @BindView(R.id.remote_ctrl_mac)
+    TextView mRemoteCtrlMac;
+
+    @BindView(R.id.remote_ctrl_status)
+    TextView mRemoteCtrlStatus;
 
     @BindView(R.id.scan_mask)
     FrameLayout mScanMask;
@@ -72,30 +93,39 @@ public class BluetoothSettingActivity extends BaseActivity {
     @BindView(R.id.scan_result)
     LinearLayout mScanrResult;
 
+    @BindView(R.id.obd_scan_result)
+    LinearLayout mObdScanResult;
+
+    @BindView(R.id.rc_scan_result)
+    LinearLayout mRcScanResult;
 
 
-    @OnClick(R.id.obd_name)
+    @OnClick(R.id.obd_content)
     public void onObdNameClicked() {
-        if (mVdtCamera.getObdDevice().getState() == BtDevice.BT_DEVICE_STATE_ON) {
+        BtDevice obdDevice = mVdtCamera.getObdDevice();
+        if (!TextUtils.isEmpty(obdDevice.getMac())) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title(R.string.unbind_bt_device)
-                .positiveText(android.R.string.ok)
-                .negativeText(android.R.string.cancel)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        doUnbindDevice(mVdtCamera.getObdDevice());
-                    }
-                }).show();
-
+                    .title(R.string.unbind_obd_device)
+                    .content(obdDevice.getName() + " " + obdDevice.getMac())
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            doUnbindDevice(mVdtCamera.getObdDevice());
+                        }
+                    }).show();
         }
+
     }
 
-    @OnClick(R.id.remote_ctrl_name)
+    @OnClick(R.id.rc_content)
     public void onRemoteCtrlNameClicked() {
-        if (mVdtCamera.getRemoteCtrlDevice().getState() == BtDevice.BT_DEVICE_STATE_ON) {
+        BtDevice remoteCtrlDevice = mVdtCamera.getRemoteCtrlDevice();
+        if (!TextUtils.isEmpty(remoteCtrlDevice.getMac())) {
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .title(R.string.unbind_bt_device)
+                    .title(R.string.unbind_rc_device)
+                    .content(remoteCtrlDevice.getName() + remoteCtrlDevice.getMac())
                     .positiveText(R.string.ok)
                     .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
@@ -104,10 +134,7 @@ public class BluetoothSettingActivity extends BaseActivity {
                             doUnbindDevice(mVdtCamera.getRemoteCtrlDevice());
                         }
                     }).show();
-
-
         }
-
     }
 
     @OnClick(R.id.bt_switch)
@@ -136,7 +163,8 @@ public class BluetoothSettingActivity extends BaseActivity {
         if (mVdtCamera == null) {
             return;
         }
-        mScanrResult.setVisibility(View.GONE);
+        mObdScanResult.setVisibility(View.GONE);
+        mRcScanResult.setVisibility(View.GONE);
         mVdtCamera.scanBluetoothDevices();
         mScanMask.setVisibility(View.VISIBLE);
     }
@@ -157,8 +185,12 @@ public class BluetoothSettingActivity extends BaseActivity {
                         mRemoteCtrlDeviceList.add(device);
                     }
                 }
-
-                mScanrResult.setVisibility(View.VISIBLE);
+                if (mObdDeviceList.size() > 0) {
+                    mObdScanResult.setVisibility(View.VISIBLE);
+                }
+                if (mRemoteCtrlDeviceList.size() > 0) {
+                    mRcScanResult.setVisibility(View.VISIBLE);
+                }
                 mRemoteCtrlDeviceListAdapter.setDeviceList(mRemoteCtrlDeviceList);
                 mObdDeviceListAdapter.setDeviceList(mObdDeviceList);
                 break;
@@ -189,7 +221,8 @@ public class BluetoothSettingActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mScanrResult.setVisibility(View.GONE);
+        mObdScanResult.setVisibility(View.GONE);
+        mRcScanResult.setVisibility(View.GONE);
         mEventBus.register(this);
     }
 
@@ -197,12 +230,23 @@ public class BluetoothSettingActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         mEventBus.unregister(this);
+        if (!mCameraStateChangeEventSubscription.isUnsubscribed()) {
+            mCameraStateChangeEventSubscription.unsubscribe();
+        }
     }
 
     @Override
     protected void init() {
         super.init();
         initViews();
+        mCameraStateChangeEventSubscription = RxBus.getDefault().toObserverable(CameraStateChangeEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleSubscribe<CameraStateChangeEvent>() {
+                    @Override
+                    public void onNext(CameraStateChangeEvent cameraStateChangeEvent) {
+                        onHandleCameraStateChangeEvent(cameraStateChangeEvent);
+                    }
+                });
     }
 
     private void initViews() {
@@ -212,14 +256,14 @@ public class BluetoothSettingActivity extends BaseActivity {
         updateBtContent();
 
         refreshBtDevices();
-
         mRvObdDeviceList.setLayoutManager(new LinearLayoutManager(this));
         mRvRemoteCtrlList.setLayoutManager(new LinearLayoutManager(this));
 
-        mScanrResult.setVisibility(View.GONE);
+        mObdScanResult.setVisibility(View.GONE);
+        mRcScanResult.setVisibility(View.GONE);
 
-        mObdDeviceListAdapter = new BtDeviceListAdapter(mObdDeviceList);
-        mRemoteCtrlDeviceListAdapter = new BtDeviceListAdapter(mRemoteCtrlDeviceList);
+        mObdDeviceListAdapter = new BtDeviceListAdapter(mObdDeviceList, BtDevice.BT_DEVICE_TYPE_OBD);
+        mRemoteCtrlDeviceListAdapter = new BtDeviceListAdapter(mRemoteCtrlDeviceList, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
 
         mRvObdDeviceList.setAdapter(mObdDeviceListAdapter);
         mRvRemoteCtrlList.setAdapter(mRemoteCtrlDeviceListAdapter);
@@ -241,35 +285,72 @@ public class BluetoothSettingActivity extends BaseActivity {
     private void refreshBtDevices() {
 
         BtDevice obdDevice = mVdtCamera.getObdDevice();
-        if (obdDevice.getName() != "") {
-            if (obdDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
-
-                mObdName.setText(obdDevice.getName() + " - " + getString(R.string.connected));
-            } else {
-                mObdName.setText(obdDevice.getName() + " - " + getString(R.string.not_connected));
+        if (!TextUtils.isEmpty(obdDevice.getName())) {
+            mObdName.setText(obdDevice.getName());
+            mObdMac.setText(obdDevice.getMac());
+            switch (obdDevice.getState()) {
+                case BtDevice.BT_DEVICE_STATE_BUSY:
+                    mObdStatus.setText(getResources().getString(R.string.busy));
+                    break;
+                case BtDevice.BT_DEVICE_STATE_OFF:
+                    mObdStatus.setText(getResources().getString(R.string.not_connected));
+                    break;
+                case BtDevice.BT_DEVICE_STATE_ON:
+                    mObdStatus.setText(getResources().getString(R.string.connected));
+                    break;
+                default:
+                    mObdStatus.setText(getResources().getString(R.string.not_connected));
+                    break;
             }
         } else {
-            mObdName.setText(getString(R.string.na));
+            mObdName.setText("");
+            mObdMac.setText("");
+            mObdStatus.setText(R.string.na);
         }
 
         BtDevice remoteCtrlDevice = mVdtCamera.getRemoteCtrlDevice();
-        if (remoteCtrlDevice.getName() != "") {
-            if (remoteCtrlDevice.getState() == BtDevice.BT_DEVICE_STATE_ON) {
-                mRemoteCtrlName.setText(remoteCtrlDevice.getName() + " - " + getString(R.string.connected));
-            } else {
-                mRemoteCtrlName.setText(remoteCtrlDevice.getName() + " - " + getString(R.string.not_connected));
+        if (!TextUtils.isEmpty(remoteCtrlDevice.getName())) {
+            mRemoteCtrlName.setText(remoteCtrlDevice.getName());
+            mRemoteCtrlMac.setText(remoteCtrlDevice.getMac());
+            switch (remoteCtrlDevice.getState()) {
+                case BtDevice.BT_DEVICE_STATE_BUSY:
+                    mRemoteCtrlStatus.setText(getResources().getString(R.string.busy));
+                    break;
+                case BtDevice.BT_DEVICE_STATE_OFF:
+                    mRemoteCtrlStatus.setText(getResources().getString(R.string.not_connected));
+                    break;
+                case BtDevice.BT_DEVICE_STATE_ON:
+                    mRemoteCtrlStatus.setText(getResources().getString(R.string.connected));
+                    break;
+                default:
+                    mRemoteCtrlStatus.setText(getResources().getString(R.string.not_connected));
+                    break;
             }
         } else {
-            mRemoteCtrlName.setText(getString(R.string.na));
+            mRemoteCtrlName.setText("");
+            mRemoteCtrlMac.setText("");
+            mRemoteCtrlStatus.setText(R.string.na);
+        }
+    }
+
+    private void onHandleCameraStateChangeEvent(CameraStateChangeEvent event) {
+        if (event.getWhat() == CameraStateChangeEvent.CAMERA_STATE_BT_DEVICE_STATUS_CHANGED) {
+            refreshBtDevices();
         }
     }
 
     private void doBindBtDevice(BtDevice device) {
+        if (device == null) {
+            return;
+        }
         mVdtCamera.doBind(device.getType(), device.getMac());
         mScanMask.setVisibility(View.VISIBLE);
     }
 
     private void doUnbindDevice(BtDevice device) {
+        if (device == null) {
+            return;
+        }
         mVdtCamera.doBtUnbind(device.getType(), device.getMac());
         mScanMask.setVisibility(View.VISIBLE);
     }
@@ -278,8 +359,11 @@ public class BluetoothSettingActivity extends BaseActivity {
 
         private List<BtDevice> mDeviceList;
 
-        public BtDeviceListAdapter(List<BtDevice> deviceList) {
+        private int mBtType;
+
+        public BtDeviceListAdapter(List<BtDevice> deviceList, int type) {
             this.mDeviceList = deviceList;
+            mBtType = type;
         }
 
         private void setDeviceList(List<BtDevice> deviceList) {
@@ -304,9 +388,31 @@ public class BluetoothSettingActivity extends BaseActivity {
             viewHolder.rootView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    BtDevice device = mDeviceList.get(position);
-                    doBindBtDevice(device);
+                    int titleRes;
+                    if (mBtType == BtDevice.BT_DEVICE_TYPE_OBD) {
+                        titleRes = R.string.bind_obd_device;
+                    } else {
+                        titleRes = R.string.bind_rc_device;
+                    }
+                    final BtDevice device = mDeviceList.get(position);
+                    new MaterialDialog.Builder(BluetoothSettingActivity.this)
+                            .title(titleRes)
+                            .content(device.getName() + " " + device.getMac())
+                            .positiveText(R.string.ok)
+                            .negativeText(R.string.cancel)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
 
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    if (mBtType == BtDevice.BT_DEVICE_TYPE_OBD) {
+                                        doUnbindDevice(mVdtCamera.getObdDevice());
+                                    } else {
+                                        doUnbindDevice(mVdtCamera.getRemoteCtrlDevice());
+                                    }
+                                    doBindBtDevice(device);
+                                }
+                            })
+                            .show();
                 }
             });
         }

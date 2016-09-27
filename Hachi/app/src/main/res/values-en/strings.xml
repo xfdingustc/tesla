@@ -212,8 +212,8 @@
 	<string name="wifi">WiFi</string>
 	<string name="bt">Bluetooth</string>
 	<string name="na">Not Available</string>
-	<string name="obd">OBD</string>
-	<string name="remote_ctrl">Remote Control</string>
+	<string name="obd">OBD Dongle</string>
+	<string name="remote_ctrl">Remote Controller</string>
 	<string name="scan_bluetooth_devices">Scan Bluetooth Devices</string>
 	<string name="unbind_bt_device">Unbind bluetooth device</string>
 	<string name="found_new_firmware">Found new firmware</string>
@@ -480,4 +480,10 @@
 	<string name="feedback_hint">Text here</string>
 	<string name="feedback_empty">Please input your feedback.</string>
 	<string name="feedback_success">Thanks for your feedback.</string>
+	<string name="moment_upload_sucess">Moment has been uploaded</string>
+	<string name="bind_obd_device">Bind OBD Dongle</string>
+	<string name="bind_rc_device">Bind Remote Controller</string>
+	<string name="unbind_obd_device">Unbind OBD Dongle</string>
+	<string name="unbind_rc_device">Unbind Remote Controller</string>
+	<string name="busy">Busy</string>
 </resources>

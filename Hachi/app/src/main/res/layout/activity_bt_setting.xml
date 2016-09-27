@@ -51,51 +51,117 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
                     android:text="@string/obd"
                     android:textColor="?attr/appTextColorPrimary"
                     android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/obd_name"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/obd_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/na"
-                    android:textColor="?attr/appTextColorSecondary"
-                    android:textSize="14sp"/>
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/obd_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text=""
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/obd_mac"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text=""
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/obd_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_centerVertical="true"
+                        android:text="@string/na"
+                        android:textColor="?attr/appTextColorSecondary"
+                        android:textSize="15sp"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
+
+            <View
+                style="@style/HachiSepatator"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"></View>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
                     android:text="@string/remote_ctrl"
                     android:textColor="?attr/appTextColorPrimary"
                     android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/remote_ctrl_name"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:id="@+id/rc_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/na"
-                    android:textColor="?attr/appTextColorSecondary"
-                    android:textSize="14sp"/>
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/remote_ctrl_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text=""
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/remote_ctrl_mac"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:text=""
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/remote_ctrl_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_centerVertical="true"
+                        android:text="@string/na"
+                        android:textColor="?attr/appTextColorSecondary"
+                        android:textSize="15sp"/>
+
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -114,38 +180,49 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    style="@style/HachiTextViewSubHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/obd"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/obd_device_list"
+                <LinearLayout
+                    android:id="@+id/obd_scan_result"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        style="@style/HachiTextViewSubHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/obd"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/obd_device_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp">
+
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/rc_scan_result"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp">
-
-                </android.support.v7.widget.RecyclerView>
-
-                <TextView
-                    style="@style/HachiTextViewSubHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/remote_ctrl"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/remote_ctrl_device_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp">
+                    android:orientation="vertical">
+                    <TextView
+                        style="@style/HachiTextViewSubHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/remote_ctrl"/>
 
-                </android.support.v7.widget.RecyclerView>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/remote_ctrl_device_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp">
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
