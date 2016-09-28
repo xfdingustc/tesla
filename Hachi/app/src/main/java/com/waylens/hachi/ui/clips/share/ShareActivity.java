@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -122,6 +123,8 @@ public class ShareActivity extends ClipPlayActivity {
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
+    private boolean mAutoDetected;
+
     @BindView(R.id.user_vehicle_info)
     TextView mTvUserVehicleInfo;
 
@@ -173,7 +176,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     @OnClick(R.id.info_edit)
     public void onBtnInfoEditClicked() {
-        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, REQUEST_SHARE_SETTING);
+        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, mAutoDetected, REQUEST_SHARE_SETTING);
 
     }
 
@@ -251,6 +254,7 @@ public class ShareActivity extends ClipPlayActivity {
 
                     Logger.t(TAG).d("isLocation:" + mIsLocationChecked + "isVehicle:" + mIsVehicleInfoChecked);
                     if (!mIsLocationChecked) {
+                        mLocation = null;
                         mTvGeoInfo.setVisibility(View.GONE);
                         mInfoSeparator.setVisibility(View.GONE);
                     }
@@ -261,6 +265,11 @@ public class ShareActivity extends ClipPlayActivity {
                         }
                     } else {
                         mTvVehicleInfo.setVisibility(View.GONE);
+                        mInfoSeparator.setVisibility(View.GONE);
+                    }
+                    if (!TextUtils.isEmpty(mVehicleMaker) && !TextUtils.isEmpty(mLocation)) {
+                        mInfoSeparator.setVisibility(View.VISIBLE);
+                    } else {
                         mInfoSeparator.setVisibility(View.GONE);
                     }
                     Logger.t(TAG).d("maker:" + mVehicleMaker + mVehicleModel + mVehicleYear);
@@ -318,9 +327,11 @@ public class ShareActivity extends ClipPlayActivity {
                         VinQueryResponse vinQueryResponse = response.body();
                         Logger.t(TAG).d(response.code() + response.message());
                         if (vinQueryResponse != null) {
+                            mAutoDetected = true;
                             mVehicleMaker = vinQueryResponse.makerName;
                             mVehicleModel = vinQueryResponse.modelName;
                             mVehicleYear = vinQueryResponse.year;
+
                             Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
                         }
 
@@ -358,10 +369,13 @@ public class ShareActivity extends ClipPlayActivity {
             @Override
             public void onCompleted() {
                 if (mVehicleMaker != null) {
-                    mTvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+                    mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
                 }
                 if (mLocation != null) {
                     mTvGeoInfo.setText(mLocation);
+                }
+                if (!TextUtils.isEmpty(mTvVehicleInfo.getText()) && !TextUtils.isEmpty(mTvGeoInfo.getText())) {
+                    mInfoSeparator.setVisibility(View.VISIBLE);
                 }
             }
 

@@ -74,6 +74,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_gravity="center_vertical"
                         style="@style/HachiSepatator"
+                        android:visibility="gone"
                         />
 
                     <TextView

@@ -30,6 +30,8 @@ public class ShareSettingActivity extends BaseActivity {
 
     private int vehicleYear;
 
+    private boolean autoDetected;
+
     public boolean isLocationChecked = true;
 
     public boolean isVehicleChecked = true;
@@ -46,12 +48,13 @@ public class ShareSettingActivity extends BaseActivity {
         this.vehicleYear = vehicleYear;
     }
 
-    public static void launch(Activity activity, String location, String maker, String model, int year, int requestCode) {
+    public static void launch(Activity activity, String location, String maker, String model, int year, boolean autoDetected, int requestCode) {
         Intent intent = new Intent(activity, ShareSettingActivity.class);
         intent.putExtra("location", location);
         intent.putExtra("vehicleMaker", maker);
         intent.putExtra("vehicleModel", model);
         intent.putExtra("vehicleYear", year);
+        intent.putExtra("autoDetected", autoDetected);
         activity.startActivityForResult(intent, requestCode);
     }
 
@@ -64,6 +67,7 @@ public class ShareSettingActivity extends BaseActivity {
         vehicleMaker = intent.getStringExtra("vehicleMaker");
         vehicleModel = intent.getStringExtra("vehicleModel");
         vehicleYear = intent.getIntExtra("vehicleYear", -1);
+        autoDetected = intent.getBooleanExtra("autoDetected", false);
         init();
     }
 
@@ -77,7 +81,7 @@ public class ShareSettingActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_share_setting);
         setupToolbar();
-        ShareSettingFragment fragment = ShareSettingFragment.newInstance(location, vehicleMaker, vehicleModel, vehicleYear);
+        ShareSettingFragment fragment = ShareSettingFragment.newInstance(location, vehicleMaker, vehicleModel, vehicleYear, autoDetected);
         getFragmentManager().beginTransaction().replace(R.id.share_setting, fragment).commit();
 
     }

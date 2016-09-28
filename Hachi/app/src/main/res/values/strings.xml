@@ -493,4 +493,5 @@
 	<string name="unbind_obd_device">Unbind OBD Dongle</string>
 	<string name="unbind_rc_device">Unbind Remote Controller</string>
 	<string name="busy">Busy</string>
+	<string name="geoTag_setting_notification">Could not hide location according to your gauge setting.</string>
 </resources>

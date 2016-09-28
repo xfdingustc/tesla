@@ -215,7 +215,7 @@
 	<string name="obd">OBD Dongle</string>
 	<string name="remote_ctrl">Remote Controller</string>
 	<string name="scan_bluetooth_devices">Scan Bluetooth Devices</string>
-	<string name="unbind_bt_device">Unbind bluetooth device</string>
+	<string name="unbind_bt_device">Unbind Bluetooth Device</string>
 	<string name="found_new_firmware">Found new firmware</string>
 	<string name="upgrade">Upgrade</string>
 	<string name="download_complete">Download Complete</string>
@@ -475,6 +475,13 @@
 	<string name="choose_clips">Choose clips</string>
 	<string name="all_car">All car</string>
 	<string name="same_car">Same car with mine</string>
+	<string name="from_waylens_camera">Choose clips from Waylens camera</string>
+	<string name="from_phone_galley">Select picture from photo library</string>
+	<string name="take_picture">Take picture</string>
+	<string name="write_a_caption">"Write a caption..."</string>
+	<string name="publish">Publish</string>
+	<string name="upload_success">Upload successfully</string>
+	<string name="upload_failed">Upload failed</string>
 	<string name="race_time">%1$s</string>
 	<string name="feedback">Feedback</string>>
 	<string name="feedback_hint">Text here</string>
@@ -486,4 +493,5 @@
 	<string name="unbind_obd_device">Unbind OBD Dongle</string>
 	<string name="unbind_rc_device">Unbind Remote Controller</string>
 	<string name="busy">Busy</string>
+	<string name="geoTag_setting_notification">Could not hide location according to your gauge setting.</string>
 </resources>

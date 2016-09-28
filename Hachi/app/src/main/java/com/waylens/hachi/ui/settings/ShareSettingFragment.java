@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.design.widget.Snackbar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -42,13 +43,16 @@ public class ShareSettingFragment extends PreferenceFragment{
 
     private int mShareYear;
 
-    static ShareSettingFragment newInstance(String location, String maker, String model, int year) {
+    private boolean mAutoDetected;
+
+    static ShareSettingFragment newInstance(String location, String maker, String model, int year, boolean autoDetected) {
         ShareSettingFragment fragment = new ShareSettingFragment();
         Bundle bundle = new Bundle();
         bundle.putString("location", location);
         bundle.putString("vehicleMaker", maker);
         bundle.putString("vehicleModel", model);
         bundle.putInt("vehicleYear", year);
+        bundle.putBoolean("autoDetected", autoDetected);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -62,6 +66,7 @@ public class ShareSettingFragment extends PreferenceFragment{
         mShareMaker = bundle.getString("vehicleMaker");
         mShareModel = bundle.getString("vehicleModel");
         mShareYear = bundle.getInt("vehicleYear");
+        mAutoDetected = bundle.getBoolean("autoDetected", false);
         addPreferencesFromResource(R.xml.pref_share_setting);
         initPreference();
     }
@@ -83,10 +88,7 @@ public class ShareSettingFragment extends PreferenceFragment{
         mDrivingLocation.setChecked(true);
         mVehicleInfo.setChecked(true);
 
-        Map<String, String> gaugeSettingMap = GaugeSettingManager.getManager().getGaugeSettingMap();
-        if (!gaugeSettingMap.get("showGps").equals("")) {
-            mDrivingLocation.setEnabled(false);
-        }
+        final Map<String, String> gaugeSettingMap = GaugeSettingManager.getManager().getGaugeSettingMap();
         mDrivingLocation.setSummary(mShareLocation);
         mVehicleMaker.setSummary(mShareMaker);
         mVehicleModel.setSummary(mShareModel);
@@ -96,8 +98,13 @@ public class ShareSettingFragment extends PreferenceFragment{
         mDrivingLocation.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                ((ShareSettingActivity)getActivity()).isLocationChecked = mDrivingLocation.isChecked();
-                return true;
+                if (gaugeSettingMap.get("showGps").equals("")) {
+                    ((ShareSettingActivity) getActivity()).isLocationChecked = !mDrivingLocation.isChecked();
+                    return true;
+                } else {
+                    Snackbar.make(ShareSettingFragment.this.getView(), getString(R.string.geoTag_setting_notification), Snackbar.LENGTH_SHORT).show();
+                    return false;
+                }
             }
         });
 
@@ -118,9 +125,11 @@ public class ShareSettingFragment extends PreferenceFragment{
             }
         });
 
-        if (mShareMaker == null) {
+        if (!mAutoDetected) {
             mVehicleMaker.setEnabled(true);
-            mVehicleMaker.setSummary("Click to select one.");
+            if (mShareMaker == null) {
+                mVehicleMaker.setSummary("Click to select one.");
+            }
             mVehicleMaker.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
