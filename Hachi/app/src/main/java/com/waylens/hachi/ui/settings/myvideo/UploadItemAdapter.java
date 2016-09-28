@@ -78,7 +78,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
 
-        videoItemViewHolder.btnMore.setVisibility(View.VISIBLE);
+        videoItemViewHolder.btnMore.setVisibility(View.GONE);
 
         videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
