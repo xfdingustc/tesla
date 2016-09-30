@@ -6,9 +6,11 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.NumberPicker;
+import android.widget.SeekBar;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -56,6 +58,9 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mStorage;
     private Preference mBluetooth;
     private Preference mFirmware;
+    private Preference mWifi;
+
+    private Preference mSyncTimezone;
     private SeekBarPreference mBrightness;
     private ListPreference mScreenSaver;
     private ListPreference mScreenSaverStyle;
@@ -101,6 +106,8 @@ public class CameraSettingFragment extends PreferenceFragment {
         mBattery = findPreference("battery");
         mBluetooth = findPreference("bluetooth");
         mFirmware = findPreference("firmware");
+        mSyncTimezone = findPreference("sync_timezone");
+        mWifi = findPreference("wifi");
         initCameraNamePreference();
         initBookmarkPreference();
         initVideoPreference();
@@ -109,6 +116,8 @@ public class CameraSettingFragment extends PreferenceFragment {
         initPowerPreference();
         initConnectivityPreference();
         initFirmwarePreference();
+        initSyncTimezonePreference();
+        initWifiPreference();
     }
 
     private void initFirmwarePreference() {
@@ -201,6 +210,27 @@ public class CameraSettingFragment extends PreferenceFragment {
         });
 
     }
+
+    private void initSyncTimezonePreference() {
+        mSyncTimezone.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Snackbar.make(CameraSettingFragment.this.getView(), "Synchronize timezone successfully!", Snackbar.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+    }
+
+    private void initWifiPreference() {
+        mWifi.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                WifiSettingActivity.launch(getActivity());
+                return true;
+            }
+        });
+    }
+
 
 
     private void initDisplayPreference() {

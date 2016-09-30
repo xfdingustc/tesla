@@ -89,6 +89,10 @@
             android:key="bluetooth"
             android:title="@string/bt"/>
 
+        <Preference
+            android:key="wifi"
+            android:title="@string/wifi"/>
+
     </PreferenceCategory>
     <PreferenceCategory
         android:key="display"
@@ -119,5 +123,7 @@
 
     </PreferenceCategory>
 
-
+    <Preference
+        android:key="sync_timezone"
+        android:title="Synchronize Timezone"/>
 </PreferenceScreen>

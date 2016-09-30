@@ -495,5 +495,6 @@
 	<string name="busy">Busy</string>
 	<string name="comment_in_feed"><b>%1$s</b> %2$s</string>
 	<string name="geoTag_setting_notification">Could not hide location according to your gauge setting.</string>
+	<string name="client_wifi">Phone-WiFi-Camera</string>
 	<string name="refresh">Refresh</string>
 </resources>
