@@ -224,10 +224,13 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.commentContent3.setVisibility(View.GONE);
 
 
+
         if (momentEx.lastComments.size() == 0) {
             holder.separator.setVisibility(View.GONE);
+            holder.bottomPadding.setVisibility(View.GONE);
         } else {
             holder.separator.setVisibility(View.VISIBLE);
+            holder.bottomPadding.setVisibility(View.VISIBLE);
         }
 
         if (moment.isRecommended) {
@@ -496,6 +499,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.separator)
         View separator;
+
+        @BindView(R.id.bottom_padding)
+        View bottomPadding;
 
 
         public MomentViewHolder(View itemView) {
