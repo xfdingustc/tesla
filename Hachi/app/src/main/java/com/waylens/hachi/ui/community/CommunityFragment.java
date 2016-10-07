@@ -254,6 +254,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             .staff_picks));
         //mFeedPageAdapter.addFragment(PerformanceTestFragment.newInstance(0), getString(R.string.leaderboard));
         mViewPager.setAdapter(mFeedPageAdapter);
+        mViewPager.setOffscreenPageLimit(2);
 
 
         //mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);

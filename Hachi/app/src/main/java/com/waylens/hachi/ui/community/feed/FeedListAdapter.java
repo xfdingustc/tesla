@@ -2,10 +2,16 @@ package com.waylens.hachi.ui.community.feed;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,6 +34,7 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
+import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
@@ -203,10 +210,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
             stringBuilder.append(vehicleInfo.vehicleMaker).append(" ")
                 .append(vehicleInfo.vehicleModel).append(" ")
-                .append(vehicleInfo.vehicleYear);
-            if (moment.withGeoTag) {
-                stringBuilder.append(" • ");
-            }
+                .append(vehicleInfo.vehicleYear)
+                .append(" • ");
         }
         if (moment.withGeoTag && !TextUtils.isEmpty(momentEx.moment.place.toString())) {
             stringBuilder.append(momentEx.moment.place.toString()).append(" • ");
@@ -219,10 +224,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.commentUser1.setVisibility(View.GONE);
         holder.commentUser2.setVisibility(View.GONE);
         holder.commentUser3.setVisibility(View.GONE);
-        holder.commentContent1.setVisibility(View.GONE);
-        holder.commentContent2.setVisibility(View.GONE);
-        holder.commentContent3.setVisibility(View.GONE);
-
 
 
         if (momentEx.lastComments.size() == 0) {
@@ -256,23 +257,17 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (momentEx.lastComments.size() > 0) {
             holder.commentUser1.setVisibility(View.VISIBLE);
-            holder.commentContent1.setVisibility(View.VISIBLE);
-            holder.commentUser1.setText(momentEx.lastComments.get(0).author.userName);
-            holder.commentContent1.setText(momentEx.lastComments.get(0).content);
+            holder.commentUser1.setText(getCommentString(momentEx.lastComments.get(0).author.userName, momentEx.lastComments.get(0).content));
         }
 
         if (momentEx.lastComments.size() > 1) {
             holder.commentUser2.setVisibility(View.VISIBLE);
-            holder.commentContent2.setVisibility(View.VISIBLE);
-            holder.commentUser2.setText(momentEx.lastComments.get(1).author.userName);
-            holder.commentContent2.setText(momentEx.lastComments.get(1).content);
+            holder.commentUser2.setText(getCommentString(momentEx.lastComments.get(1).author.userName, momentEx.lastComments.get(1).content));
         }
 
         if (momentEx.lastComments.size() > 2) {
             holder.commentUser3.setVisibility(View.VISIBLE);
-            holder.commentContent3.setVisibility(View.VISIBLE);
-            holder.commentUser3.setText(momentEx.lastComments.get(2).author.userName);
-            holder.commentContent3.setText(momentEx.lastComments.get(2).content);
+            holder.commentUser3.setText(getCommentString(momentEx.lastComments.get(2).author.userName, momentEx.lastComments.get(2).content));
         }
 
 
@@ -283,7 +278,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 final String cover;
                 if (!TextUtils.isEmpty(momentPicture.bigThumbnail)) {
                     cover = momentPicture.bigThumbnail;
-                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)){
+                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)) {
                     cover = momentPicture.smallThumbnail;
                 } else {
                     cover = momentPicture.original;
@@ -296,7 +291,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PhotoViewActivity.launch((BaseActivity)mContext, cover);
+                        PhotoViewActivity.launch((BaseActivity) mContext, cover);
                     }
                 });
             } else {
@@ -365,7 +360,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.START);
+                PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_moment, popupMenu.getMenu());
                 if (momentEx.owner.userID.equals(SessionManager.getInstance().getUserId())) {
                     popupMenu.getMenu().removeItem(R.id.report);
@@ -373,6 +368,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     popupMenu.getMenu().removeItem(R.id.delete);
                     popupMenu.getMenu().removeItem(R.id.edit);
                 }
+                popupMenu.getMenu().removeItem(R.id.edit);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -384,7 +380,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 onDeleteClick(moment.id, holder.getAdapterPosition());
                                 break;
                             case R.id.edit:
-//                                onEditClick(moment, holder);
+//                                onEditClick(moment.id, moment.title, holder);
+                                break;
 
                         }
                         return true;
@@ -428,8 +425,16 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
+    private SpannableStringBuilder getCommentString(String userName, String comment) {
+        String content = mContext.getString(R.string.comment_in_feed, userName, comment);
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(content);
+        spannableStringBuilder.setSpan(new StyleSpan(Typeface.BOLD), 0, userName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.WHITE), 0, userName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableStringBuilder;
+    }
+
     private void onEditClick(Moment moment, final MomentViewHolder holder) {
-//        MomentEditActivity.launch((Activity)mContext, moment, holder.videoCover);
+        MomentEditActivity.launch((Activity) mContext, moment, holder.videoCover);
     }
 
 
@@ -479,14 +484,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.comment_user3)
         TextView commentUser3;
 
-        @BindView(R.id.comment_content1)
-        TextView commentContent1;
-
-        @BindView(R.id.comment_content2)
-        TextView commentContent2;
-
-        @BindView(R.id.comment_content3)
-        TextView commentContent3;
 
         @BindView(R.id.btn_like)
         ImageButton btnLike;

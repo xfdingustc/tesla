@@ -150,20 +150,21 @@
                 android:layout_gravity="center_vertical"
                 tools:text="999"/>
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
 
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="right"
                 android:layout_marginLeft="8dp"
                 android:src="@drawable/social_more"/>
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"></LinearLayout>
 
             <TextView
                 android:id="@+id/btn_follow"
@@ -178,124 +179,52 @@
 
         </LinearLayout>
 
-        <View
-            android:id="@+id/separator"
-            style="@style/HachiSepatator"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/ll_action_bar"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/separator"
+            android:layout_below="@id/ll_action_bar"
             android:orientation="vertical">
 
-            <LinearLayout
+            <View
+                android:id="@+id/separator"
+                style="@style/HachiSepatator"
                 android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+
+            <TextView
+                android:id="@+id/comment_user1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                tools:text="xfding Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
+                />
 
-                <TextView
-                    android:id="@+id/comment_user1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="8dp"
-                    android:textStyle="bold"
-                    tools:text="xfding"
-                    />
 
-                <TextView
-                    android:id="@+id/comment_content1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/separator"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="8dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/app_text_color_secondary"
-                    tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
-                    />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/comment_user2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/comment_user2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/comment_user1"
-                    android:layout_marginLeft="16dp"
-                    android:textStyle="bold"
-                    tools:text="xfding"
-                    />
-
-                <TextView
-                    android:id="@+id/comment_content2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/comment_user1"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_toRightOf="@id/comment_user2"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/app_text_color_secondary"
-                    tools:text="beatiful"
-                    />
+                android:layout_below="@id/comment_user1"
+                android:layout_marginLeft="16dp"
+                tools:text="xfding beatiful"
+                />
 
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/comment_user3"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/comment_user3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/comment_user2"
-                    android:layout_marginLeft="16dp"
-                    android:textStyle="bold"
-                    tools:text="xfding"
-                    />
-
-                <TextView
-                    android:id="@+id/comment_content3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/comment_user2"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_toRightOf="@id/comment_user3"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/app_text_color_secondary"
-                    tools:text="beatiful"/>
-
-
-            </LinearLayout>
+                android:layout_below="@id/comment_user2"
+                android:layout_marginLeft="16dp"
+                tools:text="xfding beatiful"/>
 
             <View
                 android:id="@+id/bottom_padding"
                 android:layout_width="match_parent"
                 android:layout_height="8dp"/>
         </LinearLayout>
-
-
-
-
-
-
-
 
 
     </RelativeLayout>

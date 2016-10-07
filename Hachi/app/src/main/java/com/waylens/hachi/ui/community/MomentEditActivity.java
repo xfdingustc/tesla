@@ -44,6 +44,8 @@ import retrofit2.Response;
 public class MomentEditActivity extends BaseActivity {
     private static final String TAG = MomentEditActivity.class.getSimpleName();
     public static final String EXTRA_MOMENT = "moment";
+    private static final String EXTRA_MOMENT_ID = "momentId";
+    private static final String EXTRA_MOMENT_TITLE = "momentTitle";
 
 
     private Moment mMoment;
@@ -52,6 +54,16 @@ public class MomentEditActivity extends BaseActivity {
     public static void launch(Activity activity, Moment moment, View transitionView) {
         Intent intent = new Intent(activity, MomentEditActivity.class);
         intent.putExtra(EXTRA_MOMENT, moment);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+            false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+    }
+
+    public static void launch(Activity activity, long momentId, String momentTitle, View transitionView) {
+        Intent intent = new Intent(activity, MomentEditActivity.class);
+        intent.putExtra(EXTRA_MOMENT_ID, momentId);
+        intent.putExtra(EXTRA_MOMENT_TITLE, momentTitle);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
