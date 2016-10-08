@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,9 +26,12 @@ import com.waylens.hachi.rest.body.MomentUpdateBody;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.utils.TransitionHelper;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 import butterknife.BindView;
 import retrofit2.Call;
@@ -82,12 +86,25 @@ public class MomentEditActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_moment_edit);
         setupToolbar();
-
+        String thumbnailUrl = mMoment.thumbnail;
+        if (!TextUtils.isEmpty(mMoment.momentType) && mMoment.momentType.equals("PICTURE")) {
+            final List<MomentPicture> momentPictures = mMoment.pictureUrls;
+            if (!momentPictures.isEmpty()) {
+                MomentPicture momentPicture = momentPictures.get(0);
+                if (!TextUtils.isEmpty(momentPicture.bigThumbnail)) {
+                    thumbnailUrl = momentPicture.bigThumbnail;
+                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)) {
+                    thumbnailUrl = momentPicture.smallThumbnail;
+                } else {
+                    thumbnailUrl = momentPicture.original;
+                }
+            }
+        }
         Logger.t(TAG).d("moment: " + mMoment.toString());
         mMomentTitle.setText(mMoment.title);
         mMomentDescription.setText(mMoment.description);
         Glide.with(this)
-            .load(mMoment.thumbnail)
+            .load(thumbnailUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(mMomentCover);
     }
