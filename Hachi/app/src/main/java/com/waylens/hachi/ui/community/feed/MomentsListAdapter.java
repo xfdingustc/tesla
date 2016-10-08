@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
@@ -189,7 +190,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.userName.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         }
 
-
+        if (moment.momentVehicleInfo != null && !TextUtils.isEmpty(moment.momentVehicleInfo.vehicleModel)) {
+            VehicleInfo vehicleInfo = moment.momentVehicleInfo;
+            holder.carInfo.setVisibility(View.VISIBLE);
+            holder.carInfo.setText(vehicleInfo.toString());
+        } else {
+            holder.carInfo.setVisibility(View.GONE);
+        }
 
         holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
@@ -351,6 +358,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @BindView(R.id.user_name)
         TextView userName;
+
+        @BindView(R.id.car_info)
+        TextView carInfo;
 
 
         public MomentViewHolder(View itemView) {

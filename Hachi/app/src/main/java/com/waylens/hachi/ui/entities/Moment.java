@@ -139,6 +139,11 @@ public class Moment implements Serializable {
         moment.commentsCount = jsonMoment.optInt("commentsCount");
         moment.isLiked = jsonMoment.optBoolean("isLiked");
         moment.momentType = jsonMoment.optString("momentType");
+        Gson gson = new GsonBuilder().create();
+        JSONObject vehicleInfoObj = jsonMoment.optJSONObject("momentVehicleInfo");
+        if (vehicleInfoObj != null) {
+            moment.momentVehicleInfo = gson.fromJson(vehicleInfoObj.toString(), VehicleInfo.class);
+        }
 
         JSONObject ownerInfo = jsonObject.optJSONObject("owner");
         if (ownerInfo == null) {
