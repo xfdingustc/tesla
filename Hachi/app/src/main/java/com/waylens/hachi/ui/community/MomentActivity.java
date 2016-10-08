@@ -676,7 +676,7 @@ public class MomentActivity extends BaseActivity {
             //vh.btnLike.setImageResource(R.drawable.social_like_click);
             mBtnLike.setImageResource(R.drawable.social_like_click);
         } else {
-            mBtnLike.setImageResource(R.drawable.social_like_click);
+            mBtnLike.setImageResource(R.drawable.social_like);
         }
     }
 
