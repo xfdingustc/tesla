@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -379,8 +380,14 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
         if (!momentInfo.moment.overlay.isEmpty()) {
             Logger.t(TAG).d("setting gauge!!!");
             for (Map.Entry<String, String> entry : momentInfo.moment.overlay.entrySet()) {
-//                Logger.t(TAG).d("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                Logger.t(TAG).d("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+                if (entry.getKey().equals("theme") && TextUtils.isEmpty(entry.getValue())) {
+                    mGaugeView.setVisibility(View.GONE);
+                    mBtnShowOverlay.setVisibility(View.GONE);
+                }
             }
+
+
             if (momentInfo.moment.momentType != null && momentInfo.moment.momentType.startsWith("RACING")) {
                 momentInfo.moment.overlay.put("CountDown", "S");
             }
@@ -941,7 +948,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 rawDataItemList.add(rawDataItem);
             }
             if (!rawDataItemList.isEmpty()) {
-                Logger.t(TAG).d("update raw data!");
+//                Logger.t(TAG).d("update raw data!");
                 mGaugeView.updateRawDateItem(rawDataItemList);
             } else {
                 Logger.t(TAG).d("raw data empty!");
