@@ -208,10 +208,14 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         StringBuilder stringBuilder = new StringBuilder();
         if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
             VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
-            stringBuilder.append(vehicleInfo.vehicleMaker).append(" ")
-                .append(vehicleInfo.vehicleModel).append(" ")
-                .append(vehicleInfo.vehicleYear)
-                .append(" • ");
+//            stringBuilder.append(vehicleInfo.vehicleMaker).append(" ")
+//                .append(vehicleInfo.vehicleModel).append(" ")
+//                .append(vehicleInfo.vehicleYear)
+//                .append(" • ");
+            holder.carInfo.setVisibility(View.VISIBLE);
+            holder.carInfo.setText(vehicleInfo.toString());
+        } else {
+            holder.carInfo.setVisibility(View.GONE);
         }
         if (moment.withGeoTag && !TextUtils.isEmpty(momentEx.moment.place.toString())) {
             stringBuilder.append(momentEx.moment.place.toString()).append(" • ");
@@ -500,6 +504,8 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         @BindView(R.id.bottom_padding)
         View bottomPadding;
 
+        @BindView(R.id.car_info)
+        TextView carInfo;
 
         public MomentViewHolder(View itemView) {
             super(itemView);

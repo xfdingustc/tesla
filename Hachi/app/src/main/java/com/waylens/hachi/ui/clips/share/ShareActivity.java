@@ -350,7 +350,7 @@ public class ShareActivity extends ClipPlayActivity {
                     Call<GeoInfoResponse> geoInfoResponseCall = mHachi.getGeoInfo(lng, lat);
                     Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
                     if (response.isSuccessful()) {
-                        mLocation = response.body().city + ", " +response.body().country;
+                        mLocation = response.body().getLocationString();
                         mGeoInfo.city = response.body().city;
                         mGeoInfo.country = response.body().country;
                         mGeoInfo.region = response.body().region;

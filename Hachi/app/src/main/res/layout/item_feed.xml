@@ -89,6 +89,17 @@
                 android:src="@drawable/icon_recommend_for_you"
                 />
 
+            <TextView
+                android:id="@+id/car_info"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:layout_margin="8dp"
+                android:background="@drawable/vehicle_info_bg"
+                android:textColor="@android:color/white"
+                tools:text="Toyota Camry 2014"/>
+
 
             <TextView
                 android:id="@+id/video_duration"
@@ -98,7 +109,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="8dp"
                 android:background="@drawable/round_rectangle_background"
-                android:textColor="@android:color/white"
+                android:textColor="#eed7cc"
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

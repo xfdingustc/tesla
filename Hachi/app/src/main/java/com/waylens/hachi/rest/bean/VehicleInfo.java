@@ -11,4 +11,9 @@ public class VehicleInfo implements Serializable {
     public String vehicleModel;
     public int vehicleYear;
     public String vehicleDescription;
+
+    @Override
+    public String toString() {
+        return vehicleMaker + " " + vehicleModel + " " + vehicleYear;
+    }
 }
