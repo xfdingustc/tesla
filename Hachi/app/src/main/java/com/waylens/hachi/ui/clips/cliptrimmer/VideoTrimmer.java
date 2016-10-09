@@ -25,10 +25,10 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 
 
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.control.VdtCameraManager;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipPos;
 

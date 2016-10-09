@@ -24,6 +24,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.events.CameraConnectionEvent;
+import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
@@ -40,8 +42,7 @@ import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.view.ClipGridListView;
-import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
-import com.xfdingustc.snipe.control.events.MarkLiveMsgEvent;
+
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipActionInfo;

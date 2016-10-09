@@ -16,12 +16,13 @@ import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
+import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.service.download.DownloadServiceRx;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.utils.HashUtils2;
 import com.waylens.hachi.utils.Hex;
-import com.xfdingustc.snipe.control.VdtCamera;
+
 
 import java.io.File;
 import java.io.IOException;

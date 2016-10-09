@@ -23,13 +23,14 @@ import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
 import com.xfdingustc.snipe.vdb.SpaceInfo;
 

@@ -22,6 +22,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 
 
@@ -30,8 +32,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.views.rangbar.RangeBar;
 import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 import com.xfdingustc.snipe.vdb.Clip;
 import com.xfdingustc.snipe.vdb.ClipPos;
 import com.xfdingustc.snipe.vdb.ClipSet;

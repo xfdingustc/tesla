@@ -8,12 +8,13 @@ import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadManager;
+import com.waylens.hachi.camera.CameraDiscovery;
+import com.waylens.hachi.camera.DeviceScanner;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.VdtCameraManager;
-import com.xfdingustc.snipe.hardware.CameraDiscovery;
-import com.xfdingustc.snipe.hardware.DeviceScanner;
+
 
 //import com.bugtags.library.Bugtags;
 //import com.bugtags.library.BugtagsOptions;

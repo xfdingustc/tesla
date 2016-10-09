@@ -14,13 +14,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

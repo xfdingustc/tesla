@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -92,18 +92,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:background="@color/windowBackground"
         android:visibility="gone"
         tools:visibility="visible">
 
-        <ImageButton
-            android:id="@+id/btn_refresh"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_refresh"
-            android:tint="@color/style_color_primary"
-            android:layout_margin="8dp"
-            android:layout_gravity="center_horizontal"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/settings_line_separator"/>
 
+        <LinearLayout
+            android:id="@+id/ll_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/btn_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_refresh"
+                android:tint="@color/style_color_accent"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/refresh"/>
+        </LinearLayout>
     </FrameLayout>
 
 </FrameLayout>

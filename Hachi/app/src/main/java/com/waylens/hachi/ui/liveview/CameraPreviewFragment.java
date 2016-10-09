@@ -27,6 +27,12 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.BtDevice;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.camera.events.CameraConnectionEvent;
+import com.waylens.hachi.camera.events.CameraStateChangeEvent;
+import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -40,12 +46,7 @@ import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.control.BtDevice;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.VdtCameraManager;
-import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
-import com.xfdingustc.snipe.control.events.CameraStateChangeEvent;
-import com.xfdingustc.snipe.control.events.MarkLiveMsgEvent;
+
 import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
 import com.xfdingustc.snipe.toolbox.LiveRawDataRequest;
 import com.xfdingustc.snipe.vdb.ClipActionInfo;

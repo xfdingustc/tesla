@@ -4,14 +4,15 @@ import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.interactor.ClipGridListInteractor;
 import com.waylens.hachi.listeners.BaseSingleLoadedListener;
 import com.xfdingustc.snipe.SnipeError;
 import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbRequestQueue;
 import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.vdb.Clip;

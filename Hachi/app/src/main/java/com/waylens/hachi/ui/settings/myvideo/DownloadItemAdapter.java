@@ -24,9 +24,10 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 
 import org.ocpsoft.prettytime.PrettyTime;
 

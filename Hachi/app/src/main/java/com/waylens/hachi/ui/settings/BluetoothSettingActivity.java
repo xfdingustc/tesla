@@ -21,13 +21,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 
+import com.waylens.hachi.camera.BtDevice;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.events.BluetoothEvent;
+import com.waylens.hachi.camera.events.CameraStateChangeEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
-import com.xfdingustc.snipe.control.BtDevice;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.events.BluetoothEvent;
-import com.xfdingustc.snipe.control.events.CameraStateChangeEvent;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

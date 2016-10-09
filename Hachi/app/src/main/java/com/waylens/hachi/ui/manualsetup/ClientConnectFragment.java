@@ -28,14 +28,15 @@ import android.widget.ViewAnimator;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.entities.NetworkItemBean;
+import com.waylens.hachi.camera.events.CameraConnectionEvent;
+import com.waylens.hachi.camera.events.NetworkEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.radarview.RadarView;
-import com.xfdingustc.snipe.control.VdtCamera;
-import com.xfdingustc.snipe.control.entities.NetworkItemBean;
-import com.xfdingustc.snipe.control.events.CameraConnectionEvent;
-import com.xfdingustc.snipe.control.events.NetworkEvent;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -87,16 +88,17 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     View bottomLayout;
 
     @BindView(R.id.btn_refresh)
-    ImageButton btnRefresh;
+    ImageView btnRefresh;
 
-    @OnClick(R.id.btn_refresh)
+    @OnClick(R.id.ll_refresh)
     public void onBtnRefreshClicked() {
         startScanWifi();
         Animation operatingAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
         LinearInterpolator lin = new LinearInterpolator();
         operatingAnim.setInterpolator(lin);
-        btnRefresh.setAnimation(operatingAnim);
+        btnRefresh.startAnimation(operatingAnim);
         btnRefresh.setEnabled(false);
+
     }
 
 

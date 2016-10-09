@@ -12,11 +12,12 @@ import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
 
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.xfdingustc.snipe.VdbCommand;
 import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.toolbox.ClipUploadUrlRequest;
 import com.xfdingustc.snipe.toolbox.VdbImageRequest;

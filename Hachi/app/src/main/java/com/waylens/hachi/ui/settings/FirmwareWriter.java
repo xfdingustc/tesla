@@ -2,7 +2,9 @@ package com.waylens.hachi.ui.settings;
 
 
 
-import com.xfdingustc.snipe.control.VdtCamera;
+
+
+import com.waylens.hachi.camera.VdtCamera;
 
 import java.io.File;
 import java.io.FileInputStream;

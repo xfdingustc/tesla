@@ -3,11 +3,12 @@ package com.waylens.hachi.ui.clips.playlist;
 import android.support.annotation.NonNull;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.xfdingustc.snipe.VdbRequest;
 import com.xfdingustc.snipe.VdbRequestFuture;
 import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.control.VdtCameraManager;
+
 import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
 import com.xfdingustc.snipe.toolbox.PlaylistEditRequest;
 import com.xfdingustc.snipe.vdb.Clip;
