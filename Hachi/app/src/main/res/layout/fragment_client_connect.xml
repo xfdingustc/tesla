@@ -1,90 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="64dp"
-        android:src="@drawable/setup_setp3"/>
-
-    <TextView
-        android:id="@+id/text_line1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="32dp"
-        android:text="@string/camera_searching"
-        android:textColor="?attr/appTextColorPrimary"/>
-
-    <TextView
-        android:id="@+id/text_line2"
-        style="@style/HachiTextViewBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="32dp"
-        android:text="@string/connected_before"
-        android:textColor="?attr/appTextColorSecondary"
-        android:visibility="invisible"
-        tools:visibility="visible"/>
-
-
-    <ViewAnimator
-        android:id="@+id/vsConnect"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        
-        
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="64dp"
+            android:src="@drawable/setup_setp3"/>
+
+        <TextView
+            android:id="@+id/text_line1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="32dp"
+            android:text="@string/camera_searching"
+            android:textColor="?attr/appTextColorPrimary"/>
+
+        <TextView
+            android:id="@+id/text_line2"
+            style="@style/HachiTextViewBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="32dp"
+            android:text="@string/connected_before"
+            android:textColor="?attr/appTextColorSecondary"
+            android:visibility="invisible"
+            tools:visibility="visible"/>
+
+
+        <ViewAnimator
+            android:id="@+id/vsConnect"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
 
-
-
-
-            <com.waylens.hachi.ui.views.radarview.RadarView
-                android:id="@+id/wifi_scan_radar"
-                android:layout_width="256dp"
-                android:layout_height="256dp"
-                android:layout_marginTop="32dp"
-                android:layout_gravity="center_horizontal"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-
-            
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvWifiList"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            </android.support.v7.widget.RecyclerView>
 
-            <View
+                <com.waylens.hachi.ui.views.radarview.RadarView
+                    android:id="@+id/wifi_scan_radar"
+                    android:layout_width="256dp"
+                    android:layout_height="256dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="32dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/settings_line_separator"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
 
-        </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvWifiList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/settings_line_separator"/>
 
 
-        <include layout="@layout/camera_connecting"/>
-
-    </ViewAnimator>
+            </LinearLayout>
 
 
-</LinearLayout>
+            <include layout="@layout/camera_connecting"/>
+
+        </ViewAnimator>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_refresh"
+            android:tint="@color/style_color_primary"
+            android:layout_margin="8dp"
+            android:layout_gravity="center_horizontal"/>
+
+    </FrameLayout>
+
+</FrameLayout>

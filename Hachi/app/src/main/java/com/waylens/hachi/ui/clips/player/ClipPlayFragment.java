@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
@@ -36,9 +35,9 @@ import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 
-import com.waylens.hachi.library.player.HachiPlayer;
-import com.waylens.hachi.library.player.HlsRendererBuilder;
-import com.waylens.hachi.library.player.Utils;
+import com.waylens.hachi.player.HachiPlayer;
+import com.waylens.hachi.player.HlsRendererBuilder;
+import com.waylens.hachi.player.Utils;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -53,8 +52,6 @@ import com.xfdingustc.snipe.vdb.ClipPos;
 import com.xfdingustc.snipe.vdb.ClipSet;
 import com.xfdingustc.snipe.vdb.ClipSetManager;
 import com.xfdingustc.snipe.vdb.ClipSetPos;
-import com.xfdingustc.snipe.vdb.rawdata.GpsData;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
 import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
 import com.xfdingustc.snipe.vdb.urls.VdbUrl;
 
@@ -66,7 +63,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 

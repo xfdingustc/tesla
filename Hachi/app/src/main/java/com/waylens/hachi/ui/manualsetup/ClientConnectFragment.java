@@ -15,7 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,7 +42,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
@@ -80,6 +83,22 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     @BindView(R.id.wifi_scan_radar)
     RadarView mWifiScanRadar;
 
+    @BindView(R.id.bottom_layout)
+    View bottomLayout;
+
+    @BindView(R.id.btn_refresh)
+    ImageButton btnRefresh;
+
+    @OnClick(R.id.btn_refresh)
+    public void onBtnRefreshClicked() {
+        startScanWifi();
+        Animation operatingAnim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
+        LinearInterpolator lin = new LinearInterpolator();
+        operatingAnim.setInterpolator(lin);
+        btnRefresh.setAnimation(operatingAnim);
+        btnRefresh.setEnabled(false);
+    }
+
 
     private NetworkItemAdapter mNetworkItemAdapter;
 
@@ -94,7 +113,7 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
 
     private WifiManager mWifiManager;
 
-    private Timer mTimer;
+    //    private Timer mTimer;
     private ScanWifiTimeTask mScanWifiTimeTask;
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -191,6 +210,9 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
                     @Override
                     public void run() {
                         mVsConnect.setDisplayedChild(1);
+                        bottomLayout.setVisibility(View.VISIBLE);
+                        btnRefresh.clearAnimation();
+                        btnRefresh.setEnabled(true);
                         if (!mNetworkItemShouldUpdated) {
                             return;
                         }
@@ -222,15 +244,16 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
     }
 
     private void startScanWifi() {
-        mTimer = new Timer();
+//        mTimer = new Timer();
         mScanWifiTimeTask = new ScanWifiTimeTask();
-        mTimer.schedule(mScanWifiTimeTask, 1000, 15000);
+//        mTimer.schedule(mScanWifiTimeTask, 1000, 15000);
+        refreshWifiList();
     }
 
     private void stopScanWifi() {
-        if (mTimer != null) {
-            mTimer.cancel();
-        }
+//        if (mTimer != null) {
+//            mTimer.cancel();
+//        }
     }
 
     private void refreshWifiList() {

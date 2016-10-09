@@ -1,1 +1,1 @@
-include ':app', ':library', ':mediatranscoder'
+include ':app', ':mediatranscoder'

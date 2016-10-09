@@ -11,7 +11,7 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
-import com.waylens.hachi.library.crs_svr.CrsCommand;
+
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.xfdingustc.snipe.VdbCommand;
 import com.xfdingustc.snipe.VdbRequestFuture;
@@ -37,8 +37,12 @@ import java.util.concurrent.CancellationException;
 public class CacheMomentJob extends UploadMomentJob {
     private static final String TAG = CacheMomentJob.class.getSimpleName();
 
+    private static final int VIDIT_RAW_DATA = 1;
+
+    private static final int VIDIT_VIDEO_DATA_LOW = 64;
+
     private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
-    private static final int DEFAULT_DATA_TYPE_CLOUD = CrsCommand.VIDIT_VIDEO_DATA_LOW | CrsCommand.VIDIT_RAW_DATA;
+    private static final int DEFAULT_DATA_TYPE_CLOUD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
 
 
     private VdbRequestQueue mVdbRequestQueue;
