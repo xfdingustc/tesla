@@ -1,17 +1,12 @@
 package com.waylens.hachi.ui.manualsetup;
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Outline;
 import android.graphics.drawable.AnimationDrawable;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -36,7 +31,6 @@ import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.xfdingustc.mjpegview.library.MjpegView;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -210,8 +204,6 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
         mSSID = bundle.getString("ssid");
         mPassword = bundle.getString("password");
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
-        setPreferredNetwork(1);
-
     }
 
     private void initViews() {
@@ -310,61 +302,6 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
 
             }
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setPreferredNetwork(int networkType1) {
-
-        ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-//        Logger.t(TAG).d("current preferred network: " + connMgr.getNetworkPreference());
-//        if (networkType == 0) {
-//            connMgr.setNetworkPreference(ConnectivityManager.TYPE_MOBILE);
-//        } else if (networkType == 1) {
-//            connMgr.setNetworkPreference(ConnectivityManager.TYPE_WIFI);
-//        }
-
-        final ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        Network[] network = connectivityManager.getAllNetworks();
-        if(network != null && network.length >0 ){
-            for(int i = 0 ; i < network.length ; i++){
-                NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
-                int networkType = networkInfo.getType();
-                Logger.t(TAG).d("network: " + networkInfo.toString());
-                if(ConnectivityManager.TYPE_WIFI == networkType ){
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        boolean bind = connectivityManager.bindProcessToNetwork(network[i]);
-                        Logger.t(TAG).d("bind result: " + bind);
-                    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        boolean bind = connectivityManager.setProcessDefaultNetwork(network[i]);
-                        Logger.t(TAG).d("bind result: " + bind);
-                    }
-
-
-                }
-            }
-        }
-
-//        NetworkRequest.Builder builder = new NetworkRequest.Builder();
-//
-//        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_RESTRICTED);
-//        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
-//
-//        NetworkRequest networkRequest = builder.build();
-//        connectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback(){
-//            @Override
-//            public void onAvailable(Network network) {
-//                Logger.t(TAG).d("network available");
-//                connectivityManager.setProcessDefaultNetwork(network);
-//            }
-//        });
-//        connectivityManager.registerNetworkCallback(networkRequest, new ConnectivityManager.NetworkCallback() {
-//
-//        });
-
-//        Logger.t(TAG).d("current preferred network: " + connMgr.getNetworkPreference());
-//        WifiManager wifiMgr = (WifiManager) this.context.getSystemService("wifi");
-//        wifiMgr.disconnect();
     }
 
 

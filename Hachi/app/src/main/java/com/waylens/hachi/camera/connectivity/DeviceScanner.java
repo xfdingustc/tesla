@@ -1,4 +1,4 @@
-package com.waylens.hachi.camera;
+package com.waylens.hachi.camera.connectivity;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;

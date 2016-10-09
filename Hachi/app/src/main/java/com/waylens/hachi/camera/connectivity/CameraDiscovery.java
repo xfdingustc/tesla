@@ -1,4 +1,4 @@
-package com.waylens.hachi.camera;
+package com.waylens.hachi.camera.connectivity;
 
 import android.content.Context;
 import android.net.nsd.NsdManager;

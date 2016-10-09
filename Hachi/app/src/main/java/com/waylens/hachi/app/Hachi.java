@@ -1,18 +1,16 @@
 package com.waylens.hachi.app;
 
 import android.content.Context;
-import android.net.nsd.NsdServiceInfo;
+import android.net.ConnectivityManager;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadManager;
-import com.waylens.hachi.camera.CameraDiscovery;
-import com.waylens.hachi.camera.DeviceScanner;
-import com.waylens.hachi.camera.VdtCamera;
-import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.utils.ConnectivityHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 
@@ -29,9 +27,6 @@ public class Hachi extends MultiDexApplication {
 
 
     private static Context mSharedContext = null;
-
-
-    private DeviceScanner mScanner;
 
 
     @Override
@@ -61,8 +56,7 @@ public class Hachi extends MultiDexApplication {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        CameraDiscovery.stopDiscovery();
-        mScanner.stopWork();
+        VdtCameraConnectivityManager.getManager().stopSearchCamera();
     }
 
 
@@ -87,27 +81,11 @@ public class Hachi extends MultiDexApplication {
 
 //        FIR.init(this);
 
+//        ConnectivityHelper.setPreferredNetwork(ConnectivityManager.TYPE_WIFI);
 
-        CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
-            @Override
-            public void onCameraFound(NsdServiceInfo cameraService) {
-                String serviceName = cameraService.getServiceName();
-                boolean bIsPcServer = serviceName.equals("Vidit Studio");
-                final VdtCamera.ServiceInfo serviceInfo = new VdtCamera.ServiceInfo(
-                    cameraService.getHost(),
-                    cameraService.getPort(),
-                    "", serviceName, bIsPcServer);
-                VdtCameraManager.getManager().connectCamera(serviceInfo, "CameraDiscovery");
+        VdtCameraConnectivityManager.getManager().startSearchCamera();
 
-            }
 
-            @Override
-            public void onError(int errorCode) {
-                Logger.t(TAG).e("errorCode: " + errorCode);
-            }
-        });
-
-        startDeviceScanner();
     }
 
     private void initSessionInfo() {
@@ -122,14 +100,6 @@ public class Hachi extends MultiDexApplication {
 
     private void configureJobManager() {
         BgJobManager.init(this);
-    }
-
-    public void startDeviceScanner() {
-        if (mScanner != null) {
-            mScanner.stopWork();
-        }
-        mScanner = new DeviceScanner(this);
-        mScanner.startWork();
     }
 
 
