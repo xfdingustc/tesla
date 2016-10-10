@@ -26,6 +26,7 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.ui.activities.MainActivity;
@@ -133,6 +134,7 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_ap_connect, savedInstanceState);
+
         initViews();
         return view;
     }
@@ -161,7 +163,9 @@ public class ApConnectFragment extends BaseFragment implements WifiAutoConnectMa
     @Override
     public void onStart() {
         super.onStart();
-        mEventBus.register(this);
+        if (!mEventBus.isRegistered(this)) {
+            mEventBus.register(this);
+        }
     }
 
     @Override

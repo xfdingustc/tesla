@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.utils.ConnectivityHelper;

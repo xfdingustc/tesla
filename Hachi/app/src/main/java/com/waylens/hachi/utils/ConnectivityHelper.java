@@ -36,6 +36,7 @@ public class ConnectivityHelper {
         if (network != null && network.length > 0) {
             for (int i = 0; i < network.length; i++) {
                 NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
+                Logger.t(TAG).d("networkInfo: " + networkInfo.toString());
                 int networkType = networkInfo.getType();
                 if (desirednetworkType == networkType) {
                     setAppNetwork(connectivityManager, network[i]);
@@ -70,6 +71,8 @@ public class ConnectivityHelper {
             && VdtCameraManager.getManager().isConnected()
             && VdtCameraManager.getManager().getCurrentCamera().getWifiMode() == VdtCamera.WIFI_MODE_AP) {
             setPreferredNetwork(ConnectivityManager.TYPE_MOBILE);
+        } else {
+            Logger.t(TAG).d("ssid: " + wifiInfo.getSSID());
         }
     }
 
