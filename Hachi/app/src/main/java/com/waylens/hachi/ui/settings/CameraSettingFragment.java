@@ -47,7 +47,6 @@ public class CameraSettingFragment extends PreferenceFragment {
     private static final String TAG = CameraSettingFragment.class.getSimpleName();
 
     private VdtCamera mVdtCamera;
-
     private Preference mCameraName;
     private ListPreference mResolution;
     private SwitchPreference mTimestamp;
@@ -215,6 +214,7 @@ public class CameraSettingFragment extends PreferenceFragment {
         mSyncTimezone.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
+                mVdtCamera.syncTimezone();
                 Snackbar.make(CameraSettingFragment.this.getView(), "Synchronize timezone successfully!", Snackbar.LENGTH_SHORT).show();
                 return true;
             }

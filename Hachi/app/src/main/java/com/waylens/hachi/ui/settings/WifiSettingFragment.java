@@ -262,7 +262,15 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
         if(!TextUtils.isEmpty(mVdtCamera.getSSID())) {
             mTvSsid.setText(mVdtCamera.getSSID());
         } else {
-            mTvSsid.setText("");
+            if (mVdtCamera.getWifiMode() != VdtCamera.WIFI_MODE_OFF) {
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                String ssid = wifiInfo.getSSID();
+                int len = ssid.length();
+                if (len > 2) {
+                    String str = ssid.substring(1, len - 1);
+                    mTvSsid.setText(str);
+                }
+            }
         }
 
         final int wifiModeIndex = wifiMode;
@@ -343,6 +351,24 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                 viewHolder.ivWifiCipher.setVisibility(View.INVISIBLE);
             }
 
+            switch (networkItem.status) {
+                case NetworkItemBean.CONNECT_STATUS_NONE:
+                    viewHolder.wifiStatus.setVisibility(View.GONE);
+                    break;
+                case NetworkItemBean.CONNECT_STATUS_SAVED:
+                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+                    viewHolder.wifiStatus.setText(R.string.saved);
+                    break;
+                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION:
+                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+                    viewHolder.wifiStatus.setText(R.string.authenticating);
+                    break;
+                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM:
+                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+                    viewHolder.wifiStatus.setText(R.string.authentication_problem);
+                    break;
+            }
+
             if (networkItem.signalLevel >= -30) {
                 viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
             } else if (networkItem.signalLevel >= -60) {
@@ -380,6 +406,9 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
             @BindView(R.id.ivWifiSignal)
             ImageView ivWifiSignal;
 
+            @BindView(R.id.wifi_status)
+            TextView wifiStatus;
+
             public NetworkItemViewHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
@@ -414,6 +443,8 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                             mEventBus.register(WifiSettingFragment.this);
                             setNetwork2Camera(itemBean.ssid, mEtPassword.getText().toString());
                             //MainActivity.launch(WifiSettingFragment.this.getActivity());
+                            itemBean.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION;
+                            mNetworkItemAdapter.notifyDataSetChanged();
                         }
                     })
                     .build();
