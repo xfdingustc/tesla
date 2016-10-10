@@ -115,7 +115,8 @@
             style="@style/HachiTextViewBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/start_up_text_line3"/>
+            android:text="@string/start_up_text_line3"
+            android:layout_marginBottom="16dp"/>
 
 
     </LinearLayout>

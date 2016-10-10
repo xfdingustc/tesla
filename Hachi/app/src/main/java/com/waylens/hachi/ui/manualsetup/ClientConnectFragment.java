@@ -29,6 +29,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.camera.entities.NetworkItemBean;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.camera.events.NetworkEvent;

@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class WifiAutoConnectManager {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 boolean ret = openWifi();
-
+                VdtCameraConnectivityManager.getManager().stopSearchCamera();
                 subscriber.onNext(STATUS_OPEN_WIFI);
 
                 while (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
@@ -104,6 +105,7 @@ public class WifiAutoConnectManager {
                     if (mListener != null) {
                         mListener.onAutoConnectStarted();
                     }
+                    VdtCameraConnectivityManager.getManager().startSearchCamera();
                 }
 
                 @Override
@@ -112,6 +114,7 @@ public class WifiAutoConnectManager {
                     if (mListener != null) {
                         mListener.onAutoConnectError(e.getMessage());
                     }
+                    VdtCameraConnectivityManager.getManager().startSearchCamera();
                 }
 
                 @Override

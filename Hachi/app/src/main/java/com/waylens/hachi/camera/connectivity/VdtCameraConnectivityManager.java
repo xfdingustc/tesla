@@ -18,6 +18,8 @@ public class VdtCameraConnectivityManager {
     private DeviceScanner mScanner;
     private static VdtCameraConnectivityManager _INSTANCE = new VdtCameraConnectivityManager();
 
+    private boolean isStarted = false;
+
     public static VdtCameraConnectivityManager getManager() {
         if (_INSTANCE == null) {
             synchronized (VdtCameraConnectivityManager.class) {
@@ -36,6 +38,9 @@ public class VdtCameraConnectivityManager {
 
     public void startSearchCamera() {
         ConnectivityHelper.setPreferredNetwork(ConnectivityManager.TYPE_WIFI);
+        if (isStarted) {
+            return;
+        }
         CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
             @Override
             public void onCameraFound(NsdServiceInfo cameraService) {
@@ -55,7 +60,8 @@ public class VdtCameraConnectivityManager {
             }
         });
 
-        startDeviceScanner();
+//        startDeviceScanner();
+        isStarted = true;
     }
 
     private void startDeviceScanner() {
@@ -67,7 +73,10 @@ public class VdtCameraConnectivityManager {
     }
 
     public void stopSearchCamera() {
-        CameraDiscovery.stopDiscovery();
-        mScanner.stopWork();
+        if (isStarted) {
+            CameraDiscovery.stopDiscovery();
+//            mScanner.stopWork();
+            isStarted = false;
+        }
     }
 }
