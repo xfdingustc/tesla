@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -38,6 +39,7 @@ import com.waylens.hachi.ui.community.feed.FeedFragment;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.utils.ConnectivityHelper;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -136,6 +138,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @Override
     public void onStart() {
         super.onStart();
+        ConnectivityHelper.requestInternetNetwork();
         mListScrollSubscription = RxBus.getDefault().toObserverable(ScrollEvent.class)
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<ScrollEvent>() {
