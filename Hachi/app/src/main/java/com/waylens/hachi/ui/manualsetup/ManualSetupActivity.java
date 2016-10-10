@@ -64,7 +64,7 @@ public class ManualSetupActivity extends BaseActivity {
         PackageManager pm = getPackageManager();
         boolean permission = pm.checkPermission("android.permission.CAMERA", "com.waylens.hachi") == PackageManager.PERMISSION_GRANTED;
 
-        Logger.t(TAG).d("Permission: " + permission);
+//        Logger.t(TAG).d("Permission: " + permission);
 
         if (permission) {
             mApConnectFragment = ApConnectFragment.newInstance(mWifi, mPassword);

@@ -17,6 +17,7 @@ import com.waylens.hachi.utils.PreferenceUtils;
  * Created by Xiaofei on 2016/3/18.
  */
 public class OvertureActivity extends BaseActivity {
+    private boolean mNeedDelay = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,19 +30,24 @@ public class OvertureActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
+        mNeedDelay = getIntent().getBooleanExtra("need_delay", true);
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_overture);
         hideStatusBar();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                redirectTo();
-            }
-        }, 2000);
+        if (mNeedDelay) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    redirectTo();
+                }
+            }, 2000);
+        } else {
+            redirectTo();
+        }
     }
 
 

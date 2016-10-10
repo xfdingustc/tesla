@@ -132,6 +132,13 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
                 MainActivity.launch(getActivity());
                 break;
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTING_FAILED:
+                final Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage(getActivity().getPackageName());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("need_delay", true);
+                startActivity(intent);
+                System.exit(0);
+                break;
         }
     }
 
