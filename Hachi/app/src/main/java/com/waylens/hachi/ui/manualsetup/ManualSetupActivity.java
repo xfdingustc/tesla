@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.utils.ConnectivityHelper;
 
 
 /**
@@ -51,6 +53,7 @@ public class ManualSetupActivity extends BaseActivity {
         super.init();
         mWifi = getIntent().getStringExtra(EXTRA_WIFI);
         mPassword = getIntent().getStringExtra(EXTRA_PASSWORD);
+        ConnectivityHelper.setPreferredNetwork(ConnectivityManager.TYPE_WIFI);
         initViews();
     }
 

@@ -25,6 +25,7 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.utils.ConnectivityHelper;
 import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONObject;
@@ -92,6 +93,7 @@ public class AuthorizeActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_authorize);
         setupToolbar();
+        ConnectivityHelper.requestInternetNetwork();
         mFBLoginButton.setReadPermissions("public_profile", "email", "user_friends");
         mFBLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
 

@@ -148,6 +148,7 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
                     mNetworkItemAdapter.notifyDataSetChanged();
                     mEventBus.unregister(this);
                 } else {
+                    bottomLayout.setVisibility(View.GONE);
                     showCameraConnect2Wifi();
                     switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
                     WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager(mWifiManager, this);

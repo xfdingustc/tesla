@@ -7,10 +7,18 @@ import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
+
+import static android.content.Context.WIFI_SERVICE;
 
 /**
  * Created by Xiaofei on 2016/10/9.
@@ -40,23 +48,29 @@ public class ConnectivityHelper {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void requestInternetNetwork() {
-        final ConnectivityManager connectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//        final ConnectivityManager connectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//
+//        NetworkRequest.Builder builder = new NetworkRequest.Builder();
+//        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+//        builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR);
+//        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+//
+//        NetworkRequest networkRequest = builder.build();
+//        connectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback(){
+//            @Override
+//            public void onAvailable(Network network) {
+//                super.onAvailable(network);
+//                setAppNetwork(connectivityManager, network);
+//            }
+//        });
 
-        NetworkRequest.Builder builder = new NetworkRequest.Builder();
-        builder.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-        builder.addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR);
-        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
-
-        NetworkRequest networkRequest = builder.build();
-        connectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback(){
-            @Override
-            public void onAvailable(Network network) {
-                super.onAvailable(network);
-
-
-                setAppNetwork(connectivityManager, network);
-            }
-        });
+        WifiManager wifiManager = (WifiManager) Hachi.getContext().getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getSSID().contains("C9J")
+            && VdtCameraManager.getManager().isConnected()
+            && VdtCameraManager.getManager().getCurrentCamera().getWifiMode() == VdtCamera.WIFI_MODE_AP) {
+            setPreferredNetwork(ConnectivityManager.TYPE_MOBILE);
+        }
     }
 
 
@@ -66,6 +80,9 @@ public class ConnectivityHelper {
     private static void setAppNetwork(ConnectivityManager manager, Network network) {
         NetworkInfo networkInfo = manager.getNetworkInfo(network);
         Logger.t(TAG).d("bind process network: " + networkInfo.toString());
+        if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+            Toast.makeText(Hachi.getContext(), R.string.using_cellular, Toast.LENGTH_LONG).show();
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean bind = manager.bindProcessToNetwork(network);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

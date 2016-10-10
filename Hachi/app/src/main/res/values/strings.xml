@@ -497,4 +497,5 @@
 	<string name="geoTag_setting_notification">Could not hide location according to your gauge setting.</string>
 	<string name="client_wifi">Phone-WiFi-Camera</string>
 	<string name="refresh">Refresh</string>
+	<string name="using_cellular">Using cellular data</string>
 </resources>
