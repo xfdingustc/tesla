@@ -427,20 +427,27 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
     }
 
     private void onNetworkItemClicked(final NetworkItemBean itemBean) {
+        if(mSelectedNetworkItem !=null && mSelectedNetworkItem.status == NetworkItemBean.CONNECT_STATUS_AUTHENTICATION) {
+            Snackbar.make(WifiSettingFragment.this.mWifiList, "Connecting process is not finished yet.", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+
         mSelectedNetworkItem = itemBean;
         /*
         if (itemBean.status == NetworkItemBean.CONNECT_STATUS_SAVED) {
             connect2AddedWifi(itemBean.ssid);
         } else {  */
-        {
-            mPasswordDialog = new MaterialDialog.Builder(this.getActivity())
-                    .title(itemBean.ssid)
-                    .customView(R.layout.dialog_network_password, true)
-                    .positiveText(R.string.join)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            mEventBus.register(WifiSettingFragment.this);
+
+        mPasswordDialog = new MaterialDialog.Builder(this.getActivity())
+                .title(itemBean.ssid)
+                .customView(R.layout.dialog_network_password, true)
+                .positiveText(R.string.join)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            if (!mEventBus.isRegistered(WifiSettingFragment.this)) {
+                                mEventBus.register(WifiSettingFragment.this);
+                            }
                             setNetwork2Camera(itemBean.ssid, mEtPassword.getText().toString());
                             //MainActivity.launch(WifiSettingFragment.this.getActivity());
                             itemBean.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION;
@@ -448,9 +455,8 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                         }
                     })
                     .build();
-            mPasswordDialog.show();
-            mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
-        }
+        mPasswordDialog.show();
+        mEtPassword = (EditText) mPasswordDialog.getCustomView().findViewById(R.id.password);
     }
 
     private void connect2AddedWifi(String ssid) {
