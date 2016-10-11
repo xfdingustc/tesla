@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
@@ -103,6 +104,7 @@ public class SignInFragment extends BaseFragment {
                 public void onClick(View widget) {
                     onForgotPassword();
                 }
+
             }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         mForgotPasswordView.setText(ssb);
         mForgotPasswordView.setMovementMethod(LinkMovementMethod.getInstance());

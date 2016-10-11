@@ -70,7 +70,7 @@ public class ClipChooserActivity extends BaseActivity {
         } else {
             getToolbar().setTitle(R.string.choose_clips);
         }
-        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationIcon(R.drawable.ic_close);
         getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_add_clip);
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {

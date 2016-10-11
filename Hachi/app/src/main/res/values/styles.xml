@@ -8,10 +8,16 @@
         <item name="toolbarColor">@color/material_deep_orange_500</item>
         <item name="defaultBgColor">#FAFAFA</item>
         <item name="defaultBgColorDark">#F5F5F5</item>
+        <item name="appTextColorPrimary">#dd000000</item>
+        <item name="appTextColorSecondary">#89000000</item>
+        <item name="appTextColorDisabled">#60000000</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="colorControlActivated">@color/style_color_accent</item>
         <item name="actionButtonColor">@color/material_deep_orange_500</item>
         <item name="signinLogoColor">@color/material_deep_orange_500</item>
+        <item name="separateColor">#1E000000</item>
+
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -27,7 +33,7 @@
         <item name="appTextColorSecondary">@color/app_text_color_secondary</item>
         <item name="appTextColorDisabled">@color/app_text_color_disabled</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:actionModeCloseDrawable">@drawable/navbar_close</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_close</item>
         <item name="actionModeStyle">@style/Styled.ActionMode</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorHint">@color/app_text_color_disabled</item>
@@ -35,6 +41,7 @@
         <item name="colorControlActivated">@color/style_color_accent</item>
         <item name="actionButtonColor">@color/style_color_accent</item>
         <item name="signinLogoColor">@android:color/white</item>
+        <item name="separateColor">#FF35373B</item>
     </style>
 
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">

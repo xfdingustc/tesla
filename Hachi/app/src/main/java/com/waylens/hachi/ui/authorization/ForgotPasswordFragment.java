@@ -35,7 +35,7 @@ import butterknife.OnClick;
  * Created by Richard on 3/23/16.
  */
 public class ForgotPasswordFragment extends BaseFragment {
-    private static final String TAG = "ForgotPasswordFragment";
+    private static final String TAG = ForgotPasswordFragment.class.getSimpleName();
 
     private static final String TAG_REQUEST_SEND_EMAIL = "ForgotPasswordFragment.request.send.email";
 

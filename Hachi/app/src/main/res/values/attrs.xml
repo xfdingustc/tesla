@@ -13,6 +13,8 @@
     <attr name="appTextColorDisabled" format="color"/>
     <attr name="actionButtonColor" format="color"/>
     <attr name="signinLogoColor" format="color"/>
+    <attr name="separateColor" format="color"/>
+
 
     <declare-styleable name="VideoTrimmer">
         <attr name="thumbWidth" format="dimension"/>
