@@ -1,5 +1,6 @@
 package com.waylens.hachi.utils;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**
@@ -49,5 +50,11 @@ public class StringUtils {
             + "KB" : (var0 < 1073741824L ? var2.format((double) ((float) var0 / 1024.0F / 1024.0F))
             + "MB" : (var0 < 0L ? var2.format((double) ((float) var0 / 1024.0F / 1024.0F / 1024.0F))
             + "GB" : "error")));
+    }
+
+    public static String getRaceTime(long time) {
+        BigDecimal tmp = new BigDecimal((float)time / 1000f);
+        return String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + "s";
+
     }
 }

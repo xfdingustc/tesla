@@ -285,6 +285,23 @@ public class Clip implements Parcelable, Serializable {
             + "real Clip id: " + realCid.toString();
     }
 
+    public long getRaceTime030() {
+        return raceTimingPoints.get(2) - getRaceStartTime();
+    }
+
+    public long getRaceTime060() {
+        return raceTimingPoints.get(4) - getRaceStartTime();
+    }
+
+    private long getRaceStartTime() {
+        if ((typeRace & MASK_RACE) == TYPE_RACE_CD3T
+            || (typeRace & MASK_RACE) == TYPE_RACE_CD6T) {
+            return raceTimingPoints.get(0);
+        } else {
+            return raceTimingPoints.get(1);
+        }
+    }
+
     public long getStandardClipDate() {
         return (mClipDate - gmtOffset) * 1000l;
     }

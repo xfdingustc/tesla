@@ -15,12 +15,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.utils.StringUtils;
 
 
 import java.text.SimpleDateFormat;
@@ -200,8 +202,22 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
             viewHolder.performanceIcon.setVisibility(View.VISIBLE);
+            viewHolder.performance.setVisibility(View.VISIBLE);
+
+            Logger.t(TAG).d("0-30: " + clip.getRaceTime030() + " 0-60: " + clip.getRaceTime060());
+            if (clip.getRaceTime060() > 0) {
+                viewHolder.performanceIcon.setText("60");
+                viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime060()));
+            } else if (clip.getRaceTime030() > 0) {
+                viewHolder.performanceIcon.setText("30");
+                viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime030()));
+            } else {
+                viewHolder.performanceIcon.setVisibility(View.GONE);
+                viewHolder.performance.setVisibility(View.GONE);
+            }
         } else {
             viewHolder.performanceIcon.setVisibility(View.GONE);
+            viewHolder.performance.setVisibility(View.GONE);
         }
 
         if (viewHolder.mBtnSelect != null) {
@@ -379,7 +395,10 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         View mSelectedMask;
 
         @BindView(R.id.performance_icon)
-        View performanceIcon;
+        TextView performanceIcon;
+
+        @BindView(R.id.performance)
+        TextView performance;
 
 
         @OnClick({R.id.btnSelect, R.id.ivClipCover})

@@ -31,19 +31,31 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="24dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:alpha="0.7"
         android:background="@color/background_color_dark"
         android:orientation="horizontal">
 
-        <ImageView
+
+        
+        <TextView
             android:id="@+id/performance_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="30"
+            android:textSize="12sp"
+            android:textColor="@color/app_text_color_primary_light"
+            android:background="@drawable/performance_icon_bg"
+            android:layout_margin="4dp"/>
+
+        <TextView
+            android:id="@+id/performance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_margin="8dp"
-            android:src="@drawable/icon_performance"/>
+            android:textSize="12sp"
+            tools:text="3.5s"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -52,11 +64,11 @@
 
         <TextView
             android:id="@+id/tvDuration"
-            style="@style/HachiTextViewCaption"
+            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="8dp"
+            android:layout_margin="4dp"
             tools:text="00:28"/>
 
     </LinearLayout>
