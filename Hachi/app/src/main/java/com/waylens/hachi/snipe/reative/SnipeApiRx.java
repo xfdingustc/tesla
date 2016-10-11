@@ -2,6 +2,7 @@ package com.waylens.hachi.snipe.reative;
 
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.SpaceInfo;
 
 import java.util.concurrent.ExecutionException;
 
@@ -34,6 +35,19 @@ public class SnipeApiRx {
                 try {
                     return Observable.just(SnipeApi.deleteClip(cid));
                 } catch (ExecutionException  | InterruptedException e) {
+                    return Observable.error(e);
+                }
+            }
+        });
+    }
+
+    public static Observable<SpaceInfo> getSpaceInfoRx() {
+        return Observable.defer(new Func0<Observable<SpaceInfo>>() {
+            @Override
+            public Observable<SpaceInfo> call() {
+                try {
+                    return Observable.just(SnipeApi.getSpaceInfo());
+                } catch (ExecutionException | InterruptedException e) {
                     return Observable.error(e);
                 }
             }

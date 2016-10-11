@@ -35,7 +35,7 @@ import com.waylens.hachi.camera.events.CameraStateChangeEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.LiveRawDataRequest;
 import com.waylens.hachi.snipe.vdb.ClipActionInfo;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
@@ -48,12 +48,10 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
-import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -67,8 +65,10 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/3/7.
@@ -358,7 +358,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     public void onEventUpdateCameraStatus(UpdateCameraStatusEvent event) {
         updateCameraState();
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -690,37 +689,39 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     }
 
     private void updateSpaceInfo() {
-        if (isDetached()) {
+        if (isDetached() || mInfoView == null || mInfoView.getVisibility() != View.VISIBLE) {
             return;
         }
-        if (mInfoView != null && mInfoView.getVisibility() == View.VISIBLE) {
-            GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
+
+        SnipeApiRx.getSpaceInfoRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<SpaceInfo>() {
                 @Override
-                public void onResponse(SpaceInfo response) {
-                    Logger.t(TAG).d("response: " + response.toString());
-                    mStorageView.getProgressDrawable().clearColorFilter();
-                    mStorageView.setMax((int) (response.total / (1024 * 1024)));
-                    mStorageView.setProgress((int) (response.marked / (1024 * 1024)));
-                    mStorageView.setSecondaryProgress((int) (response.used / (1024 * 1024)));
-
-                    mTvSpaceLeft.setText(Utils.getSpaceString(response.total - response.used) + " " + getString(R.string.ready_to_record));
-
-                    mHighlightSpace.setText(Utils.getSpaceString(response.marked));
-                    mLoopRecordSpace.setText(Utils.getSpaceString(response.used - response.marked));
-
+                public void onCompleted() {
 
                 }
-            }, new VdbResponse.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(SnipeError error) {
+                public void onError(Throwable e) {
                     mStorageView.getProgressDrawable().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
+                }
+
+                @Override
+                public void onNext(SpaceInfo spaceInfo) {
+                    Logger.t(TAG).d("response: " + spaceInfo.toString());
+                    mStorageView.getProgressDrawable().clearColorFilter();
+                    mStorageView.setMax((int) (spaceInfo.total / (1024 * 1024)));
+                    mStorageView.setProgress((int) (spaceInfo.marked / (1024 * 1024)));
+                    mStorageView.setSecondaryProgress((int) (spaceInfo.used / (1024 * 1024)));
+
+                    mTvSpaceLeft.setText(Utils.getSpaceString(spaceInfo.total - spaceInfo.used) + " " + getString(R.string.ready_to_record));
+
+                    mHighlightSpace.setText(Utils.getSpaceString(spaceInfo.marked));
+                    mLoopRecordSpace.setText(Utils.getSpaceString(spaceInfo.used - spaceInfo.marked));
                 }
             });
 
-            if (mVdbRequestQueue != null) {
-                mVdbRequestQueue.add(request);
-            }
-        }
     }
 
 

@@ -10,13 +10,17 @@ import android.widget.TextView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.Utils;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/8/22.
@@ -66,30 +70,27 @@ public class SpaceInfoActivity extends BaseActivity {
         setContentView(R.layout.activity_space_info);
         setupToolbar();
 
-        GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
-            @Override
-            public void onResponse(SpaceInfo response) {
-                mSdCardVolume.setText(Utils.getSpaceString(response.total));
-                mHightlight.setText(Utils.getSpaceString(response.marked));
-                mVideoBuffer.setText(Utils.getSpaceString(response.used));
-                mFree.setText(Utils.getSpaceString(response.total - response.used));
-                mStorageProgressBar.setMax(100);
-                long marked = (response.marked * 100) / response.total;
-                long buffered = (response.used * 100) / response.total;
-                mStorageProgressBar.setProgress((int)marked);
-                mStorageProgressBar.setSecondaryProgress((int)buffered);
-                mStorageNumber.setText(Utils.getSpaceNumber(response.used));
-                mStorageUnit.setText(Utils.getSpaceUnit(response.used));
-            }
+        SnipeApiRx.getSpaceInfoRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SpaceInfo>() {
+                @Override
+                public void onNext(SpaceInfo spaceInfo) {
+                    mSdCardVolume.setText(Utils.getSpaceString(spaceInfo.total));
+                    mHightlight.setText(Utils.getSpaceString(spaceInfo.marked));
+                    mVideoBuffer.setText(Utils.getSpaceString(spaceInfo.used));
+                    mFree.setText(Utils.getSpaceString(spaceInfo.total - spaceInfo.used));
+                    mStorageProgressBar.setMax(100);
+                    long marked = (spaceInfo.marked * 100) / spaceInfo.total;
+                    long buffered = (spaceInfo.used * 100) / spaceInfo.total;
+                    mStorageProgressBar.setProgress((int)marked);
+                    mStorageProgressBar.setSecondaryProgress((int)buffered);
+                    mStorageNumber.setText(Utils.getSpaceNumber(spaceInfo.used));
+                    mStorageUnit.setText(Utils.getSpaceUnit(spaceInfo.used));
+                }
+            });
 
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
 
-            }
-        });
-
-        mVdtCamera.getRequestQueue().add(request);
     }
 
 

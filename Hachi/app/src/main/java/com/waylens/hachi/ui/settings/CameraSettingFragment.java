@@ -31,9 +31,11 @@ import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.utils.Utils;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 
 import org.json.JSONArray;
@@ -41,6 +43,9 @@ import org.json.JSONException;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class CameraSettingFragment extends PreferenceFragment {
@@ -414,20 +419,17 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-        GetSpaceInfoRequest request = new GetSpaceInfoRequest(new VdbResponse.Listener<SpaceInfo>() {
-            @Override
-            public void onResponse(SpaceInfo response) {
-                String leftSpace = Utils.getSpaceString(response.total - response.used);
-                mStorage.setSummary(getString(R.string.space_free, leftSpace));
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
+        SnipeApiRx.getSpaceInfoRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SpaceInfo>() {
+                @Override
+                public void onNext(SpaceInfo spaceInfo) {
+                    String leftSpace = Utils.getSpaceString(spaceInfo.total - spaceInfo.used);
+                    mStorage.setSummary(getString(R.string.space_free, leftSpace));
+                }
+            });
 
-            }
-        });
-
-        mVdtCamera.getRequestQueue().add(request);
     }
 
     private void initBookmarkPreference() {
