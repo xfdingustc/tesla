@@ -3,8 +3,8 @@ package com.waylens.hachi.utils;
 
 
 
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipSet;
 
 import java.util.ArrayList;
 import java.util.Collections;

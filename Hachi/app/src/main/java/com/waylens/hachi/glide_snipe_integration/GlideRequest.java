@@ -1,12 +1,12 @@
 package com.waylens.hachi.glide_snipe_integration;
 
 import com.orhanobut.logger.Logger;
-import com.xfdingustc.snipe.VdbAcknowledge;
-import com.xfdingustc.snipe.VdbCommand;
-import com.xfdingustc.snipe.VdbRequest;
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.vdb.ClipPos;
+import com.waylens.hachi.snipe.VdbAcknowledge;
+import com.waylens.hachi.snipe.VdbCommand;
+import com.waylens.hachi.snipe.VdbRequest;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.vdb.ClipPos;
 
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +19,7 @@ public class GlideRequest extends VdbRequest<InputStream> {
     private static final String TAG = GlideRequest.class.getSimpleName();
 
     private final ClipPos mClipPos;
-
+;
     private final VdbRequestFuture<InputStream> mFuture;
 
     public GlideRequest(ClipPos clipPos, VdbRequestFuture<InputStream> future) {

@@ -4,8 +4,9 @@ package com.waylens.hachi.rest.response;
 
 
 import com.waylens.hachi.rest.bean.VehicleInfo;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.ui.entities.User;
-import com.xfdingustc.snipe.utils.ToStringUtils;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;

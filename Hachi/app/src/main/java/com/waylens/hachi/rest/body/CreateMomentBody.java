@@ -3,13 +3,14 @@ package com.waylens.hachi.rest.body;
 import android.os.LocaleList;
 import android.text.TextUtils;
 
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import com.orhanobut.logger.Logger;
-import com.xfdingustc.snipe.utils.ToStringUtils;
+
 
 /**
  * Created by Xiaofei on 2016/6/17.

@@ -6,11 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -30,6 +26,10 @@ import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipActionInfo;
+import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
@@ -40,13 +40,7 @@ import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.view.ClipGridListView;
-
-import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipActionInfo;
-import com.xfdingustc.snipe.vdb.ClipSet;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -543,9 +537,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
 
     }
-
-
-
 
 
     private void toEnhance() {

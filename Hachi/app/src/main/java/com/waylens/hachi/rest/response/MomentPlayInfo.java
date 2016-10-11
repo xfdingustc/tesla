@@ -2,7 +2,9 @@ package com.waylens.hachi.rest.response;
 
 
 
-import com.xfdingustc.snipe.utils.ToStringUtils;
+
+
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import java.util.List;
 

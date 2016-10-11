@@ -1,7 +1,9 @@
 package com.waylens.hachi.eventbus.events;
 
 
-import com.xfdingustc.snipe.vdb.Clip;
+
+
+import com.waylens.hachi.snipe.vdb.Clip;
 
 import java.util.List;
 

@@ -5,15 +5,14 @@ import android.support.annotation.NonNull;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
-import com.xfdingustc.snipe.VdbRequest;
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
-
-import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
-import com.xfdingustc.snipe.toolbox.PlaylistEditRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.ClipSetManager;
+import com.waylens.hachi.snipe.VdbRequest;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.snipe.toolbox.PlaylistEditRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.ClipSetManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

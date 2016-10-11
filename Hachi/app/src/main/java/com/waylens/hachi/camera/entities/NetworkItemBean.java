@@ -1,7 +1,7 @@
 package com.waylens.hachi.camera.entities;
 
 
-import com.xfdingustc.snipe.utils.ToStringUtils;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/3/21.

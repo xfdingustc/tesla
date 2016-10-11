@@ -7,9 +7,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 
+import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.utils.Utils;
 import com.waylens.hachi.utils.ViewUtils;
-import com.xfdingustc.snipe.vdb.Clip;
+
 
 
 /**

@@ -6,13 +6,13 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.orhanobut.logger.Logger;
-import com.xfdingustc.snipe.SnipeError;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.toolbox.RawDataBlockRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 
 
 import java.util.ArrayList;

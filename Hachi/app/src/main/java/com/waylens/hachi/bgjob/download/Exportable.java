@@ -1,6 +1,7 @@
 package com.waylens.hachi.bgjob.download;
 
-import com.xfdingustc.snipe.vdb.ClipPos;
+
+import com.waylens.hachi.snipe.vdb.ClipPos;
 
 /**
  * Created by Xiaofei on 2016/8/17.

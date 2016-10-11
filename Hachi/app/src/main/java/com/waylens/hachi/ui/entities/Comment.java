@@ -8,7 +8,7 @@ import android.text.style.StyleSpan;
 import android.view.View;
 
 
-import com.xfdingustc.snipe.utils.ToStringUtils;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import org.json.JSONObject;
 

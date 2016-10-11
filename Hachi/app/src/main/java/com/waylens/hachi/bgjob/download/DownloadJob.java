@@ -13,9 +13,10 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.service.remux.RemuxHelper;
 import com.waylens.hachi.service.remux.RemuxerParams;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipDownloadInfo;
-import com.xfdingustc.snipe.vdb.ClipPos;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
+import com.waylens.hachi.snipe.vdb.ClipPos;
+
 
 import org.greenrobot.eventbus.EventBus;
 

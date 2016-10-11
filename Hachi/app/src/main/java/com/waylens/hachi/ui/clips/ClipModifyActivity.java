@@ -18,20 +18,21 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipExtentGetRequest;
+import com.waylens.hachi.snipe.toolbox.ClipExtentUpdateRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipExtent;
+import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.ClipSetManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.cliptrimmer.VideoTrimmer;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.utils.ViewUtils;
-import com.xfdingustc.snipe.SnipeError;
-import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.toolbox.ClipExtentGetRequest;
-import com.xfdingustc.snipe.toolbox.ClipExtentUpdateRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipExtent;
-import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.ClipSetManager;
+
 
 import org.greenrobot.eventbus.EventBus;
 

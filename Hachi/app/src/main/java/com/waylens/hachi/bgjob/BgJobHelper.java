@@ -11,8 +11,9 @@ import com.waylens.hachi.bgjob.upload.PictureUploadJob;
 import com.waylens.hachi.bgjob.upload.UploadCachedMomentJob;
 import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.rest.body.ReportMomentBody;
+import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.xfdingustc.snipe.vdb.Clip;
+
 
 /**
  * Created by Xiaofei on 2016/7/22.

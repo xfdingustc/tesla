@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.toolbox.ClipPlaybackUrlExRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.Vdb;
-import com.xfdingustc.snipe.vdb.urls.PlaybackUrl;
-import com.xfdingustc.snipe.vdb.urls.VdbUrl;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.Vdb;
+import com.waylens.hachi.snipe.vdb.urls.PlaybackUrl;
+import com.waylens.hachi.snipe.vdb.urls.VdbUrl;
 
 import java.util.concurrent.ExecutionException;
 

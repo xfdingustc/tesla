@@ -12,7 +12,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.xfdingustc.snipe.utils.ToStringUtils;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -3,7 +3,7 @@ package com.waylens.hachi.camera.events;
 
 
 import com.waylens.hachi.camera.VdtCamera;
-import com.xfdingustc.snipe.vdb.ClipActionInfo;
+import com.waylens.hachi.snipe.vdb.ClipActionInfo;
 
 
 /**

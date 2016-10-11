@@ -1,11 +1,11 @@
 package com.waylens.hachi.ui.clips.player;
 
 
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.toolbox.PlaylistPlaybackUrlRequest;
-import com.xfdingustc.snipe.vdb.urls.PlaylistPlaybackUrl;
-import com.xfdingustc.snipe.vdb.urls.VdbUrl;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
+import com.waylens.hachi.snipe.vdb.urls.PlaylistPlaybackUrl;
+import com.waylens.hachi.snipe.vdb.urls.VdbUrl;
 
 /**
  * Created by Xiaofei on 2016/2/29.

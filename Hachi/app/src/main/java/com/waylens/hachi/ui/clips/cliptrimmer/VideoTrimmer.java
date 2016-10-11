@@ -27,10 +27,10 @@ import com.waylens.hachi.R;
 
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.utils.ViewUtils;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipPos;
 
 
 import java.util.ArrayList;

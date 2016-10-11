@@ -6,9 +6,10 @@ import com.waylens.hachi.interactor.ClipGridListInteractor;
 import com.waylens.hachi.interactor.impl.ClipGridListInteractorImpl;
 import com.waylens.hachi.listeners.BaseSingleLoadedListener;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.view.ClipGridListView;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSet;
+
 
 import java.util.List;
 

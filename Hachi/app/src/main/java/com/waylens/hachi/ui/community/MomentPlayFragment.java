@@ -37,18 +37,19 @@ import com.waylens.hachi.player.HlsRendererBuilder;
 import com.waylens.hachi.player.Utils;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
+import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
+import com.waylens.hachi.snipe.vdb.rawdata.IioData;
+import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
-import com.xfdingustc.snipe.utils.ToStringUtils;
-import com.xfdingustc.snipe.vdb.rawdata.GpsData;
-import com.xfdingustc.snipe.vdb.rawdata.IioData;
-import com.xfdingustc.snipe.vdb.rawdata.ObdData;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
-import com.xfdingustc.snipe.vdb.rawdata.WeatherData;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;

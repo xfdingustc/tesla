@@ -5,7 +5,8 @@ import android.os.StatFs;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
-import com.xfdingustc.snipe.utils.DateTime;
+import com.waylens.hachi.snipe.utils.DateTime;
+
 
 import java.io.File;
 

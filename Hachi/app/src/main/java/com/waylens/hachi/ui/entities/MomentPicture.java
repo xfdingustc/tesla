@@ -1,6 +1,8 @@
 package com.waylens.hachi.ui.entities;
 
-import com.xfdingustc.snipe.utils.ToStringUtils;
+
+
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import java.io.Serializable;
 

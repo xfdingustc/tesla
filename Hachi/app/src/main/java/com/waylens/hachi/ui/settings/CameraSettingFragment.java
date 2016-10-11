@@ -29,12 +29,12 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.utils.Utils;
-import com.xfdingustc.snipe.SnipeError;
-import com.xfdingustc.snipe.VdbResponse;
 
-import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
-import com.xfdingustc.snipe.vdb.SpaceInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;

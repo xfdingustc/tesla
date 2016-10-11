@@ -2,7 +2,8 @@ package com.waylens.hachi.rest.response;
 
 
 import com.waylens.hachi.bgjob.upload.UploadServer;
-import com.xfdingustc.snipe.utils.ToStringUtils;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
+
 
 /**
  * Created by Xiaofei on 2016/6/17.

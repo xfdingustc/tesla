@@ -1,7 +1,7 @@
 package com.waylens.hachi.eventbus.events;
 
 
-import com.xfdingustc.snipe.vdb.ClipSetPos;
+import com.waylens.hachi.snipe.vdb.ClipSetPos;
 
 /**
  * Created by Xiaofei on 2016/4/5.

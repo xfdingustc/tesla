@@ -8,12 +8,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.Utils;
-import com.xfdingustc.snipe.SnipeError;
-import com.xfdingustc.snipe.VdbResponse;
-import com.xfdingustc.snipe.toolbox.GetSpaceInfoRequest;
-import com.xfdingustc.snipe.vdb.SpaceInfo;
+
 
 import butterknife.BindView;
 

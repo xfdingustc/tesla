@@ -21,13 +21,14 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipPos;
+import com.waylens.hachi.snipe.vdb.ClipSegment;
+import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.ClipSetPos;
 import com.waylens.hachi.utils.ViewUtils;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipPos;
-import com.xfdingustc.snipe.vdb.ClipSegment;
-import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.ClipSetPos;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

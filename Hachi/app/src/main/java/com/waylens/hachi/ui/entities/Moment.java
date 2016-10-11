@@ -1,17 +1,14 @@
 package com.waylens.hachi.ui.entities;
 
-import android.graphics.Picture;
 import android.text.Spannable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
-import com.xfdingustc.snipe.utils.ToStringUtils;
-
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,17 +155,17 @@ public class Moment implements Serializable {
         moment.pictureUrls = new ArrayList<>();
         JSONArray pictures = jsonObject.optJSONArray("pictureUrls");
         if (pictures != null) {
-          for (int i = 0; i < pictures.length(); i++) {
-              JSONObject onePicture = pictures.optJSONObject(i);
-              if (onePicture != null) {
-                  MomentPicture oneMomentPicture = new MomentPicture();
-                  oneMomentPicture.pictureID = onePicture.optLong("pictureID");
-                  oneMomentPicture.original = onePicture.optString("original");
-                  oneMomentPicture.smallThumbnail = onePicture.optString("smallThumbnail");
-                  oneMomentPicture.bigThumbnail = onePicture.optString("bigThumbnail");
-                  moment.pictureUrls.add(oneMomentPicture);
-              }
-          }
+            for (int i = 0; i < pictures.length(); i++) {
+                JSONObject onePicture = pictures.optJSONObject(i);
+                if (onePicture != null) {
+                    MomentPicture oneMomentPicture = new MomentPicture();
+                    oneMomentPicture.pictureID = onePicture.optLong("pictureID");
+                    oneMomentPicture.original = onePicture.optString("original");
+                    oneMomentPicture.smallThumbnail = onePicture.optString("smallThumbnail");
+                    oneMomentPicture.bigThumbnail = onePicture.optString("bigThumbnail");
+                    moment.pictureUrls.add(oneMomentPicture);
+                }
+            }
         }
 
         return moment;

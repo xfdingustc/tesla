@@ -3,16 +3,16 @@ package com.waylens.hachi.ui.clips.player;
 import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.toolbox.RawDataBlockRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSegment;
-import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.ClipSetManager;
-import com.xfdingustc.snipe.vdb.ClipSetPos;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipSegment;
+import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.ClipSetManager;
+import com.waylens.hachi.snipe.vdb.ClipSetPos;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 
 
 import java.util.ArrayList;

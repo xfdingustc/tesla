@@ -1,6 +1,7 @@
 package com.waylens.hachi.service.upload.rest.response;
 
-import com.xfdingustc.snipe.utils.ToStringUtils;
+
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 /**
  * Created by Xiaofei on 2016/9/8.

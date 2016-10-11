@@ -36,6 +36,12 @@ import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
@@ -47,12 +53,7 @@ import com.waylens.hachi.ui.settings.ShareSettingActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.ViewUtils;
-import com.xfdingustc.snipe.utils.ToStringUtils;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.rawdata.GpsData;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataBlock;
-import com.xfdingustc.snipe.vdb.rawdata.RawDataItem;
+
 
 import java.io.IOException;
 import java.util.ArrayList;

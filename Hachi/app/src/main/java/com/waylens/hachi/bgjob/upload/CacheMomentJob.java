@@ -13,18 +13,18 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
 
 import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.snipe.VdbCommand;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.snipe.toolbox.ClipUploadUrlRequest;
+import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipPos;
+import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.urls.UploadUrl;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.xfdingustc.snipe.VdbCommand;
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
 
-import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
-import com.xfdingustc.snipe.toolbox.ClipUploadUrlRequest;
-import com.xfdingustc.snipe.toolbox.VdbImageRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipPos;
-import com.xfdingustc.snipe.vdb.ClipSet;
-import com.xfdingustc.snipe.vdb.urls.UploadUrl;
 
 import org.greenrobot.eventbus.EventBus;
 

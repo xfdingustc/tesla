@@ -4,9 +4,9 @@ package com.waylens.hachi.ui.entities;
 import com.waylens.hachi.bgjob.upload.UploadServer;
 import com.waylens.hachi.rest.body.GeoInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
-import com.xfdingustc.snipe.utils.DateTime;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.urls.UploadUrl;
+import com.waylens.hachi.snipe.utils.DateTime;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.urls.UploadUrl;
 
 import java.io.Serializable;
 import java.util.ArrayList;

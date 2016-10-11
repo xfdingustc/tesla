@@ -4,7 +4,7 @@ package com.waylens.hachi.camera;
 import android.util.Log;
 
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
-import com.xfdingustc.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbRequestQueue;
 
 
 import org.greenrobot.eventbus.EventBus;

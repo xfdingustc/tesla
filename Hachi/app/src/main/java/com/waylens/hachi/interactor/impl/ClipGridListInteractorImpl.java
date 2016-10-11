@@ -8,15 +8,14 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.interactor.ClipGridListInteractor;
 import com.waylens.hachi.listeners.BaseSingleLoadedListener;
-import com.xfdingustc.snipe.SnipeError;
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.VdbResponse;
-
-import com.xfdingustc.snipe.toolbox.ClipDeleteRequest;
-import com.xfdingustc.snipe.toolbox.ClipSetExRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.SnipeError;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipSet;
 
 
 import java.util.ArrayList;

@@ -3,7 +3,8 @@ package com.waylens.hachi.presenter;
 
 
 
-import com.xfdingustc.snipe.vdb.Clip;
+
+import com.waylens.hachi.snipe.vdb.Clip;
 
 import java.util.List;
 

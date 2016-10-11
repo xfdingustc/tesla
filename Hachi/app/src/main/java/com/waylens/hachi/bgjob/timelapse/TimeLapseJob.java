@@ -18,11 +18,12 @@ import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.service.remux.RemuxHelper;
-import com.xfdingustc.snipe.VdbRequestFuture;
-import com.xfdingustc.snipe.VdbRequestQueue;
-import com.xfdingustc.snipe.toolbox.VdbImageRequest;
-import com.xfdingustc.snipe.vdb.Clip;
-import com.xfdingustc.snipe.vdb.ClipPos;
+import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
+import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipPos;
+
 
 import org.greenrobot.eventbus.EventBus;
 
