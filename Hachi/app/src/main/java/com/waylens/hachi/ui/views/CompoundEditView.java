@@ -56,25 +56,25 @@ public class CompoundEditView extends FrameLayout {
     @BindView(R.id.cev_edit_text)
     TextInputEditText mInputText;
 
-    @BindView(R.id.cev_input_controls)
-    View mControlsContainer;
+//    @BindView(R.id.cev_input_controls)
+//    View mControlsContainer;
+//
+//    @BindView(R.id.cev_btn_show_password)
+//    View mShowPasswordControl;
+//
+//    @BindView(R.id.cev_btn_clear_text)
+//    View mClearTextControl;
+//
+//    @OnClick(R.id.cev_btn_clear_text)
+//    public void onCevBtnClearTextClicked() {
+//        mInputText.getText().clear();
+//    }
 
-    @BindView(R.id.cev_btn_show_password)
-    View mShowPasswordControl;
-
-    @BindView(R.id.cev_btn_clear_text)
-    View mClearTextControl;
-
-    @OnClick(R.id.cev_btn_clear_text)
-    public void onCevBtnClearTextClicked() {
-        mInputText.getText().clear();
-    }
-
-    @OnClick(R.id.cev_btn_show_password)
-    public void onCevBtnShowPasswordClicked(View view) {
-        view.setSelected(!view.isSelected());
-        mInputText.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
-    }
+//    @OnClick(R.id.cev_btn_show_password)
+//    public void onCevBtnShowPasswordClicked(View view) {
+//        view.setSelected(!view.isSelected());
+//        mInputText.setTransformationMethod(view.isSelected() ? null : mTransformationMethod);
+//    }
 
 
 
@@ -141,7 +141,7 @@ public class CompoundEditView extends FrameLayout {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mTextInputLayout.setError(null);
-                mClearTextControl.setVisibility(TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE);
+//                mClearTextControl.setVisibility(TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE);
             }
 
             @Override
@@ -164,8 +164,8 @@ public class CompoundEditView extends FrameLayout {
 
     private void initConfigure() {
         int visibility = mInputType == TYPE_EMAIL ? GONE : VISIBLE;
-        mClearTextControl.setVisibility(GONE);
-        mShowPasswordControl.setVisibility(visibility);
+//        mClearTextControl.setVisibility(GONE);
+//        mShowPasswordControl.setVisibility(visibility);
         switch (mInputType) {
             case TYPE_EMAIL:
                 mInputText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
