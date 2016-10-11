@@ -33,7 +33,6 @@ import com.waylens.hachi.ui.clips.player.ClipUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.utils.ViewUtils;
 
-
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
@@ -200,7 +199,7 @@ public class ClipModifyActivity extends BaseActivity {
 
     private void embedVideoPlayFragment() {
 
-        UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue, getClip().cid,
+        UrlProvider vdtUriProvider = new ClipUrlProvider(getClip().cid,
             getClip().editInfo.selectedStartValue,
             getClip().editInfo.getSelectedLength());
 
@@ -289,8 +288,7 @@ public class ClipModifyActivity extends BaseActivity {
 
             @Override
             public void onStopTrackingTouch(VideoTrimmer trimmer) {
-                UrlProvider vdtUriProvider = new ClipUrlProvider(mVdbRequestQueue,
-                    clip.editInfo.bufferedCid, clip.editInfo.selectedStartValue,
+                UrlProvider vdtUriProvider = new ClipUrlProvider(clip.editInfo.bufferedCid, clip.editInfo.selectedStartValue,
                     clip.editInfo.getSelectedLength());
                 mClipPlayFragment.setUrlProvider(vdtUriProvider, clip.editInfo.selectedStartValue);
             }

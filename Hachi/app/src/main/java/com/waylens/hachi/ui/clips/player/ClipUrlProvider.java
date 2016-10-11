@@ -22,7 +22,6 @@ import rx.functions.Action1;
  */
 public class ClipUrlProvider implements UrlProvider {
     private static final String TAG = ClipUrlProvider.class.getSimpleName();
-    private VdbRequestQueue mVdbRequestQueue;
 
     private Clip.ID mCid;
     private long mStartTime;
@@ -31,8 +30,7 @@ public class ClipUrlProvider implements UrlProvider {
 
     private PositionAdjuster mPositionAdjuster;
 
-    public ClipUrlProvider(@NonNull VdbRequestQueue requestQueue, Clip.ID cid, long startTime, int maxLength) {
-        this.mVdbRequestQueue = requestQueue;
+    public ClipUrlProvider(Clip.ID cid, long startTime, int maxLength) {
         this.mCid = cid;
         this.mStartTime = startTime;
         this.maxLength = maxLength;

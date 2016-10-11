@@ -128,7 +128,7 @@ public class ClipPlayActivity extends BaseActivity {
 
     protected void embedVideoPlayFragment(boolean transition) {
 
-        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mVdbRequestQueue, mPlaylistEditor.getPlaylistId());
+        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mPlaylistEditor.getPlaylistId());
 
         mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mPlaylistEditor.getPlaylistId(),
             vdtUriProvider, ClipPlayFragment.ClipMode.MULTI);

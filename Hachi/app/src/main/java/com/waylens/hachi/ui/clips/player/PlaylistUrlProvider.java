@@ -16,14 +16,13 @@ import rx.functions.Action1;
  */
 public class PlaylistUrlProvider implements UrlProvider {
     private static final String TAG = PlaylistUrlProvider.class.getSimpleName();
-    private final VdbRequestQueue mVdbRequestQueue;
+
     private final int mPlayListID;
 
     private PositionAdjuster mPositionAdjuster;
 
 
-    public PlaylistUrlProvider(VdbRequestQueue requestQueue, int playListID) {
-        this.mVdbRequestQueue = requestQueue;
+    public PlaylistUrlProvider(int playListID) {
         mPlayListID = playListID;
     }
 

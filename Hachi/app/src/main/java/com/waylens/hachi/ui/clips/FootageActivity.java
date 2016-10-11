@@ -23,6 +23,7 @@ import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
@@ -38,7 +39,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.utils.TransitionHelper;
-
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -49,6 +50,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 /**
@@ -62,14 +65,12 @@ public class FootageActivity extends ClipPlayActivity {
 
     private static final int DEFAULT_BOOKMARK_LENGTH = 30000;
 
-    private int mDeleteClipCount = 0;
 
     private BottomSheetDialog mTimeLaspeBottomSheetDialog;
 
     private ClipSet mFootageClipSet;
     private ClipSet mBookmarkClipSet;
 
-    private MaterialDialog mTimeLapseDialog;
 
 
     @BindView(R.id.vsRoot)
@@ -268,20 +269,16 @@ public class FootageActivity extends ClipPlayActivity {
 
 
     private void refreshBookmarkClipSet() {
-        ClipSetExRequest request = new ClipSetExRequest(Clip.TYPE_MARKED, ClipSetExRequest
-            .FLAG_CLIP_EXTRA, new VdbResponse.Listener<ClipSet>() {
-            @Override
-            public void onResponse(ClipSet response) {
-                mBookmarkClipSet = response;
-                setupClipProgressBar();
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-        mVdbRequestQueue.add(request);
+        SnipeApiRx.getClipSetRx(Clip.TYPE_MARKED, ClipSetExRequest.FLAG_CLIP_EXTRA)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ClipSet>() {
+                @Override
+                public void onNext(ClipSet clipSet) {
+                    mBookmarkClipSet = clipSet;
+                    setupClipProgressBar();
+                }
+            });
     }
 
     private void doAddBookmark() {
@@ -298,20 +295,16 @@ public class FootageActivity extends ClipPlayActivity {
         startTimeMs = Math.max(startTimeMs, clip.getStartTimeMs());
         endTimeMs = Math.min(endTimeMs, clip.getEndTimeMs());
 
-        AddBookmarkRequest request = new AddBookmarkRequest(clipPos.cid, startTimeMs, endTimeMs, new
-            VdbResponse.Listener<Integer>() {
+
+        SnipeApiRx.addHighlightRx(clipPos.cid, startTimeMs, endTimeMs)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<Integer>() {
                 @Override
-                public void onResponse(Integer response) {
+                public void onNext(Integer integer) {
                     refreshBookmarkClipSet();
                 }
-            }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-
-        mVdbRequestQueue.add(request);
+            });
     }
 
     @Override
@@ -350,29 +343,24 @@ public class FootageActivity extends ClipPlayActivity {
 
 
     private void doDeleteSelectedClips(List<Clip> clipList) {
-
-        final int toDeleteClipCount = clipList.size();
-        mDeleteClipCount = 0;
-
-        for (Clip clip : clipList) {
-            ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, new VdbResponse.Listener<Integer>() {
+        SnipeApiRx.deleteClipListRx(clipList)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Integer>() {
                 @Override
-                public void onResponse(Integer response) {
-                    mDeleteClipCount++;
-                    Logger.t(TAG).d("" + mDeleteClipCount + " clips deleted");
-                    if (mDeleteClipCount == toDeleteClipCount) {
-                        refreshBookmarkClipSet();
-                    }
+                public void onCompleted() {
+                    refreshBookmarkClipSet();
                 }
-            }, new VdbResponse.ErrorListener() {
-                @Override
-                public void onErrorResponse(SnipeError error) {
 
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Integer integer) {
                 }
             });
-
-            mVdbRequestQueue.add(request);
-        }
 
     }
 

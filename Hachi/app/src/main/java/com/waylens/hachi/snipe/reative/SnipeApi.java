@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
@@ -82,7 +83,13 @@ class SnipeApi {
         VdbRequestFuture<PlaylistPlaybackUrl> requestFuture = VdbRequestFuture.newFuture();
         PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(playlistId, startTime, requestFuture, requestFuture);
         VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+        return requestFuture.get();
+    }
 
+    public static Integer addHighlight(Clip.ID clipId, long startTimeMs, long endTimeMs) throws ExecutionException, InterruptedException {
+        VdbRequestFuture<Integer> requestFuture = VdbRequestFuture.newFuture();
+        AddBookmarkRequest request = new AddBookmarkRequest(clipId, startTimeMs, endTimeMs, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
         return requestFuture.get();
     }
 }

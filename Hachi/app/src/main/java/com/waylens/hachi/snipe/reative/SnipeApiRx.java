@@ -7,10 +7,12 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.snipe.vdb.urls.PlaybackUrl;
 import com.waylens.hachi.snipe.vdb.urls.PlaylistPlaybackUrl;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import rx.Observable;
 import rx.functions.Func0;
+import rx.functions.Func1;
 
 
 /**
@@ -18,6 +20,11 @@ import rx.functions.Func0;
  */
 
 public class SnipeApiRx {
+
+    public static Observable<ClipSet> getClipSetRx(final int type, final int flag) {
+        return getClipSetRx(type, flag, 0);
+    }
+
     public static Observable<ClipSet> getClipSetRx(final int type, final int flag, final int attr) {
         return Observable.defer(new Func0<Observable<ClipSet>>() {
             @Override
@@ -42,6 +49,16 @@ public class SnipeApiRx {
                 }
             }
         });
+    }
+
+    public static Observable<Integer> deleteClipListRx(List<Clip> clipList) {
+        return Observable.from(clipList)
+            .concatMap(new Func1<Clip, Observable<Integer>>() {
+                @Override
+                public Observable<Integer> call(Clip clip) {
+                    return SnipeApiRx.deleteClipRx(clip.cid);
+                }
+            });
     }
 
     public static Observable<SpaceInfo> getSpaceInfoRx() {
@@ -90,6 +107,19 @@ public class SnipeApiRx {
             public Observable<PlaybackUrl> call() {
                 try {
                     return Observable.just(SnipeApi.getClipPlaybackUrl(clipId, startTime, clipTimeMs, maxLength));
+                } catch (ExecutionException | InterruptedException e) {
+                    return Observable.error(e);
+                }
+            }
+        });
+    }
+
+    public static Observable<Integer> addHighlightRx(final Clip.ID clipId, final long startTimeMs, final long endTimeMs) {
+        return Observable.defer(new Func0<Observable<Integer>>() {
+            @Override
+            public Observable<Integer> call() {
+                try {
+                    return Observable.just(SnipeApi.addHighlight(clipId, startTimeMs, endTimeMs));
                 } catch (ExecutionException | InterruptedException e) {
                     return Observable.error(e);
                 }
