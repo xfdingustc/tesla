@@ -12,7 +12,7 @@ public class ClipPositionAdjuster extends PositionAdjuster {
     private final long mStartTimeMs;
 
 
-    public ClipPositionAdjuster(long  startTime, VdbUrl url) {
+    public ClipPositionAdjuster(long startTime, VdbUrl url) {
         this.mStartTimeMs = startTime;
         this.mUrl = url;
     }

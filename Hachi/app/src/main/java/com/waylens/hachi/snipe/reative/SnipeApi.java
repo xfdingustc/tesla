@@ -5,13 +5,18 @@ import android.os.Bundle;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
+import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
+import com.waylens.hachi.snipe.vdb.Vdb;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
+import com.waylens.hachi.snipe.vdb.urls.PlaybackUrl;
+import com.waylens.hachi.snipe.vdb.urls.PlaylistPlaybackUrl;
 
 import java.util.concurrent.ExecutionException;
 
@@ -41,7 +46,7 @@ class SnipeApi {
         return future.get();
     }
 
-    public static RawDataBlock getRawDataBlock(Clip clip, int dataType, long startTime, int duration){
+    public static RawDataBlock getRawDataBlock(Clip clip, int dataType, long startTime, int duration) {
         Bundle params = new Bundle();
         params.putInt(RawDataBlockRequest.PARAM_DATA_TYPE, dataType);
         params.putLong(RawDataBlockRequest.PARAM_CLIP_TIME, startTime);
@@ -55,5 +60,29 @@ class SnipeApi {
         } catch (InterruptedException | ExecutionException e) {
             return null;
         }
+    }
+
+    public static PlaybackUrl getClipPlaybackUrl(Clip.ID clipId, long startTime, long clipTimeMs, int maxLength) throws ExecutionException, InterruptedException {
+        Bundle parameters = new Bundle();
+        parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_URL_TYPE, Vdb.URL_TYPE_HLS);
+        parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_STREAM, Vdb.STREAM_SUB_1);
+        parameters.putBoolean(ClipPlaybackUrlExRequest.PARAMETER_MUTE_AUDIO, false);
+        parameters.putLong(ClipPlaybackUrlExRequest.PARAMETER_CLIP_TIME_MS, clipTimeMs + startTime);
+        parameters.putInt(ClipPlaybackUrlExRequest.PARAMETER_CLIP_LENGTH_MS, maxLength);
+
+
+        VdbRequestFuture<PlaybackUrl> requestFuture = VdbRequestFuture.newFuture();
+        ClipPlaybackUrlExRequest request = new ClipPlaybackUrlExRequest(clipId, parameters, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+
+        return requestFuture.get();
+    }
+
+    public static PlaylistPlaybackUrl getPlaylistPlaybackUrl(int playlistId, int startTime) throws ExecutionException, InterruptedException {
+        VdbRequestFuture<PlaylistPlaybackUrl> requestFuture = VdbRequestFuture.newFuture();
+        PlaylistPlaybackUrlRequest request = new PlaylistPlaybackUrlRequest(playlistId, startTime, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+
+        return requestFuture.get();
     }
 }
