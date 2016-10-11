@@ -12,6 +12,7 @@ import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
@@ -25,6 +26,8 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -37,14 +40,11 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
     private final int mFlag;
     private final int mAttr;
 
-    private VdtCamera mVdtCamera;
-    private VdbRequestQueue mVdbRequestQueue;
+
     private BaseSingleLoadedListener<ClipSet> mLoadListener;
 
     public ClipGridListInteractorImpl(String requestTag, int clipSetType, int flag, int attr,
                                       BaseSingleLoadedListener<ClipSet> loadedListener) {
-
-
         this.mRequestTag = requestTag;
         this.mClipSetType = clipSetType;
         this.mFlag = flag;
@@ -54,75 +54,10 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
     @Override
     public void getClipSet() {
-
-        ClipSetExRequest request = new ClipSetExRequest(mClipSetType, mFlag | ClipSetExRequest.FLAG_CLIP_DESC, mAttr, new VdbResponse.Listener<ClipSet>() {
-            @Override
-            public void onResponse(ClipSet response) {
-                ArrayList<Clip> clipList = response.getClipList();
-                String vin = null;
-                for( Clip clip : clipList) {
-                    Logger.t(TAG).d("Vin  = " + clip.getVin());
-                    if (clip.getVin() != null) {
-                        vin = clip.getVin();
-                    }
-                }
-                Logger.t(TAG).d("Get Inserted response\tvin = " + vin);
-                mLoadListener.onSuccess(response);
-            }
-        }, new VdbResponse.ErrorListener() {
-            @Override
-            public void onErrorResponse(SnipeError error) {
-
-            }
-        });
-        request.setTag(mRequestTag);
-
-        mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
-
-
-        if (mVdbRequestQueue != null) {
-            mVdbRequestQueue.add(request);
-        } else {
-            mLoadListener.onError("no camera connected");
-        }
-    }
-
-    @Override
-    public void deleteClipList(final List<Clip> clipToDelete) {
-        Observable.create(new Observable.OnSubscribe<ClipSet>() {
-            @Override
-            public void call(Subscriber<? super ClipSet> subscriber) {
-                for (Clip clip : clipToDelete) {
-                    VdbRequestFuture<Integer> requestFuture = VdbRequestFuture.newFuture();
-                    ClipDeleteRequest request = new ClipDeleteRequest(clip.cid, requestFuture, requestFuture);
-                    request.setTag(mRequestTag);
-                    mVdbRequestQueue.add(request);
-
-                    try {
-                        int response = requestFuture.get();
-                    } catch (Exception e) {
-                        subscriber.onError(e);
-                    }
-                }
-
-                VdbRequestFuture<ClipSet> clipSetRequestFuture = VdbRequestFuture.newFuture();
-                ClipSetExRequest request = new ClipSetExRequest(mClipSetType, mFlag, mAttr, clipSetRequestFuture, clipSetRequestFuture);
-                request.setTag(mRequestTag);
-                mVdbRequestQueue.add(request);
-
-                try {
-                    ClipSet newClipSet = clipSetRequestFuture.get();
-                    subscriber.onNext(newClipSet);
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-
-
-            }
-        })
+        SnipeApiRx.getClipSetRx(mClipSetType, mFlag, mAttr)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<ClipSet>() {
+            .subscribe(new Subscriber<ClipSet>() {
                 @Override
                 public void onCompleted() {
 
@@ -130,12 +65,44 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
                 @Override
                 public void onError(Throwable e) {
-                    mLoadListener.onException(e.getMessage());
+                    mLoadListener.onError(e.getMessage());
                 }
 
                 @Override
                 public void onNext(ClipSet clipSet) {
                     mLoadListener.onSuccess(clipSet);
+                }
+            });
+
+    }
+
+    @Override
+    public void deleteClipList(final List<Clip> clipToDelete) {
+
+        Observable.from(clipToDelete)
+            .concatMap(new Func1<Clip, Observable<Integer>>() {
+                @Override
+                public Observable<Integer> call(Clip clip) {
+                    return SnipeApiRx.deleteClipRx(clip.cid);
+                }
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Integer>(){
+
+                @Override
+                public void onCompleted() {
+                    getClipSet();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+
                 }
             });
     }
