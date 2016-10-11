@@ -54,7 +54,7 @@
             android:layout_marginLeft="16dp"
             android:textSize="14sp"
             android:layout_marginRight="16dp"
-            android:backgroundTint="@color/style_color_primary"
+            android:backgroundTint="?attr/actionButtonColor"
             android:textColor="@android:color/white"
             />
 

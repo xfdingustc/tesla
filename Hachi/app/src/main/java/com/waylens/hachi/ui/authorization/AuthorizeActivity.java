@@ -146,7 +146,7 @@ public class AuthorizeActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        getToolbar().setNavigationIcon(R.drawable.navbar_close);
+        getToolbar().setNavigationIcon(R.drawable.ic_close);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

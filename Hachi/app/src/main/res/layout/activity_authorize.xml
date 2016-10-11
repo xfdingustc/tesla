@@ -15,7 +15,7 @@
         android:src="@drawable/waylens_logo_140x98"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
-        android:tint="@color/style_color_primary"/>
+        android:tint="?attr/signinLogoColor"/>
 
     <FrameLayout
         android:id="@+id/fragment_content"
