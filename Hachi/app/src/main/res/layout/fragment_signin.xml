@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cev="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:cev="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:paddingTop="24dp">
+    tools:paddingLeft="16dp"
+    tools:paddingRight="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="16dp"
-        android:text="@string/welcome_back"
-        style="@style/HachiTextViewTitle"
-        />
+
+
+
+
     <com.waylens.hachi.ui.views.CompoundEditView
         android:id="@+id/sign_in_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        cev:cevType="email"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        cev:cevHint="@string/email"
         cev:cevInvalidFormatMessage="@string/email_error"
-        cev:cevHint="@string/email"/>
+        cev:cevType="email"/>
+
     <com.waylens.hachi.ui.views.CompoundEditView
         android:id="@+id/sign_in_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        cev:cevType="password"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         cev:cevHint="@string/password"
-        cev:cevValidPattern="@string/password_pattern"
-        cev:cevInvalidFormatMessage="@string/password_error"/>
+        cev:cevInvalidFormatMessage="@string/password_error"
+        cev:cevType="password"
+        cev:cevValidPattern="@string/password_pattern"/>
 
     <ViewAnimator
         android:id="@+id/button_animator"
@@ -42,12 +44,18 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="48dp">
 
+
+
         <Button
             android:id="@+id/btn_sign_in"
-            style="@style/ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login"
+            android:layout_marginLeft="16dp"
+            android:textSize="14sp"
+            android:layout_marginRight="16dp"
+            android:backgroundTint="@color/style_color_primary"
+            android:textColor="@android:color/white"
             />
 
         <ProgressBar
@@ -58,13 +66,12 @@
 
     <TextView
         android:id="@+id/forgot_password_view"
+        style="@style/HachiTextViewSubHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        style="@style/HachiTextViewSubHeader"
-        tools:text="Forgot password?Find it back"
-        android:background="?attr/selectableItemBackground"/>
-
+        android:background="?attr/selectableItemBackground"
+        tools:text="Forgot password?Find it back"/>
 
 
 

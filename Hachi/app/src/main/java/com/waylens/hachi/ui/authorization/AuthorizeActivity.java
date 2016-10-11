@@ -79,6 +79,23 @@ public class AuthorizeActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        switch (mCurrentStep) {
+            case STEP_SIGN_IN:
+                finish();
+                break;
+            case STEP_SIGN_UP:
+                switchStep(STEP_SIGN_IN);
+                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+                break;
+            case STEP_FIND_PASSWORD:
+                switchStep(STEP_FIND_PASSWORD);
+                getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+                break;
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
@@ -133,7 +150,7 @@ public class AuthorizeActivity extends BaseActivity {
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+               onBackPressed();
             }
         });
         getToolbar().getMenu().clear();

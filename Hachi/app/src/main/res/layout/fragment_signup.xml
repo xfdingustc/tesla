@@ -1,80 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cev="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:cev="http://schemas.android.com/apk/res-auto"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    android:paddingTop="48dp">
+    tools:paddingLeft="16dp"
+    tools:paddingRight="16dp">
 
-    <ViewAnimator
-        android:id="@+id/input_animator"
+
+    <com.waylens.hachi.ui.views.CompoundEditView
+        android:id="@+id/sign_up_email"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.waylens.hachi.ui.views.CompoundEditView
-            android:id="@+id/sign_up_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            cev:cevType="email"
-            cev:cevInvalidFormatMessage="@string/email_error"
-            cev:cevHint="@string/email"/>
-        <com.waylens.hachi.ui.views.CompoundEditView
-            android:id="@+id/sign_up_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            cev:cevType="password"
-            cev:cevHint="@string/password"
-            cev:cevValidPattern="@string/password_pattern"
-            cev:cevInvalidFormatMessage="@string/password_error"/>
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        cev:cevHint="@string/email"
+        cev:cevInvalidFormatMessage="@string/email_error"
+        cev:cevType="email"/>
 
-    </ViewAnimator>
+    <com.waylens.hachi.ui.views.CompoundEditView
+        android:id="@+id/sign_up_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        cev:cevHint="@string/password"
+        cev:cevInvalidFormatMessage="@string/password_error"
+        cev:cevType="password"
+        cev:cevValidPattern="@string/password_pattern"/>
+
 
     <ViewAnimator
         android:id="@+id/button_animator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginTop="48dp">
+        android:layout_marginTop="48dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <Button
-            android:id="@+id/sign_up_next"
-            style="@style/ActionButton"
+            android:id="@+id/btn_signup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/next"/>
+            android:text="@string/sign_up"
+            android:backgroundTint="@color/style_color_primary"
+            android:textColor="@android:color/white"/>
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
 
-        <Button
-            android:id="@+id/sign_up_done"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_done"/>
     </ViewAnimator>
-
-
-    <TextView
-        style="@style/Base.TextAppearance.AppCompat.Body1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="48dp"
-        android:text="@string/already_a_member"/>
-
-    <Button
-        android:id="@+id/btn_sign_in"
-        style="@style/ActionButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/login"/>
-
 
 
 </LinearLayout>

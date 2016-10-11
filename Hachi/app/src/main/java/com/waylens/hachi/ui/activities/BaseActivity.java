@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.camera.VdtCamera;
@@ -28,6 +29,7 @@ import butterknife.ButterKnife;
  * Created by Xiaofei on 2015/7/29.
  */
 public class BaseActivity extends AppCompatActivity {
+    private static final String TAG = BaseActivity.class.getSimpleName();
     static final private String IS_LOCAL = "isLocal";
     static final private String IS_PC_SERVER = "isPcServer";
     static final private String SSID = "ssid";
@@ -72,8 +74,10 @@ public class BaseActivity extends AppCompatActivity {
     public void setContentView(int layoutResID) {
         String theme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
         if (theme.equals("dark")) {
+            Logger.t(TAG).d("dark theme");
             setTheme(R.style.DarkTheme);
         } else {
+            Logger.t(TAG).d("light theme");
             setTheme(R.style.LightTheme);
         }
         super.setContentView(layoutResID);

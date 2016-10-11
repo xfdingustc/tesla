@@ -13,14 +13,16 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"
         android:layout_marginTop="90dp"
-        android:src="@drawable/waylens_logo_140x98"/>
+        android:src="@drawable/waylens_logo_140x98"
+        android:tint="@color/style_color_primary"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/sign_up_success"
-        android:textColor="#FFF5F5F5"
-        android:textSize="18sp"/>
+        android:textColor="@color/app_text_color_primary"
+        android:textSize="18sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -28,8 +30,9 @@
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:text="@string/sign_up_welcome"
-        android:textColor="#FF7F7F7F"
-        android:textSize="16sp"/>
+        android:textColor="@color/app_text_color_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -41,14 +44,15 @@
 
         <Button
             android:id="@+id/btn_complete_profile"
-            style="@style/ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
+            android:backgroundTint="@color/style_color_primary"
             android:text="@string/complete_my_profile"
-            android:textSize="18sp"/>
+            android:textColor="@android:color/white"
+            />
 
         <TextView
             android:id="@+id/sign_up_get_started"
@@ -56,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="64dp"
             android:text="@string/sign_up_get_started"
-            android:textColor="#FFF5F5F5"
             android:textSize="18sp"/>
     </LinearLayout>
 

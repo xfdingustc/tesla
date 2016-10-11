@@ -51,6 +51,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
+import rx.Observer;
 
 /**
  * Created by Xiaofei on 2016/6/8.
@@ -137,6 +138,9 @@ public interface HachiApi {
 
     @POST("/api/users/signup")
     Call<SignUpResponse> signUp(@Body SignUpPostBody signUpnPostBody);
+
+    @POST("/api/users/signup")
+    Observable<SignUpResponse> signUpRx(@Body SignUpPostBody signUpnPostBody);
 
     @GET("/api/users/check_account")
     Call<SimpleBoolResponse> checkEmail(@Query("e") String email);

@@ -2,9 +2,9 @@
 <resources>
 
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/style_color_primary</item>
-        <item name="colorPrimaryDark">@color/style_color_primary_dark</item>
-        <item name="colorAccent">@color/style_color_primary</item>
+        <item name="colorPrimary">@color/material_deep_orange_700</item>
+        <item name="colorPrimaryDark">@color/material_deep_orange_500</item>
+        <item name="colorAccent">#4ACA62</item>
         <item name="toolbarColor">@color/style_color_primary</item>
         <item name="defaultBgColor">@color/material_grey_200</item>
         <item name="defaultBgColorDark">@color/material_grey_700</item>
@@ -16,7 +16,7 @@
         <item name="colorPrimary">@color/style_color_primary</item>
         <item name="colorPrimaryDark">@color/style_color_primary_dark</item>
         <item name="colorAccent">@color/style_color_accent</item>
-        <item name="toolbarColor">@color/style_color_primary_dark</item>
+        <item name="toolbarColor">@color/toolbar_color</item>
         <item name="android:windowBackground">@color/windowBackground</item>
         <item name="defaultBgColor">@color/windowBackground</item>
         <item name="defaultBgColorDark">@color/windowBackgroundDark</item>
@@ -31,6 +31,7 @@
         <item name="android:textColorHint">@color/app_text_color_disabled</item>
         <item name="colorControlNormal">@color/app_color_control_normal</item>
         <item name="colorControlActivated">@color/style_color_accent</item>
+
     </style>
 
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">

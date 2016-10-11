@@ -139,7 +139,7 @@ public class SignInFragment extends BaseFragment {
         if (!mTvSignInEmail.isValid() || !mTvPassword.isValid()) {
             return;
         }
-        mButtonAnimator.setDisplayedChild(1);
+        mButtonAnimator.setDisplayedChild(0);
         performSignIn();
     }
 
@@ -160,10 +160,10 @@ public class SignInFragment extends BaseFragment {
                         .positiveText(R.string.ok)
                         .negativeText(R.string.cancel)
                         .show();
-                    mButtonAnimator.setDisplayedChild(0);
+                    mButtonAnimator.setDisplayedChild(1);
                 } else {
                     onSignInFailed(new Throwable("Sign in failed"));
-                    mButtonAnimator.setDisplayedChild(0);
+                    mButtonAnimator.setDisplayedChild(1);
                 }
             }
 
@@ -177,7 +177,7 @@ public class SignInFragment extends BaseFragment {
     }
 
     void onSignInFailed(Throwable error) {
-        mButtonAnimator.setDisplayedChild(0);
+        mButtonAnimator.setDisplayedChild(1);
         //showMessage(ServerMessage.parseServerError(error).msgResID);
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
             .content(R.string.failed_to_sign_in)

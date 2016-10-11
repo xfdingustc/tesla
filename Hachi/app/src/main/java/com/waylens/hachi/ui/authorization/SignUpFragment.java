@@ -13,6 +13,8 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
@@ -26,11 +28,23 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.ServerMessage;
+
+import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
+
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Richard on 8/20/15.
@@ -44,13 +58,16 @@ public class SignUpFragment extends BaseFragment {
     private static final String TAG_REQUEST_SIGN_UP = "SignInFragment.request.sign.up";
     private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
+    private static final int ERROR_CODE_EMAIL_EXISTED = 31;
+    private static final int ERROR_CODE_EMAIL_INVALIDE = 33;
+    private static final int ERROR_CODE_PASSWORD_INVALIDE = 36;
+
 
 
     @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
 
-    @BindView(R.id.input_animator)
-    ViewAnimator mInputAnimator;
+
 
     @BindView(R.id.sign_up_email)
     CompoundEditView mTvSignUpEmail;
@@ -62,35 +79,15 @@ public class SignUpFragment extends BaseFragment {
 
     RequestQueue mVolleyRequestQueue;
 
-    String mEmail;
-    String mPassword;
 
 
+    @OnClick(R.id.btn_signup)
+    public void onBtnSignUpClicked() {
 
-    @OnClick(R.id.btn_sign_in)
-    void onClickSignIn() {
-        AuthorizeActivity authorizeActivity = (AuthorizeActivity)getActivity();
-        authorizeActivity.switchStep(AuthorizeActivity.STEP_SIGN_IN);
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
-
-    }
-
-    @OnClick(R.id.sign_up_next)
-    public void signUpNext() {
-        mEmail = mTvSignUpEmail.getText().toString();
-        if (!mTvSignUpEmail.isValid()) {
+        if (!mTvSignUpEmail.isValid() || !mEvPassword.isValid()) {
             return;
         }
-        verifyEmailOnCloud();
-        mButtonAnimator.setDisplayedChild(1);
-    }
 
-    @OnClick(R.id.sign_up_done)
-    void signUpDone() {
-        mPassword = mEvPassword.getText().toString();
-        if (!mEvPassword.isValid()) {
-            return;
-        }
         mButtonAnimator.setDisplayedChild(1);
         performSignUp();
     }
@@ -113,11 +110,7 @@ public class SignUpFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_signup, savedInstanceState);
-        if(getArguments() != null) {
-            mEmail = getArguments().getString("email");
-        }
-        mTvSignUpEmail.setText(mEmail);
-        Logger.t(TAG).d("Signup frament is invoked", this, mEmail);
+
         initViews();
         return view;
     }
@@ -134,62 +127,100 @@ public class SignUpFragment extends BaseFragment {
 
 
 
-    void performSignUp() {
+    private void performSignUp() {
+        String email = mTvSignUpEmail.getText().toString();
+        String password = mEvPassword.getText().toString();
 
         HachiApi hachiApi = HachiService.createHachiApiService();
-        SignUpPostBody signUpPostBody = new SignUpPostBody(mEmail, mEmail.substring(0, mEmail.indexOf("@")), mPassword);
-        Call<SignUpResponse> signUpResponseCall = hachiApi.signUp(signUpPostBody);
-        signUpResponseCall.enqueue(new Callback<SignUpResponse>() {
-            @Override
-            public void onResponse(Call<SignUpResponse> call, retrofit2.Response<SignUpResponse> response) {
-                onSignUpSuccessful(response.body());
-            }
+        SignUpPostBody signUpPostBody = new SignUpPostBody(email, email.substring(0, email.indexOf("@")), password);
 
-            @Override
-            public void onFailure(Call<SignUpResponse> call, Throwable t) {
-                onSignUpFailed(t);
-            }
-        });
+
+        hachiApi.signUpRx(signUpPostBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<SignUpResponse>() {
+                @Override
+                public void onCompleted() {
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    onSignUpFailed(e);
+                }
+
+                @Override
+                public void onNext(SignUpResponse signUpResponse) {
+                    Logger.t(TAG).d("signup response: " + signUpResponse.toString());
+                    onSignUpSuccessful(signUpResponse);
+                }
+            });
 
     }
 
-    void onSignUpFailed(Throwable error) {
-        Logger.t(TAG).d(error.getMessage());
-        //showMessage(ServerMessage.parseServerError(error).msgResID);
+    private void onSignUpFailed(Throwable error) {
+        if (error instanceof HttpException) {
+            HttpException httpException = (HttpException)error;
+
+            try {
+                String errorMessage = httpException.response().errorBody().string();
+                Logger.t(TAG).json(errorMessage);
+
+                JSONObject jsonObject = new JSONObject(errorMessage);
+                int code = jsonObject.getInt("code");
+                switch (code) {
+                    case ERROR_CODE_EMAIL_EXISTED:
+                        mTvSignUpEmail.setError(getString(R.string.email_has_been_used));
+                        break;
+                    case ERROR_CODE_EMAIL_INVALIDE:
+                        mTvSignUpEmail.setError(getString(R.string.email_error));
+                        break;
+                    case ERROR_CODE_PASSWORD_INVALIDE:
+                        mEvPassword.setError(getString(R.string.password_error));
+                        break;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        mButtonAnimator.setDisplayedChild(0);
+//        showMessage(ServerMessage.parseServerError(error).msgResID)
+//        error.
     }
 
     void onSignUpSuccessful(SignUpResponse response) {
         performSignIn();
     }
 
-    private void verifyEmailOnCloud() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
-        Call<SimpleBoolResponse> simpleBoolResponseCall = hachiApi.checkEmail(mEmail);
-        simpleBoolResponseCall.enqueue(new Callback<SimpleBoolResponse>() {
-            @Override
-            public void onResponse(Call<SimpleBoolResponse> call, retrofit2.Response<SimpleBoolResponse> response) {
-                onValidEmail(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<SimpleBoolResponse> call, Throwable t) {
-                onInvalidEmail(t);
-
-            }
-        });
-    }
+//    private void verifyEmailOnCloud() {
+//        HachiApi hachiApi = HachiService.createHachiApiService();
+//        Call<SimpleBoolResponse> simpleBoolResponseCall = hachiApi.checkEmail(mEmail);
+//        simpleBoolResponseCall.enqueue(new Callback<SimpleBoolResponse>() {
+//            @Override
+//            public void onResponse(Call<SimpleBoolResponse> call, retrofit2.Response<SimpleBoolResponse> response) {
+//                onValidEmail(response.body());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SimpleBoolResponse> call, Throwable t) {
+//                onInvalidEmail(t);
+//
+//            }
+//        });
+//    }
 
     void onInvalidEmail(Throwable error) {
         Logger.t(TAG).d(error.getMessage());
-        //ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+//        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
         //showMessage(errorInfo.msgResID);
         mButtonAnimator.setDisplayedChild(0);
     }
 
     void onValidEmail(SimpleBoolResponse response) {
         if (response.result) {
-            PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, mEmail);
-            mInputAnimator.setDisplayedChild(1);
+//            PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, mEmail);
+//            mInputAnimator.setDisplayedChild(1);
             mButtonAnimator.setDisplayedChild(2);
         } else {
             mTvSignUpEmail.setError(getString(R.string.email_has_been_used));
@@ -204,7 +235,7 @@ public class SignUpFragment extends BaseFragment {
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             SignInFragment signInFragment = new SignInFragment();
                             Bundle mbundle = new Bundle();
-                            mbundle.putString("email", mEmail);
+//                            mbundle.putString("email", mEmail);
                             signInFragment.setArguments(mbundle);
                             AuthorizeActivity authorizeActivity = (AuthorizeActivity)getActivity();
                             authorizeActivity.switchStep(AuthorizeActivity.STEP_SIGN_IN);
@@ -214,10 +245,12 @@ public class SignUpFragment extends BaseFragment {
         }
     }
 
-    void performSignIn() {
+    private void performSignIn() {
+        String email = mTvSignUpEmail.getText().toString();
+        String password = mEvPassword.getText().toString();
 
         HachiApi hachiApi = HachiService.createHachiApiService();
-        SignInPostBody signInPostBody = new SignInPostBody(mEmail, mPassword);
+        SignInPostBody signInPostBody = new SignInPostBody(email, password);
         Call<SignInResponse> signInResponseCall = hachiApi.signin(signInPostBody);
         signInResponseCall.enqueue(new Callback<SignInResponse>() {
             @Override

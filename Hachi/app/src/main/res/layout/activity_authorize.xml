@@ -3,11 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
 
     <include layout="@layout/toolbar_default"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/waylens_logo_140x98"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:tint="@color/style_color_primary"/>
 
     <FrameLayout
         android:id="@+id/fragment_content"
@@ -46,7 +54,7 @@
                 android:layout_marginRight="8dp"
                 android:text="@string/or"
                 android:textColor="?attr/appTextColorPrimary"
-                android:textSize="20sp"/>
+                android:textSize="18sp"/>
 
             <View
                 android:layout_width="0dp"
@@ -59,22 +67,15 @@
         </LinearLayout>
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Sign Up With Other Media"
-            android:textColor="?attr/appTextColorSecondary"
-            android:textSize="16sp"
-            android:layout_marginTop="16dp"/>
+
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="32dp"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_marginTop="16dp"/>
 
     </LinearLayout>
 </LinearLayout>
