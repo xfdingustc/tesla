@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSegment;
@@ -17,6 +18,11 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.functions.Func3;
 
 /**
  * Created by Xiaofei on 2016/3/8.
@@ -68,6 +74,39 @@ public class RawDataLoader {
         }
     }
 
+    public Observable loadRawDataRx() {
+        return Observable.from(getClipSet().getClipList())
+            .concatMap(new Func1<Clip, Observable<RawDataBlockAll>>() {
+                @Override
+                public Observable<RawDataBlockAll> call(Clip clip) {
+                    return getRawDataBlockAllRx(clip);
+                }
+            })
+            .doOnNext(new Action1<RawDataBlockAll>() {
+                @Override
+                public void call(RawDataBlockAll rawDataBlockAll) {
+                    mRawDataBlockList.add(rawDataBlockAll);
+                }
+            });
+    }
+
+
+    private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip) {
+        Observable<RawDataBlock> obdObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_OBD);
+        Observable<RawDataBlock> gpsObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_GPS);
+        Observable<RawDataBlock> iioObservalbe = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_IIO);
+        return Observable.zip(obdObservable, gpsObservable, iioObservalbe, new Func3<RawDataBlock, RawDataBlock, RawDataBlock, RawDataBlockAll>() {
+            @Override
+            public RawDataBlockAll call(RawDataBlock obd, RawDataBlock gps, RawDataBlock iio) {
+                RawDataBlockAll rawDataBlockAll = new RawDataBlockAll();
+                rawDataBlockAll.obdDataBlock = obd;
+                rawDataBlockAll.gpsDataBlock = gps;
+                rawDataBlockAll.iioDataBlock = iio;
+                return rawDataBlockAll;
+            }
+        });
+    }
+
 
     public RawDataBlock loadRawData(Clip clip, int dataType) {
         ClipSegment clipSegment = new ClipSegment(clip);
@@ -87,6 +126,8 @@ public class RawDataLoader {
             return null;
         }
     }
+
+
 
     public List<RawDataItem> getRawDataItemList(ClipSetPos clipSetPos) {
 

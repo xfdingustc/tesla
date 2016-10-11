@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.clips.player;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
-
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
@@ -34,7 +33,6 @@ public class ClipUrlProvider implements UrlProvider {
     }
 
 
-
     @Override
     public VdbUrl getUriSync(long clipTimeMs) {
         Bundle parameters = new Bundle();
@@ -51,14 +49,10 @@ public class ClipUrlProvider implements UrlProvider {
         try {
             PlaybackUrl playbackUrl = requestFuture.get();
             return playbackUrl;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
         }
-
 
     }
 }

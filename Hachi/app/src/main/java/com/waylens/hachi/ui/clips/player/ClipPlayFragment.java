@@ -54,6 +54,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -74,6 +75,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -326,10 +328,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             case HachiPlayer.STATE_ENDED:
                 Logger.t(TAG).d("playback ended");
                 releasePlayer();
-
-//                mMediaPlayer.seekTo(0);
-//                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).getStartTimeMs());
-//                setClipSetPos(clipSetPos, true);
                 break;
         }
         if (mAudioUrl != null && mAudioPlayer != null) {
@@ -467,7 +465,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initRawDataView();
+//        initRawDataView();
 
     }
 
@@ -505,42 +503,54 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     public void initRawDataView() {
-        Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(final Subscriber<? super Void> subscriber) {
-                Logger.t(TAG).d("start loading ");
-                // First load raw data into memory
-                mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-                mRawDataLoader.loadRawData();
-                subscriber.onCompleted();
-            }
-        }).observeOn(AndroidSchedulers.mainThread())
-        .subscribeOn(Schedulers.io())
-        .subscribe(new Observer<Void>() {
-            @Override
-            public void onCompleted() {
-                ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
-                if (mRawDataLoader != null) {
-                    List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
-                    if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
-                        mWvGauge.updateRawDateItem(rawDataItemList);
-                        Logger.t(TAG).d("update raw data!");
+        mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+        mRawDataLoader.loadRawDataRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe() {
+                @Override
+                public void onNext(Object o) {
+                    ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
+                    if (mRawDataLoader != null) {
+                        List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
+                        if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
+                            mWvGauge.updateRawDateItem(rawDataItemList);
+                            Logger.t(TAG).d("update raw data!");
 
+                        }
                     }
+                    Logger.t(TAG).d("init gauge view!");
                 }
-                Logger.t(TAG).d("init gauge view!");
-            }
+            });
 
-            @Override
-            public void onError(Throwable e) {
 
-            }
-
-            @Override
-            public void onNext(Void aVoid) {
-
-            }
-        });
+//        Observable.create(new Observable.OnSubscribe<Void>() {
+//            @Override
+//            public void call(final Subscriber<? super Void> subscriber) {
+//                Logger.t(TAG).d("start loading ");
+//                // First load raw data into memory
+//
+//                mRawDataLoader.loadRawData();
+//                subscriber.onCompleted();
+//            }
+//        }).observeOn(AndroidSchedulers.mainThread())
+//        .subscribeOn(Schedulers.io())
+//        .subscribe(new Observer<Void>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onNext(Void aVoid) {
+//
+//            }
+//        });
 
     }
 
@@ -548,20 +558,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mWvGauge.setDefaultViewAndTimePoints(timePoints);
     }
 
-
-    private Clip loadClipInfo(Clip clip) {
-        VdbRequestFuture<Clip> requestFuture = VdbRequestFuture.newFuture();
-        ClipInfoRequest request = new ClipInfoRequest(clip.cid, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
-                clip.cid.type, 0, requestFuture, requestFuture);
-        mVdbRequestQueue.add(request);
-        try {
-            Clip retClip = requestFuture.get();
-            return retClip;
-        } catch (Exception e) {
-            Logger.t(TAG).e("Load raw data: " + e.getMessage());
-            return null;
-        }
-    }
 
 
     private void init() {
@@ -730,56 +726,40 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         mProgressLoading.setVisibility(View.VISIBLE);
 
+        mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
 
-        Observable.create(new Observable.OnSubscribe<Integer>() {
+        mRawDataLoader.loadRawDataRx()
+            .doOnNext(new Action1() {
+                @Override
+                public void call(Object o) {
+                    long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+                    mVdbUrl = mUrlProvider.getUriSync(startTimeMs);
+                    Logger.t(TAG).d("get playback url: " + mVdbUrl.url);
+                    if (mUrlProvider instanceof ClipUrlProvider) {
+                        mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0).editInfo.selectedStartValue, mVdbUrl);
+                    } else {
+                        mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
+                    }
 
-            @Override
-            public void call(final Subscriber<? super Integer> subscriber) {
-                Logger.t(TAG).d("start loading ");
-                // First load raw data into memory
-                if (loadRawData) {
-                    mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-                    mRawDataLoader.loadRawData();
-                    subscriber.onNext(LOADING_STAGE_RAW_DATA);
-                }
 
-
-                // Second fetch playback url
-                long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
-                mVdbUrl = mUrlProvider.getUriSync(startTimeMs);
-                Logger.t(TAG).d("get playback url: " + mVdbUrl.url);
-                if (mUrlProvider instanceof ClipUrlProvider) {
-                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0).editInfo.selectedStartValue, mVdbUrl);
-                } else {
-                    mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
-                }
-                subscriber.onNext(LOADING_STAGE_GET_PLAYBACK_URL);
-
-                if (mVdbUrl == null) {
-
-                }
-
-                // prepare audio if audio is set:
-                if (mAudioUrl != null) {
-                    mAudioPlayer = new MediaPlayer();
-                    try {
-                        mAudioPlayer.setDataSource(mAudioUrl);
-                        mAudioPlayer.prepare();
-                        mAudioPlayer.setLooping(true);
-                        mAudioPlayer.start();
-                        mAudioPlayer.pause();
-                    } catch (IOException e) {
-                        Logger.e("", e);
+                    // prepare audio if audio is set:
+                    if (mAudioUrl != null) {
+                        mAudioPlayer = new MediaPlayer();
+                        try {
+                            mAudioPlayer.setDataSource(mAudioUrl);
+                            mAudioPlayer.prepare();
+                            mAudioPlayer.setLooping(true);
+                            mAudioPlayer.start();
+                            mAudioPlayer.pause();
+                        } catch (IOException e) {
+                            Logger.e("", e);
+                        }
                     }
                 }
-                subscriber.onNext(LOADING_STAGE_PREPARE_AUDIO);
-                subscriber.onNext(LOADING_STAGE_PREPARE_VIDEO);
-
-            }
-        })
+            })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Integer>() {
+            .subscribe(new Subscriber() {
                 @Override
                 public void onCompleted() {
 
@@ -787,17 +767,82 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
                 @Override
                 public void onError(Throwable e) {
-
+                    Logger.t(TAG).d("load error");
                 }
 
                 @Override
-                public void onNext(Integer integer) {
-                    //Logger.t(TAG).d("loading staget: " + integer);
-                    if (integer == LOADING_STAGE_PREPARE_VIDEO) {
-                        preparePlayer(true);
-                    }
+                public void onNext(Object o) {
+                    preparePlayer(true);
                 }
             });
+
+//        Observable.create(new Observable.OnSubscribe<Integer>() {
+//
+//            @Override
+//            public void call(final Subscriber<? super Integer> subscriber) {
+//                Logger.t(TAG).d("start loading ");
+//                // First load raw data into memory
+//                if (loadRawData) {
+//                    mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+//                    mRawDataLoader.loadRawData();
+//                    subscriber.onNext(LOADING_STAGE_RAW_DATA);
+//                }
+//
+//
+//                // Second fetch playback url
+//                long startTimeMs = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+//                mVdbUrl = mUrlProvider.getUriSync(startTimeMs);
+//                Logger.t(TAG).d("get playback url: " + mVdbUrl.url);
+//                if (mUrlProvider instanceof ClipUrlProvider) {
+//                    mPositionAdjuster = new ClipPositionAdjuster(getClipSet().getClip(0).editInfo.selectedStartValue, mVdbUrl);
+//                } else {
+//                    mPositionAdjuster = new PlaylistPositionAdjuster(mVdbUrl);
+//                }
+//                subscriber.onNext(LOADING_STAGE_GET_PLAYBACK_URL);
+//
+//                if (mVdbUrl == null) {
+//
+//                }
+//
+//                // prepare audio if audio is set:
+//                if (mAudioUrl != null) {
+//                    mAudioPlayer = new MediaPlayer();
+//                    try {
+//                        mAudioPlayer.setDataSource(mAudioUrl);
+//                        mAudioPlayer.prepare();
+//                        mAudioPlayer.setLooping(true);
+//                        mAudioPlayer.start();
+//                        mAudioPlayer.pause();
+//                    } catch (IOException e) {
+//                        Logger.e("", e);
+//                    }
+//                }
+//                subscriber.onNext(LOADING_STAGE_PREPARE_AUDIO);
+//                subscriber.onNext(LOADING_STAGE_PREPARE_VIDEO);
+//
+//            }
+//        })
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe(new Observer<Integer>() {
+//                @Override
+//                public void onCompleted() {
+//
+//                }
+//
+//                @Override
+//                public void onError(Throwable e) {
+//
+//                }
+//
+//                @Override
+//                public void onNext(Integer integer) {
+//                    //Logger.t(TAG).d("loading staget: " + integer);
+//                    if (integer == LOADING_STAGE_PREPARE_VIDEO) {
+//                        preparePlayer(true);
+//                    }
+//                }
+//            });
 
     }
 
@@ -937,9 +982,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         }
 
         private void refreshProgressBar(final int currentPos) {
-//            final int currentPos = getCurrentPlayingTime();
-
-//            final int duration = getClipSet().getTotalSelectedLengthMs();
             if (mEventBus != null) {
                 ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPos);
                 ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG);

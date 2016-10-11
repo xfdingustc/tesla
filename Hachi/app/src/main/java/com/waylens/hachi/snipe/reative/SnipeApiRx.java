@@ -3,6 +3,7 @@ package com.waylens.hachi.snipe.reative;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
+import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
 
 import java.util.concurrent.ExecutionException;
 
@@ -34,7 +35,7 @@ public class SnipeApiRx {
             public Observable<Integer> call() {
                 try {
                     return Observable.just(SnipeApi.deleteClip(cid));
-                } catch (ExecutionException  | InterruptedException e) {
+                } catch (ExecutionException | InterruptedException e) {
                     return Observable.error(e);
                 }
             }
@@ -50,6 +51,19 @@ public class SnipeApiRx {
                 } catch (ExecutionException | InterruptedException e) {
                     return Observable.error(e);
                 }
+            }
+        });
+    }
+
+    public static Observable<RawDataBlock> getRawDataBlockRx(final Clip clip, final int dataType) {
+        return getRawDataBlockRx(clip, dataType, clip.getStartTimeMs(), clip.getDurationMs());
+    }
+
+    public static Observable<RawDataBlock> getRawDataBlockRx(final Clip clip, final int dataType, final long startTime, final int duration) {
+        return Observable.defer(new Func0<Observable<RawDataBlock>>() {
+            @Override
+            public Observable<RawDataBlock> call() {
+                return Observable.just(SnipeApi.getRawDataBlock(clip, dataType, startTime, duration));
             }
         });
     }
