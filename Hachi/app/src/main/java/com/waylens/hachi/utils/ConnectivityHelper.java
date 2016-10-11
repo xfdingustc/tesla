@@ -4,9 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -15,8 +13,6 @@ import android.widget.Toast;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.camera.VdtCamera;
-import com.waylens.hachi.camera.VdtCameraManager;
 
 import static android.content.Context.WIFI_SERVICE;
 
@@ -36,7 +32,10 @@ public class ConnectivityHelper {
         if (network != null && network.length > 0) {
             for (int i = 0; i < network.length; i++) {
                 NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
-                Logger.t(TAG).d("networkInfo: " + networkInfo.toString());
+                if (networkInfo == null) {
+                    continue;
+                }
+//                Logger.t(TAG).d("networkInfo: " + networkInfo.toString());
                 int networkType = networkInfo.getType();
                 if (desirednetworkType == networkType) {
                     setAppNetwork(connectivityManager, network[i]);
@@ -67,16 +66,12 @@ public class ConnectivityHelper {
 
         WifiManager wifiManager = (WifiManager) Hachi.getContext().getSystemService(WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        if (wifiInfo.getSSID().contains("C9J")
-            && VdtCameraManager.getManager().isConnected()
-            && VdtCameraManager.getManager().getCurrentCamera().getWifiMode() == VdtCamera.WIFI_MODE_AP) {
-            setPreferredNetwork(ConnectivityManager.TYPE_MOBILE);
+        if (wifiInfo != null && wifiInfo.getSSID().contains("C9J")) {
+//            setPreferredNetwork(ConnectivityManager.TYPE_MOBILE);
         } else {
             Logger.t(TAG).d("ssid: " + wifiInfo.getSSID());
         }
     }
-
-
 
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -89,7 +84,7 @@ public class ConnectivityHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean bind = manager.bindProcessToNetwork(network);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            boolean bind = manager.setProcessDefaultNetwork(network);
+//            boolean bind = ConnectivityManager.setProcessDefaultNetwork(network);
         }
     }
 }

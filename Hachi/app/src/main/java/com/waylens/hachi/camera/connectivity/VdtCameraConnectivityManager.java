@@ -41,6 +41,8 @@ public class VdtCameraConnectivityManager {
         if (isStarted) {
             return;
         }
+
+        Logger.t(TAG).d("start search camera");
         CameraDiscovery.discoverCameras(Hachi.getContext(), new CameraDiscovery.Callback() {
             @Override
             public void onCameraFound(NsdServiceInfo cameraService) {
@@ -60,7 +62,7 @@ public class VdtCameraConnectivityManager {
             }
         });
 
-//        startDeviceScanner();
+        startDeviceScanner();
         isStarted = true;
     }
 
@@ -74,8 +76,9 @@ public class VdtCameraConnectivityManager {
 
     public void stopSearchCamera() {
         if (isStarted) {
+            Logger.t(TAG).d("stop search camera");
             CameraDiscovery.stopDiscovery();
-//            mScanner.stopWork();
+            mScanner.stopWork();
             isStarted = false;
         }
     }

@@ -3,7 +3,6 @@ package com.waylens.hachi.camera;
 
 import android.util.Log;
 
-
 import com.waylens.hachi.camera.mina.VdtCodecFactory;
 import com.waylens.hachi.camera.mina.VdtCommand;
 import com.waylens.hachi.camera.mina.VdtMessage;
@@ -168,6 +167,7 @@ class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
             Log.d(TAG, "connection error " + e.getMessage());
             mConnectionListener.onConnectionFailed();
             boolean retry = mConnectRetryCount++ >= 3 ? false : true;
+
             connectError(false);
         }
 
@@ -211,6 +211,11 @@ class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
     // TODO, may deadlock here;
     private synchronized void connectError(boolean reconnect) {
         if (reconnect) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             startMinaConnection();
         } else {
             if (!mConnectError) {
