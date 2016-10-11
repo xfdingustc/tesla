@@ -1,80 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windowBackgroundLight"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="56dp"
+        android:text="@string/welcome41"
+        android:textAlignment="center"
+        android:textColor="@color/app_text_color_primary_light"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:id="@+id/buy_waylens_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:text="@string/welcome42"
+        android:textAlignment="center"
+        android:textColor="@color/style_color_accent"
+        android:textSize="14sp"
+        />
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/walkthrough4"
-        android:scaleType="centerCrop"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:src="@drawable/intro4"/>
 
 
-    <LinearLayout
-        android:id="@+id/policy_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:visibility="visible">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp">
 
 
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"></FrameLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_margin="16dp">
-
-
-            <CheckBox
-                android:id="@+id/agree_check_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="8dp"
-                android:buttonTint="@color/style_color_accent"
-                android:checked="true"/>
-
-            <TextView
-                android:id="@+id/waylens_agreement"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/agree_check_box"
-                tools:text="Agree with Waylens Agreement before you could use this app"/>
-
-        </RelativeLayout>
-
-        <Button
-            android:id="@+id/btnEnter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_gravity="bottom|center_horizontal"
-            android:text="@string/wake_up_camera"
-            android:textSize="14sp"
-            style="@style/ActionButton">
-        </Button>
-
-        <TextView
-            android:id="@+id/withoutCamera"
+        <CheckBox
+            android:id="@+id/agree_check_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/without_camera"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            android:layout_marginBottom="56dp"
-            android:textColor="?attr/appTextColorPrimary"
-            />
+            android:layout_marginRight="8dp"
+            android:buttonTint="@color/style_color_accent"
+            android:checked="true"/>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/waylens_agreement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/agree_check_box"
+            android:textColor="@color/app_text_color_primary_light"
+            tools:text="Agree with Waylens Agreement before you could use this app"/>
 
+    </RelativeLayout>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnEnter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:backgroundTint="?attr/actionButtonColor"
+        android:text="@string/wake_up_camera"
+        >
+    </Button>
+
+    <TextView
+        android:id="@+id/withoutCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="@string/without_camera"
+        android:textColor="@color/app_text_color_primary_light"
+        android:textSize="16sp"
+        />
+
+</LinearLayout>
+

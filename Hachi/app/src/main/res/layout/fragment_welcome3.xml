@@ -1,82 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:orientation="vertical"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/windowBackgroundLight"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="56dp"
+        android:text="@string/welcome31"
+        android:textAlignment="center"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:textColor="@color/app_text_color_primary_light"
+        android:textSize="24sp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:text="@string/welcome32"
+        android:textAlignment="center"
+        android:textColor="@color/app_text_color_secondary_light"
+        android:textSize="14sp"
+        />
+
+
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/walkthrough3"
-        android:scaleType="centerCrop"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="32dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome31"
-            android:textSize="40sp"
-            tools:text="waylens,"
-            android:textAllCaps="true"
-            android:layout_marginTop="64dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome32"
-            android:textSize="40sp"
-            tools:text="a data-driven,"
-            android:textAllCaps="true"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome33"
-            android:textSize="40sp"
-            tools:text="camera"
-            android:textAllCaps="true"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome34"
-            android:textSize="14sp"
-            tools:text="designed for drivers,"
-            android:textAllCaps="true"
-            android:layout_marginTop="16dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome35"
-            android:textSize="14sp"
-            tools:text="puts fun back behind"
-            android:textAllCaps="true"
-            android:layout_marginTop="8dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/welcome16"
-            android:textSize="14sp"
-            tools:text="your driving wheel."
-            android:textAllCaps="true"
-            android:layout_marginTop="8dp"
-            />
-
-    </LinearLayout>
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="96dp"
+        android:src="@drawable/intro3"/>
 
 
 
-</FrameLayout>
+</LinearLayout>
+
+
+

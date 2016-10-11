@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.welcome;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
@@ -58,6 +59,15 @@ public class Welcome4Fragment extends BaseFragment {
         MainActivity.launch(getActivity());
         getActivity().finish();
         writeVersionName();
+    }
+
+    @OnClick(R.id.buy_waylens_camera)
+    public void onBuyWaylensCameraClicked() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri contentUri = Uri.parse("http://www.waylens.com/");
+        intent.setData(contentUri);
+        startActivity(intent);
     }
 
     @Nullable

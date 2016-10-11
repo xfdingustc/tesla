@@ -11,12 +11,22 @@
     <color name="windowBackground">#1D1F23</color>
     <color name="windowBackgroundDark">#141618</color>
     <color name="dialogBackground">@color/material_blue_grey_900</color>
+    <color name="windowBackgroundLight">#FAFAFA</color>
+    <color name="windowBackgroundDarkLight">#F5F5F5</color>
+
 
     <color name="app_text_color_primary">#FFC4C5C5</color>
     <color name="app_text_color_secondary">#B3C4C5C5</color>
     <color name="app_text_color_disabled">#4CC4C5C5</color>
+
+    <color name="app_text_color_primary_light">#dd000000</color>
+    <color name="app_text_color_secondary_light">#89000000</color>
+    <color name="app_text_color_disabled_light">#60000000</color>
+
     <color name="app_color_control_normal">#1EFFFFFF</color>
     <color name="app_color_control_activated">@color/app_text_color_primary</color>
+
+
 
     <color name="color_line_break">#E6404245</color>
 
