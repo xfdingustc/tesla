@@ -4,5 +4,5 @@
         android:width="1dp"
         android:color="?attr/separateColor"/>
     <solid
-        android:color="#e5e5e5"/>
+        android:color="?attr/momentPlaceHolderColor"/>
 </shape>

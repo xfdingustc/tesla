@@ -14,6 +14,7 @@
     <attr name="actionButtonColor" format="color"/>
     <attr name="signinLogoColor" format="color"/>
     <attr name="separateColor" format="color"/>
+    <attr name="momentPlaceHolderColor" format="color"/>
 
 
     <declare-styleable name="VideoTrimmer">
