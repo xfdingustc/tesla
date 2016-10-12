@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/llNoBookmark"
+<RelativeLayout android:id="@+id/llNoBookmark"
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/windowBackground"
+                android:background="?attr/defaultBgColor"
                 android:orientation="vertical">
-    
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
 
     <TextView
@@ -22,17 +17,6 @@
         android:textColor="?attr/appTextColorPrimary"
         android:textSize="16sp"/>
 
-    <TextView
-        android:id="@+id/no_bookmark_help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/no_bookmark"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:text="@string/no_bookmark_help"
-        android:textAlignment="viewStart"
-        android:textColor="?attr/appTextColorSecondary"
-        android:textSize="16sp"/>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -42,12 +26,6 @@
         android:layout_margin="16dp"
         android:src="@drawable/bookmark_no_bookmarks"/>
 
-    </RelativeLayout>
-    
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="96dp"></FrameLayout>
 
-
-</LinearLayout>
+</RelativeLayout>
 

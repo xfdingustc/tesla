@@ -1,47 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/defaultBgColor"
+                android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/no_footage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="32dp"
-            android:text="@string/no_footage"
-            android:textColor="?attr/appTextColorPrimary"
-            android:textSize="16sp"/>
+    <TextView
+        android:id="@+id/no_footage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="32dp"
+        android:text="@string/no_footage"
+        android:textColor="?attr/appTextColorPrimary"
+        android:textSize="16sp"/>
 
-        <TextView
-            android:id="@+id/no_footage_help"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/no_footage"
-            android:layout_marginLeft="32dp"
-            android:layout_marginRight="32dp"
-            android:text="@string/no_footage_help"
-            android:textAlignment="viewStart"
-            android:textColor="?attr/appTextColorSecondary"
-            android:textSize="16sp"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/no_footage"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="16dp"
-            android:src="@drawable/bookmark_no_footages"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/no_footage"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/bookmark_no_footages"/>
 
-    </RelativeLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="96dp"></FrameLayout>
-</LinearLayout>
+</RelativeLayout>

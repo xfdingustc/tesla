@@ -42,7 +42,7 @@
         <item name="colorControlActivated">@color/style_color_accent</item>
         <item name="actionButtonColor">@color/style_color_accent</item>
         <item name="signinLogoColor">@android:color/white</item>
-        <item name="separateColor">#FF35373B</item>
+        <item name="separateColor">#1EFFFFFF</item>
         <item name="actionBarSize">48dp</item>
         <item name="momentPlaceHolderColor">@color/windowBackground</item>
     </style>

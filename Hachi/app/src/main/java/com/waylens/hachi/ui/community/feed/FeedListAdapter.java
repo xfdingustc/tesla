@@ -433,7 +433,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         String content = mContext.getString(R.string.comment_in_feed, userName, comment);
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(content);
         spannableStringBuilder.setSpan(new StyleSpan(Typeface.BOLD), 0, userName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.WHITE), 0, userName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        spannableStringBuilder.setSpan(new ForegroundColorSpan(Color.WHITE), 0, userName.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannableStringBuilder;
     }
 

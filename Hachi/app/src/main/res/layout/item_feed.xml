@@ -7,16 +7,13 @@
                                     android:layout_marginLeft="8dp"
                                     android:layout_marginRight="8dp"
                                     android:layout_marginTop="8dp"
-                                    android:background="@color/windowBackground"
                                     android:orientation="vertical"
                                     app:cardCornerRadius="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/windowBackground"
-        android:orientation="vertical"
-        tools:background="@color/material_grey_700">
+        android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_avatar"
@@ -46,7 +43,7 @@
             android:layout_alignTop="@id/user_avatar"
             android:layout_gravity="top"
             android:layout_toRightOf="@id/user_avatar"
-            android:textColor="@color/app_text_color_primary"
+            android:textColor="?attr/appTextColorPrimary"
             android:textSize="16dp"
             android:textStyle="bold"
             tools:text="xfding"/>
@@ -63,7 +60,7 @@
             android:layout_toRightOf="@id/user_avatar"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textColor="@color/app_text_color_secondary"
+            android:textColor="?attr/appTextColorSecondary"
             tools:text="4 days ago  • Shanghai China"/>
 
         <com.xfdingustc.far.FixedAspectRatioFrameLayout
@@ -71,6 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_below="@id/title"
+            android:background="@drawable/stroke_rect"
             app:farfl_xratio="16dp"
             app:farfl_yratio="9dp">
 
@@ -91,19 +89,19 @@
 
             <TextView
                 android:id="@+id/car_info"
-                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|bottom"
                 android:layout_margin="8dp"
                 android:background="@drawable/vehicle_info_bg"
                 android:textColor="@android:color/white"
+                android:textSize="12sp"
                 tools:text="Toyota Camry 2014"/>
 
 
             <TextView
                 android:id="@+id/video_duration"
-                style="@style/HachiTextViewCaption"
+                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
@@ -161,7 +159,7 @@
                 android:layout_gravity="center_vertical"
                 tools:text="999"/>
 
-            <View
+            <Space
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
@@ -199,7 +197,7 @@
 
             <View
                 android:id="@+id/separator"
-                style="@style/HachiSepatator"
+                android:background="?attr/separateColor"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"/>
 
@@ -209,6 +207,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
+                android:textColor="?attr/appTextColorSecondary"
                 tools:text="xfding Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
                 />
 
@@ -219,6 +218,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/comment_user1"
                 android:layout_marginLeft="16dp"
+                android:textColor="?attr/appTextColorSecondary"
                 tools:text="xfding beatiful"
                 />
 
@@ -229,6 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/comment_user2"
                 android:layout_marginLeft="16dp"
+                android:textColor="?attr/appTextColorSecondary"
                 tools:text="xfding beatiful"/>
 
             <View
