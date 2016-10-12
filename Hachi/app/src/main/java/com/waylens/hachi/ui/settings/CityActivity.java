@@ -17,7 +17,9 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.City;
+import com.waylens.hachi.rest.body.UserProfileBody;
 import com.waylens.hachi.rest.response.CityList;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCityAdapter;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -35,10 +37,8 @@ import rx.schedulers.Schedulers;
  * Created by Xiaofei on 2016/5/18.
  */
 public class CityActivity extends BaseActivity {
-
     private static final String TAG = CityActivity.class.getSimpleName();
-    List<String> cityNameList = new ArrayList<>();
-    List<City> cityList = new ArrayList<>();
+
     public static int cityLimit = 3000;
     private SimpleCityAdapter mAdapter;
     private String mCode;
@@ -113,17 +113,6 @@ public class CityActivity extends BaseActivity {
 
 
     private void getCityList() {
-//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-//            .url(Constants.API_CITY + "?cc=" + mCode + "&limit=" + cityLimit)
-//            .listner(new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                    mVs.showNext();
-//                    renderCityList(response);
-//                }
-//            })
-//            .build();
-//        mRequestQueue.add(request);
         HachiApi hachiApi = HachiService.createHachiApiService();
         hachiApi.getCityListRx(mCode, cityLimit)
             .subscribeOn(Schedulers.io())
@@ -139,10 +128,6 @@ public class CityActivity extends BaseActivity {
     }
 
     private void renderCityList(List<City> cityList) {
-        for (int i = 0; i < cityList.size(); i++) {
-            City city = cityList.get(i);
-            cityNameList.add(city.name);
-        }
 
         mAdapter = new SimpleCityAdapter(cityList, new SimpleCityAdapter.OnListItemClickListener() {
             @Override
@@ -159,19 +144,32 @@ public class CityActivity extends BaseActivity {
 
 
     private void changeUserCity(City city) {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_PROFILE)
-            .postBody("cityID", city.id)
-            .listner(new Response.Listener<JSONObject>() {
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+//            .url(Constants.API_USER_PROFILE)
+//            .postBody("cityID", city.id)
+//            .listner(new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    Logger.t(TAG).json(response.toString());
+//                    finish();
+//                }
+//            })
+//
+//            .build();
+//        mRequestQueue.add(request);
+
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        UserProfileBody userProfileBody = new UserProfileBody();
+        userProfileBody.cityID = (int)city.id;
+        hachiApi.changeProfileRx(userProfileBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
                     finish();
                 }
-            })
-
-            .build();
-        mRequestQueue.add(request);
+            });
     }
 
 
