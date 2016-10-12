@@ -41,7 +41,7 @@
                 android:layout_gravity="center"
                 android:background="?android:attr/selectableItemBackground"
                 android:contentDescription="@null"
-                android:src="@drawable/playbar_play"/>
+                android:src="@drawable/ic_play_arrow"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
         <LinearLayout

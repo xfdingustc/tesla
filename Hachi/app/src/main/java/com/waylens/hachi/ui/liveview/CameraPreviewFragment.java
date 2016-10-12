@@ -537,7 +537,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             params3.removeRule(RelativeLayout.BELOW);
             mStatusErrorLayout.setLayoutParams(params3);
 
-            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
+            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit);
         } else {
             mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark);
             mFabStopSrc = R.drawable.camera_control_stop;
@@ -563,7 +563,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             params3.addRule(RelativeLayout.BELOW, mLiveViewLayout.getId());
             mControlPanel.setLayoutParams(params3);
 
-            mBtnFullScreen.setImageResource(R.drawable.screen_full);
+            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen);
         }
         updateFloatActionButton();
         ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());

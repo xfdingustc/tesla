@@ -289,9 +289,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (isFullScreen()) {
-            mBtnFullScreen.setImageResource(R.drawable.screen_narrow);
+            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit);
         } else {
-            mBtnFullScreen.setImageResource(R.drawable.screen_full);
+            mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen);
         }
         ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
     }

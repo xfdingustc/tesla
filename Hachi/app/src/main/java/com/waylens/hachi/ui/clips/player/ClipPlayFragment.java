@@ -217,7 +217,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         if (isFullScreen()) {
-            mBtnFullscreen.setImageResource(R.drawable.screen_narrow);
+            mBtnFullscreen.setImageResource(R.drawable.ic_fullscreen_exit);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mControlPanel.setLayoutParams(params);
@@ -227,7 +227,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.BELOW, mFragmentView.getId());
             mControlPanel.setLayoutParams(params);
-            mBtnFullscreen.setImageResource(R.drawable.screen_full);
+            mBtnFullscreen.setImageResource(R.drawable.ic_fullscreen);
             mControlPanel.setBackgroundResource(0);
         }
         ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
@@ -255,7 +255,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onEventClipSetChanged(ClipSetChangeEvent event) {
         Logger.t(TAG).d("on Clip Set chang event clip count: " + getClipSet().getCount());
         releasePlayer();
-        mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+        mBtnPlayPause.setImageResource(R.drawable.ic_play_arrow);
         updateProgressTextView(0, getClipSet().getTotalLengthMs());
         if (getClipSet().getCount() == 0) {
             mClipCover.setVisibility(View.INVISIBLE);
@@ -366,7 +366,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             case HachiPlayer.STATE_ENDED:
                 mClipCover.setVisibility(View.VISIBLE);
                 mProgressLoading.setVisibility(View.INVISIBLE);
-                mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+                mBtnPlayPause.setImageResource(R.drawable.ic_play_arrow);
                 break;
             case HachiPlayer.STATE_PREPARING:
                 mClipCover.setVisibility(View.VISIBLE);
@@ -380,9 +380,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 mProgressLoading.setVisibility(View.GONE);
                 mClipCover.setVisibility(View.INVISIBLE);
                 if (playwhenReady) {
-                    mBtnPlayPause.setImageResource(R.drawable.playbar_pause);
+                    mBtnPlayPause.setImageResource(R.drawable.ic_pause_black);
                 } else {
-                    mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+                    mBtnPlayPause.setImageResource(R.drawable.ic_play_arrow);
                 }
                 break;
 
@@ -587,7 +587,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             mAudioPlayer.release();
             mAudioPlayer = null;
         }
-        mBtnPlayPause.setImageResource(R.drawable.playbar_play);
+        mBtnPlayPause.setImageResource(R.drawable.ic_play_arrow);
 //        mMultiSegSeekbar.reset();
         mNeedSendPlayCompleteEvent = true;
 

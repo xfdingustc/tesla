@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:src="@drawable/playbar_play"/>
+            android:src="@drawable/ic_play_arrow"/>
 
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
