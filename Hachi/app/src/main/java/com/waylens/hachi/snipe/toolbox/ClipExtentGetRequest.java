@@ -19,7 +19,8 @@ public class ClipExtentGetRequest extends VdbRequest<ClipExtent> {
 
     private Clip mClip;
 
-    public ClipExtentGetRequest(Clip clip, VdbResponse.Listener<ClipExtent> listener, VdbResponse.ErrorListener errorListener) {
+    public ClipExtentGetRequest(Clip clip, VdbResponse.Listener<ClipExtent> listener,
+                                VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         mClip = clip;
     }

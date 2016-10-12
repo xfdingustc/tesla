@@ -11,7 +11,8 @@ import com.waylens.hachi.snipe.vdb.ClipActionInfo;
  */
 public class MarkLiveMsgHandler extends ClipInfoMsgHandler {
 
-    public MarkLiveMsgHandler(VdbResponse.Listener<ClipActionInfo> listener, VdbResponse.ErrorListener errorListener) {
+    public MarkLiveMsgHandler(VdbResponse.Listener<ClipActionInfo> listener,
+                              VdbResponse.ErrorListener errorListener) {
         super(VdbCommand.Factory.VDB_MSG_MarkLiveClipInfo, listener, errorListener);
     }
 

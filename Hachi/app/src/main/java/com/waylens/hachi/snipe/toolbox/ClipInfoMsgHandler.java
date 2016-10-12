@@ -12,11 +12,13 @@ public class ClipInfoMsgHandler extends VdbMessageHandler<ClipActionInfo> {
 
     public static final int CLIP_IS_LIVE = 1;
 
-    public ClipInfoMsgHandler(VdbResponse.Listener<ClipActionInfo> listener, VdbResponse.ErrorListener errorListener) {
+    public ClipInfoMsgHandler(VdbResponse.Listener<ClipActionInfo> listener,
+                              VdbResponse.ErrorListener errorListener) {
         super(VdbCommand.Factory.MSG_ClipInfo, listener, errorListener);
     }
 
-    public ClipInfoMsgHandler(int msgCode, VdbResponse.Listener<ClipActionInfo> listener, VdbResponse.ErrorListener errorListener) {
+    public ClipInfoMsgHandler(int msgCode, VdbResponse.Listener<ClipActionInfo> listener,
+                              VdbResponse.ErrorListener errorListener) {
         super(msgCode, listener, errorListener);
     }
 

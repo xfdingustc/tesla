@@ -28,12 +28,14 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     String mCacheKey; //
 
 
-    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, VdbResponse.ErrorListener errorListener) {
+    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener,
+                           VdbResponse.ErrorListener errorListener) {
         this(clipPos, listener, errorListener, 0, 0, ScaleType.CENTER_INSIDE, Config.RGB_565, null);
     }
 
-    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener, VdbResponse.ErrorListener errorListener,
-                           int maxWidth, int maxHeight, ScaleType scaleType, Config decodeConfig, String cacheKey) {
+    public VdbImageRequest(ClipPos clipPos, VdbResponse.Listener<Bitmap> listener,
+                           VdbResponse.ErrorListener errorListener, int maxWidth, int maxHeight,
+                           ScaleType scaleType, Config decodeConfig, String cacheKey) {
         super(0, listener, errorListener);
         this.mClipPos = clipPos;
         this.mDecoderConfig = decodeConfig;
@@ -47,7 +49,6 @@ public class VdbImageRequest extends VdbRequest<Bitmap> {
     public Priority getPriority() {
         return Priority.LOW;
     }
-
 
 
     @Override

@@ -16,9 +16,7 @@ public class ClipExtentUpdateRequest extends VdbRequest<Integer> {
     private long mClipStart;
     private long mClipEnd;
 
-    public ClipExtentUpdateRequest(Clip.ID cid,
-                                   long newClipStart,
-                                   long newClipEnd,
+    public ClipExtentUpdateRequest(Clip.ID cid, long newClipStart, long newClipEnd,
                                    VdbResponse.Listener<Integer> listener,
                                    VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);

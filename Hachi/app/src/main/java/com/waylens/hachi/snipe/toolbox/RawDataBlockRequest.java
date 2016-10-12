@@ -28,8 +28,7 @@ public class RawDataBlockRequest extends VdbRequest<RawDataBlock> {
     public static final String PARAM_CLIP_LENGTH = "clip.length.ms";
     public static final String PARAM_DATA_TYPE = "raw.data.type";
 
-    public RawDataBlockRequest(Clip.ID cid, Bundle params,
-                               VdbResponse.Listener<RawDataBlock> listener,
+    public RawDataBlockRequest(Clip.ID cid, Bundle params, VdbResponse.Listener<RawDataBlock> listener,
                                VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mCid = cid;

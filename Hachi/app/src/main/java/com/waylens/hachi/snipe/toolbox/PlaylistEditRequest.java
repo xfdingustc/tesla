@@ -22,7 +22,8 @@ public class PlaylistEditRequest extends VdbRequest<Integer> {
     private final int mIndex;
 
     public PlaylistEditRequest(Clip clip, long startTimeMs, long endTimeMs, int playListID,
-                               VdbResponse.Listener<Integer> listener, VdbResponse.ErrorListener errorListener) {
+                               VdbResponse.Listener<Integer> listener,
+                               VdbResponse.ErrorListener errorListener) {
         this(METHOD_INSERT_CLIP, clip, startTimeMs, endTimeMs, -1, playListID, listener, errorListener);
 
     }

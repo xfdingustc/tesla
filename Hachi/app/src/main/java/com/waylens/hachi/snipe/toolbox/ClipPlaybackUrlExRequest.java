@@ -12,11 +12,15 @@ public class ClipPlaybackUrlExRequest extends ClipPlaybackUrlRequest {
 
     public static final String PARAMETER_CLIP_LENGTH_MS = "clip_length_ms";
 
-    public ClipPlaybackUrlExRequest(Clip.ID cid, Bundle parameters, VdbResponse.Listener<PlaybackUrl> listener, VdbResponse.ErrorListener errorListener) {
+    public ClipPlaybackUrlExRequest(Clip.ID cid, Bundle parameters,
+                                    VdbResponse.Listener<PlaybackUrl> listener,
+                                    VdbResponse.ErrorListener errorListener) {
         this(0, cid, parameters, listener, errorListener);
     }
 
-    public ClipPlaybackUrlExRequest(int method, Clip.ID cid, Bundle parameters, VdbResponse.Listener<PlaybackUrl> listener, VdbResponse.ErrorListener errorListener) {
+    public ClipPlaybackUrlExRequest(int method, Clip.ID cid, Bundle parameters,
+                                    VdbResponse.Listener<PlaybackUrl> listener,
+                                    VdbResponse.ErrorListener errorListener) {
         super(method, cid, parameters, listener, errorListener);
     }
 

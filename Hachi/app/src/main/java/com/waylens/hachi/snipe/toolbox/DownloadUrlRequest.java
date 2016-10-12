@@ -63,8 +63,6 @@ public class DownloadUrlRequest extends VdbRequest<ClipDownloadInfo> {
     protected VdbResponse<ClipDownloadInfo> parseVdbResponse(VdbAcknowledge response) {
         if (response.getRetCode() != 0) {
             Logger.t(TAG).e("ackGetDownloadUrl: failed: " + response.getRetCode());
-
-            //return null;
         }
 
         int clipType = response.readi32();

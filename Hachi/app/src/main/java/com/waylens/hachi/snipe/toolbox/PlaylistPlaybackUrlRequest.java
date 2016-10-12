@@ -17,8 +17,7 @@ public class PlaylistPlaybackUrlRequest extends VdbRequest<PlaylistPlaybackUrl> 
     private final int mPlaylistID;
     private final int mStartTimeMs;
 
-    public PlaylistPlaybackUrlRequest(int playListID,
-                                      int startTimeMs,
+    public PlaylistPlaybackUrlRequest(int playListID, int startTimeMs,
                                       VdbResponse.Listener<PlaylistPlaybackUrl> listener,
                                       VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
@@ -29,7 +28,7 @@ public class PlaylistPlaybackUrlRequest extends VdbRequest<PlaylistPlaybackUrl> 
     @Override
     protected VdbCommand createVdbCommand() {
         mVdbCommand = VdbCommand.Factory.createCmdGetPlaylistPlaybackUrl(Vdb.URL_TYPE_HLS,
-                mPlaylistID, mStartTimeMs, Vdb.STREAM_SUB_1);
+            mPlaylistID, mStartTimeMs, Vdb.STREAM_SUB_1);
         return mVdbCommand;
     }
 

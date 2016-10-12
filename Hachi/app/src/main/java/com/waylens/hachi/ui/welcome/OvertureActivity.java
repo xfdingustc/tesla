@@ -77,7 +77,7 @@ public class OvertureActivity extends BaseActivity {
 
 
     private void redirectTo() {
-        if (true || isUpdated()) {
+        if (isUpdated()) {
             FirstInstallActivity.launch(this);
         } else {
             MainActivity.launch(this);

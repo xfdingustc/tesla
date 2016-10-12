@@ -16,8 +16,9 @@ public class AddBookmarkRequest extends VdbRequest<Integer> {
     private final long mStartTimeMs;
     private final long mEndTimeMs;
 
-    public AddBookmarkRequest(Clip.ID cid, long startTimeMs, long endTimeMs, VdbResponse
-        .Listener<Integer> listener, VdbResponse.ErrorListener errorListener) {
+    public AddBookmarkRequest(Clip.ID cid, long startTimeMs, long endTimeMs,
+                              VdbResponse.Listener<Integer> listener,
+                              VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         this.mClipId = cid;
         this.mStartTimeMs = startTimeMs;
