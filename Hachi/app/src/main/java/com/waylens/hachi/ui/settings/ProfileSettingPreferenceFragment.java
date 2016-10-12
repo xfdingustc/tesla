@@ -31,11 +31,13 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SocialProvider;
+import com.waylens.hachi.rest.body.UserProfileBody;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -510,25 +512,25 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void updateGender(final String gender) {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_PROFILE)
-            .postBody("gender", gender)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        UserProfileBody userProfileBody = new UserProfileBody();
+        userProfileBody.gender = gender;
+        hachiApi.changeProfileRx(userProfileBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
                     mSessionManager.setGender(gender);
                     mGender.setSummary(mSessionManager.getGender());
                     Snackbar.make(getView(), R.string.gender_update, Snackbar.LENGTH_SHORT).show();
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Snackbar.make(getView(), new String(error.networkResponse.data), Snackbar.LENGTH_LONG).show();
+                public void onError(Throwable e) {
+                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
                 }
-            })
-            .build();
-        mRequestQueue.add(request.setTag(TAG));
+            });
     }
 
 
