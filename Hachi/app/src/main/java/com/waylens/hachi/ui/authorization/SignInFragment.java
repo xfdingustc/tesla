@@ -60,6 +60,15 @@ public class SignInFragment extends BaseFragment {
     @BindView(R.id.forgot_password_view)
     TextView mForgotPasswordView;
 
+    @OnClick(R.id.btn_sign_in)
+    public void onClickSignIn() {
+        if (!mTvSignInEmail.isValid() || !mTvPassword.isValid()) {
+            return;
+        }
+        mButtonAnimator.setDisplayedChild(1);
+        performSignIn();
+    }
+
 
     RequestQueue mVolleyRequestQueue;
 
@@ -136,14 +145,7 @@ public class SignInFragment extends BaseFragment {
         mRootView.requestFocus();
     }
 
-    @OnClick(R.id.btn_sign_in)
-    public void onClickSignIn() {
-        if (!mTvSignInEmail.isValid() || !mTvPassword.isValid()) {
-            return;
-        }
-        mButtonAnimator.setDisplayedChild(0);
-        performSignIn();
-    }
+
 
     void performSignIn() {
         mEmail = mTvSignInEmail.getText().toString();
@@ -196,23 +198,6 @@ public class SignInFragment extends BaseFragment {
     }
 
     private void doDeviceLogin() {
-/*        HachiApi hachiApi = HachiService.createHachiApiService();
-        DeviceLoginBody deviceLoginBody = new DeviceLoginBody("ANDROID", "xfding");
-        Call<SignInResponse> deviceLoginResponseCall = hachiApi.deviceLogin(deviceLoginBody);
-        deviceLoginResponseCall.enqueue(new Callback<SignInResponse>() {
-            @Override
-            public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
-                Logger.t(TAG).d(response.body().token);
-                SessionManager.getInstance().saveLoginInfo(response.body());
-                getActivity().setResult(Activity.RESULT_OK);
-                getActivity().finish();
-            }
-
-            @Override
-            public void onFailure(Call<SignInResponse> call, Throwable t) {
-
-            }
-        });*/
 
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
             .url(Constants.API_DEVICE_LOGIN)
