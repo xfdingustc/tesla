@@ -558,27 +558,25 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void updateBirthday(final String birthday) {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_PROFILE)
-            .postBody("birthday", birthday)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        UserProfileBody userProfileBody = new UserProfileBody();
+        userProfileBody.birthday = birthday;
+        hachiApi.changeProfileRx(userProfileBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
                     mBirthday.setSummary(birthday);
                     mSessionManager.setBirthday(birthday);
                     Snackbar.make(getView(), R.string.birthday_update, Snackbar.LENGTH_SHORT).show();
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Snackbar.make(getView(), new String(error.networkResponse.data), Snackbar.LENGTH_SHORT).show();
+                public void onError(Throwable e) {
+                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
                 }
-            })
-            .build();
-
-
-        mRequestQueue.add(request.setTag(TAG));
+            });
     }
 
     public void showDialog() {

@@ -7,6 +7,7 @@ package com.waylens.hachi.rest.body;
 public class UserProfileBody {
     public String userName;
     public String displayName;
+    public String birthday;
     public String gender;
     public String region;
     public int cityID;
