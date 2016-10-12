@@ -13,7 +13,7 @@
         app:elevation="@dimen/default_elevation"
         app:layout_scrollFlags="scroll"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:navigationIcon="@drawable/navbar_back"/>
+        app:navigationIcon="@drawable/ic_arrow_back"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_margin="16dp"
-                    android:src="@drawable/settings_menu_account"
+                    android:src="@drawable/ic_person"
                     android:tint="@color/app_text_color_primary"/>
 
                 <TextView
@@ -129,7 +129,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_margin="16dp"
-                    android:src="@drawable/ic_cloud_upload_black_24dp"
+                    android:src="@drawable/ic_cloud_upload"
                     />
 
                 <TextView
@@ -176,7 +176,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_margin="16dp"
-                    android:src="@drawable/navbar_notification"/>
+                    android:tint="@color/app_text_color_primary"
+                    android:src="@drawable/ic_notifications"/>
 
                 <TextView
                     android:layout_width="match_parent"

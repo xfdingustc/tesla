@@ -38,6 +38,7 @@ import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.ui.settings.AccountActivity;
+import com.waylens.hachi.ui.settings.AccountFragment;
 import com.waylens.hachi.ui.settings.SettingsFragment;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -60,27 +61,22 @@ public class MainActivity extends BaseActivity {
     public static final int TAB_TAG_LIVE_VIEW = 1;
     public static final int TAB_TAG_MOMENTS = 2;
     public static final int TAB_TAG_LEADERBOARD = 3;
-    public static final int TAB_TAG_SETTINGS = 4;
+    public static final int TAB_TAG_ACCOUNT = 3;
 
     public static final int REQUEST_CODE_SIGN_UP_FROM_MOMENTS = 100;
 
-    private int mCurrentNavMenuId;
 
-    //private BiMap<Integer, Integer> mMenuId2Tab = HashBiMap.create();
-    private Map<Integer, Integer> mMenuId2Tab = new HashMap<>();
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private Fragment[] mFragmentList = new Fragment[]{
         new ClipVideoFragment(),
         new CameraPreviewFragment(),
         new CommunityFragment(),
+        new AccountFragment(),
         new PerformanceTestFragment(),
-        new SettingsFragment(),
-
     };
 
     private Fragment mCurrentFragment = null;
-    private SessionManager mSessionManager = SessionManager.getInstance();
 
 
     @BindView(R.id.bottomBar)
@@ -126,7 +122,7 @@ public class MainActivity extends BaseActivity {
         super.init();
 
         mTab2MenuId.put(TAB_TAG_MOMENTS, R.id.moments);
-        mTab2MenuId.put(TAB_TAG_SETTINGS, R.id.setting);
+        mTab2MenuId.put(TAB_TAG_ACCOUNT, R.id.setting);
         mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
         mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.live_view);
 //        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderboard);
@@ -154,7 +150,7 @@ public class MainActivity extends BaseActivity {
                         switchFragment(TAB_TAG_MOMENTS);
                         break;
                     case R.id.account:
-                        switchFragment(TAB_TAG_SETTINGS);
+                        switchFragment(TAB_TAG_ACCOUNT);
                         break;
                     case R.id.video:
                         switchFragment(TAB_TAG_VIDEO);
@@ -191,14 +187,6 @@ public class MainActivity extends BaseActivity {
     public void switchFragment(int tag) {
         int menuId = mTab2MenuId.get(tag);
 
-//        // When init current menu id is 0. so here must check if MenuItem is null
-//        MenuItem item = mNavView.getMenu().findItem(mCurrentNavMenuId);
-//        if (item != null) {
-//            item.setChecked(false);
-//        }
-
-
-        mCurrentNavMenuId = menuId;
 //        mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
 
         Fragment fragment = mFragmentList[tag];

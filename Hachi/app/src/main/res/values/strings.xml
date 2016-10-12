@@ -490,6 +490,7 @@
     <string name="unbind_obd_device">Unbind OBD Dongle</string>
     <string name="unbind_rc_device">Unbind Remote Controller</string>
     <string name="busy">Busy</string>
+	<string name="camera_setting">Camera setting</string>
     <string name="comment_in_feed"><b>%1$s</b> %2$s</string>
     <string name="geoTag_setting_notification">Could not hide location according to your gauge setting.</string>
     <string name="client_wifi">Phone-WiFi-Camera</string>
