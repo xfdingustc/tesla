@@ -30,8 +30,10 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.ChangePwdBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.body.UserProfileBody;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -489,26 +491,46 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void uploadPassword(String oldPwd, String newPwd) {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_CHANGE_PASSWORD)
-            .postBody("curPassword", oldPwd)
-            .postBody("newPassword", newPwd)
-            .listner(new Response.Listener<JSONObject>() {
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+//            .url(Constants.API_USER_CHANGE_PASSWORD)
+//            .postBody("curPassword", oldPwd)
+//            .postBody("newPassword", newPwd)
+//            .listner(new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    Logger.t(TAG).json(response.toString());
+//                    mSessionManager.saveLoginInfo(response);
+//                    Snackbar.make(getView(), R.string.change_password_successfully, Snackbar.LENGTH_LONG).show();
+//                }
+//            })
+//            .errorListener(new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    Snackbar.make(getView(), R.string.change_password_failed, Snackbar.LENGTH_LONG).show();
+//                }
+//            })
+//            .build();
+//        mRequestQueue.add(request.setTag(TAG));
+
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        ChangePwdBody changePwdBody = new ChangePwdBody();
+        changePwdBody.curPassword = oldPwd;
+        changePwdBody.newPassword = newPwd;
+        hachiApi.changePasswordRx(changePwdBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    mSessionManager.saveLoginInfo(response);
+                public void onNext(AuthorizeResponse authorizeResponse) {
+                    mSessionManager.saveLoginInfo(authorizeResponse);
                     Snackbar.make(getView(), R.string.change_password_successfully, Snackbar.LENGTH_LONG).show();
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Snackbar.make(getView(), R.string.change_password_failed, Snackbar.LENGTH_LONG).show();
+                public void onError(Throwable e) {
+                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
                 }
-            })
-            .build();
-        mRequestQueue.add(request.setTag(TAG));
+            });
     }
 
     private void updateGender(final String gender) {

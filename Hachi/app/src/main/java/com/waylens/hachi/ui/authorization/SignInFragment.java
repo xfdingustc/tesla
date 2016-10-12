@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.text.style.ClickableSpan;
@@ -18,25 +17,20 @@ import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
-import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -156,10 +150,10 @@ public class SignInFragment extends BaseFragment {
         mPassword = mTvPassword.getText().toString();
         HachiApi hachiApi = HachiService.createHachiApiService();
         SignInPostBody signInPostBody = new SignInPostBody(mEmail, mPassword);
-        Call<SignInResponse> signInResponseCall = hachiApi.signin(signInPostBody);
-        signInResponseCall.enqueue(new Callback<SignInResponse>() {
+        Call<AuthorizeResponse> signInResponseCall = hachiApi.signin(signInPostBody);
+        signInResponseCall.enqueue(new Callback<AuthorizeResponse>() {
             @Override
-            public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
+            public void onResponse(Call<AuthorizeResponse> call, retrofit2.Response<AuthorizeResponse> response) {
                 if (response.code() == 200) {
                     onSignInSuccessful(response.body());
                 } else if (response.code() == 401) {
@@ -176,7 +170,7 @@ public class SignInFragment extends BaseFragment {
             }
 
             @Override
-            public void onFailure(Call<SignInResponse> call, Throwable t) {
+            public void onFailure(Call<AuthorizeResponse> call, Throwable t) {
                 onSignInFailed(t);
 //                Logger.d(t.getMessage());
             }
@@ -194,7 +188,7 @@ public class SignInFragment extends BaseFragment {
             .show();
     }
 
-    private void onSignInSuccessful(SignInResponse response) {
+    private void onSignInSuccessful(AuthorizeResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
         SessionManager.getInstance().setEmail(mEmail);
         doDeviceLogin();
@@ -207,9 +201,9 @@ public class SignInFragment extends BaseFragment {
         hachiApi.deviceLoginRx(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<SignInResponse>() {
+            .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
                 @Override
-                public void onNext(SignInResponse signInResponse) {
+                public void onNext(AuthorizeResponse signInResponse) {
                     SessionManager.getInstance().saveLoginInfo(signInResponse);
                     getActivity().setResult(Activity.RESULT_OK);
                     RegistrationIntentService.launch(getActivity());

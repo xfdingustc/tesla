@@ -21,13 +21,11 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
-import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.ConnectivityHelper;
@@ -37,8 +35,6 @@ import com.xfdingustc.rxutils.library.SimpleSubscribe;
 import org.json.JSONObject;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -212,9 +208,9 @@ public class AuthorizeActivity extends BaseActivity {
         hachiApi.deviceLoginRx(body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<SignInResponse>() {
+            .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
                 @Override
-                public void onNext(SignInResponse signInResponse) {
+                public void onNext(AuthorizeResponse signInResponse) {
                     SessionManager.getInstance().saveLoginInfo(signInResponse);
                     setResult(Activity.RESULT_OK);
                     finish();

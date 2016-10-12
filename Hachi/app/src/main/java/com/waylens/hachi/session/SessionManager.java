@@ -14,7 +14,7 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.LinkedAccounts;
-import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
@@ -280,11 +280,11 @@ public class SessionManager {
         setIsVerified(userinfo.isVerified);
     }
 
-    public void saveLoginInfo(SignInResponse response) {
+    public void saveLoginInfo(AuthorizeResponse response) {
         saveLoginInfo(response, false);
     }
 
-    public void saveLoginInfo(SignInResponse response, boolean isLoginWithSNS) {
+    public void saveLoginInfo(AuthorizeResponse response, boolean isLoginWithSNS) {
         if (response == null) {
             return;
         }

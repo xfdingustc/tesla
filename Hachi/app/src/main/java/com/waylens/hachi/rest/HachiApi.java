@@ -1,6 +1,7 @@
 package com.waylens.hachi.rest;
 
 import com.waylens.hachi.rest.bean.MomentAmount;
+import com.waylens.hachi.rest.body.ChangePwdBody;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FinishUploadBody;
@@ -37,24 +38,20 @@ import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
-import com.waylens.hachi.rest.response.SignUpResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UploadAvatarResponse;
 import com.waylens.hachi.rest.response.UserInfo;
-import com.waylens.hachi.rest.response.SignInResponse;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
-import rx.Observer;
 
 /**
  * Created by Xiaofei on 2016/6/8.
@@ -137,13 +134,13 @@ public interface HachiApi {
     Call<SimpleBoolResponse> report(@Body ReportFeedbackBody reportBody);
 
     @POST("/api/users/signin")
-    Call<SignInResponse> signin(@Body SignInPostBody signInPostBody);
+    Call<AuthorizeResponse> signin(@Body SignInPostBody signInPostBody);
 
     @POST("/api/users/signup")
-    Call<SignUpResponse> signUp(@Body SignUpPostBody signUpnPostBody);
+    Call<AuthorizeResponse> signUp(@Body SignUpPostBody signUpnPostBody);
 
     @POST("/api/users/signup")
-    Observable<SignUpResponse> signUpRx(@Body SignUpPostBody signUpnPostBody);
+    Observable<AuthorizeResponse> signUpRx(@Body SignUpPostBody signUpnPostBody);
 
     @GET("/api/users/check_account")
     Call<SimpleBoolResponse> checkEmail(@Query("e") String email);
@@ -211,11 +208,14 @@ public interface HachiApi {
     Call<ModelResponse> getModelByMaker(@Query("maker") long makerID);
 
     @POST("api/devices/login")
-    Observable<SignInResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
+    Observable<AuthorizeResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
 
     @GET("api/region/cities")
     Observable<CityList> getCityListRx(@Query("cc") String countryCod, @Query("limit") int count);
 
     @POST("api/users/me/profile")
     Observable<SimpleBoolResponse> changeProfileRx(@Body UserProfileBody userProfileBody);
+
+    @POST("api/users/change_password")
+    Observable<AuthorizeResponse> changePasswordRx(@Body ChangePwdBody changePwdBody);
 }

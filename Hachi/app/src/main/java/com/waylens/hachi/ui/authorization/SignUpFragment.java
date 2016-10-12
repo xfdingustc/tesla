@@ -13,29 +13,19 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
-import com.waylens.hachi.rest.response.SignInResponse;
-import com.waylens.hachi.rest.response.SignUpResponse;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
-import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.ServerMessage;
 
 import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
-
-import java.io.IOException;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -138,7 +128,7 @@ public class SignUpFragment extends BaseFragment {
         hachiApi.signUpRx(signUpPostBody)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<SignUpResponse>() {
+            .subscribe(new Subscriber<AuthorizeResponse>() {
                 @Override
                 public void onCompleted() {
 
@@ -150,7 +140,7 @@ public class SignUpFragment extends BaseFragment {
                 }
 
                 @Override
-                public void onNext(SignUpResponse signUpResponse) {
+                public void onNext(AuthorizeResponse signUpResponse) {
                     Logger.t(TAG).d("signup response: " + signUpResponse.toString());
                     onSignUpSuccessful(signUpResponse);
                 }
@@ -189,7 +179,7 @@ public class SignUpFragment extends BaseFragment {
 //        error.
     }
 
-    void onSignUpSuccessful(SignUpResponse response) {
+    void onSignUpSuccessful(AuthorizeResponse response) {
         performSignIn();
     }
 
@@ -251,15 +241,15 @@ public class SignUpFragment extends BaseFragment {
 
         HachiApi hachiApi = HachiService.createHachiApiService();
         SignInPostBody signInPostBody = new SignInPostBody(email, password);
-        Call<SignInResponse> signInResponseCall = hachiApi.signin(signInPostBody);
-        signInResponseCall.enqueue(new Callback<SignInResponse>() {
+        Call<AuthorizeResponse> signInResponseCall = hachiApi.signin(signInPostBody);
+        signInResponseCall.enqueue(new Callback<AuthorizeResponse>() {
             @Override
-            public void onResponse(Call<SignInResponse> call, retrofit2.Response<SignInResponse> response) {
+            public void onResponse(Call<AuthorizeResponse> call, retrofit2.Response<AuthorizeResponse> response) {
                 onSignInSuccessful(response.body());
             }
 
             @Override
-            public void onFailure(Call<SignInResponse> call, Throwable t) {
+            public void onFailure(Call<AuthorizeResponse> call, Throwable t) {
                 onSignInFailed(t);
                 Logger.d(t.getMessage());
             }
@@ -272,7 +262,7 @@ public class SignUpFragment extends BaseFragment {
         //showMessage(ServerMessage.parseServerError(error).msgResID);
     }
 
-    void onSignInSuccessful(SignInResponse response) {
+    void onSignInSuccessful(AuthorizeResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
