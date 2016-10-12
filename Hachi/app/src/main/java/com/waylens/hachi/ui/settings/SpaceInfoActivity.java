@@ -14,6 +14,7 @@ import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -76,17 +77,17 @@ public class SpaceInfoActivity extends BaseActivity {
             .subscribe(new SimpleSubscribe<SpaceInfo>() {
                 @Override
                 public void onNext(SpaceInfo spaceInfo) {
-                    mSdCardVolume.setText(Utils.getSpaceString(spaceInfo.total));
-                    mHightlight.setText(Utils.getSpaceString(spaceInfo.marked));
-                    mVideoBuffer.setText(Utils.getSpaceString(spaceInfo.used));
-                    mFree.setText(Utils.getSpaceString(spaceInfo.total - spaceInfo.used));
+                    mSdCardVolume.setText(StringUtils.getSpaceString(spaceInfo.total));
+                    mHightlight.setText(StringUtils.getSpaceString(spaceInfo.marked));
+                    mVideoBuffer.setText(StringUtils.getSpaceString(spaceInfo.used));
+                    mFree.setText(StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used));
                     mStorageProgressBar.setMax(100);
                     long marked = (spaceInfo.marked * 100) / spaceInfo.total;
                     long buffered = (spaceInfo.used * 100) / spaceInfo.total;
                     mStorageProgressBar.setProgress((int)marked);
                     mStorageProgressBar.setSecondaryProgress((int)buffered);
-                    mStorageNumber.setText(Utils.getSpaceNumber(spaceInfo.used));
-                    mStorageUnit.setText(Utils.getSpaceUnit(spaceInfo.used));
+                    mStorageNumber.setText(StringUtils.getSpaceNumber(spaceInfo.used));
+                    mStorageUnit.setText(StringUtils.getSpaceUnit(spaceInfo.used));
                 }
             });
 

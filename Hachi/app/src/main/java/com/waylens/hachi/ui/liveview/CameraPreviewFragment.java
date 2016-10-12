@@ -48,6 +48,7 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.rxutils.library.RxBus;
@@ -715,10 +716,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                     mStorageView.setProgress((int) (spaceInfo.marked / (1024 * 1024)));
                     mStorageView.setSecondaryProgress((int) (spaceInfo.used / (1024 * 1024)));
 
-                    mTvSpaceLeft.setText(Utils.getSpaceString(spaceInfo.total - spaceInfo.used) + " " + getString(R.string.ready_to_record));
+                    mTvSpaceLeft.setText(StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used) + " " + getString(R.string.ready_to_record));
 
-                    mHighlightSpace.setText(Utils.getSpaceString(spaceInfo.marked));
-                    mLoopRecordSpace.setText(Utils.getSpaceString(spaceInfo.used - spaceInfo.marked));
+                    mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
+                    mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.used - spaceInfo.marked));
                 }
             });
 

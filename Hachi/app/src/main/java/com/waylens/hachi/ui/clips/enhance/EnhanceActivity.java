@@ -47,6 +47,7 @@ import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
+import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -366,8 +367,8 @@ public class EnhanceActivity extends ClipPlayActivity {
                 });
 
 
-                tvFullHd.setText(getString(R.string.fullhd, Utils.getSpaceString(response.main.size)));
-                tvSd.setText(getString(R.string.sd, Utils.getSpaceString(response.sub.size)));
+                tvFullHd.setText(getString(R.string.fullhd, StringUtils.getSpaceString(response.main.size)));
+                tvSd.setText(getString(R.string.sd, StringUtils.getSpaceString(response.sub.size)));
 
                 mDownloadBottomSheetDialog.setContentView(view);
 

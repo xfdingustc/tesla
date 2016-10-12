@@ -20,7 +20,7 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.service.download.DownloadServiceRx;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.utils.HashUtils2;
+import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 
 
@@ -147,7 +147,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
                 subscriber.onNext(0);
 
                 try {
-                    final String downloadFileMd5 = Hex.encodeHexString(HashUtils2.encodeMD5(file));
+                    final String downloadFileMd5 = Hex.encodeHexString(HashUtils.encodeMD5(file));
                     if (downloadFileMd5.equals(mFirmwareInfo.getMd5())) {
                         subscriber.onNext(1);
                     } else {

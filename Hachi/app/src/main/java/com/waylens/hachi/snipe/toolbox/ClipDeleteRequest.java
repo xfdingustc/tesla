@@ -13,8 +13,7 @@ public class ClipDeleteRequest extends VdbRequest<Integer> {
     private static final String TAG = "ClipDeleteRequest";
     Clip.ID mCid;
 
-    public ClipDeleteRequest(Clip.ID cid,
-                             VdbResponse.Listener<Integer> listener,
+    public ClipDeleteRequest(Clip.ID cid, VdbResponse.Listener<Integer> listener,
                              VdbResponse.ErrorListener errorListener) {
         super(0, listener, errorListener);
         mCid = cid;

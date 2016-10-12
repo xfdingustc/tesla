@@ -23,7 +23,7 @@ import com.waylens.hachi.service.upload.UploadProgressListener;
 import com.waylens.hachi.service.upload.UploadProgressRequestBody;
 import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.utils.HashUtils2;
+import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
 
@@ -92,7 +92,7 @@ public class PictureUploadJob extends UploadMomentJob {
                 out.close();
             }
 
-            String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(jpeg));
+            String fileSha1 = Hex.encodeHexString(HashUtils.encodeSHA1(jpeg));
 
             SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss", Locale.US);
             String date = format.format(System.currentTimeMillis()) + " GMT";

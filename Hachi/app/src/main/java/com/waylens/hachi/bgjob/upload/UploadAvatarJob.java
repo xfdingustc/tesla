@@ -12,7 +12,7 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.service.upload.UploadAPI;
 import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.utils.HashUtils2;
+import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
 import com.xfdingustc.rxutils.library.RxBus;
@@ -55,7 +55,7 @@ public class UploadAvatarJob extends Job {
             Logger.t(TAG).d("get upload server: " + uploadServer.toString());
 
 
-            String fileSha1 = Hex.encodeHexString(HashUtils2.encodeSHA1(new File(file)));
+            String fileSha1 = Hex.encodeHexString(HashUtils.encodeSHA1(new File(file)));
 
             SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyy hh:mm:ss", Locale.US);
             String date = format.format(System.currentTimeMillis()) + " GMT";

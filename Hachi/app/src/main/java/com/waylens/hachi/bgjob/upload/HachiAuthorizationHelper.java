@@ -2,7 +2,7 @@ package com.waylens.hachi.bgjob.upload;
 
 import android.util.Log;
 
-import com.waylens.hachi.utils.HashUtils2;
+import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 
 import java.security.NoSuchAlgorithmException;
@@ -20,10 +20,10 @@ public class HachiAuthorizationHelper {
             String checkSum = computeCheckSum(host, userId, momentId, date);
             Log.d(TAG, "checkSum = " + checkSum);
             String stringToSign = "WAYLENS-HMAC-SHA256&waylens_cfs&" + content + "&" + checkSum;
-            String signingKey = Hex.encodeHexString(HashUtils2.encodeHMAC256(privateKey, "waylens_cfs&" + date));
+            String signingKey = Hex.encodeHexString(HashUtils.encodeHMAC256(privateKey, "waylens_cfs&" + date));
             Log.d(TAG, "signingKey: " + signingKey);
 
-            String signature = Hex.encodeHexString(HashUtils2.encodeHMAC256(signingKey, stringToSign));
+            String signature = Hex.encodeHexString(HashUtils.encodeHMAC256(signingKey, stringToSign));
             Log.d(TAG, "signature: " + signature);
             return "WAYLENS-HMAC-SHA256 " + signature;
         } catch (Exception e) {
@@ -37,10 +37,10 @@ public class HachiAuthorizationHelper {
             String checkSum = computeCheckSum(host, userId, Long.toString(momentId), fileSha1, date);
             Log.d(TAG, "checkSum = " + checkSum);
             String stringToSign = "WAYLENS-HMAC-SHA256&waylens_cfs&" + content + "&" + checkSum;
-            String signingKey = Hex.encodeHexString(HashUtils2.encodeHMAC256(privateKey, "waylens_cfs&" + date));
+            String signingKey = Hex.encodeHexString(HashUtils.encodeHMAC256(privateKey, "waylens_cfs&" + date));
             Log.d(TAG, "signingKey: " + signingKey);
 
-            String signature = Hex.encodeHexString(HashUtils2.encodeHMAC256(signingKey, stringToSign));
+            String signature = Hex.encodeHexString(HashUtils.encodeHMAC256(signingKey, stringToSign));
             Log.d(TAG, "signature: " + signature);
             return "WAYLENS-HMAC-SHA256 " + signature;
         } catch (Exception e) {
@@ -66,7 +66,7 @@ public class HachiAuthorizationHelper {
         }
 
 
-        return Hex.encodeHexString(HashUtils2.encodeMD5(newSumByte));
+        return Hex.encodeHexString(HashUtils.encodeMD5(newSumByte));
     }
 
     private static String computeCheckSum(String host, String userId, String momentId, String fileSha1, String date) throws NoSuchAlgorithmException {
@@ -80,6 +80,6 @@ public class HachiAuthorizationHelper {
         }
 
 
-        return Hex.encodeHexString(HashUtils2.encodeMD5(newSumByte));
+        return Hex.encodeHexString(HashUtils.encodeMD5(newSumByte));
     }
 }

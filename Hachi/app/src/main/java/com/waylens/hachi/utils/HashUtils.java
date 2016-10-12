@@ -14,8 +14,8 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * Created by Xiaofei on 2016/9/8.
  */
-public abstract class HashUtils2 {
-    private static final String TAG = HashUtils2.class.getSimpleName();
+public abstract class HashUtils {
+    private static final String TAG = HashUtils.class.getSimpleName();
 
     private static MessageDigest sha1Inst;
     private static MessageDigest md5Inst;

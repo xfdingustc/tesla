@@ -97,6 +97,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private String mAudioUrl;
     private VdbUrl mVdbUrl;
 
+    private RawDataLoader mInitDataLoader;
     private RawDataLoader mRawDataLoader;
 
     private Timer mTimer;
@@ -459,8 +460,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        initRawDataView();
-
+        initRawDataView();
     }
 
     @Override
@@ -497,20 +497,19 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     public void initRawDataView() {
-        mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-        mRawDataLoader.loadRawDataRx()
+        mInitDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
+        mInitDataLoader.loadRawDataRx(1000)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe() {
                 @Override
                 public void onNext(Object o) {
                     ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
-                    if (mRawDataLoader != null) {
-                        List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
+                    if (mInitDataLoader != null) {
+                        List<RawDataItem> rawDataItemList = mInitDataLoader.getRawDataItemList(clipSetPos);
                         if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
                             mWvGauge.updateRawDateItem(rawDataItemList);
                             Logger.t(TAG).d("update raw data!");
-
                         }
                     }
                     Logger.t(TAG).d("init gauge view!");
@@ -569,14 +568,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         if (playerNeedsPrepare) {
             mMediaPlayer.prepare();
             playerNeedsPrepare = false;
-            updateButtonVisibilities();
         }
 
         mMediaPlayer.setSurface(mSurfaceView.getHolder().getSurface());
         mMediaPlayer.setPlayWhenReady(playWhenReady);
-    }
-
-    private void updateButtonVisibilities() {
     }
 
 
@@ -615,16 +610,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mMultiSegSeekbar.setOnMultiSegSeekbarChangListener(new MultiSegSeekbar.OnMultiSegSeekBarChangeListener() {
             @Override
             public void onStartTrackingTouch(MultiSegSeekbar seekBar) {
-//                changeState(STATE_FAST_PREVIEW);
                 enterFastPreview();
             }
 
             @Override
             public void onProgressChanged(MultiSegSeekbar seekBar, ClipSetPos clipSetPos) {
-//                if (mCurrentState == STATE_FAST_PREVIEW) {
                 setClipSetPos(clipSetPos, true);
-//                }
-
                 mEventBus.post(new ClipSetPosChangeEvent(clipSetPos, TAG));
             }
 
@@ -655,7 +646,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             if (mPreviousShownClipPos != null && mPreviousShownClipPos.getClipId().equals(clipPos.getClipId())) {
                 long timeDiff = Math.abs(mPreviousShownClipPos.getClipTimeMs() - clipPos.getClipTimeMs());
                 if (timeDiff < 1000) {
-//                    Logger.t(TAG).d("Ignore clippos request");
                     return;
                 }
 

@@ -34,6 +34,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
+import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -425,7 +426,7 @@ public class CameraSettingFragment extends PreferenceFragment {
             .subscribe(new SimpleSubscribe<SpaceInfo>() {
                 @Override
                 public void onNext(SpaceInfo spaceInfo) {
-                    String leftSpace = Utils.getSpaceString(spaceInfo.total - spaceInfo.used);
+                    String leftSpace = StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used);
                     mStorage.setSummary(getString(R.string.space_free, leftSpace));
                 }
             });
