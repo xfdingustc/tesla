@@ -2,6 +2,7 @@ package com.waylens.hachi.rest;
 
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
@@ -206,5 +207,8 @@ public interface HachiApi {
 
     @GET("api/vehicle/models")
     Call<ModelResponse> getModelByMaker(@Query("maker") long makerID);
+
+    @POST("api/devices/login")
+    Observable<SignInResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
 
 }

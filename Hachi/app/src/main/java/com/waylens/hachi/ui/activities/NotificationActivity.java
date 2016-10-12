@@ -348,52 +348,6 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
 
                 }
             });
-
-/*        String qs = String.format(Constants.API_QS_COMMON, 0, 0);
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET,
-                Constants.API_NOTIFICATIONS_COMMENTS + qs,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadCommentsSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onLoadNotificationFailed(error);
-                    }
-                }).setTag(TAG));
-
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET,
-                Constants.API_NOTIFICATIONS_LIKES + qs,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadLikesSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onLoadNotificationFailed(error);
-                    }
-                }).setTag(TAG));
-
-        mRequestQueue.add(new AuthorizedJsonRequest(Request.Method.GET,
-                Constants.API_NOTIFICATIONS_FOLLOWS + qs,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onLoadFollowsSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onLoadNotificationFailed(error);
-                    }
-                }).setTag(TAG));*/
     }
 
 

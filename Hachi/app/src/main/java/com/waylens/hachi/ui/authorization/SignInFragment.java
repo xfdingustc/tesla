@@ -26,6 +26,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.response.SignInResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -33,6 +34,7 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONObject;
 
@@ -40,6 +42,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class SignInFragment extends BaseFragment {
@@ -198,22 +202,19 @@ public class SignInFragment extends BaseFragment {
     }
 
     private void doDeviceLogin() {
-
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_DEVICE_LOGIN)
-            .postBody("deviceType", "ANDROID")
-            .postBody("deviceID", "xfding")
-            .listner(new Response.Listener<JSONObject>() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        DeviceLoginBody body = new DeviceLoginBody("ANDROID", "xfding");
+        hachiApi.deviceLoginRx(body)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SignInResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Logger.d(response.toString(), this);
-                    SessionManager.getInstance().saveLoginInfo(response);
+                public void onNext(SignInResponse signInResponse) {
+                    SessionManager.getInstance().saveLoginInfo(signInResponse);
                     getActivity().setResult(Activity.RESULT_OK);
                     RegistrationIntentService.launch(getActivity());
                     getActivity().finish();
                 }
-            })
-            .build();
-        mVolleyRequestQueue.add(request);
+            });
     }
 }
