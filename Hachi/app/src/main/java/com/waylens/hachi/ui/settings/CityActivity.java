@@ -6,29 +6,30 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ViewSwitcher;
 
 import com.android.volley.Response;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.City;
+import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCityAdapter;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/18.
@@ -88,15 +89,12 @@ public class CityActivity extends BaseActivity {
     }
 
 
-
     private void initViews() {
         setContentView(R.layout.activity_city);
         mRvCityList.setLayoutManager(new LinearLayoutManager(this));
         setupToolbar();
         getCityList();
     }
-
-
 
 
     @Override
@@ -115,46 +113,50 @@ public class CityActivity extends BaseActivity {
 
 
     private void getCityList() {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_CITY + "?cc=" + mCode + "&limit=" + cityLimit)
-            .listner(new Response.Listener<JSONObject>() {
+//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+//            .url(Constants.API_CITY + "?cc=" + mCode + "&limit=" + cityLimit)
+//            .listner(new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    mVs.showNext();
+//                    renderCityList(response);
+//                }
+//            })
+//            .build();
+//        mRequestQueue.add(request);
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        hachiApi.getCityListRx(mCode, cityLimit)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<CityList>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(CityList cityList) {
                     mVs.showNext();
-                    renderCityList(response);
+                    renderCityList(cityList.cities);
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
+
     }
 
-    private void renderCityList(JSONObject response) {
-
-        try {
-            JSONArray cityArray = response.getJSONArray("cities");
-            for (int i = 0; i < cityArray.length(); i++) {
-                JSONObject oneCity = cityArray.getJSONObject(i);
-                City city = new City();
-                city.id = oneCity.getLong("id");
-                city.name = oneCity.getString("name");
-                cityList.add(city);
-                cityNameList.add(city.name);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private void renderCityList(List<City> cityList) {
+        for (int i = 0; i < cityList.size(); i++) {
+            City city = cityList.get(i);
+            cityNameList.add(city.name);
         }
 
         mAdapter = new SimpleCityAdapter(cityList, new SimpleCityAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 City city = mAdapter.getCity(position);
-                if (city != null)
+                if (city != null) {
                     changeUserCity(city);
+                }
             }
         });
 
         mRvCityList.setAdapter(mAdapter);
     }
+
 
     private void changeUserCity(City city) {
         AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
@@ -172,8 +174,5 @@ public class CityActivity extends BaseActivity {
         mRequestQueue.add(request);
     }
 
-    public static class City {
-        public long id;
-        public String name;
-    }
+
 }

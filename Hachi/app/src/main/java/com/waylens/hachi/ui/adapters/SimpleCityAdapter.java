@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.bean.City;
 import com.waylens.hachi.ui.settings.CityActivity;
 
 import java.util.ArrayList;
@@ -24,18 +25,18 @@ import butterknife.ButterKnife;
  */
 public class SimpleCityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>implements Filterable{
 
-    private final List<CityActivity.City> mCityList;
-    private List<CityActivity.City> mCityListFiltered;
+    private final List<City> mCityList;
+    private List<City> mCityListFiltered;
     private final OnListItemClickListener mOnListItemClickListener;
     private InnerFilter mFilter;
 
-    public SimpleCityAdapter(List<CityActivity.City> list, OnListItemClickListener listener ) {
+    public SimpleCityAdapter(List<City> list, OnListItemClickListener listener ) {
         mCityList = list;
         mCityListFiltered = list;
         mOnListItemClickListener = listener;
     }
 
-    public CityActivity.City getCity(int index) {
+    public City getCity(int index) {
         if (index < mCityListFiltered.size()) {
             return mCityListFiltered.get(index);
         } else {
@@ -104,8 +105,8 @@ public class SimpleCityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 results.count = mCityList.size();
             } else {
                 String prefixString = prefix.toString().toLowerCase();
-                List<CityActivity.City> newValues = new ArrayList<>();
-                for (CityActivity.City item : mCityList) {
+                List<City> newValues = new ArrayList<>();
+                for (City item : mCityList) {
                     if (item.name.toLowerCase().startsWith(prefixString)) {
                         newValues.add(item);
                     }
@@ -118,7 +119,7 @@ public class SimpleCityAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mCityListFiltered = (List<CityActivity.City>) results.values;
+            mCityListFiltered = (List<City>) results.values;
 
             if (results.count > 0) {
                 notifyDataSetChanged();

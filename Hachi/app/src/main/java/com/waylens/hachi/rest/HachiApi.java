@@ -15,6 +15,7 @@ import com.waylens.hachi.rest.body.RepostBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
+import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.rest.response.MakerResponse;
 import com.waylens.hachi.rest.response.ModelResponse;
 import com.waylens.hachi.rest.response.MomentSummaryResponse;
@@ -210,5 +211,8 @@ public interface HachiApi {
 
     @POST("api/devices/login")
     Observable<SignInResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
+
+    @GET("api/region/cities")
+    Observable<CityList> getCityListRx(@Query("cc") String countryCod, @Query("limit") int count);
 
 }

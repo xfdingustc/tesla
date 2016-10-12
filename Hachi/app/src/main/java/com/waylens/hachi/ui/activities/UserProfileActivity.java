@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -16,16 +15,11 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
@@ -35,7 +29,6 @@ import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
-import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -46,9 +39,6 @@ import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -57,7 +47,6 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.functions.Func2;
 import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
@@ -194,7 +183,7 @@ public class UserProfileActivity extends BaseActivity {
 
 //        Observable<MomentListResponse> momentListResponseObservable = mHachiApi.getUserMomentsRx(mUserID, mCurrentCursor);
 
-        Observable.zip(userInfoObservable, followInfoObservable, getMomentAmount, new Func3<UserInfo, FollowInfo,  MomentAmount, UserProfileZip>() {
+        Observable.zip(userInfoObservable, followInfoObservable, getMomentAmount, new Func3<UserInfo, FollowInfo, MomentAmount, UserProfileZip>() {
 
             @Override
             public UserProfileZip call(UserInfo userInfo, FollowInfo followInfo, MomentAmount amount) {
@@ -289,30 +278,30 @@ public class UserProfileActivity extends BaseActivity {
         });
     }
 
-    private void doBlockUser() {
-        String url = Constants.API_BLOCK;
-        JSONObject requestBody = new JSONObject();
-
-        try {
-            requestBody.put("userID", mUserID);
-            Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    Snackbar.make(mRvUserMomentList, "Block user", Snackbar.LENGTH_LONG).show();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-            mRequestQueue.add(request);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void doBlockUser() {
+//        String url = Constants.API_BLOCK;
+//        JSONObject requestBody = new JSONObject();
+//
+//        try {
+//            requestBody.put("userID", mUserID);
+//            Logger.t(TAG).json(requestBody.toString());
+//            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
+//                @Override
+//                public void onResponse(JSONObject response) {
+//                    Logger.t(TAG).json(response.toString());
+//                    Snackbar.make(mRvUserMomentList, "Block user", Snackbar.LENGTH_LONG).show();
+//                }
+//            }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    Logger.t(TAG).d(error.toString());
+//                }
+//            });
+//            mRequestQueue.add(request);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void doReportUser() {
         JobManager jobManager = BgJobManager.getManager();
