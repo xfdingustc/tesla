@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.clips.preview;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -12,7 +11,6 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -41,9 +39,7 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.TransitionHelper;
 
-
 import java.util.ArrayList;
-import java.util.List;
 
 import rx.Observable;
 import rx.Observer;
@@ -121,7 +117,7 @@ public class PreviewActivity extends ClipPlayActivity {
                 }
 
                 String vin = null;
-                for( Clip clip : clipList) {
+                for (Clip clip : clipList) {
                     Logger.t(TAG).d("Vin  = " + clip.getVin());
                     if (clip.getVin() != null) {
                         vin = clip.getVin();
@@ -185,38 +181,38 @@ public class PreviewActivity extends ClipPlayActivity {
                                     if (retClip.raceTimingPoints.get(4) > 0) {
                                         timeList.add(4, retClip.raceTimingPoints.get(4) - retClip.raceTimingPoints.get(0) + searchResult);
                                     } else {
-                                        timeList.add(4, (long)-1);
+                                        timeList.add(4, (long) -1);
                                     }
                                     if (retClip.raceTimingPoints.get(5) > 0) {
                                         timeList.add(5, retClip.raceTimingPoints.get(5) - retClip.raceTimingPoints.get(0) + searchResult);
                                     } else {
-                                        timeList.add(5, (long)-1);
+                                        timeList.add(5, (long) -1);
                                     }
                                 } else if (searchIndex == 1) {
-                                    timeList.add(0, (long)-1);
+                                    timeList.add(0, (long) -1);
                                     timeList.add(1, searchResult);
                                     timeList.add(2, retClip.raceTimingPoints.get(2) - retClip.raceTimingPoints.get(1) + searchResult);
                                     timeList.add(3, retClip.raceTimingPoints.get(3) - retClip.raceTimingPoints.get(1) + searchResult);
                                     if (retClip.raceTimingPoints.get(4) > 0) {
                                         timeList.add(4, retClip.raceTimingPoints.get(4) - retClip.raceTimingPoints.get(1) + searchResult);
                                     } else {
-                                        timeList.add(4, (long)-1);
+                                        timeList.add(4, (long) -1);
                                     }
                                     if (retClip.raceTimingPoints.get(5) > 0) {
                                         timeList.add(5, retClip.raceTimingPoints.get(5) - retClip.raceTimingPoints.get(1) + searchResult);
                                     } else {
-                                        timeList.add(5, (long)-1);
+                                        timeList.add(5, (long) -1);
                                     }
                                 }
-                                for( int j = 0; j < timeList.size(); j++) {
+                                for (int j = 0; j < timeList.size(); j++) {
                                     timeList.set(j, timeList.get(j) - clipStartTime);
                                 }
                                 mTimeList = new ArrayList<Long>(6);
-                                for( int j = 0; j < timeList.size(); j++) {
+                                for (int j = 0; j < timeList.size(); j++) {
                                     if (timeList.get(j) > 0) {
                                         mTimeList.add(j, timeList.get(j));
                                     } else {
-                                        mTimeList.add(j, (long)-1);
+                                        mTimeList.add(j, (long) -1);
                                     }
                                 }
                                 subscriber.onNext(timeList);
@@ -231,34 +227,34 @@ public class PreviewActivity extends ClipPlayActivity {
                 subscriber.onCompleted();
             }
         }).observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Observer<ArrayList<Long>>() {
-                    @Override
-                    public void onCompleted() {
+            .subscribeOn(Schedulers.io())
+            .subscribe(new Observer<ArrayList<Long>>() {
+                @Override
+                public void onCompleted() {
 
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(ArrayList<Long> timeList) {
+                    Logger.t(TAG).d("set time Points");
+                    if (timeList.size() > 0) {
+                        mClipPlayFragment.setRaceTimePoints(timeList);
                     }
 
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(ArrayList<Long> timeList) {
-                        Logger.t(TAG).d("set time Points");
-                        if (timeList.size() > 0) {
-                            mClipPlayFragment.setRaceTimePoints(timeList);
-                        }
-
-                    }
-                });
+                }
+            });
 
     }
 
     private Clip loadClipInfo(Clip clip) {
         VdbRequestFuture<Clip> requestFuture = VdbRequestFuture.newFuture();
         ClipInfoRequest request = new ClipInfoRequest(clip.cid, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
-                clip.cid.type, 0, requestFuture, requestFuture);
+            clip.cid.type, 0, requestFuture, requestFuture);
         mVdbRequestQueue.add(request);
         try {
             Clip retClip = requestFuture.get();
