@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -89,7 +90,7 @@ public class BaseActivity extends AppCompatActivity {
     public void setupToolbar() {
 //        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         if (mToolbar != null) {
-            mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
+            mToolbar.setTitleTextColor(Color.WHITE);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

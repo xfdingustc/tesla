@@ -12,14 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="16dp"
+        android:background="@drawable/stroke_rect"
         app:farfl_xratio="16dp"
         app:farfl_yratio="9dp">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.12"
-            android:background="@drawable/stroke_rect"></FrameLayout>
 
         <ImageView
             android:id="@+id/video_cover"
@@ -42,12 +38,13 @@
 
         <TextView
             android:id="@+id/video_duration"
-            style="@style/HachiTextViewCaption"
+            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="8dp"
             android:background="@drawable/round_rectangle_background"
+            android:textColor="@android:color/white"
             tools:text="01:08"/>
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
@@ -83,6 +80,7 @@
         android:layout_below="@id/video_fragment_container"
         android:layout_toLeftOf="@id/btn_more"
         android:layout_toRightOf="@id/user_avatar"
+        android:textColor="?attr/appTextColorPrimary"
         android:ellipsize="end"
         android:maxLines="2"
         tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
@@ -94,7 +92,7 @@
         android:layout_below="@id/title"
         android:layout_toLeftOf="@id/btn_more"
         android:layout_toRightOf="@id/user_avatar"
-        android:textColor="@color/app_text_color_secondary"
+        android:textColor="?attr/appTextColorSecondary"
         android:textSize="14dp"
         tools:text="xfding"/>
 
@@ -104,6 +102,6 @@
         android:layout_height="1dp"
         android:layout_below="@id/user_name"
         android:layout_marginTop="16dp"
-        android:background="@color/settings_line_separator"></View>
+        android:background="?attr/separateColor"></View>
 
 </RelativeLayout>

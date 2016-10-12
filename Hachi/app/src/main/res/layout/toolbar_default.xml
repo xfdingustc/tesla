@@ -15,6 +15,6 @@
         app:elevation="@dimen/default_elevation"
         app:layout_scrollFlags="scroll"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:navigationIcon="@drawable/navbar_back"/>
+        app:navigationIcon="@drawable/ic_arrow_back"/>
     
 </android.support.design.widget.AppBarLayout>

@@ -497,4 +497,5 @@
     <string name="refresh">Refresh</string>
     <string name="using_cellular">Using cellular data</string>
 	<string name="connecting_unfinished">Connecting process is not finished yet.</string>
+    <string name="light_theme">Light theme</string>
 </resources>
