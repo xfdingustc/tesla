@@ -90,26 +90,11 @@ public class RawDataLoader {
             });
     }
 
-    public Observable loadRawDataRx(final int duration) {
-        return Observable.from(getClipSet().getClipList())
-            .concatMap(new Func1<Clip, Observable<RawDataBlockAll>>() {
-                @Override
-                public Observable<RawDataBlockAll> call(Clip clip) {
-                    return getRawDataBlockAllRx(clip, duration);
-                }
-            })
-            .doOnNext(new Action1<RawDataBlockAll>() {
-                @Override
-                public void call(RawDataBlockAll rawDataBlockAll) {
-                    mRawDataBlockList.add(rawDataBlockAll);
-                }
-            });
-    }
 
-    private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip, int duration) {
-        Observable<RawDataBlock> obdObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_OBD, clip.getStartTimeMs(), duration);
-        Observable<RawDataBlock> gpsObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_GPS, clip.getStartTimeMs(), duration);
-        Observable<RawDataBlock> iioObservalbe = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_IIO, clip.getStartTimeMs(), duration);
+    private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip) {
+        Observable<RawDataBlock> obdObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_OBD);
+        Observable<RawDataBlock> gpsObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_GPS);
+        Observable<RawDataBlock> iioObservalbe = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_IIO);
         return Observable.zip(obdObservable, gpsObservable, iioObservalbe, new Func3<RawDataBlock, RawDataBlock, RawDataBlock, RawDataBlockAll>() {
             @Override
             public RawDataBlockAll call(RawDataBlock obd, RawDataBlock gps, RawDataBlock iio) {
@@ -120,11 +105,6 @@ public class RawDataLoader {
                 return rawDataBlockAll;
             }
         });
-    }
-
-
-    private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip) {
-        return getRawDataBlockAllRx(clip, clip.getDurationMs());
     }
 
 
