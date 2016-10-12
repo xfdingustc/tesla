@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<LinearLayout
     android:id="@+id/drawerLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/fragment_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </FrameLayout>
 
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/navView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:alpha="0.9"
+    <com.roughike.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
         android:background="?attr/defaultBgColorDark"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:itemIconTint="@drawable/nav_menu_item_tintlist"
-        app:itemTextColor="@drawable/nav_menu_item_tintlist"
-        app:menu="@menu/nav_view_menu">
+        app:bb_activeTabColor="@color/style_color_accent"
+        app:bb_behavior="shifting"
+        app:bb_inActiveTabAlpha="0.3"
+        app:bb_inActiveTabColor="@color/style_color_accent"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"/>
 
-    </android.support.design.widget.NavigationView>
 
-</android.support.v4.widget.DrawerLayout>
+</LinearLayout>

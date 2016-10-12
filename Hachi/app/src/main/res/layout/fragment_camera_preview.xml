@@ -100,11 +100,6 @@
                 android:src="@drawable/btn_gauge_overlay_n"/>
         </RelativeLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
-
-        <!--        </LinearLayout>-->
 
 
         <ImageButton
@@ -113,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_margin="32dp"
+            android:layout_margin="8dp"
             android:background="@android:color/transparent"
             android:src="@drawable/camera_control_start"/>
 
@@ -122,7 +117,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:layout_toRightOf="@id/fabStartStop"
             android:background="@android:color/transparent"
             android:scaleType="fitCenter"

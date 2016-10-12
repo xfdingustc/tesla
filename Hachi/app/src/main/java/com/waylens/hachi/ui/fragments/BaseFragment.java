@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -125,15 +126,7 @@ public abstract class BaseFragment extends Fragment {
 
     public void setupToolbar() {
         if (mToolbar != null) {
-            mToolbar.setNavigationIcon(R.drawable.btn_menu);
-
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ((MainActivity) getActivity()).showDrawer();
-                }
-            });
-            mToolbar.setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
+            mToolbar.setTitleTextColor(Color.WHITE);
         }
     }
 
