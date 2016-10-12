@@ -535,34 +535,26 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
 
     private void updateNewUserName(final String newUserName) {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_PROFILE)
-            .postBody("userName", newUserName)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        UserProfileBody userProfileBody = new UserProfileBody();
+        userProfileBody.userName = newUserName;
+        hachiApi.changeProfileRx(userProfileBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
                     mUserName.setSummary(newUserName);
                     mSessionManager.setUserName(newUserName);
                     Snackbar.make(getView(), R.string.username_update, Snackbar.LENGTH_SHORT).show();
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(new String(error.networkResponse.data));
-                    if (error.networkResponse.statusCode == 400) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(new String(error.networkResponse.data));
-                            String msg = jsonObject.optString("msg", "Failed to update username.");
-                            Snackbar.make(getView(), msg, Snackbar.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                public void onError(Throwable e) {
+                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
+
     }
 
     private void updateBirthday(final String birthday) {
