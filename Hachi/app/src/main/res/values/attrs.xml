@@ -17,6 +17,7 @@
     <attr name="momentPlaceHolderColor" format="color"/>
     <attr name="overtureBgColor" format="color"/>
     <attr name="overtureLogoTint" format="color"/>
+    <attr name="cardViewBgColor" format="color"/>
 
 
     <declare-styleable name="VideoTrimmer">

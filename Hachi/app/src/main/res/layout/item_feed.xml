@@ -13,6 +13,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/cardViewBgColor"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -164,6 +165,10 @@
                 android:layout_gravity="center_vertical"
                 tools:text="999"/>
 
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
             <ImageButton
                 android:id="@+id/btn_more"
@@ -175,10 +180,7 @@
                 android:src="@drawable/ic_more"/>
 
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
+
 
             <TextView
                 android:id="@+id/btn_follow"

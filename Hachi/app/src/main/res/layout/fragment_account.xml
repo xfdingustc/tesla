@@ -34,6 +34,7 @@
                     android:id="@+id/ll_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/cardViewBgColor"
                     android:orientation="horizontal">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -71,6 +72,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/cardViewBgColor"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -230,12 +232,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/cardViewBgColor"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:id="@+id/ll_camera_setting"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+
                         android:orientation="horizontal">
 
                         <ImageView
@@ -304,6 +308,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="?attr/cardViewBgColor"
                     android:orientation="vertical">
 
                     <LinearLayout
