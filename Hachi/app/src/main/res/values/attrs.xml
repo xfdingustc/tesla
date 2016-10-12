@@ -15,6 +15,8 @@
     <attr name="signinLogoColor" format="color"/>
     <attr name="separateColor" format="color"/>
     <attr name="momentPlaceHolderColor" format="color"/>
+    <attr name="overtureBgColor" format="color"/>
+    <attr name="overtureLogoTint" format="color"/>
 
 
     <declare-styleable name="VideoTrimmer">

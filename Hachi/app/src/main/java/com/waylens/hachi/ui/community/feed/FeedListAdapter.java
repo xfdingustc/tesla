@@ -332,9 +332,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
         if (moment.isLiked) {
-            holder.btnLike.setImageResource(R.drawable.social_like_click);
+            holder.btnLike.setImageResource(R.drawable.ic_favorite);
         } else {
-            holder.btnLike.setImageResource(R.drawable.social_like);
+            holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
         }
 
         holder.tsLikeCounter.setCurrentText(Integer.toString(moment.likesCount));
@@ -346,11 +346,11 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (!moment.isLiked) {
                     holder.tsLikeCounter.setText(Integer.toString(moment.likesCount + 1));
                     moment.likesCount++;
-                    holder.btnLike.setImageResource(R.drawable.social_like_click);
+                    holder.btnLike.setImageResource(R.drawable.ic_favorite);
                 } else {
                     holder.tsLikeCounter.setText(Integer.toString(moment.likesCount - 1));
                     moment.likesCount--;
-                    holder.btnLike.setImageResource(R.drawable.social_like);
+                    holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
                 }
                 BgJobHelper.addLike(moment.id, moment.isLiked);
                 moment.isLiked = !moment.isLiked;

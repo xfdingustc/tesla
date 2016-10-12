@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/defaultBgColor"
+                android:background="?attr/overtureBgColor"
                 android:orientation="vertical">
 
     <TextView
@@ -13,13 +13,16 @@
         android:layout_marginTop="16dp"
         android:text="@string/slogan"
         android:textAlignment="center"
-        android:textSize="16sp"
-        android:textColor="@color/text_camera_info"/>
+        android:textColor="?attr/overtureLogoTint"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/slogan"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/waylens_logo_140x98"
-        android:layout_centerHorizontal="true"/>
+        android:tint="?attr/overtureLogoTint"/>
 
 </RelativeLayout>

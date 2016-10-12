@@ -111,21 +111,25 @@
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
+
+
+
         <LinearLayout
             android:id="@+id/ll_action_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/video_fragment_container"
             android:orientation="horizontal"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp">
+            android:padding="8dp"
+            android:layout_below="@+id/video_fragment_container"
+            android:layout_alignParentStart="true">
 
             <ImageButton
                 android:id="@+id/btn_like"
                 style="@style/SelectableRippleButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/social_like"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_favorite_border"/>
 
             <TextSwitcher
                 android:id="@+id/ts_like_counter"
@@ -147,9 +151,10 @@
             <ImageButton
                 android:id="@+id/btn_comment"
                 style="@style/SelectableRippleButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:src="@drawable/social_comment"/>
 
             <TextView
@@ -159,21 +164,21 @@
                 android:layout_gravity="center_vertical"
                 tools:text="999"/>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-
 
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginLeft="8dp"
-                android:src="@drawable/social_more"/>
+                android:src="@drawable/ic_more"/>
 
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
 
             <TextView
                 android:id="@+id/btn_follow"
@@ -187,7 +192,6 @@
                 android:visibility="gone"/>
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"

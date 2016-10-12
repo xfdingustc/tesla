@@ -674,9 +674,9 @@ public class MomentActivity extends BaseActivity {
     private void updateLikeState() {
         if (mMomentInfo.moment.isLiked) {
             //vh.btnLike.setImageResource(R.drawable.social_like_click);
-            mBtnLike.setImageResource(R.drawable.social_like_click);
+            mBtnLike.setImageResource(R.drawable.ic_favorite);
         } else {
-            mBtnLike.setImageResource(R.drawable.social_like);
+            mBtnLike.setImageResource(R.drawable.ic_favorite_border);
         }
     }
 
