@@ -1,87 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             xmlns:tools="http://schemas.android.com/tools"
-             tools:visibility="gone"
-    >
+             tools:visibility="visible">
 
     <RelativeLayout
         android:id="@+id/noSignal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/defaultBgColor"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/cannotFindcamera"
+
+        <ImageView
+            android:id="@+id/no_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="32dp"
-            android:text="@string/cannot_find_camera"
-            android:textColor="@color/text_camera_info"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/camera_lost_connection"/>
 
         <TextView
             android:id="@+id/tvNoSignal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/cannotFindcamera"
+            android:layout_below="@id/no_camera"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="32dp"
             android:text="@string/no_signal"
-            android:textColor="@color/text_camera_info"/>
+            android:textColor="?attr/appTextColorPrimary"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/tvNoSignal"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/camera_lost_connection"/>
 
-        <TextView
-            android:id="@+id/tvInfo1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/cannotFindcamera"
-            android:layout_below="@+id/cannotFindcamera"
-            android:layout_marginTop="16dp"
-            android:text="@string/camera_power_is_on"
-            android:textColor="@color/text_camera_info"/>
 
-        <TextView
-            android:id="@+id/tvInfo2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/cannotFindcamera"
-            android:layout_below="@+id/tvInfo1"
-            android:layout_marginTop="16dp"
-            android:text="@string/mobile_wifi_is_on"
-            android:textColor="@color/text_camera_info"/>
-
-        <TextView
-            android:id="@+id/tvInfo3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/cannotFindcamera"
-            android:layout_below="@+id/tvInfo2"
-            android:layout_marginTop="16dp"
-            android:text="@string/distance_restrict"
-            android:textColor="@color/text_camera_info"/>
 
         <Button
             android:id="@+id/add_new_camera"
-            style="@style/ActionButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="48dp"
             android:layout_marginLeft="32dp"
             android:layout_marginRight="32dp"
-
-            android:text="@string/add_new_camera"/>
+            android:backgroundTint="?attr/actionButtonColor"
+            android:text="@string/add_new_camera"
+            android:textColor="@android:color/white"/>
 
 
     </RelativeLayout>

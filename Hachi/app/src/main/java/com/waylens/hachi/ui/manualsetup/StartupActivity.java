@@ -128,7 +128,7 @@ public class StartupActivity extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_startup2);
+        setContentView(R.layout.activity_startup);
     }
 
     private boolean checkIfCameraIsGranted() {

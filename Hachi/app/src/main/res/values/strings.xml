@@ -114,7 +114,7 @@
     <string name="no_bookmark_help">"You can add a highlight by:\n\n1. Pressing the remote control button during recording.\n2. Using the software to add one when browsing buffered footage."</string>
     <string name="no_footage">No footage found</string>
     <string name="no_footage_help">"Buffered footage are video clips that can be automatically erased with the oldest footage overwritten by the freshest. Start filling buffered video by turning on the car engine!"</string>
-    <string name="no_signal">No Signal</string>
+    <string name="no_signal">You have not connected any camera</string>
     <string name="no_title">No Title</string>
     <string name="old_password">Old Password</string>
     <string name="or">OR</string>
