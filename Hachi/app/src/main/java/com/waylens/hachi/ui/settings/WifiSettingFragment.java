@@ -48,6 +48,7 @@ import com.waylens.hachi.camera.events.NetworkEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -58,12 +59,18 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+import android.net.Network;
 
 /**
  * Created by Xiaofei on 2016/5/23.
  */
 public class WifiSettingFragment extends BaseFragment implements WifiAutoConnectManager.WifiAutoConnectListener{
     private static final String TAG = WifiSettingFragment.class.getSimpleName();
+
+    public static final int CONNECTION_STAGE_CAMERA_2_ROUTE = 0;
+    public static final int CONNECTION_STAGE_PHONE_2_ROUTE = 1;
+    public static final int CONNECTION_STAGE_PHONE_2_CAMERA = 2;
 
     private NetworkItemAdapter mNetworkItemAdapter;
 
@@ -86,6 +93,9 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
     @BindView(R.id.tvSsid)
     TextView mTvSsid;
 
+    @BindView(R.id.tvInfo)
+    TextView mTvInfo;
+
 /*    @BindView(R.id.pull_to_refresh)
     PullToRefreshView mPullToRefreshView;*/
 
@@ -100,6 +110,8 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
     private BroadcastReceiver mWifiStateReceiver;
 
     private VdtCamera.OnScanHostListener mOnScanHostListener;
+
+    private int mStage = -1;
 
     @BindView(R.id.btn_refresh)
     ImageButton btnRefresh;
@@ -128,6 +140,25 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                 MainActivity.launch(getActivity());
                 getActivity().finish();
                 break;
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTING_FAILED:
+                MaterialDialog dialog = new MaterialDialog.Builder(this.getActivity())
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .content(R.string.restart_app)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                final Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage(getActivity().getPackageName());
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("need_delay", true);
+                                startActivity(intent);
+                                System.exit(0);
+                            }
+                        })
+                        .build();
+                dialog.show();
+            default:
+                break;
         }
     }
 
@@ -143,8 +174,8 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                 if (connectResult == 0) {
                     mSelectedNetworkItem.status = NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM;
                     mNetworkItemAdapter.notifyDataSetChanged();
-                    mEventBus.unregister(this);
                 } else {
+                    switchConnectionStage(CONNECTION_STAGE_PHONE_2_ROUTE);
                     WifiAutoConnectManager wifiAutoConnectManager = new WifiAutoConnectManager(mWifiManager, this);
                     wifiAutoConnectManager.connect(mSelectedNetworkItem.ssid, mSavedPassword, WifiAutoConnectManager
                             .WifiCipherType.WIFICIPHER_WPA);
@@ -161,6 +192,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
 
     private void init() {
         mWifiManager = (WifiManager) getActivity().getSystemService(Context.WIFI_SERVICE);
+        mEventBus.register(WifiSettingFragment.this);
     }
 
 
@@ -274,7 +306,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
         }
 
         final int wifiModeIndex = wifiMode;
-        mWifiMode.setOnClickListener(new View.OnClickListener() {
+      /*  mWifiMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
@@ -301,7 +333,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                     })
                     .show();
             }
-        });
+        }); */
     }
 
 
@@ -493,6 +525,32 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
         MainActivity.launch(getActivity());
     }
 
+    private void switchConnectionStage(final int stage) {
+        switch (stage) {
+            case CONNECTION_STAGE_CAMERA_2_ROUTE:
+                mTvInfo.setText(R.string.camera_to_router);
+                break;
+            case CONNECTION_STAGE_PHONE_2_ROUTE:
+                mTvInfo.setText(R.string.phone_camera);
+                break;
+            case CONNECTION_STAGE_PHONE_2_CAMERA:
+                mTvInfo.setText(R.string.phone_to_camera);
+                break;
+        }
+        Observable.timer(3, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        if (mStage == stage) {
+                            mTvInfo.setText("");
+                        }
+                    }
+                });
+        mStage = stage;
+    }
+
     private class WifiStateReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -506,6 +564,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                     if (currentSsid != null && currentSsid.equals("\"" + mSelectedNetworkItem.ssid + "\"")) {
                         Logger.t(TAG).d("Network state changed " + wifiInfo.getSSID() + " state: " + state);
                     }
+                    switchConnectionStage(CONNECTION_STAGE_PHONE_2_CAMERA);
                 }
             }
         }

@@ -498,4 +498,8 @@
     <string name="using_cellular">Using cellular data</string>
 	<string name="connecting_unfinished">Connecting process is not finished yet.</string>
     <string name="light_theme">Light theme</string>
+    <string name="restart_app">This operation needs to restart App, proceed?</string>
+    <string name="camera_to_router">camera to router</string>
+    <string name="phone_to_router">phone to router</string>
+    <string name="phone_to_camera">phone to camera</string>
 </resources>
