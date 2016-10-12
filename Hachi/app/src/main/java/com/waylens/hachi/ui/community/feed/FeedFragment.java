@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.response.MomentListResponse2;
+import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -157,26 +156,26 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
 
 
-        Observable<MomentListResponse2> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME, true);
+        Observable<MomentListResponse> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME, true);
 
-        Observable<MomentListResponse2> feedObservable;
+        Observable<MomentListResponse> feedObservable;
 
         if (cursor != 0) {
             feedObservable = feedMoment;
         } else {
-            Observable<MomentListResponse2> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
-                .map(new Func1<MomentListResponse2, MomentListResponse2>() {
+            Observable<MomentListResponse> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
+                .map(new Func1<MomentListResponse, MomentListResponse>() {
                     @Override
-                    public MomentListResponse2 call(MomentListResponse2 momentListResponse2) {
+                    public MomentListResponse call(MomentListResponse momentListResponse2) {
                         for (MomentEx momentEx : momentListResponse2.moments) {
                             momentEx.moment.isRecommended = true;
                         }
                         return momentListResponse2;
                     }
                 });
-            feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse2, MomentListResponse2, MomentListResponse2>() {
+            feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse, MomentListResponse, MomentListResponse>() {
                 @Override
-                public MomentListResponse2 call(MomentListResponse2 recommendMoment, MomentListResponse2 feedMoment) {
+                public MomentListResponse call(MomentListResponse recommendMoment, MomentListResponse feedMoment) {
                     feedMoment.moments.addAll(0, recommendMoment.moments);
                     return feedMoment;
                 }
@@ -186,7 +185,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         feedObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<MomentListResponse2>() {
+            .subscribe(new Subscriber<MomentListResponse>() {
                 @Override
                 public void onCompleted() {
 
@@ -198,7 +197,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                 }
 
                 @Override
-                public void onNext(MomentListResponse2 momentListResponse) {
+                public void onNext(MomentListResponse momentListResponse) {
                     if (isRefresh) {
                         RxBus.getDefault().post(new ScrollEvent(false));
                     }
@@ -209,7 +208,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
 
-    private void onLoadFeedSuccessful(MomentListResponse2 momentList, boolean isRefresh) {
+    private void onLoadFeedSuccessful(MomentListResponse momentList, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
 
 

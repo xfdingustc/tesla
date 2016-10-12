@@ -1,14 +1,16 @@
 package com.waylens.hachi.rest.response;
 
-import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 
 import java.util.List;
 
 /**
- * Created by Xiaofei on 2016/7/21.
+ * Created by Xiaofei on 2016/9/13.
  */
 public class MomentListResponse {
-    public List<Moment> moments;
+    public List<MomentEx> moments;
+
+    public long nextCursor;
 
     public boolean hasMore;
 }

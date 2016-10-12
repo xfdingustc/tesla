@@ -34,17 +34,17 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func3;
@@ -322,7 +322,7 @@ public class UserProfileActivity extends BaseActivity {
             .map(new Func1<MomentListResponse, MomentListResponse>() {
                 @Override
                 public MomentListResponse call(MomentListResponse momentInfo) {
-                    for (Moment moment : momentInfo.moments) {
+                    for (MomentEx moment : momentInfo.moments) {
                         moment.owner = new User();
                         moment.owner.userID = mUserID;
                         moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
@@ -332,53 +332,48 @@ public class UserProfileActivity extends BaseActivity {
             })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<MomentListResponse>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
+            .subscribe(new SimpleSubscribe<MomentListResponse>() {
                 @Override
                 public void onNext(MomentListResponse momentListResponse) {
-                    if (momentListResponse.moments.size() > 0) {
-                        int random = (int) (Math.random() * (momentListResponse.moments.size() - 1));
-                        Logger.t(TAG).d("Display: " + momentListResponse.moments.get(random).thumbnail);
-                        Glide.with(UserProfileActivity.this)
-                            .load(momentListResponse.moments.get(random).thumbnail)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(userCover);
-                    }
+                    onLoadUserMoment(momentListResponse, isRefresh);
 
-                    mCurrentCursor += momentListResponse.moments.size();
-                    if (isRefresh) {
-                        mMomentRvAdapter.setMoments(momentListResponse.moments);
-                    } else {
-                        mMomentRvAdapter.addMoments(momentListResponse.moments);
-                    }
-
-                    mRvUserMomentList.setIsLoadingMore(false);
-                    if (!momentListResponse.hasMore) {
-                        mRvUserMomentList.setEnableLoadMore(false);
-                        mMomentRvAdapter.setHasMore(false);
-                    } else {
-                        mMomentRvAdapter.setHasMore(true);
-                        mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-                            @Override
-                            public void loadMore() {
-                                loadUserMoment(mCurrentCursor, false);
-                            }
-                        });
-                    }
                 }
             });
 
 
+    }
+
+    private void onLoadUserMoment(MomentListResponse momentListResponse, boolean isRefresh) {
+        if (momentListResponse.moments.size() > 0) {
+            int random = (int) (Math.random() * (momentListResponse.moments.size() - 1));
+            Logger.t(TAG).d("Display: " + momentListResponse.moments.get(random).moment.thumbnail);
+            Glide.with(UserProfileActivity.this)
+                .load(momentListResponse.moments.get(random).moment.thumbnail)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(userCover);
+        }
+
+        mCurrentCursor += momentListResponse.moments.size();
+        if (isRefresh) {
+            mMomentRvAdapter.setMoments(momentListResponse.moments);
+        } else {
+            mMomentRvAdapter.addMoments(momentListResponse.moments);
+        }
+
+        mRvUserMomentList.setIsLoadingMore(false);
+        if (!momentListResponse.hasMore) {
+            mRvUserMomentList.setEnableLoadMore(false);
+            mMomentRvAdapter.setHasMore(false);
+        } else {
+            mMomentRvAdapter.setHasMore(true);
+            mRvUserMomentList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+                @Override
+                public void loadMore() {
+                    loadUserMoment(mCurrentCursor, false);
+                }
+            });
+        }
     }
 
     private void updateFollowInfo() {
@@ -398,7 +393,6 @@ public class UserProfileActivity extends BaseActivity {
         UserInfo userInfo;
         FollowInfo followInfo;
         MomentAmount amount;
-        MomentListResponse momentList;
     }
 
 

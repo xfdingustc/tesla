@@ -32,6 +32,8 @@ import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
+import com.waylens.hachi.ui.entities.moment.MomentAbstract;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -55,7 +57,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int ITEM_VIEW_TYPE_TAIL = 1;
     private static final int ITEM_VIEW_TYPE_HEADER = 2;
 
-    private List<Moment> mMoments = new ArrayList<>();
+    private List<MomentEx> mMoments = new ArrayList<>();
 
     private final Context mContext;
 
@@ -70,7 +72,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMomentChanged(MomentChangeEvent event) {
         for (int i = 0; i < mMoments.size(); i++) {
-            Moment moment = mMoments.get(i);
+            MomentAbstract moment = mMoments.get(i).moment;
             if (moment.id == event.getMomentId()) {
                 moment.title = event.getMomentUpdateBody().title;
                 moment.description = event.getMomentUpdateBody().description;
@@ -89,13 +91,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    public void setMoments(List<Moment> moments) {
+    public void setMoments(List<MomentEx> moments) {
         mMoments = moments;
         notifyDataSetChanged();
     }
 
 
-    public void addMoments(List<Moment> moments) {
+    public void addMoments(List<MomentEx> moments) {
         if (mMoments == null) {
             mMoments = new ArrayList<>();
         }
@@ -169,36 +171,38 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     private void onBindMomentViewHolder(final MomentViewHolder holder, final int position) {
-        final Moment moment = mMoments.get(position);
+        final MomentEx momentEx = mMoments.get(position);
+        final MomentAbstract momentAbstract = momentEx.moment;
+
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         Glide.with(mContext)
-            .load(moment.owner.avatarUrl)
+            .load(momentEx.owner.avatarUrl)
             .placeholder(R.drawable.menu_profile_photo_default)
             .crossFade()
             .dontAnimate()
             .into(holder.userAvatar);
 
-        if (!TextUtils.isEmpty(moment.title)) {
-            holder.title.setText(moment.title);
+        if (!TextUtils.isEmpty(momentAbstract.title)) {
+            holder.title.setText(momentAbstract.title);
         } else {
             holder.title.setText(R.string.no_title);
         }
 
-        if (!TextUtils.isEmpty(moment.owner.userName)) {
-            holder.userName.setText(moment.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        if (!TextUtils.isEmpty(momentEx.owner.userName)) {
+            holder.userName.setText(momentEx.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(momentAbstract.uploadTime)));
         } else {
-            holder.userName.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+            holder.userName.setText(mPrettyTime.formatUnrounded(new Date(momentAbstract.uploadTime)));
         }
 
-        if (moment.momentVehicleInfo != null && !TextUtils.isEmpty(moment.momentVehicleInfo.vehicleModel)) {
-            VehicleInfo vehicleInfo = moment.momentVehicleInfo;
+        if (momentAbstract.momentVehicleInfo != null && !TextUtils.isEmpty(momentAbstract.momentVehicleInfo.vehicleModel)) {
+            VehicleInfo vehicleInfo = momentAbstract.momentVehicleInfo;
             holder.carInfo.setVisibility(View.VISIBLE);
             holder.carInfo.setText(vehicleInfo.toString());
         } else {
             holder.carInfo.setVisibility(View.GONE);
         }
 
-        holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
+        holder.videoDuration.setText(DateUtils.formatElapsedTime(momentAbstract.duration / 1000l));
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,12 +210,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, moment.owner.userID);
+                UserProfileActivity.launch((Activity) mContext, momentEx.owner.userID);
 
             }
         });
-        if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
-            final List<MomentPicture> momentPictures = moment.pictureUrls;
+        if (!TextUtils.isEmpty(momentAbstract.momentType) && momentAbstract.momentType.equals("PICTURE")) {
+            final List<MomentPicture> momentPictures = momentEx.pictureUrls;
             if (!momentPictures.isEmpty()) {
                 MomentPicture momentPicture = momentPictures.get(0);
                 final String cover;
@@ -242,14 +246,14 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         } else {
             Glide.with(mContext)
-                .load(moment.thumbnail)
+                .load(momentAbstract.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .crossFade()
                 .into(holder.videoCover);
             holder.videoCover.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover);
+                    MomentActivity.launch((BaseActivity) mContext, momentAbstract.id, momentAbstract.thumbnail, holder.videoCover);
                 }
             });
             holder.videoDuration.setVisibility(View.VISIBLE);
@@ -261,7 +265,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(mContext, holder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_moment, popupMenu.getMenu());
-                if (moment.owner.userID.equals(SessionManager.getInstance().getUserId())) {
+                if (momentEx.owner.userID.equals(SessionManager.getInstance().getUserId())) {
                     popupMenu.getMenu().removeItem(R.id.report);
                 } else {
                     popupMenu.getMenu().removeItem(R.id.delete);
@@ -272,13 +276,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.report:
-                                onReportClick(moment.id);
+                                onReportClick(momentAbstract.id);
                                 break;
                             case R.id.delete:
-                                onDeleteClick(moment.id, holder.getAdapterPosition());
+                                onDeleteClick(momentAbstract.id, holder.getAdapterPosition());
                                 break;
                             case R.id.edit:
-                                onEditClick(moment, holder);
+                                onEditClick(momentAbstract, holder);
 
                         }
                         return true;
@@ -324,8 +328,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     }
 
-    private void onEditClick(Moment moment, final MomentViewHolder holder) {
-        MomentEditActivity.launch((Activity)mContext, moment, holder.videoCover);
+    private void onEditClick(MomentAbstract moment, final MomentViewHolder holder) {
+//        MomentEditActivity.launch((Activity)mContext, moment, holder.videoCover);
     }
 
 

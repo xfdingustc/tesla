@@ -48,20 +48,6 @@ public class Constants {
     public static final String API_USER_VEHICLE = HOST_URL + "api/users/vehicle";
 
 
-
-    public static final String API_MOMENTS = HOST_URL + "api/moments";
-
-
-
-    public static final String API_MOMENTS_FEATURED = API_MOMENTS + "?filter=featured";
-
-
-
-    public static final String API_MOMENTS_PARAM_ORDER = "order";
-    public static final String API_MOMENTS_PARAM_CURSOR = "cursor";
-    public static final String API_MOMENTS_PARAM_COUNT = "count";
-
-
     public static final String PARAM_SORT_UPLOAD_TIME = "uploadtime_desc";
 
 

@@ -17,11 +17,8 @@ import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.body.UserProfileBody;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.CityList;
-import com.waylens.hachi.rest.response.MakerResponse;
-import com.waylens.hachi.rest.response.ModelResponse;
-import com.waylens.hachi.rest.response.MomentSummaryResponse;
-import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
@@ -30,10 +27,12 @@ import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
+import com.waylens.hachi.rest.response.MakerResponse;
+import com.waylens.hachi.rest.response.ModelResponse;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
-import com.waylens.hachi.rest.response.MomentListResponse2;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
+import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
@@ -41,7 +40,7 @@ import com.waylens.hachi.rest.response.RepostResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UploadAvatarResponse;
 import com.waylens.hachi.rest.response.UserInfo;
-import com.waylens.hachi.rest.response.AuthorizeResponse;
+import com.waylens.hachi.rest.response.VinQueryResponse;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -81,17 +80,15 @@ public interface HachiApi {
     @GET("/api/moments/{momentId}")
     Observable<Response<MomentInfo>> getMomentInfo(@Path("momentId") long momentId);
 
-    @GET("/api/users/{userId}/moments")
-    Call<MomentListResponse> getUserMoments(@Path("userId") String userId, @Query("cursor") int cursor);
 
-    @GET("/api/users/{userId}/moments")
+    @GET("/api/v2/users/{userId}/moments")
     Observable<MomentListResponse> getUserMomentsRx(@Path("userId") String userId, @Query("cursor") int cursor);
 
     @GET("/api/moments/recommend")
-    Observable<MomentListResponse2> getRecommendedMomentsRx(@Query("count") int count);
+    Observable<MomentListResponse> getRecommendedMomentsRx(@Query("count") int count);
 
     @GET("/api/moments/myfeed")
-    Observable<MomentListResponse2> getMyFeed(@Query("cursor") long cursor, @Query("count") int count, @Query("order") String order, @Query("showPic") boolean showPic);
+    Observable<MomentListResponse> getMyFeed(@Query("cursor") long cursor, @Query("count") int count, @Query("order") String order, @Query("showPic") boolean showPic);
 
 
     @GET("/api/moments/{momentId}")
@@ -196,7 +193,7 @@ public interface HachiApi {
     Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
 
     @GET("/api/moments/race")
-    Call<RaceQueryResponse>  queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("maker") String maker, @Query("model") String model, @Query("count") int count);
+    Call<RaceQueryResponse> queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("maker") String maker, @Query("model") String model, @Query("count") int count);
 
     @GET("/api/place")
     Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
@@ -218,4 +215,9 @@ public interface HachiApi {
 
     @POST("api/users/change_password")
     Observable<AuthorizeResponse> changePasswordRx(@Body ChangePwdBody changePwdBody);
+
+    @GET("api/moments")
+    Observable<MomentListResponse> getAllMomentsRx(@Query("cursor") int cursor, @Query("count") int count,
+                                                   @Query("order") String order, @Query("filter") String filter,
+                                                   @Query("showPic") boolean showPic);
 }

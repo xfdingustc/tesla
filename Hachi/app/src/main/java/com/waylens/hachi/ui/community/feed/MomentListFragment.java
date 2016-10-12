@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.community.feed;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -16,6 +17,9 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
@@ -25,6 +29,7 @@ import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.rxutils.library.RxBus;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,6 +37,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class MomentListFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
@@ -51,7 +59,6 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     private MomentsListAdapter mAdapter;
 
-    private RequestQueue mRequestQueue;
 
     private LinearLayoutManager mLinearLayoutManager;
 
@@ -69,7 +76,6 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
 
     public static MomentListFragment newInstance(int tag) {
-
         Bundle args = new Bundle();
         args.putInt(FEED_TAG, tag);
         MomentListFragment fragment = new MomentListFragment();
@@ -85,7 +91,6 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         if (arguments != null) {
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_LATEST);
         }
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new MomentsListAdapter(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -99,12 +104,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         mRvVideoList.setAdapter(mAdapter);
         mRvVideoList.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
-        mRvVideoList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-            @Override
-            public void loadMore() {
-                loadFeed(mCurrentCursor, false);
-            }
-        });
+
 
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
@@ -122,30 +122,24 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
 
     private void loadFeed(int cursor, final boolean isRefresh) {
-        String url = getFeedURL(cursor);
-        if (url == null) {
-            return;
-        }
-        Logger.t(TAG).d("Load url: " + url);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(url)
-            .listner(new Response.Listener<JSONObject>() {
+        getMomentListObservable(cursor)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MomentListResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(MomentListResponse momentListResponse) {
                     if (isRefresh) {
                         RxBus.getDefault().post(new ScrollEvent(false));
                     }
-                    onLoadFeedSuccessful(response, isRefresh);
+                    onLoadFeedSuccessful(momentListResponse, isRefresh);
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    onLoadFeedFailed(error);
+                public void onError(Throwable e) {
+                    onLoadMomentFailed(e);
                 }
-            }).build();
-        request.setTag(getRequestTag());
-        mRequestQueue.add(request);
+            });
+
 
     }
 
@@ -159,62 +153,47 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         }
     }
 
-    private String getFeedURL(int cursor) {
-        String url = null;
+    private Observable<MomentListResponse> getMomentListObservable(int cursor) {
+        HachiApi hachiApi = HachiService.createHachiApiService();
         switch (mFeedTag) {
             case FEED_TAG_LATEST:
-                url = Constants.API_MOMENTS;
-                break;
+                return hachiApi.getAllMomentsRx(cursor, DEFAULT_COUNT, "uploadtime_desc", null, true);
             case FEED_TAG_STAFF_PICKS:
-                url = Constants.API_MOMENTS_FEATURED;
-                break;
+                return hachiApi.getAllMomentsRx(cursor, DEFAULT_COUNT, "uploadtime_desc", "featured", true);
         }
-        if (url != null) {
-            Uri uri = Uri.parse(url).buildUpon()
-                .appendQueryParameter(Constants.API_MOMENTS_PARAM_CURSOR, String.valueOf(cursor))
-                .appendQueryParameter(Constants.API_MOMENTS_PARAM_COUNT, String.valueOf(DEFAULT_COUNT))
-                .appendQueryParameter(Constants.API_MOMENTS_PARAM_ORDER, Constants.PARAM_SORT_UPLOAD_TIME)
-                .appendQueryParameter("showPic", String.valueOf(true))
-                .build();
-            return uri.toString();
-        } else {
-            return null;
-        }
+
+        return null;
     }
 
-    private void onLoadFeedSuccessful(JSONObject response, boolean isRefresh) {
+    private void onLoadFeedSuccessful(MomentListResponse response, boolean isRefresh) {
         mRefreshLayout.setRefreshing(false);
-//        Logger.t(TAG).json(response.toString());
-        JSONArray jsonMoments = response.optJSONArray("moments");
-        if (jsonMoments == null) {
-            return;
-        }
-        ArrayList<Moment> momentList = new ArrayList<>();
-        for (int i = 0; i < jsonMoments.length(); i++) {
-            momentList.add(Moment.fromJson(jsonMoments.optJSONObject(i)));
-        }
         if (isRefresh) {
-            mAdapter.setMoments(momentList);
+            mAdapter.setMoments(response.moments);
         } else {
-            mAdapter.addMoments(momentList);
+            mAdapter.addMoments(response.moments);
         }
 
         mRvVideoList.setIsLoadingMore(false);
-        mCurrentCursor += momentList.size();
-        if (!response.optBoolean("hasMore")) {
+        mCurrentCursor += response.moments.size();
+        if (!response.hasMore) {
             mRvVideoList.setEnableLoadMore(false);
             mAdapter.setHasMore(false);
         } else {
             mAdapter.setHasMore(true);
+            mRvVideoList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+                @Override
+                public void loadMore() {
+                    loadFeed(mCurrentCursor, false);
+                }
+            });
         }
 
     }
 
-    private void onLoadFeedFailed(VolleyError error) {
+    private void onLoadMomentFailed(Throwable e) {
         mRefreshLayout.setRefreshing(false);
         mRvVideoList.setIsLoadingMore(false);
-        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.msgResID);
+        Snackbar.make(mRootView, e.getMessage(), Snackbar.LENGTH_SHORT).show();
     }
 
 
@@ -222,7 +201,6 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     public void onRefresh() {
         mCurrentCursor = 0;
         mRvVideoList.setEnableLoadMore(true);
-
         loadFeed(mCurrentCursor, true);
     }
 
