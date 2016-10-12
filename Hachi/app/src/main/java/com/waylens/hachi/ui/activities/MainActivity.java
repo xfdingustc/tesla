@@ -86,9 +86,6 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.bottomBar)
     BottomBar mBottomBar;
 
-//    @BindView(R.id.fragment_view_pager)
-//    ViewPager mViewPager;
-
 
     private boolean mIsRestored;
 

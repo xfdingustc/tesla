@@ -83,11 +83,6 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
         return TAG;
     }
 
-    @Override
-    public void setupToolbar() {
-        getToolbar().setTitle(R.string.video);
-        super.setupToolbar();
-    }
 
 
     @Override

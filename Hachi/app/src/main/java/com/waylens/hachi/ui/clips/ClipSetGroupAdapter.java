@@ -204,7 +204,6 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             viewHolder.performanceIcon.setVisibility(View.VISIBLE);
             viewHolder.performance.setVisibility(View.VISIBLE);
 
-            Logger.t(TAG).d("0-30: " + clip.getRaceTime030() + " 0-60: " + clip.getRaceTime060());
             if (clip.getRaceTime060() > 0) {
                 viewHolder.performanceIcon.setText("60");
                 viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime060()));
