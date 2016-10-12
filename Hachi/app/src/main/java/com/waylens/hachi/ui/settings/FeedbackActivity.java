@@ -106,7 +106,7 @@ public class FeedbackActivity extends BaseActivity{
     public void setupToolbar() {
         super.setupToolbar();
 
-        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationIcon(R.drawable.ic_arrow_back);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

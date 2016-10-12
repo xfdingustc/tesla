@@ -114,7 +114,7 @@ public class AvatarActivity extends BaseActivity {
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(getString(R.string.avatar));
-        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationIcon(R.drawable.ic_arrow_back);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

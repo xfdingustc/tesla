@@ -78,7 +78,7 @@ public class FollowListActivity extends BaseActivity {
             String title = mIsFollowers ? getString(R.string.followers) : getString(R.string
                 .following);
             mToolbar.setTitle(title);
-            mToolbar.setNavigationIcon(R.drawable.navbar_back);
+            mToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

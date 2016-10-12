@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/search"
-        android:icon="@drawable/navbar_search_n"
+        android:icon="@drawable/ic_search"
         android:title="search"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/my_notification"
-        android:icon="@drawable/navbar_notification"
+        android:icon="@drawable/ic_notifications"
         android:title="waylens_notification"
         app:showAsAction="always"/>
 

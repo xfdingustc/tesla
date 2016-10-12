@@ -94,7 +94,7 @@ public class ManualSetupActivity extends BaseActivity {
     @Override
     public void setupToolbar() {
         getToolbar().setTitle(R.string.initial_setup);
-        getToolbar().setNavigationIcon(R.drawable.navbar_back);
+        getToolbar().setNavigationIcon(R.drawable.ic_arrow_back);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
