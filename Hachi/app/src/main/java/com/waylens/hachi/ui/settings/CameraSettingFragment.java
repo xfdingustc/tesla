@@ -25,6 +25,7 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
+import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -112,58 +113,48 @@ public class CameraSettingFragment extends PreferenceFragment {
 
         mFirmware.setSummary(mVdtCamera.getApiVersion());
 
-        HachiApi hachiApi = HachiService.createHachiApiService();
-        hachiApi.getFirmwareRx()
+        FirmwareUpgradeHelper.getNewerFirmwareRx()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<List<Firmware>>() {
+            .subscribe(new SimpleSubscribe<Firmware>() {
                 @Override
-                public void onNext(List<Firmware> firmwares) {
-                    showFirmwareUpgradDialog(firmwares);
+                public void onNext(final Firmware firmware) {
+                    if (firmware != null) {
+                        showFirmwareUpgradDialog(firmware);
+                    }
                 }
             });
 
     }
 
-    private void showFirmwareUpgradDialog(List<Firmware> firmwares) {
-        for (int i = 0; i < firmwares.size(); i++) {
-            final Firmware firmware = firmwares.get(i);
-            if (!TextUtils.isEmpty(firmware.name) && firmware.name.equals(mVdtCamera.getHardwareName())) {
-                Logger.t(TAG).d("Found our hardware");
-                FirmwareVersion versionFromServer = new FirmwareVersion(firmware.version);
-                FirmwareVersion versionInCamera = new FirmwareVersion(mVdtCamera.getApiVersion());
-                if (versionFromServer.isGreaterThan(versionInCamera)) {
-                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.found_new_firmware)
-                        .content(firmware.description.en)
-                        .positiveText(R.string.upgrade)
-                        .negativeText(R.string.cancel)
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                FirmwareUpdateActivity.launch(getActivity(), firmware);
-                            }
-                        })
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                mFirmware.setSummary(mFirmware.getSummary() + " (" + getString(R.string.found_new_firmware) + ")");
-                                mFirmware.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                                    @Override
-                                    public boolean onPreferenceClick(Preference preference) {
-                                        FirmwareUpdateActivity.launch(getActivity(), firmware);
-                                        return true;
-                                    }
-                                });
-                            }
-                        })
-                        .show();
+    private void showFirmwareUpgradDialog(final Firmware firmware) {
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+            .title(R.string.found_new_firmware)
+            .content(firmware.description.en)
+            .positiveText(R.string.upgrade)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    FirmwareUpdateActivity.launch(getActivity(), firmware);
                 }
-            }
-
-
-        }
+            })
+            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    mFirmware.setSummary(mFirmware.getSummary() + " (" + getString(R.string.found_new_firmware) + ")");
+                    mFirmware.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                        @Override
+                        public boolean onPreferenceClick(Preference preference) {
+                            FirmwareUpdateActivity.launch(getActivity(), firmware);
+                            return true;
+                        }
+                    });
+                }
+            })
+            .show();
     }
+
 
 
     private void initConnectivityPreference() {
@@ -447,46 +438,5 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
 
-    private static class FirmwareVersion {
-        private int mMain;
-        private int mSub;
-        private int mBuild;
 
-        public FirmwareVersion(String firmware) {
-            int main = 0, sub = 0;
-            String build = "";
-            int i_main = firmware.indexOf('.', 0);
-            if (i_main >= 0) {
-                String t = firmware.substring(0, i_main);
-                main = Integer.parseInt(t);
-                i_main++;
-                int i_sub = firmware.indexOf('.', i_main);
-                if (i_sub >= 0) {
-                    t = firmware.substring(i_main, i_sub);
-                    sub = Integer.parseInt(t);
-                    i_sub++;
-                    build = firmware.substring(i_sub);
-                }
-            }
-            mMain = main;
-            mSub = sub;
-            mBuild = Integer.parseInt(build);
-        }
-
-
-        public boolean isGreaterThan(FirmwareVersion firmwareVersion) {
-            if (this.mMain > firmwareVersion.mMain) {
-                return true;
-            }
-            if (this.mSub > firmwareVersion.mSub) {
-                return true;
-            }
-
-            if (this.mBuild > firmwareVersion.mBuild) {
-                return true;
-            }
-
-            return true;
-        }
-    }
 }
