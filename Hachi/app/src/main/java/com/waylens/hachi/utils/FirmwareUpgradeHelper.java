@@ -91,7 +91,7 @@ public class FirmwareUpgradeHelper {
                 return true;
             }
 
-            return true;
+            return false;
         }
     }
 }

@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by Xiaofei on 2016/10/13.
  */
 
-public class Firmware implements Serializable{
+public class Firmware implements Serializable {
     public String name;
     public String version;
     public String BSPVersion;
@@ -18,7 +18,7 @@ public class Firmware implements Serializable{
     public String releaseData;
     public Description description;
 
-    public static class Description {
+    public static class Description implements Serializable {
         public String en;
     }
 

@@ -5,8 +5,10 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.DrmInitData;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
@@ -25,6 +27,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.BtDevice;
@@ -33,6 +37,7 @@ import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.camera.events.CameraStateChangeEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
+import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
@@ -43,11 +48,14 @@ import com.waylens.hachi.snipe.vdb.VdbReadyInfo;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
+import com.waylens.hachi.ui.settings.FirmwareUpdateActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
@@ -493,6 +501,19 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         if (isVisible()) {
             startPreview();
         }
+
+        // Check if firmware need update:
+        FirmwareUpgradeHelper.getNewerFirmwareRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<Firmware>() {
+                @Override
+                public void onNext(Firmware firmware) {
+                    if (firmware != null) {
+                        DialogHelper.showUpgradFirmwareConfirmDialog(getActivity(), firmware, null);
+                    }
+                }
+            });
 
     }
 

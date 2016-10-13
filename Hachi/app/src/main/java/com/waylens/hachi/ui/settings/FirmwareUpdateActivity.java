@@ -74,9 +74,9 @@ public class FirmwareUpdateActivity extends BaseActivity {
     };
 
 
-    public static void launch(Activity activity, Firmware firmwareInfo) {
+    public static void launch(Activity activity, Firmware firmware) {
         Intent intent = new Intent(activity, FirmwareUpdateActivity.class);
-        intent.putExtra(EXTRA_FIRMWARE_INFO, firmwareInfo);
+        intent.putExtra(EXTRA_FIRMWARE_INFO, firmware);
         activity.startActivity(intent);
     }
 

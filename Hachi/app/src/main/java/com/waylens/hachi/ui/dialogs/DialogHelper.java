@@ -1,6 +1,8 @@
 package com.waylens.hachi.ui.dialogs;
 
+import android.app.Activity;
 import android.content.Context;
+import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.view.View;
 
@@ -10,6 +12,8 @@ import com.afollestad.materialdialogs.Theme;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
+import com.waylens.hachi.rest.bean.Firmware;
+import com.waylens.hachi.ui.settings.FirmwareUpdateActivity;
 
 import java.io.File;
 
@@ -142,8 +146,28 @@ public class DialogHelper {
     }
 
 
+    public static MaterialDialog showUpgradFirmwareConfirmDialog(final Context context, final Firmware firmware,
+                                                                 MaterialDialog.SingleButtonCallback negativeListener) {
+        return new MaterialDialog.Builder(context)
+            .title(R.string.found_new_firmware)
+            .content(firmware.description.en)
+            .positiveText(R.string.upgrade)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    FirmwareUpdateActivity.launch((Activity)context, firmware);
+                }
+            })
+            .onNegative(negativeListener).show();
+
+    }
+
+
 
     public interface onPositiveClickListener {
         void onPositiveClick();
     }
+
+
 }

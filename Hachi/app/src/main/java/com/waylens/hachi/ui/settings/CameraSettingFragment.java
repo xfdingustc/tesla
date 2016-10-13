@@ -25,6 +25,7 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -128,31 +129,19 @@ public class CameraSettingFragment extends PreferenceFragment {
     }
 
     private void showFirmwareUpgradDialog(final Firmware firmware) {
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-            .title(R.string.found_new_firmware)
-            .content(firmware.description.en)
-            .positiveText(R.string.upgrade)
-            .negativeText(R.string.cancel)
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    FirmwareUpdateActivity.launch(getActivity(), firmware);
-                }
-            })
-            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    mFirmware.setSummary(mFirmware.getSummary() + " (" + getString(R.string.found_new_firmware) + ")");
-                    mFirmware.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                        @Override
-                        public boolean onPreferenceClick(Preference preference) {
-                            FirmwareUpdateActivity.launch(getActivity(), firmware);
-                            return true;
-                        }
-                    });
-                }
-            })
-            .show();
+        DialogHelper.showUpgradFirmwareConfirmDialog(getActivity(), firmware, new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                mFirmware.setSummary(mFirmware.getSummary() + " (" + getString(R.string.found_new_firmware) + ")");
+                mFirmware.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        FirmwareUpdateActivity.launch(getActivity(), firmware);
+                        return true;
+                    }
+                });
+            }
+        });
     }
 
 
