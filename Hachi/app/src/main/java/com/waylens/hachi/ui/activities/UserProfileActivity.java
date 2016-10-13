@@ -34,7 +34,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.entities.UserDeprecated;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
@@ -44,7 +44,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Observable;
-import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func3;
@@ -311,7 +310,7 @@ public class UserProfileActivity extends BaseActivity {
                 @Override
                 public MomentListResponse call(MomentListResponse momentInfo) {
                     for (MomentEx moment : momentInfo.moments) {
-                        moment.owner = new User();
+                        moment.owner = new UserDeprecated();
                         moment.owner.userID = mUserID;
                         moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
                     }

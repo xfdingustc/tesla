@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.entities;
+package com.waylens.hachi.rest.bean;
 
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
@@ -33,16 +33,6 @@ public class Comment {
 
     public Comment() {
         commentID = UNASSIGNED_ID;
-    }
-
-    public static Comment fromJson(JSONObject jsonObject) {
-        Comment comment = new Comment();
-        comment.commentID = jsonObject.optLong("commentID");
-        comment.content = jsonObject.optString("content");
-        comment.createTime = jsonObject.optLong("createTime");
-        comment.author = User.fromJson(jsonObject.optJSONObject("author"));
-        comment.replyTo = User.fromJson(jsonObject.optJSONObject("replyTo"));
-        return comment;
     }
 
     public SpannableStringBuilder toSpannable() {

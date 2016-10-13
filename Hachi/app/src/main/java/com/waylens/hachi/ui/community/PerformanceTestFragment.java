@@ -38,7 +38,7 @@ import com.waylens.hachi.ui.adapters.LeaderBoardAdapter;
 import com.waylens.hachi.ui.adapters.ListDropDownAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.entities.UserDeprecated;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
@@ -468,8 +468,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     ArrayList<Moment> momentList = new ArrayList<>();
                     for (int i = 0; i < raceQueryResponse.leaderboard.size(); i++) {
                         Moment moment = raceQueryResponse.leaderboard.get(i).moment;
-                        moment.owner = new User();
-                        User owner = raceQueryResponse.leaderboard.get(i).owner;
+                        moment.owner = new UserDeprecated();
+                        UserDeprecated owner = raceQueryResponse.leaderboard.get(i).owner;
                         moment.owner.userID = owner.userID;
                         moment.owner.avatarUrl = owner.avatarUrl;
                         moment.owner.userName = owner.userName;

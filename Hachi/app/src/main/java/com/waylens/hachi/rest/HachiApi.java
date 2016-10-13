@@ -21,6 +21,7 @@ import com.waylens.hachi.rest.body.UserProfileBody;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
+import com.waylens.hachi.rest.response.CommentListResponse;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
 import com.waylens.hachi.rest.response.FirmwareResponse;
@@ -228,4 +229,7 @@ public interface HachiApi {
 
     @GET("api/moments/search")
     Observable<MomentListResponse> searchMomentRx(@Query("key") String key, @Query("count") int count);
+
+    @GET("api/comments")
+    Observable<CommentListResponse> getCommentsRx(@Query("m") long momentId, @Query("cursor") int cursor, @Query("count") int count);
 }

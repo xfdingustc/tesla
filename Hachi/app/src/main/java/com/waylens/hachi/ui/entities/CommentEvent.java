@@ -6,6 +6,8 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StyleSpan;
 
+import com.waylens.hachi.rest.bean.Comment;
+
 import org.json.JSONObject;
 
 /**
@@ -15,8 +17,8 @@ public class CommentEvent extends NotificationEvent {
 
     public long commentID;
     public String content;
-    public User author;
-    public User replyTo;
+    public UserDeprecated author;
+    public UserDeprecated replyTo;
     public long createTime;
 
 
@@ -30,8 +32,8 @@ public class CommentEvent extends NotificationEvent {
         JSONObject jsonComment = jsonObject.optJSONObject("comment");
         commentEvent.commentID = jsonComment.optLong("commentID");
         commentEvent.content = jsonComment.optString("content");
-        commentEvent.author = User.fromJson(jsonComment.optJSONObject("author"));
-        commentEvent.replyTo = User.fromJson(jsonComment.optJSONObject("replyTo"));
+        commentEvent.author = UserDeprecated.fromJson(jsonComment.optJSONObject("author"));
+        commentEvent.replyTo = UserDeprecated.fromJson(jsonComment.optJSONObject("replyTo"));
         commentEvent.createTime = jsonComment.optLong("createTime");
         commentEvent.time = commentEvent.createTime;
         return commentEvent;

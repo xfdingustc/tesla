@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class FollowEvent extends NotificationEvent {
 
     public boolean isMyFollowing;
-    public User follower;
+    public UserDeprecated follower;
     public long createTime;
 
     FollowEvent(JSONObject jsonObject) {
@@ -21,7 +21,7 @@ public class FollowEvent extends NotificationEvent {
         JSONObject jsonFollow = jsonObject.optJSONObject("follow");
         if (jsonFollow != null) {
             followEvent.isMyFollowing = jsonFollow.optBoolean("isMyFollowing");
-            followEvent.follower = User.fromJson(jsonFollow.optJSONObject("user"));
+            followEvent.follower = UserDeprecated.fromJson(jsonFollow.optJSONObject("user"));
             followEvent.createTime = jsonFollow.optLong("createTime");
             followEvent.time = followEvent.createTime;
         }

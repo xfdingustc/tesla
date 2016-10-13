@@ -54,8 +54,11 @@ import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Comment;
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.SocialProvider;
+import com.waylens.hachi.rest.response.CommentListResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.UserInfo;
@@ -68,21 +71,18 @@ import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.Comment;
 import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.TransitionHelper;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -421,11 +421,11 @@ public class MomentActivity extends BaseActivity {
                     Comment comment = new Comment();
                     comment.content = mNewCommentView.getText().toString();
                     comment.createTime = System.currentTimeMillis();
-                    User basicUserInfo = new User();
-                    basicUserInfo.avatarUrl = SessionManager.getInstance().getAvatarUrl();
-                    basicUserInfo.userName = SessionManager.getInstance().getUserName();
-                    basicUserInfo.userID = SessionManager.getInstance().getUserId();
-                    comment.author = basicUserInfo;
+                    User user = new User();
+                    user.avatarUrl = SessionManager.getInstance().getAvatarUrl();
+                    user.userName = SessionManager.getInstance().getUserName();
+                    user.userID = SessionManager.getInstance().getUserId();
+                    comment.author = user;
                     if (mReplyTo != null) {
                         comment.replyTo = mReplyTo;
                         mReplyTo = null;
@@ -530,7 +530,7 @@ public class MomentActivity extends BaseActivity {
                     }
                 }
             })
-            .subscribe(new rx.Observer<retrofit2.Response<MomentInfo> >() {
+            .subscribe(new rx.Observer<retrofit2.Response<MomentInfo>>() {
                 @Override
                 public void onCompleted() {
 
@@ -544,7 +544,7 @@ public class MomentActivity extends BaseActivity {
 
                 @Override
                 public void onNext(retrofit2.Response<MomentInfo> response) {
-                    if (response.isSuccessful() ) {
+                    if (response.isSuccessful()) {
                         Logger.t(TAG).d("code:" + response.code());
                         Logger.t(TAG).d("body:" + response.body());
                         MomentInfo momentInfo = response.body();
@@ -854,27 +854,21 @@ public class MomentActivity extends BaseActivity {
             return;
         }
 
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_COMMENTS + String.format(Constants.API_COMMENTS_QUERY_STRING,
-                mMomentInfo.moment.id, cursor, DEFAULT_COUNT))
-            .listner(new Response.Listener<JSONObject>() {
+
+        HachiService.createHachiApiService().getCommentsRx(mMomentInfo.moment.id, cursor, DEFAULT_COUNT)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<CommentListResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    onLoadCommentsSuccessful(response, isRefresh);
+                public void onNext(CommentListResponse commentListResponse) {
+                    onLoadCommentsSuccessful(commentListResponse, isRefresh);
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    onLoadCommentsFailed(error);
+                public void onError(Throwable e) {
+                    onLoadCommentsFailed(e);
                 }
-            })
-            .build();
-
-        mRequestQueue.add(request);
-
-
+            });
     }
 
     private void doReportComment(Comment comment) {
@@ -888,31 +882,6 @@ public class MomentActivity extends BaseActivity {
         ReportJob job = new ReportJob(reportCommentBody, ReportJob.REPORT_TYPE_COMMENT);
         jobManager.addJobInBackground(job);
         Snackbar.make(mCommentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
-
-/*        String url = Constants.API_REPORT;
-        final JSONObject requestBody = new JSONObject();
-        try {
-            requestBody.put("commentID", comment.commentID);
-            requestBody.put("reason", mReportReason);
-
-            Logger.t(TAG).json(requestBody.toString());
-            AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.POST, url, requestBody, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
-                    Snackbar.make(mCommentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                }
-            });
-
-            mRequestQueue.add(request);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
     }
 
     private void doDeleteComment(Comment comment) {
@@ -931,37 +900,22 @@ public class MomentActivity extends BaseActivity {
         }
     }
 
-    private void onLoadCommentsFailed(VolleyError error) {
-        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        showMessage(errorInfo.msgResID);
+    private void onLoadCommentsFailed(Throwable error) {
+//        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
+        Snackbar.make(mCommentList, error.getMessage(), Snackbar.LENGTH_SHORT).show();
+
     }
 
-    private void onLoadCommentsSuccessful(JSONObject response, boolean isRefresh) {
-        JSONArray jsonComments = response.optJSONArray("comments");
-        if (jsonComments == null) {
-            return;
-        }
-        ArrayList<Comment> commentList = new ArrayList<>();
-        for (int i = 0; i < jsonComments.length(); i++) {
-            Comment comment = Comment.fromJson(jsonComments.optJSONObject(i));
-            commentList.add(comment);
-//            Logger.t(TAG).d("Add comment: " + comment.toString());
-        }
-
-        boolean hasMore = response.optBoolean("hasMore");
+    private void onLoadCommentsSuccessful(CommentListResponse response, boolean isRefresh) {
         mAdapter.setIsLoadMore(false);
 
         if (isRefresh) {
-            mAdapter.setComments(commentList, hasMore);
+            mAdapter.setComments(response.comments, response.hasMore);
         } else {
-            mAdapter.addComments(commentList, hasMore);
+            mAdapter.addComments(response.comments, response.hasMore);
         }
 
-        mCurrentCursor += commentList.size();
-
-//        if (mViewAnimator.getDisplayedChild() == 0) {
-//            mViewAnimator.setDisplayedChild(1);
-//        }
+        mCurrentCursor += response.comments.size();
     }
 
 

@@ -1,8 +1,8 @@
 package com.waylens.hachi.ui.entities.moment;
 
-import com.waylens.hachi.ui.entities.Comment;
+import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.ui.entities.MomentPicture;
-import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.entities.UserDeprecated;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ import java.util.List;
 public class MomentEx {
     public MomentAbstract moment;
 
-    public User owner;
+    public UserDeprecated owner;
 
-    public User lastLike;
+    public UserDeprecated lastLike;
 
     public List<Comment> lastComments;
 

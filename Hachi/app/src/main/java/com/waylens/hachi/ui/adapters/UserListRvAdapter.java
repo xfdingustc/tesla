@@ -7,24 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.ui.entities.User;
-import com.waylens.hachi.utils.ImageUtils;
-import com.waylens.hachi.utils.VolleyUtil;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.waylens.hachi.ui.entities.UserDeprecated;
 
 import java.util.List;
 
@@ -39,13 +26,13 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final String TAG = UserListRvAdapter.class.getSimpleName();
 
     private final Context mContext;
-    private List<User> mUserList;
+    private List<UserDeprecated> mUserList;
 
     public UserListRvAdapter(Context context) {
         this.mContext = context;
     }
 
-    public void setUserList(List<User> userList) {
+    public void setUserList(List<UserDeprecated> userList) {
         this.mUserList = userList;
         notifyDataSetChanged();
     }
@@ -61,7 +48,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         UserListViewHolder viewHolder = (UserListViewHolder) holder;
 
-        User userInfo = mUserList.get(position);
+        UserDeprecated userInfo = mUserList.get(position);
 
         viewHolder.mTvUserName.setText(userInfo.userName);
 
@@ -129,7 +116,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void setUserIsFollowing(UserListViewHolder viewHolder, boolean isFollowing) {
         int position = viewHolder.getPosition();
-        User user = mUserList.get(position);
+        UserDeprecated user = mUserList.get(position);
         user.setIsFollowing(isFollowing);
     }
 

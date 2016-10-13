@@ -13,12 +13,13 @@ import android.widget.ViewAnimator;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.entities.Comment;
+import com.waylens.hachi.rest.bean.Comment;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +30,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int VIEW_TYPE_COMMENT = 0;
     private static final int VIEW_TYPE_TAIL = 1;
 
-    private ArrayList<Comment> mComments;
+    private List<Comment> mComments;
 
     private PrettyTime mPrettyTime;
 
@@ -41,12 +42,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private boolean mHasMore = false;
 
-    public CommentsAdapter(ArrayList<Comment> comments) {
+    public CommentsAdapter(List<Comment> comments) {
         mComments = comments;
         mPrettyTime = new PrettyTime();
     }
 
-    public void setComments(ArrayList<Comment> comments, boolean hasMore) {
+    public void setComments(List<Comment> comments, boolean hasMore) {
         mComments = comments;
         mHasMore = hasMore;
         notifyDataSetChanged();
@@ -216,7 +217,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    public void addComments(ArrayList<Comment> commentList, boolean hasMore) {
+    public void addComments(List<Comment> commentList, boolean hasMore) {
         if (mComments == null) {
             mComments = new ArrayList<>();
         }

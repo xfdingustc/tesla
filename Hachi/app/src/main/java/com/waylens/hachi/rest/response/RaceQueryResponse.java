@@ -2,7 +2,7 @@ package com.waylens.hachi.rest.response;
 
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.User;
+import com.waylens.hachi.ui.entities.UserDeprecated;
 
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class RaceQueryResponse {
     public class LeaderBoardItem {
         public int cursor;
         public Moment moment;
-        public User owner;
+        public UserDeprecated owner;
     }
 
     public class UserRankItem {
