@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.bean.Vehicle;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 
@@ -30,7 +31,7 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2016/8/4.
  */
 public class VehicleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private static final String TAG = VehicleAdapter.class.getSimpleName();
     private final Context mContext;
     private final OnVehicleClickListener mOnVehicleClickListener;
     private List<Vehicle> mVehicleList = new ArrayList<>();
@@ -82,7 +83,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         VehicleViewHolder vehicleViewHolder = (VehicleViewHolder) holder;
         Vehicle vehicle = mVehicleList.get(position);
-        Logger.t("TAG").d(vehicle.toString());
+        Logger.t(TAG).d(vehicle.toString());
         vehicleViewHolder.vehicle.setText(vehicle.maker + "  " + vehicle.model + "  " + vehicle.year);
     }
 
@@ -128,17 +129,7 @@ public class VehicleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public class Vehicle {
-        public long modelYearID;
-        public String maker;
-        public String model;
-        public int year;
 
-        @Override
-        public String toString() {
-            return ToStringUtils.getString(this);
-        }
-    }
 
     public interface OnVehicleClickListener {
         void onVehicleClicked(long modelId);

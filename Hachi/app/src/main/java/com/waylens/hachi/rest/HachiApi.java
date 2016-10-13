@@ -3,6 +3,7 @@ package com.waylens.hachi.rest;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.rest.bean.MomentAmount;
+import com.waylens.hachi.rest.body.AddVehicleBody;
 import com.waylens.hachi.rest.body.ChangePwdBody;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
@@ -21,6 +22,7 @@ import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.body.UserProfileBody;
+import com.waylens.hachi.rest.body.VehicleListResponse;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
@@ -230,6 +232,12 @@ public interface HachiApi {
 
     @GET("api/vehicle/years")
     Observable<ModelYearResponse> getModelYearRx(@Query("model") long model);
+
+    @GET("api/users/vehicle")
+    Observable<VehicleListResponse> getUserVehicleListRx(@Query("userID") String userId);
+
+    @POST("api/users/vehicle")
+    Observable<SimpleBoolResponse> addUserVehicle(@Body AddVehicleBody addVehicleBody);
 
     @POST("api/devices/login")
     Observable<AuthorizeResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
