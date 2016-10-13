@@ -219,8 +219,13 @@ public interface HachiApi {
     @GET("api/vehicle/makers")
     Observable<MakerResponse> getAllMarkerRx();
 
+
     @GET("api/vehicle/models")
     Call<ModelResponse> getModelByMaker(@Query("maker") long makerID);
+
+
+    @GET("api/vehicle/models")
+    Observable<ModelResponse> getModelByMakerRx(@Query("maker") long makerID);
 
     @POST("api/devices/login")
     Observable<AuthorizeResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
