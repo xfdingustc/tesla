@@ -17,7 +17,9 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
+import com.waylens.hachi.rest.bean.Model;
 import com.waylens.hachi.rest.response.MakerResponse;
+import com.waylens.hachi.rest.response.ModelResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCommonAdapter;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -52,8 +54,7 @@ public class VehiclePickActivity extends BaseActivity {
     private String vehicleModel;
     private int vehicleYear;
 
-    List<Maker> mMakerList = new ArrayList<>();
-    List<Model> mModelList = new ArrayList<>();
+
     List<ModelYear> mYearList = new ArrayList<>();
 
     private SimpleCommonAdapter<Maker> mMakerAdapter;
@@ -173,45 +174,27 @@ public class VehiclePickActivity extends BaseActivity {
 
     private void getModelList(long makerID) {
         mViewAnimator.setDisplayedChild(0);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_MODEL + "?maker=" + makerID)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiService.createHachiApiService().getModelByMakerRx(makerID)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ModelResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(ModelResponse modelResponse) {
                     mViewAnimator.setDisplayedChild(1);
-                    renderModelList(response);
+                    renderModelList(modelResponse);
                     mCurrentStep = STEP_MODEL;
-//                    if (mSearchView != null) {
-//                        mSearchView.closeSearch();
-//                    }
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
     }
 
-    private void renderModelList(JSONObject response) {
-        try {
-            JSONArray country = response.getJSONArray("models");
-            for (int i = 0; i < country.length(); i++) {
-                JSONObject object = country.getJSONObject(i);
-                Model oneModel = new Model();
-                oneModel.modelID = object.getLong("modelID");
-                oneModel.modelName = object.getString("modelName");
-                mModelList.add(oneModel);
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        mModelAdapter = new ModelAdapter(mModelList, new ModelAdapter.OnListItemClickListener() {
+    private void renderModelList(ModelResponse response) {
+        mModelAdapter = new ModelAdapter(response.models, new ModelAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Model model = mModelAdapter.getItem(position);
                 if (model != null) {
-                    vehicleModel = model.getName();
+                    vehicleModel = model.modelName;
                     getYearList(model.modelID);
                 }
             }
@@ -303,17 +286,6 @@ public class VehiclePickActivity extends BaseActivity {
     }
 
 
-
-
-    public class Model {
-        public long modelID;
-        public String modelName;
-
-        public String getName() {
-            return modelName;
-        }
-    }
-
     public class ModelYear {
         public long modelYearID;
         public int year;
@@ -343,7 +315,7 @@ public class VehiclePickActivity extends BaseActivity {
 
         @Override
         public String getName(Model model) {
-            return model.getName();
+            return model.modelName;
         }
     }
 
