@@ -25,8 +25,10 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
 import com.xfdingustc.rxutils.library.RxBus;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -185,23 +187,18 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
         feedObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<MomentListResponse>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Logger.t(TAG).d(e.toString());
-                }
-
+            .subscribe(new SimpleSubscribe<MomentListResponse>() {
                 @Override
                 public void onNext(MomentListResponse momentListResponse) {
                     if (isRefresh) {
                         RxBus.getDefault().post(new ScrollEvent(false));
                     }
                     onLoadFeedSuccessful(momentListResponse, isRefresh);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    ServerErrorHelper.showErrorMessage(mRootView, e);
                 }
             });
 
