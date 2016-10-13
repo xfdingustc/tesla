@@ -1,5 +1,6 @@
 package com.waylens.hachi.rest;
 
+import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.body.ChangePwdBody;
@@ -9,6 +10,7 @@ import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
+import com.waylens.hachi.rest.body.PublishCommentBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
@@ -38,6 +40,7 @@ import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
+import com.waylens.hachi.rest.response.PublishCommentResponse;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
@@ -232,4 +235,7 @@ public interface HachiApi {
 
     @GET("api/comments")
     Observable<CommentListResponse> getCommentsRx(@Query("m") long momentId, @Query("cursor") int cursor, @Query("count") int count);
+
+    @POST("api/comments")
+    Observable<PublishCommentResponse> publishCommentRx(@Body PublishCommentBody publishCommentBody);
 }

@@ -56,11 +56,13 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.User;
+import com.waylens.hachi.rest.body.PublishCommentBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.CommentListResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
+import com.waylens.hachi.rest.response.PublishCommentResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -920,42 +922,30 @@ public class MomentActivity extends BaseActivity {
 
 
     private void publishComment(final Comment comment, final int position) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put("momentID", mMomentInfo.moment.id);
-            params.put("content", comment.content);
-
-        } catch (JSONException e) {
-            Logger.t(TAG).e(e.toString());
+        final PublishCommentBody publishCommentBody = new PublishCommentBody();
+        publishCommentBody.momentID = mMomentInfo.moment.id;
+        publishCommentBody.content = comment.content;
+        if (comment.replyTo != null) {
+            publishCommentBody.replyTo = comment.replyTo.userID;
         }
 
-        AuthorizedJsonRequest.Builder requestBuilder = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_COMMENTS)
-            .postBody("momentID", mMomentInfo.moment.id)
-            .postBody("content", comment.content)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiService.createHachiApiService().publishCommentRx(publishCommentBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<PublishCommentResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    long commentID = response.optLong("commentID");
-                    mAdapter.updateCommentID(position, commentID);
+                public void onNext(PublishCommentResponse publishCommentResponse) {
+                    mAdapter.updateCommentID(position, publishCommentBody.momentID);
                     if (!hasUpdates) {
                         hasUpdates = true;
                     }
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                    showMessage(errorInfo.msgResID);
+                public void onError(Throwable e) {
+                    Snackbar.make(mCommentList, e.getMessage(), Snackbar.LENGTH_SHORT).show();
                 }
             });
-
-        if (comment.replyTo != null) {
-            requestBuilder.postBody("replyTo", comment.replyTo.userID);
-        }
-
-        mRequestQueue.add(requestBuilder.build());
 
     }
 

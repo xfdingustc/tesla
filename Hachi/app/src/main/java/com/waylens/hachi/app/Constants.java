@@ -47,12 +47,6 @@ public class Constants {
 
     public static final String PARAM_SORT_UPLOAD_TIME = "uploadtime_desc";
 
-
-
-    public static final String API_COMMENTS = HOST_URL + "api/comments";
-
-
-
     public static final String API_DEVICE_ACTIVATION = HOST_URL + "api/devices/login";
 
 
