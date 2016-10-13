@@ -19,11 +19,14 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
 import com.waylens.hachi.rest.bean.ModelYear;
+import com.waylens.hachi.rest.body.AddVehicleBody;
 import com.waylens.hachi.rest.response.MakerResponse;
 import com.waylens.hachi.rest.response.ModelResponse;
 import com.waylens.hachi.rest.response.ModelYearResponse;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCommonAdapter;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONArray;
@@ -235,13 +238,14 @@ public class VehiclePickActivity extends BaseActivity {
     }
 
     public void addVehicle(long modelYearID) {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_VEHICLE)
-            .postBody("modelYearID", modelYearID)
-            .listner(new Response.Listener<JSONObject>() {
+        AddVehicleBody addVehicleBody = new AddVehicleBody();
+        addVehicleBody.modelYearID = modelYearID;
+        HachiService.createHachiApiService().addUserVehicle(addVehicleBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).json(response.toString());
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
                     Intent intent = getIntent();
                     intent.putExtra(VEHICLE_MAKER, vehicleMaker);
                     intent.putExtra(VEHICLE_MODEL, vehicleModel);
@@ -251,21 +255,12 @@ public class VehiclePickActivity extends BaseActivity {
                     Logger.t(TAG).d(vehicleMaker + vehicleModel + vehicleYear);
                     finish();
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Logger.t(TAG).d(error.toString());
-                    Intent intent = getIntent();
-                    intent.putExtra(VEHICLE_MAKER, vehicleMaker);
-                    intent.putExtra(VEHICLE_MODEL, vehicleModel);
-                    intent.putExtra(VEHICLE_YEAR, vehicleYear);
-                    setResult(RESULT_OK, intent);
-                    finish();
+                public void onError(Throwable e) {
+                    ServerErrorHelper.showErrorMessage(mViewAnimator, e);
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
 
     }
 

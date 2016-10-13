@@ -22,7 +22,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -30,19 +29,20 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Vehicle;
 import com.waylens.hachi.rest.body.ChangePwdBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.body.UserProfileBody;
+import com.waylens.hachi.rest.body.VehicleListResponse;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -419,99 +419,68 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
     private void updateVehicle() {
         Logger.t(TAG).d("update Vehicle!");
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_USER_VEHICLE)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiService.createHachiApiService().getUserVehicleListRx(SessionManager.getInstance().getUserId())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<VehicleListResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    renderVehicle(response);
+                public void onNext(VehicleListResponse vehicleListResponse) {
+                    renderVehicle(vehicleListResponse);
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
     }
 
-    public void renderVehicle(JSONObject response) {
+    public void renderVehicle(VehicleListResponse response) {
         Logger.t(TAG).d("render vehicle");
-        try {
-            JSONArray country = response.getJSONArray("vehicles");
-            mVehicleList.clear();
-            for (int i = 0; i < country.length(); i++) {
-                JSONObject object = country.getJSONObject(i);
-                Vehicle oneVehicle = new Vehicle();
-                oneVehicle.modelYearID = object.getLong("modelYearID");
-                oneVehicle.maker = object.getString("maker");
-                oneVehicle.year = object.getInt("year");
-                oneVehicle.model = object.getString("model");
-                Preference oneCar = new Preference(this.getActivity());
-                oneCar.setKey(String.valueOf(oneVehicle.modelYearID));
-                oneCar.setSummary(oneVehicle.maker + "  " + oneVehicle.model + "  " + oneVehicle.year);
-                oneCar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(final Preference preference) {
-                        final long modelYearID = Long.valueOf(preference.getKey());
-                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                            .content(R.string.delete_car_confirm)
-                            .positiveText(R.string.ok)
-                            .negativeText(R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                                        .delete()
-                                        .url(Constants.API_USER_VEHICLE + "/" + modelYearID)
-                                        .listner(new Response.Listener<JSONObject>() {
-                                            @Override
-                                            public void onResponse(JSONObject response) {
-                                                mVehicle.removePreference(preference);
-                                            }
-                                        })
-                                        .build();
+        mVehicleList.clear();
+        for (int i = 0; i < response.vehicles.size(); i++) {
+            Vehicle oneVehicle = response.vehicles.get(i);
+            Logger.t(TAG).d("add one vehicle: " + oneVehicle.toString());
+            Preference oneCar = new Preference(this.getActivity());
+            oneCar.setKey(String.valueOf(oneVehicle.modelYearID));
+            oneCar.setSummary(oneVehicle.maker + "  " + oneVehicle.model + "  " + oneVehicle.year);
+            oneCar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(final Preference preference) {
+                    final long modelYearID = Long.valueOf(preference.getKey());
+                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .content(R.string.delete_car_confirm)
+                        .positiveText(R.string.ok)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
+                                    .delete()
+                                    .url(Constants.API_USER_VEHICLE + "/" + modelYearID)
+                                    .listner(new Response.Listener<JSONObject>() {
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            mVehicle.removePreference(preference);
+                                        }
+                                    })
+                                    .build();
 
-                                    mRequestQueue.add(request.setTag(TAG));
-                                }
-                            })
-                            .build();
-                        dialog.show();
-                        return false;
-                    }
-                });
-                mVehicleList.add(oneCar);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+                                mRequestQueue.add(request.setTag(TAG));
+                            }
+                        })
+                        .build();
+                    dialog.show();
+                    return false;
+                }
+            });
+            mVehicleList.add(oneCar);
+
         }
-
         mVehicle.removeAll();
         mVehicle.addPreference(mAddCar);
         for (Preference item : mVehicleList) {
             mVehicle.addPreference(item);
         }
-
     }
 
-    private void uploadPassword(String oldPwd, String newPwd) {
-//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-//            .url(Constants.API_USER_CHANGE_PASSWORD)
-//            .postBody("curPassword", oldPwd)
-//            .postBody("newPassword", newPwd)
-//            .listner(new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                    Logger.t(TAG).json(response.toString());
-//                    mSessionManager.saveLoginInfo(response);
-//                    Snackbar.make(getView(), R.string.change_password_successfully, Snackbar.LENGTH_LONG).show();
-//                }
-//            })
-//            .errorListener(new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError error) {
-//                    Snackbar.make(getView(), R.string.change_password_failed, Snackbar.LENGTH_LONG).show();
-//                }
-//            })
-//            .build();
-//        mRequestQueue.add(request.setTag(TAG));
 
+    private void uploadPassword(String oldPwd, String newPwd) {
         HachiApi hachiApi = HachiService.createHachiApiService();
         ChangePwdBody changePwdBody = new ChangePwdBody();
         changePwdBody.curPassword = oldPwd;
@@ -528,7 +497,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
                 @Override
                 public void onError(Throwable e) {
-                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
+                    ServerErrorHelper.showErrorMessage(getView(), e);
                 }
             });
     }
@@ -620,11 +589,5 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
         }
     }
 
-    public class Vehicle {
-        public long modelYearID;
-        public String maker;
-        public String model;
-        public int year;
-    }
 
 }
