@@ -18,13 +18,6 @@ public class Constants {
 
 //    public static final String HOST_URL = "http://192.168.20.97:9000/";
 
-
-
-
-    public static final String API_RESET_PASSWORD_MAIL = HOST_URL + "api/users/send_passwordreset_mail?e=";
-
-    public static final String API_RESET_PASSWORD = HOST_URL + "api/users/reset_password";
-
     public static final String API_AUTH_FACEBOOK = HOST_URL + "api/authenticate/facebook?accessToken=";
 
 
