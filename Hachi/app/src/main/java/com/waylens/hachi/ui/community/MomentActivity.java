@@ -614,22 +614,16 @@ public class MomentActivity extends BaseActivity {
 
     private void updateFollowInfo(String userID) {
         Logger.t(TAG).d("load userId: " + userID);
-        Call<FollowInfo> followInfoCall = mHachi.getFollowInfo(userID);
-        followInfoCall.enqueue(new Callback<FollowInfo>() {
-            @Override
-            public void onResponse(Call<FollowInfo> call, retrofit2.Response<FollowInfo> response) {
-//                Logger.t(TAG).d(response.body().toString());
-                mFollowInfo = response.body();
-                updateFollowTextView();
-
-            }
-
-            @Override
-            public void onFailure(Call<FollowInfo> call, Throwable t) {
-
-            }
-        });
-
+        HachiService.createHachiApiService().getFollowInfoRx(userID)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<FollowInfo>() {
+                @Override
+                public void onNext(FollowInfo followInfo) {
+                    mFollowInfo = followInfo;
+                    updateFollowTextView();
+                }
+            });
     }
 
     private void updateFollowTextView() {

@@ -70,6 +70,9 @@ public interface HachiApi {
 //    @GET("/api/moments/play/{momentId}")
 //    Call<MomentPlayInfo> getRawDataUrl(@Path("momentId") long momentId);
 
+    @GET("api/users/send_passwordreset_mail")
+    Observable<SimpleBoolResponse> sendPwdResetEmailRx(@Query("e") String email);
+
     @GET("/api/users/start_upload_avatar")
     Call<UploadAvatarResponse> getAvatarUploadServer();
 
