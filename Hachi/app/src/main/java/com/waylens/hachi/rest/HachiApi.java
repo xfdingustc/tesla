@@ -110,8 +110,6 @@ public interface HachiApi {
     @GET("/api/moments/{momentId}")
     Observable<MomentInfo> getMomentInfoRx(@Path("momentId") long momentId);
 
-    @GET("/api/friends/{userId}")
-    Call<FollowInfo> getFollowInfo(@Path("userId") String userId);
 
     @GET("/api/friends/{userId}")
     Observable<FollowInfo> getFollowInfoRx(@Path("userId") String userId);
@@ -217,6 +215,9 @@ public interface HachiApi {
 
     @GET("api/vehicle/makers")
     Call<MakerResponse> getAllMaker();
+
+    @GET("api/vehicle/makers")
+    Observable<MakerResponse> getAllMarkerRx();
 
     @GET("api/vehicle/models")
     Call<ModelResponse> getModelByMaker(@Query("maker") long makerID);

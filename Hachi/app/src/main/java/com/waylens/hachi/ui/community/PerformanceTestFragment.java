@@ -25,6 +25,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.response.MakerResponse;
@@ -111,7 +112,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private String mModel;
 
-    private List<Pair<MakerResponse.Maker, ModelResponse.Model>> mMakerModelList;
+    private List<Pair<Maker, ModelResponse.Model>> mMakerModelList;
 
     private int mLeaderBoardItemCount;
 
@@ -366,16 +367,16 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
         mMakerModelList = new ArrayList<>();
 
-        Observable.create(new Observable.OnSubscribe<List<Pair<MakerResponse.Maker, ModelResponse.Model>>>() {
+        Observable.create(new Observable.OnSubscribe<List<Pair<Maker, ModelResponse.Model>>>() {
             @Override
-            public void call(Subscriber<? super List<Pair<MakerResponse.Maker, ModelResponse.Model>>> subscriber) {
+            public void call(Subscriber<? super List<Pair<Maker, ModelResponse.Model>>> subscriber) {
                 Call<MakerResponse> makerResponseCall = hachiApi.getAllMaker();
                 try {
                     MakerResponse makerResponse = makerResponseCall.execute().body();
-                    for (MakerResponse.Maker maker : makerResponse.makers) {
+                    for (Maker maker : makerResponse.makers) {
                         Call<ModelResponse> modelResponseCall = hachiApi.getModelByMaker(maker.makerID);
                         ModelResponse modelResponse = modelResponseCall.execute().body();
-                        List<Pair<MakerResponse.Maker, ModelResponse.Model>> makerModelList = new ArrayList<>();
+                        List<Pair<Maker, ModelResponse.Model>> makerModelList = new ArrayList<>();
                         for (ModelResponse.Model model : modelResponse.models) {
                             makerModelList.add(new Pair<>(maker, model));
                         }
@@ -390,7 +391,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         }).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<List<Pair<MakerResponse.Maker, ModelResponse.Model>>>() {
+            .subscribe(new Observer<List<Pair<Maker, ModelResponse.Model>>>() {
                 @Override
                 public void onCompleted() {
 
@@ -402,10 +403,10 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 }
 
                 @Override
-                public void onNext(List<Pair<MakerResponse.Maker, ModelResponse.Model>> pairs) {
+                public void onNext(List<Pair<Maker, ModelResponse.Model>> pairs) {
                     mMakerModelList.addAll(pairs);
                     List<String> stringList = new ArrayList<>();
-                    for (Pair<MakerResponse.Maker, ModelResponse.Model> item : pairs) {
+                    for (Pair<Maker, ModelResponse.Model> item : pairs) {
                         stringList.add(item.first.makerName + " " + item.second.modelName);
                     }
                     modelAdapter.addAll(stringList);
