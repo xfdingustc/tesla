@@ -16,6 +16,7 @@ import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.body.RepostBody;
+import com.waylens.hachi.rest.body.ResetPwdBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
 import com.waylens.hachi.rest.body.SocialProvider;
@@ -72,6 +73,9 @@ public interface HachiApi {
 
     @GET("api/users/send_passwordreset_mail")
     Observable<SimpleBoolResponse> sendPwdResetEmailRx(@Query("e") String email);
+
+    @POST("api/users/reset_password")
+    Observable<SimpleBoolResponse> resetPasswordRx(@Body ResetPwdBody resetPwdBody);
 
     @GET("/api/users/start_upload_avatar")
     Call<UploadAvatarResponse> getAvatarUploadServer();

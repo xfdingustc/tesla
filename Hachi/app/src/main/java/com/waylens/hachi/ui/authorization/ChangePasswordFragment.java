@@ -12,27 +12,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.app.JsonKey;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.ResetPwdBody;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.VolleyUtil;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Richard on 3/23/16.
@@ -59,7 +54,6 @@ public class ChangePasswordFragment extends BaseFragment {
 
     private String mPassword;
     private String mCode;
-    private RequestQueue mVolleyRequestQueue;
     private String mEmail;
 
 
@@ -71,7 +65,6 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mEmail = PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, "");
     }
 
@@ -88,31 +81,27 @@ public class ChangePasswordFragment extends BaseFragment {
         SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint5));
         int start = ssb.length();
         ssb.append(getString(R.string.resend))
-                .setSpan(new ClickableSpan() {
-                    @Override
-                    public void onClick(View widget) {
-                        onResendEmail();
-                    }
-                }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            .setSpan(new ClickableSpan() {
+                @Override
+                public void onClick(View widget) {
+                    onResendEmail();
+                }
+            }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         mTvResend.setText(ssb);
         mTvResend.setMovementMethod(LinkMovementMethod.getInstance());
 
     }
 
     private void onResendEmail() {
-        getFragmentManager().beginTransaction().replace(R.id.fragment_content, new ForgotPasswordFragment()).commit();
+        getFragmentManager().beginTransaction()
+            .replace(R.id.fragment_content, new ForgotPasswordFragment())
+            .commit();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mVolleyRequestQueue != null) {
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_RESET_PASSWORD);
-        }
-    }
+
 
     @OnClick(R.id.btn_change_password)
-    void onClickChangePassword() {
+    public void onClickChangePassword() {
         mCode = mEvCode.getText().toString();
         mPassword = mEvPassword.getText().toString();
 
@@ -124,40 +113,34 @@ public class ChangePasswordFragment extends BaseFragment {
     }
 
     private void changePassword() {
-        JSONObject params = new JSONObject();
-        try {
-            params.put(JsonKey.EMAIL, mEmail);
-            params.put(JsonKey.TOKEN, mCode);
-            params.put(JsonKey.NEW_PASSWORD, mPassword);
-        } catch (JSONException e) {
-            Logger.t(TAG).e(e, "");
-        }
+        ResetPwdBody resetPwdBody = new ResetPwdBody();
+        resetPwdBody.email = mEmail;
+        resetPwdBody.token = mCode;
+        resetPwdBody.newPassword = mPassword;
+        HachiService.createHachiApiService().resetPasswordRx(resetPwdBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
+                @Override
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
+                    onResetPasswordSuccessful(simpleBoolResponse);
+                }
 
-        Logger.t(TAG).d("reset password: " + params.toString());
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.POST, Constants.API_RESET_PASSWORD, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onResetPasswordSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onResetPasswordFailed(error);
-                    }
-                }).setTag(TAG_REQUEST_RESET_PASSWORD));
+                @Override
+                public void onError(Throwable e) {
+                    mButtonAnimator.setDisplayedChild(0);
+                    ServerErrorHelper.showErrorMessage(mRootView, e);
+                }
+            });
     }
 
-    private void onResetPasswordFailed(VolleyError error) {
-        showMessage(ServerMessage.parseServerError(error).msgResID);
-        mButtonAnimator.setDisplayedChild(0);
-    }
 
-    private void onResetPasswordSuccessful(JSONObject response) {
+    private void onResetPasswordSuccessful(SimpleBoolResponse response) {
         PreferenceUtils.remove(PreferenceUtils.KEY_RESET_EMAIL_SENT);
-        if (response.optBoolean("result", false)) {
-            getFragmentManager().beginTransaction().replace(R.id.fragment_content, new SignInFragment()).commit();
+        if (response.result) {
+            getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_content, new SignInFragment())
+                .commit();
         } else {
             mButtonAnimator.setDisplayedChild(0);
         }
