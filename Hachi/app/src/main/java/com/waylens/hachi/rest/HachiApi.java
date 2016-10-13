@@ -137,8 +137,6 @@ public interface HachiApi {
     @POST("/api/users/signin")
     Call<AuthorizeResponse> signin(@Body SignInPostBody signInPostBody);
 
-    @POST("/api/users/signup")
-    Call<AuthorizeResponse> signUp(@Body SignUpPostBody signUpnPostBody);
 
     @POST("/api/users/signup")
     Observable<AuthorizeResponse> signUpRx(@Body SignUpPostBody signUpnPostBody);
@@ -227,4 +225,7 @@ public interface HachiApi {
 
     @GET("api/camera/firmware")
     Observable<List<Firmware>> getFirmwareRx();
+
+    @GET("api/moments/search")
+    Observable<MomentListResponse> searchMomentRx(@Query("key") String key, @Query("count") int count);
 }

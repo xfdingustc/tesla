@@ -51,7 +51,6 @@ public class Constants {
 
     public static final String API_COMMENTS = HOST_URL + "api/comments";
 
-    public static final String API_MOMENTS_SEARCH = HOST_URL + "api/moments/search";
 
     public static final String API_COMMENTS_QUERY_STRING = "?m=%s&cursor=%s&count=%s";
 
@@ -68,9 +67,6 @@ public class Constants {
     public static final String API_QS_COMMON = "?cursor=%s&count=%s";
 
     public static final String API_COMMENTS_MARK_READ = HOST_URL + "api/events/mark_read";
-
-    public static final String API_USERS = HOST_URL + "api/users";
-
 
 
     public enum EventType {FOLLOW_USER, COMMENT_MOMENT, LIKE_MOMENT, REFER_USER, PUBLISH_NEWS}

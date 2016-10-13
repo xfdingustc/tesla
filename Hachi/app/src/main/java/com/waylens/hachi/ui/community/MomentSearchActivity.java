@@ -23,9 +23,12 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.myvideo.MomentItemAdapter;
 import com.waylens.hachi.ui.entities.Moment;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/8/3.
@@ -151,44 +156,23 @@ public class MomentSearchActivity extends BaseActivity {
         mSearchView.close(true);
         mViewAnimator.setVisibility(View.VISIBLE);
         mViewAnimator.setDisplayedChild(0);
-        final String requestUrl = Constants.API_MOMENTS_SEARCH + "?key=" + query + "&count=20";
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(requestUrl)
-            .listner(new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    mViewAnimator.setDisplayedChild(1);
-                    Logger.t(TAG).json(response.toString());
-                    JSONArray jsonMoments = response.optJSONArray("moments");
-                    if (jsonMoments == null) {
-                        return;
-                    }
-                    ArrayList<Moment> momentList = new ArrayList<>();
-                    for (int i = 0; i < jsonMoments.length(); i++) {
-                        JSONObject jsonObject = jsonMoments.optJSONObject(i);
-                        if (jsonObject != null) {
-                            JSONObject momentObject = jsonObject.optJSONObject("moment");
-                            if (momentObject != null) {
-                                momentList.add(Moment.fromJson(momentObject));
-                            }
-                        }
 
-//                        Logger.t(TAG).d();
-                    }
-                    if (momentList.size() == 0) {
+
+        HachiService.createHachiApiService().searchMomentRx(query, 20)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MomentListResponse>() {
+                @Override
+                public void onNext(MomentListResponse momentListResponse) {
+                    mViewAnimator.setDisplayedChild(1);
+
+                    if (momentListResponse.moments.size() == 0) {
                         mViewAnimator.setDisplayedChild(2);
                     } else {
-                        mVideoItemAdapter.setUploadedMomentList(momentList);
+                        mVideoItemAdapter.setUploadedMomentList(momentListResponse.moments);
                     }
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            }).build();
-        mRequestQueue.add(request);
+            });
     }
 
     @Override

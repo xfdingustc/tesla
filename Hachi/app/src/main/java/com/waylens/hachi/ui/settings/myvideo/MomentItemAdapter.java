@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -33,7 +34,7 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final String TAG = MomentItemAdapter.class.getSimpleName();
 
     private final Activity mActivity;
-    private List<Moment> mUploadedMomentList = new ArrayList<>();
+    private List<MomentEx> mUploadedMomentList = new ArrayList<>();
     private PrettyTime mPrettyTime = new PrettyTime();
 
 
@@ -43,7 +44,7 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
 
-    public void setUploadedMomentList(List<Moment> momentList) {
+    public void setUploadedMomentList(List<MomentEx> momentList) {
         this.mUploadedMomentList = momentList;
         notifyDataSetChanged();
     }
@@ -58,24 +59,24 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         final VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
-        final Moment uploadedMoment = mUploadedMomentList.get(position);
+        final MomentEx uploadedMoment = mUploadedMomentList.get(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
-        videoItemViewHolder.momentTitle.setText(uploadedMoment.title);
+        videoItemViewHolder.momentTitle.setText(uploadedMoment.moment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
-        videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(uploadedMoment.uploadTime)));
+        videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(uploadedMoment.moment.uploadTime)));
         videoItemViewHolder.description.setVisibility(View.VISIBLE);
         Glide.with(mActivity)
-            .load(uploadedMoment.thumbnail)
+            .load(uploadedMoment.moment.thumbnail)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .crossFade()
             .into(videoItemViewHolder.videoCover);
 
-        videoItemViewHolder.videoDuration.setText(DateUtils.formatElapsedTime(uploadedMoment.duration / 1000l));
+        videoItemViewHolder.videoDuration.setText(DateUtils.formatElapsedTime(uploadedMoment.moment.duration / 1000l));
         videoItemViewHolder.btnMore.setVisibility(View.GONE);
         videoItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MomentActivity.launch(mActivity, uploadedMoment.id, uploadedMoment.thumbnail, videoItemViewHolder.videoCover);
+                MomentActivity.launch(mActivity, uploadedMoment.moment.id, uploadedMoment.moment.thumbnail, videoItemViewHolder.videoCover);
             }
         });
 

@@ -19,9 +19,12 @@ import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
@@ -29,6 +32,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/6/17.
@@ -142,30 +147,19 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {
         SessionManager sessionManager = SessionManager.getInstance();
-        final String requestUrl = Constants.API_USERS + "/" + sessionManager.getUserId() + "/moments?cursor=" + cursor;
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(requestUrl)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiService.createHachiApiService().getUserMomentsRx(sessionManager.getUserId(), cursor)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MomentListResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-
-                    List<Moment> momentList = Moment.parseMomentArray(response);
-                    if (momentList.size() > 0) {
+                public void onNext(MomentListResponse momentListResponse) {
+                    if (momentListResponse.moments.size() > 0) {
                         mViewAnimator.setDisplayedChild(VIEW_ANIMATOR_MOMENT_LIST);
                     } else {
                         mViewAnimator.setDisplayedChild(VIEW_ANIMATOR_EMPTY_VIEW);
                     }
-                    mVideoItemAdapter.setUploadedMomentList(momentList);
+                    mVideoItemAdapter.setUploadedMomentList(momentListResponse.moments);
                 }
-            })
-            .errorListener(new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                }
-            }).build();
-
-
-        mRequestQueue.add(request);
+            });
     }
 }
