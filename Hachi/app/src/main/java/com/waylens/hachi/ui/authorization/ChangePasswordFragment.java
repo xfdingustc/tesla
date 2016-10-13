@@ -84,7 +84,7 @@ public class ChangePasswordFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mTvChangePasswordHint.setText(getString(R.string.forgot_password_hint4) + mEmail);
+        mTvChangePasswordHint.setText(getString(R.string.forgot_password_hint4) + " " + mEmail);
         SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.forgot_password_hint5));
         int start = ssb.length();
         ssb.append(getString(R.string.resend))
@@ -99,7 +99,7 @@ public class ChangePasswordFragment extends BaseFragment {
 
     }
 
-    void onResendEmail() {
+    private void onResendEmail() {
         getFragmentManager().beginTransaction().replace(R.id.fragment_content, new ForgotPasswordFragment()).commit();
     }
 
@@ -123,7 +123,7 @@ public class ChangePasswordFragment extends BaseFragment {
         changePassword();
     }
 
-    void changePassword() {
+    private void changePassword() {
         JSONObject params = new JSONObject();
         try {
             params.put(JsonKey.EMAIL, mEmail);

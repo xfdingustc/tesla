@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.authorization;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,16 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.authorization.ChangePasswordFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONObject;
 
@@ -30,14 +35,15 @@ import java.net.URLEncoder;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Richard on 3/23/16.
  */
 public class ForgotPasswordFragment extends BaseFragment {
     private static final String TAG = ForgotPasswordFragment.class.getSimpleName();
-
-    private static final String TAG_REQUEST_SEND_EMAIL = "ForgotPasswordFragment.request.send.email";
 
 
     @BindView(R.id.sign_up_email)
@@ -48,18 +54,9 @@ public class ForgotPasswordFragment extends BaseFragment {
 
     private String mEmail;
 
-    private RequestQueue mVolleyRequestQueue;
-
     @Override
     protected String getRequestTag() {
         return TAG;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
-
     }
 
     @Nullable
@@ -74,16 +71,9 @@ public class ForgotPasswordFragment extends BaseFragment {
         mTvSignUpEmail.setText(PreferenceUtils.getString(PreferenceUtils.KEY_SIGN_UP_EMAIL, ""));
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mVolleyRequestQueue != null) {
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SEND_EMAIL);
-        }
-    }
 
     @OnClick(R.id.btn_send)
-    void onClickSend() {
+    public void onClickSend() {
         if (!mTvSignUpEmail.isValid()) {
             return;
         }
@@ -91,43 +81,28 @@ public class ForgotPasswordFragment extends BaseFragment {
         sendEmail();
     }
 
-    void sendEmail() {
-        String url = Constants.API_RESET_PASSWORD_MAIL;
+    private void sendEmail() {
         mEmail = mTvSignUpEmail.getText().toString();
-        try {
-            url = url + URLEncoder.encode(mEmail, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            Logger.t(TAG).e(e, "");
-        }
+        HachiService.createHachiApiService().sendPwdResetEmailRx(mEmail)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
+                @Override
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
+                    onSendSuccessful(simpleBoolResponse);
+                }
 
-        mVolleyRequestQueue.add(new JsonObjectRequest(Request.Method.GET, url,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onSendSuccessful(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        onSendFailed(error);
-                    }
-                }).setTag(TAG_REQUEST_SEND_EMAIL));
+                @Override
+                public void onError(Throwable e) {
+                    ServerErrorHelper.showErrorMessage(mRootView, e);
+                    PreferenceUtils.remove(PreferenceUtils.KEY_RESET_EMAIL_SENT);
+                    mButtonAnimator.setDisplayedChild(0);
+                }
+            });
     }
 
-
-    void onSendFailed(VolleyError error) {
-        ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
-        if (errorMsg.errorCode != ServerMessage.EXCEED_MAX_RETRIES
-                && errorMsg.errorCode != ServerMessage.EMAIL_TOO_FREQUENT) {
-            PreferenceUtils.remove(PreferenceUtils.KEY_RESET_EMAIL_SENT);
-        }
-        showMessage(errorMsg.msgResID);
-        mButtonAnimator.setDisplayedChild(0);
-    }
-
-    void onSendSuccessful(JSONObject response) {
-        if (response.optBoolean("result", false)) {
+    private void onSendSuccessful(SimpleBoolResponse response) {
+        if (response.result) {
             PreferenceUtils.putBoolean(PreferenceUtils.KEY_RESET_EMAIL_SENT, true);
             PreferenceUtils.putString(PreferenceUtils.KEY_SIGN_UP_EMAIL, mEmail);
             getFragmentManager().beginTransaction().replace(R.id.fragment_content, new ChangePasswordFragment()).commit();
