@@ -10,6 +10,7 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.bean.Country;
 import com.waylens.hachi.ui.settings.CountryActivity;
 
 import java.util.ArrayList;
@@ -23,18 +24,18 @@ import butterknife.ButterKnife;
  */
 public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-    private final List<CountryActivity.Country> mCountryList;
-    private List<CountryActivity.Country> mCountryListFiltered;
+    private final List<Country> mCountryList;
+    private List<Country> mCountryListFiltered;
     private final OnListItemClickListener mOnListItemClickListener;
     private InnerFilter mFilter;
 
-    public SimpleCountryAdapter(List<CountryActivity.Country> list, OnListItemClickListener listener) {
+    public SimpleCountryAdapter(List<Country> list, OnListItemClickListener listener) {
         mCountryList = list;
         mCountryListFiltered = list;
         mOnListItemClickListener = listener;
     }
 
-    public CountryActivity.Country getCountry(int index) {
+    public Country getCountry(int index) {
         if (index < mCountryListFiltered.size()) {
             return mCountryListFiltered.get(index);
         } else {
@@ -103,8 +104,8 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
                 results.count = mCountryList.size();
             } else {
                 String prefixString = prefix.toString().toLowerCase();
-                List<CountryActivity.Country> newValues = new ArrayList<>();
-                for (CountryActivity.Country item : mCountryList) {
+                List<Country> newValues = new ArrayList<>();
+                for (Country item : mCountryList) {
                     if (item.name.toLowerCase().startsWith(prefixString)) {
                         newValues.add(item);
                     }
@@ -117,7 +118,7 @@ public class SimpleCountryAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mCountryListFiltered = (List<CountryActivity.Country>) results.values;
+            mCountryListFiltered = (List<Country>) results.values;
 
             if (results.count > 0) {
                 notifyDataSetChanged();

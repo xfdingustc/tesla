@@ -15,8 +15,12 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Country;
+import com.waylens.hachi.rest.response.CountryListResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCountryAdapter;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/18.
@@ -33,11 +39,8 @@ import butterknife.BindView;
 public class CountryActivity extends BaseActivity {
     private static final String TAG = CountryActivity.class.getSimpleName();
 
-    List<String> mCountryNameList = new ArrayList<>();
+    private SimpleCountryAdapter mAdapter;
 
-    List<Country> mCountryList = new ArrayList<>();
-
-    SimpleCountryAdapter mAdapter;
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, CountryActivity.class);
         activity.startActivity(intent);
@@ -106,37 +109,20 @@ public class CountryActivity extends BaseActivity {
 
 
     private void getCountryList() {
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_COUNTRY)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiService.createHachiApiService().getCountryListRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<CountryListResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(CountryListResponse countryListResponse) {
                     mVs.showNext();
-                    renderCountryList(response);
+                    renderCountryList(countryListResponse);
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
     }
 
-    private void renderCountryList(JSONObject response) {
-
-        try {
-            JSONArray country = response.getJSONArray("countries");
-            for (int i = 0; i < country.length(); i++) {
-                JSONObject object = country.getJSONObject(i);
-                Country oneCountry = new Country();
-                oneCountry.code = object.getString("code");
-                oneCountry.name = object.getString("name");
-                mCountryList.add(oneCountry);
-                mCountryNameList.add(oneCountry.name);
-
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        mAdapter = new SimpleCountryAdapter(mCountryList, new SimpleCountryAdapter.OnListItemClickListener() {
+    private void renderCountryList(CountryListResponse response) {
+        mAdapter = new SimpleCountryAdapter(response.countries, new SimpleCountryAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
@@ -150,8 +136,5 @@ public class CountryActivity extends BaseActivity {
         mRvCountryList.setAdapter(mAdapter);
     }
 
-    public static class Country {
-        public String code;
-        public String name;
-    }
+
 }

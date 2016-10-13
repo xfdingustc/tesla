@@ -25,10 +25,6 @@ public class Constants {
 
     public static final String API_BLOCK = HOST_URL + "api/friends/block";
 
-    public static final String API_COUNTRY = HOST_URL + "api/region/countries";
-
-
-
     public static final String API_MAKER = HOST_URL + "api/vehicle/makers";
 
     public static final String API_MODEL = HOST_URL + "api/vehicle/models";
