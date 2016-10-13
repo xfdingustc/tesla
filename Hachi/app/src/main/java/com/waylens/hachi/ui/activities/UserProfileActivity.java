@@ -197,28 +197,16 @@ public class UserProfileActivity extends BaseActivity {
         })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<UserProfileZip>() {
+            .subscribe(new SimpleSubscribe<UserProfileZip>() {
                 @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(UserProfileZip userInfoEx) {
-                    mUserInfoEx = userInfoEx;
+                public void onNext(UserProfileZip userProfileZip) {
+                    mUserInfoEx = userProfileZip;
                     Logger.t(TAG).d("get user info ex");
                     setupUserProfileHeaderView();
 
                     loadUserMoment(mCurrentCursor, true);
                 }
             });
-
-
     }
 
     private void setupUserProfileHeaderView() {

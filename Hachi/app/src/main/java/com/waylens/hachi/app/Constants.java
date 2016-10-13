@@ -27,9 +27,6 @@ public class Constants {
 
     public static final String API_AUTH_FACEBOOK = HOST_URL + "api/authenticate/facebook?accessToken=";
 
-    public static final String API_SHARE_ACCOUNTS = HOST_URL + "api/share/accounts";
-
-    public static final String API_CAMEAR_FIRMWARE = HOST_URL + "api/camera/firmware";
 
     public static final String API_REPORT = HOST_URL + "api/reports";
 

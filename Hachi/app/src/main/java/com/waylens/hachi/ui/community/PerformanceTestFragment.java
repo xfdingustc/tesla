@@ -13,12 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -36,7 +34,6 @@ import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
-import com.waylens.hachi.ui.adapters.ArrayAdapterSpinner;
 import com.waylens.hachi.ui.adapters.LeaderBoardAdapter;
 import com.waylens.hachi.ui.adapters.ListDropDownAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -45,9 +42,9 @@ import com.waylens.hachi.ui.entities.User;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
+import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.waylens.hachi.ui.views.DropDownMenu;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -68,7 +65,7 @@ import rx.schedulers.Schedulers;
 
 
 public class PerformanceTestFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
-        Refreshable, FragmentNavigator {
+    Refreshable, FragmentNavigator {
     private static final String TAG = PerformanceTestFragment.class.getSimpleName();
 
     public final int UNIT_ENGLISH = 0;
@@ -236,15 +233,15 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         contentView.setAlpha(0);
 
         mDropDownMenu.setDropDownMenu(Arrays.asList(headers), popupViews, contentView);
-        mDropDownMenu.setTabTextAt((String)modeAdapter.getItem(1), 0);
+        mDropDownMenu.setTabTextAt((String) modeAdapter.getItem(1), 0);
         modeAdapter.setCheckItem(1);
 
         modeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 modeAdapter.setCheckItem(position);
-                Logger.t(TAG).d((String)modeAdapter.getItem(position));
-                mDropDownMenu.setTabText((String)modeAdapter.getItem(position));
+                Logger.t(TAG).d((String) modeAdapter.getItem(position));
+                mDropDownMenu.setTabText((String) modeAdapter.getItem(position));
                 mDropDownMenu.closeMenu();
                 int mode = -1;
                 switch (position) {
@@ -266,7 +263,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
 
-        mDropDownMenu.setTabTextAt((String)typeAdapterEnglish.getItem(0), 1);
+        mDropDownMenu.setTabTextAt((String) typeAdapterEnglish.getItem(0), 1);
         typeAdapterEnglish.setCheckItem(0);
         typeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -285,15 +282,15 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             type = RACE_TYPE_50KMH;
                             typeView.setAdapter(typeAdapterMetric);
                             typeAdapterMetric.setCheckItem(0);
-                            mDropDownMenu.setTabText((String)typeAdapterMetric.getItem(0));
+                            mDropDownMenu.setTabText((String) typeAdapterMetric.getItem(0));
                             mUnits = UNIT_METRIC;
                             break;
                     }
                     if (position < 2) {
                         typeAdapterEnglish.setCheckItem(position);
-                        mDropDownMenu.setTabText((String)typeAdapterEnglish.getItem(position));
+                        mDropDownMenu.setTabText((String) typeAdapterEnglish.getItem(position));
                     }
-                } else if(mUnits == UNIT_METRIC) {
+                } else if (mUnits == UNIT_METRIC) {
                     switch (position) {
                         case 0:
                             type = RACE_TYPE_50KMH;
@@ -305,7 +302,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             type = RACE_TYPE_30MPH;
                             typeView.setAdapter(typeAdapterEnglish);
                             typeAdapterEnglish.setCheckItem(0);
-                            mDropDownMenu.setTabText((String)typeAdapterEnglish.getItem(0));
+                            mDropDownMenu.setTabText((String) typeAdapterEnglish.getItem(0));
                             mUnits = UNIT_ENGLISH;
                             break;
                         default:
@@ -313,7 +310,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     }
                     if (position < 2) {
                         typeAdapterMetric.setCheckItem(position);
-                        mDropDownMenu.setTabText((String)typeAdapterMetric.getItem(position));
+                        mDropDownMenu.setTabText((String) typeAdapterMetric.getItem(position));
                     }
 
                 }
@@ -325,7 +322,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
 
-        mDropDownMenu.setTabTextAt((String)modelAdapter.getItem(0), 2);
+        mDropDownMenu.setTabTextAt((String) modelAdapter.getItem(0), 2);
         modelAdapter.setCheckItem(0);
 
         modelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -356,7 +353,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         break;
                 }
                 modelAdapter.setCheckItem(i);
-                mDropDownMenu.setTabText((String)modelAdapter.getItem(i));
+                mDropDownMenu.setTabText((String) modelAdapter.getItem(i));
                 mDropDownMenu.closeMenu();
                 loadLeaderBoard(0, true);
                 onRefresh();
@@ -365,7 +362,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
-                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
 
         mMakerModelList = new ArrayList<>();
 
@@ -375,11 +372,11 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 Call<MakerResponse> makerResponseCall = hachiApi.getAllMaker();
                 try {
                     MakerResponse makerResponse = makerResponseCall.execute().body();
-                    for( MakerResponse.Maker maker : makerResponse.makers) {
+                    for (MakerResponse.Maker maker : makerResponse.makers) {
                         Call<ModelResponse> modelResponseCall = hachiApi.getModelByMaker(maker.makerID);
                         ModelResponse modelResponse = modelResponseCall.execute().body();
                         List<Pair<MakerResponse.Maker, ModelResponse.Model>> makerModelList = new ArrayList<>();
-                        for ( ModelResponse.Model model : modelResponse.models) {
+                        for (ModelResponse.Model model : modelResponse.models) {
                             makerModelList.add(new Pair<>(maker, model));
                         }
                         if (!makerModelList.isEmpty()) {
@@ -392,29 +389,29 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
             }
         }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Observer<List<Pair<MakerResponse.Maker,ModelResponse.Model>>>() {
-            @Override
-            public void onCompleted() {
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<List<Pair<MakerResponse.Maker, ModelResponse.Model>>>() {
+                @Override
+                public void onCompleted() {
 
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(List<Pair<MakerResponse.Maker, ModelResponse.Model>> pairs) {
-                mMakerModelList.addAll(pairs);
-                List<String> stringList = new ArrayList<>();
-                for (Pair<MakerResponse.Maker, ModelResponse.Model> item : pairs) {
-                    stringList.add(item.first.makerName + " " + item.second.modelName);
                 }
-                modelAdapter.addAll(stringList);
-                modelAdapter.notifyDataSetChanged();
-            }
-        });
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(List<Pair<MakerResponse.Maker, ModelResponse.Model>> pairs) {
+                    mMakerModelList.addAll(pairs);
+                    List<String> stringList = new ArrayList<>();
+                    for (Pair<MakerResponse.Maker, ModelResponse.Model> item : pairs) {
+                        stringList.add(item.first.makerName + " " + item.second.modelName);
+                    }
+                    modelAdapter.addAll(stringList);
+                    modelAdapter.notifyDataSetChanged();
+                }
+            });
         return view;
     }
 
@@ -513,7 +510,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             myVehicleInfo = new VehicleInfo();
                             myVehicleInfo.vehicleMaker = maker;
                             myVehicleInfo.vehicleModel = model;
-                            if ( modelAdapter.getCount() >= 2 ) {
+                            if (modelAdapter.getCount() >= 2) {
                                 if (!modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
                                     modelAdapter.insert(1, getResources().getString(R.string.same_car));
                                     modelAdapter.notifyDataSetChanged();
@@ -548,11 +545,11 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     private void initMyTestView(RaceQueryResponse.UserRankItem userRankItem) {
         final SessionManager sessionManager = SessionManager.getInstance();
         Glide.with(getActivity())
-                .load(SessionManager.getInstance().getAvatarUrl())
-                .placeholder(R.drawable.menu_profile_photo_default)
-                .crossFade()
-                .dontAnimate()
-                .into(mMyAvatar);
+            .load(SessionManager.getInstance().getAvatarUrl())
+            .placeholder(R.drawable.menu_profile_photo_default)
+            .crossFade()
+            .dontAnimate()
+            .into(mMyAvatar);
         mMyName.setText(sessionManager.getUserName());
         if (userRankItem.vehicle.vehicleMaker != null) {
             mMyVehicleInfo.setText(userRankItem.vehicle.vehicleMaker + " " + userRankItem.vehicle.vehicleModel + " " + userRankItem.vehicle.vehicleYear);
@@ -625,7 +622,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 MomentActivity.launch((BaseActivity) getActivity(), moment.id, moment.thumbnail, mMyLeaderBoardPlay);
             }
         });
-
 
 
     }

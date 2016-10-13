@@ -1,5 +1,6 @@
 package com.waylens.hachi.rest;
 
+import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.body.ChangePwdBody;
 import com.waylens.hachi.rest.body.CreateMomentBody;
@@ -22,6 +23,7 @@ import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
+import com.waylens.hachi.rest.response.FirmwareResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
@@ -41,6 +43,8 @@ import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UploadAvatarResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.rest.response.VinQueryResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -220,4 +224,7 @@ public interface HachiApi {
     Observable<MomentListResponse> getAllMomentsRx(@Query("cursor") int cursor, @Query("count") int count,
                                                    @Query("order") String order, @Query("filter") String filter,
                                                    @Query("showPic") boolean showPic);
+
+    @GET("api/camera/firmware")
+    Observable<List<Firmware>> getFirmwareRx();
 }

@@ -17,11 +17,13 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.service.download.DownloadServiceRx;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 
 import java.io.File;
@@ -42,7 +44,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
     private static final String TAG = FirmwareUpdateActivity.class.getSimpleName();
     private static final String EXTRA_FIRMWARE_INFO = "firmwareinfo";
 
-    private FirmwareInfo mFirmwareInfo;
+    private Firmware mFirmware;
 
     @BindView(R.id.progress_bar)
     ArcProgress mProgressBar;
@@ -72,7 +74,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
     };
 
 
-    public static void launch(Activity activity, FirmwareInfo firmwareInfo) {
+    public static void launch(Activity activity, Firmware firmwareInfo) {
         Intent intent = new Intent(activity, FirmwareUpdateActivity.class);
         intent.putExtra(EXTRA_FIRMWARE_INFO, firmwareInfo);
         activity.startActivity(intent);
@@ -115,7 +117,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        mFirmwareInfo = (FirmwareInfo) getIntent().getSerializableExtra(EXTRA_FIRMWARE_INFO);
+        mFirmware = (Firmware) getIntent().getSerializableExtra(EXTRA_FIRMWARE_INFO);
         initViews();
         doDownloadFirmware();
     }
@@ -133,9 +135,9 @@ public class FirmwareUpdateActivity extends BaseActivity {
     }
 
     private void doDownloadFirmware() {
-//        InetDownloadService.start(this, mFirmwareInfo.getUrl());
-        Logger.t(TAG).d(mFirmwareInfo.getUrl());
-        DownloadServiceRx.start(this, mFirmwareInfo.getUrl(), DownloadHelper.getFirmwareDownloadPath());
+//        InetDownloadService.start(this, mFirmware.getUrl());
+        Logger.t(TAG).d(mFirmware.url);
+        DownloadServiceRx.start(this, mFirmware.url, DownloadHelper.getFirmwareDownloadPath());
         mTvBottomText.setText(R.string.download_firmware);
     }
 
@@ -145,17 +147,14 @@ public class FirmwareUpdateActivity extends BaseActivity {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 subscriber.onNext(0);
-
                 try {
                     final String downloadFileMd5 = Hex.encodeHexString(HashUtils.encodeMD5(file));
-                    if (downloadFileMd5.equals(mFirmwareInfo.getMd5())) {
+                    if (downloadFileMd5.equals(mFirmware.md5)) {
                         subscriber.onNext(1);
                     } else {
                         subscriber.onNext(-1);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
+                } catch (IOException | NoSuchAlgorithmException e) {
                     e.printStackTrace();
                 }
 
@@ -164,18 +163,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
         })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Integer>() {
-
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
+            .subscribe(new SimpleSubscribe<Integer>() {
                 @Override
                 public void onNext(Integer integer) {
                     switch (integer) {
@@ -190,15 +178,12 @@ public class FirmwareUpdateActivity extends BaseActivity {
                             mTvBottomText.setText(R.string.firmware_corrupt);
                             break;
                     }
-
                 }
             });
-
-
     }
 
     private void doSendFirmware2Camera(final File file) {
-        mVdtCamera.sendNewFirmware(mFirmwareInfo.getMd5(), new VdtCamera.OnNewFwVersionListern() {
+        mVdtCamera.sendNewFirmware(mFirmware.url, new VdtCamera.OnNewFwVersionListern() {
             @Override
             public void onNewVersion(int response) {
                 Logger.t(TAG).d("response: " + response);
@@ -207,7 +192,6 @@ public class FirmwareUpdateActivity extends BaseActivity {
                         @Override
                         public void run() {
                             mTvBottomText.setText(R.string.upload_firmware);
-
                         }
                     });
 
@@ -222,21 +206,15 @@ public class FirmwareUpdateActivity extends BaseActivity {
                     })
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<Integer>() {
+                        .subscribe(new SimpleSubscribe<Integer>() {
+                            @Override
+                            public void onNext(Integer integer) {
+                                mProgressBar.setProgress((int)(((long)integer * 100) / file.length()));
+                            }
 
                             @Override
                             public void onCompleted() {
                                 MainActivity.launch(FirmwareUpdateActivity.this);
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onNext(Integer integer) {
-                                mProgressBar.setProgress((int)(((long)integer * 100) / file.length()));
                             }
                         });
 

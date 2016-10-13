@@ -10,40 +10,25 @@ import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.widget.NumberPicker;
-import android.widget.SeekBar;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
-import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
-import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.utils.StringUtils;
-import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -81,8 +66,6 @@ public class CameraSettingFragment extends PreferenceFragment {
 
 
     private RequestQueue mRequestQueue;
-
-
 
 
     @Override
@@ -129,77 +112,55 @@ public class CameraSettingFragment extends PreferenceFragment {
 
         mFirmware.setSummary(mVdtCamera.getApiVersion());
 
-        String url = Constants.API_CAMEAR_FIRMWARE;
-
-        Request<JSONArray> request = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Logger.t(TAG).json(response.toString());
-                showFirmwareUpgradDialog(response);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Logger.t(TAG).e(error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> mHashMap = new HashMap<>();
-                String token = SessionManager.getInstance().getToken();
-                if (token != null && !token.isEmpty()) {
-                    mHashMap.put("X-Auth-Token", token);
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        hachiApi.getFirmwareRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<List<Firmware>>() {
+                @Override
+                public void onNext(List<Firmware> firmwares) {
+                    showFirmwareUpgradDialog(firmwares);
                 }
-                return mHashMap;
-            }
-        };
-        request.setRetryPolicy(new DefaultRetryPolicy(1000 * 10, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        Logger.t(TAG).d("fetch latest firmware");
-        mRequestQueue.add(request);
+            });
 
     }
 
-    private void showFirmwareUpgradDialog(JSONArray response) {
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                final FirmwareInfo firmwareInfo = FirmwareInfo.fromJson(response.getJSONObject(i));
-                Logger.t(TAG).d(response.getJSONObject(i).toString());
-                if (firmwareInfo.getName().equals(mVdtCamera.getHardwareName())) {
-                    Logger.t(TAG).d("Found our hardware");
-                    FirmwareVersion versionFromServer = new FirmwareVersion(firmwareInfo.getVersion());
-                    FirmwareVersion versionInCamera = new FirmwareVersion(mVdtCamera.getApiVersion());
-                    if (versionFromServer.isGreaterThan(versionInCamera)) {
-                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                            .title(R.string.found_new_firmware)
-                            .content(firmwareInfo.getDescription())
-                            .positiveText(R.string.upgrade)
-                            .negativeText(R.string.cancel)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    FirmwareUpdateActivity.launch(getActivity(), firmwareInfo);
-                                }
-                            })
-                            .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    mFirmware.setSummary(mFirmware.getSummary() + " (" + getString(R.string.found_new_firmware) + ")");
-                                    mFirmware.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                                        @Override
-                                        public boolean onPreferenceClick(Preference preference) {
-                                            FirmwareUpdateActivity.launch(getActivity(), firmwareInfo);
-                                            return true;
-                                        }
-                                    });
-                                }
-                            })
-                            .show();
-                    }
+    private void showFirmwareUpgradDialog(List<Firmware> firmwares) {
+        for (int i = 0; i < firmwares.size(); i++) {
+            final Firmware firmware = firmwares.get(i);
+            if (!TextUtils.isEmpty(firmware.name) && firmware.name.equals(mVdtCamera.getHardwareName())) {
+                Logger.t(TAG).d("Found our hardware");
+                FirmwareVersion versionFromServer = new FirmwareVersion(firmware.version);
+                FirmwareVersion versionInCamera = new FirmwareVersion(mVdtCamera.getApiVersion());
+                if (versionFromServer.isGreaterThan(versionInCamera)) {
+                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                        .title(R.string.found_new_firmware)
+                        .content(firmware.description.en)
+                        .positiveText(R.string.upgrade)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                FirmwareUpdateActivity.launch(getActivity(), firmware);
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                mFirmware.setSummary(mFirmware.getSummary() + " (" + getString(R.string.found_new_firmware) + ")");
+                                mFirmware.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                                    @Override
+                                    public boolean onPreferenceClick(Preference preference) {
+                                        FirmwareUpdateActivity.launch(getActivity(), firmware);
+                                        return true;
+                                    }
+                                });
+                            }
+                        })
+                        .show();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+
 
         }
     }
@@ -236,7 +197,6 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
     }
-
 
 
     private void initDisplayPreference() {
@@ -526,7 +486,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                 return true;
             }
 
-            return false;
+            return true;
         }
     }
 }

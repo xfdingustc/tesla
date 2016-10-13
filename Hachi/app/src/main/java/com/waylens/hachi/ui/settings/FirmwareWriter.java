@@ -1,9 +1,5 @@
 package com.waylens.hachi.ui.settings;
 
-
-
-
-
 import com.waylens.hachi.camera.VdtCamera;
 
 import java.io.File;

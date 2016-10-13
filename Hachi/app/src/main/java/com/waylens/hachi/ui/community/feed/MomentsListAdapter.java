@@ -329,7 +329,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void onEditClick(MomentAbstract moment, final MomentViewHolder holder) {
-//        MomentEditActivity.launch((Activity)mContext, moment, holder.videoCover);
+        MomentEditActivity.launch((Activity)mContext, moment.id, moment.title, holder.videoCover);
     }
 
 
