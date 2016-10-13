@@ -37,8 +37,6 @@ import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.simplelist.MaterialSimpleListAdapter;
-import com.afollestad.materialdialogs.simplelist.MaterialSimpleListItem;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
@@ -708,58 +706,58 @@ public class MomentActivity extends BaseActivity {
                 if (!checkUserVerified()) {
                     return;
                 }
-                final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
-                adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
-                    .content(R.string.reply)
-                    .icon(R.drawable.comment_reply)
-                    .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                    .build());
-                MaterialSimpleListItem item = null;
-
-                if (comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
-                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
-                        .content(R.string.delete)
-                        .icon(R.drawable.btn_edit_action_delete)
-                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                        .build();
-                } else {
-                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
-                        .content(R.string.report)
-                        .icon(R.drawable.comment_report)
-                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
-                        .build();
-
-                }
-                adapter.add(item);
-
-                new MaterialDialog.Builder(MomentActivity.this)
-                    .title(R.string.comment)
-                    .adapter(adapter, new MaterialDialog.ListCallback() {
-                        @Override
-                        public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                            switch (which) {
-                                case 0:
-                                    mReplyTo = comment.author;
-                                    addComment();
-                                    if (mNewCommentView != null) {
-                                        mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
-                                    }
-                                    break;
-                                case 1:
-                                    if (!comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
-                                        reportComment(comment);
-                                    } else {
-                                        doDeleteComment(comment);
-                                        mAdapter.removeComment(position);
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
+//                final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
+//                adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
+//                    .content(R.string.reply)
+//                    .icon(R.drawable.comment_reply)
+//                    .backgroundColor(getResources().getColor(R.color.material_grey_800))
+//                    .build());
+//                MaterialSimpleListItem item = null;
+//
+//                if (comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
+//                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
+//                        .content(R.string.delete)
+//                        .icon(R.drawable.btn_edit_action_delete)
+//                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
+//                        .build();
+//                } else {
+//                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
+//                        .content(R.string.report)
+//                        .icon(R.drawable.comment_report)
+//                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
+//                        .build();
+//
+//                }
+//                adapter.add(item);
+//
+//                new MaterialDialog.Builder(MomentActivity.this)
+//                    .title(R.string.comment)
+//                    .adapter(adapter, new MaterialDialog.ListCallback() {
+//                        @Override
+//                        public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+//                            switch (which) {
+//                                case 0:
+//                                    mReplyTo = comment.author;
+//                                    addComment();
+//                                    if (mNewCommentView != null) {
+//                                        mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+//                                    }
+//                                    break;
+//                                case 1:
+//                                    if (!comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
+//                                        reportComment(comment);
+//                                    } else {
+//                                        doDeleteComment(comment);
+//                                        mAdapter.removeComment(position);
+//                                    }
+//                                    break;
+//                                default:
+//                                    break;
+//                            }
+//                            dialog.dismiss();
+//                        }
+//                    })
+//                    .show();
             }
 
             public void reportComment(final Comment comment) {
