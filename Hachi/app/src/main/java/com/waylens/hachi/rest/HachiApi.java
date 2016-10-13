@@ -36,6 +36,7 @@ import com.waylens.hachi.rest.response.LikeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.MakerResponse;
 import com.waylens.hachi.rest.response.ModelResponse;
+import com.waylens.hachi.rest.response.ModelYearResponse;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
@@ -226,6 +227,9 @@ public interface HachiApi {
 
     @GET("api/vehicle/models")
     Observable<ModelResponse> getModelByMakerRx(@Query("maker") long makerID);
+
+    @GET("api/vehicle/years")
+    Observable<ModelYearResponse> getModelYearRx(@Query("model") long model);
 
     @POST("api/devices/login")
     Observable<AuthorizeResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
