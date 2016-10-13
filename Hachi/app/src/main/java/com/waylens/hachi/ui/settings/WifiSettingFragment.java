@@ -306,7 +306,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
         }
 
         final int wifiModeIndex = wifiMode;
-      /*  mWifiMode.setOnClickListener(new View.OnClickListener() {
+      mWifiMode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
@@ -333,7 +333,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                     })
                     .show();
             }
-        }); */
+        });
     }
 
 
@@ -531,7 +531,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
                 mTvInfo.setText(R.string.camera_to_router);
                 break;
             case CONNECTION_STAGE_PHONE_2_ROUTE:
-                mTvInfo.setText(R.string.phone_camera);
+                mTvInfo.setText(R.string.phone_to_router);
                 break;
             case CONNECTION_STAGE_PHONE_2_CAMERA:
                 mTvInfo.setText(R.string.phone_to_camera);
