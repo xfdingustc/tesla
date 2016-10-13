@@ -5,4 +5,11 @@ package com.waylens.hachi.rest.response;
  */
 public class DeleteCommentResponse {
     public int count;
+
+    /**
+     * Created by laina on 16/10/13.
+     */
+
+    public static class LoadCommentEventResponse {
+    }
 }

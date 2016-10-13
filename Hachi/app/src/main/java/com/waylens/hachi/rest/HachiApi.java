@@ -290,4 +290,5 @@ public interface HachiApi {
 
     @GET("api/events/follows")
     Observable<NotificationResponse> getFollowNotificationRx(@Query("cursor") long cursor, @Query("count") int count);
+
 }

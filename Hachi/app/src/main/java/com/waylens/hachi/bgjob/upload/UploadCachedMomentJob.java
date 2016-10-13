@@ -1,7 +1,14 @@
 package com.waylens.hachi.bgjob.upload;
 
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.birbit.android.jobqueue.Params;
@@ -192,8 +199,10 @@ public class UploadCachedMomentJob extends UploadMomentJob {
             File file = new File(mLocalMoment.thumbnailPath);
             file.delete();
             EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
+            fireNotification(getApplicationContext().getString(R.string.upload_success));
             Toast.makeText(Hachi.getContext(), R.string.upload_success, Toast.LENGTH_LONG).show();
         } else {
+            fireNotification(getApplicationContext().getString(R.string.upload_failed));
             Toast.makeText(Hachi.getContext(), R.string.upload_failed, Toast.LENGTH_LONG).show();
         }
 
@@ -262,6 +271,25 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         int percentageInThisClip = progress / totalSegment;
         int percentage = index * 100 / totalSegment + percentageInThisClip;
         setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, percentage);
+    }
+
+    private void fireNotification(String msg) {
+        Context context = getApplicationContext();
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Bitmap largeBitmap =  BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_app);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.mipmap.ic_notification)
+                .setColor(context.getResources().getColor(R.color.material_deep_orange_500))
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText(msg)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setLargeIcon(largeBitmap);
+
+        NotificationManager notificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(1, notificationBuilder.build());
     }
 
 
