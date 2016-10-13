@@ -25,6 +25,7 @@ import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CommentListResponse;
+import com.waylens.hachi.rest.response.CountryListResponse;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.DeleteCommentResponse;
 import com.waylens.hachi.rest.response.FirmwareResponse;
@@ -194,7 +195,8 @@ public interface HachiApi {
     Call<SimpleBoolResponse> deviceLogout();
 
     @POST("/api/moments/update/{momentId}")
-    Call<SimpleBoolResponse> updateMoment(@Path("momentId") long momentId, @Body MomentUpdateBody momentUpdatebody);
+    Call<SimpleBoolResponse> updateMoment(@Path("momentId") long momentId,
+                                          @Body MomentUpdateBody momentUpdatebody);
 
     @GET("/api/musics/categories")
     Call<MusicCategoryResponse> getMusicCategories();
@@ -206,7 +208,9 @@ public interface HachiApi {
     Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
 
     @GET("/api/moments/race")
-    Call<RaceQueryResponse> queryRace(@Query("mode") int mode, @Query("start") int start, @Query("end") int end, @Query("maker") String maker, @Query("model") String model, @Query("count") int count);
+    Call<RaceQueryResponse> queryRace(@Query("mode") int mode, @Query("start") int start,
+                                      @Query("end") int end, @Query("maker") String maker,
+                                      @Query("model") String model, @Query("count") int count);
 
     @GET("/api/place")
     Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
@@ -219,6 +223,9 @@ public interface HachiApi {
 
     @POST("api/devices/login")
     Observable<AuthorizeResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
+
+    @GET("api/region/countries")
+    Observable<CountryListResponse> getCountryListRx();
 
     @GET("api/region/cities")
     Observable<CityList> getCityListRx(@Query("cc") String countryCod, @Query("limit") int count);
@@ -241,7 +248,8 @@ public interface HachiApi {
     Observable<MomentListResponse> searchMomentRx(@Query("key") String key, @Query("count") int count);
 
     @GET("api/comments")
-    Observable<CommentListResponse> getCommentsRx(@Query("m") long momentId, @Query("cursor") int cursor, @Query("count") int count);
+    Observable<CommentListResponse> getCommentsRx(@Query("m") long momentId,
+                                                  @Query("cursor") int cursor, @Query("count") int count);
 
     @POST("api/comments")
     Observable<PublishCommentResponse> publishCommentRx(@Body PublishCommentBody publishCommentBody);
