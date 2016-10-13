@@ -113,7 +113,6 @@ public class CameraSettingFragment extends PreferenceFragment {
     private void initFirmwarePreference() {
 
         mFirmware.setSummary(mVdtCamera.getApiVersion());
-
         FirmwareUpgradeHelper.getNewerFirmwareRx()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -123,6 +122,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                     if (firmware != null) {
                         showFirmwareUpgradDialog(firmware);
                     }
+
                 }
             });
 

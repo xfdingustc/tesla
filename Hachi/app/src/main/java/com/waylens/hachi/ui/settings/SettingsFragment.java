@@ -102,6 +102,11 @@ public class SettingsFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         initViews();
     }
 

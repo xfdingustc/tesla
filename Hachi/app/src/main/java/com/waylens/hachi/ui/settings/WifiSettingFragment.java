@@ -522,6 +522,7 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
     private void doChangeWifiMode(int selectIndex) {
         Logger.t(TAG).d("change wifi mode to " + selectIndex);
         mVdtCamera.setWifiMode(selectIndex);
+        VdtCameraManager.getManager().onCameraDisconnected(mVdtCamera);
         MainActivity.launch(getActivity());
     }
 

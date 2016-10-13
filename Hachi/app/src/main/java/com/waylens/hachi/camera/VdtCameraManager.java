@@ -158,7 +158,7 @@ public class VdtCameraManager {
     }
 
 
-    private synchronized void onCameraDisconnected(VdtCamera vdtCamera) {
+    public synchronized void onCameraDisconnected(VdtCamera vdtCamera) {
         // disconnect msg may be sent from msg thread,
         // need to stop it fully
         //vdtCamera.removeCallback(mCameraCallback);
