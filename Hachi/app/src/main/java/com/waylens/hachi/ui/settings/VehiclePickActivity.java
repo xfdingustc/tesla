@@ -15,8 +15,13 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Maker;
+import com.waylens.hachi.rest.response.MakerResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCommonAdapter;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by lshw on 16/7/27.
@@ -135,41 +142,28 @@ public class VehiclePickActivity extends BaseActivity {
 
     private void getMakerList() {
         mViewAnimator.setDisplayedChild(0);
-        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-            .url(Constants.API_MAKER)
-            .listner(new Response.Listener<JSONObject>() {
+        HachiService.createHachiApiService().getAllMarkerRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MakerResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
+                public void onNext(MakerResponse makerResponse) {
                     mViewAnimator.setDisplayedChild(1);
-                    renderMakerList(response);
+                    renderMakerList(makerResponse);
                 }
-            })
-            .build();
-        mRequestQueue.add(request);
+            });
+
+
     }
 
-    private void renderMakerList(JSONObject response) {
-
-        try {
-            JSONArray country = response.getJSONArray("makers");
-            for (int i = 0; i < country.length(); i++) {
-                JSONObject object = country.getJSONObject(i);
-                Maker oneMaker = new Maker();
-                oneMaker.makerID = object.getLong("makerID");
-                oneMaker.makerName = object.getString("makerName");
-                mMakerList.add(oneMaker);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        mMakerAdapter = new MakerAdapter(mMakerList, new MakerAdapter.OnListItemClickListener() {
+    private void renderMakerList(MakerResponse response) {
+        mMakerAdapter = new MakerAdapter(response.makers, new MakerAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Maker maker = mMakerAdapter.getItem(position);
                 if (maker != null) {
-                    vehicleMaker = maker.getName();
+                    vehicleMaker = maker.makerName;
                     getModelList(maker.makerID);
                 }
             }
@@ -309,14 +303,7 @@ public class VehiclePickActivity extends BaseActivity {
     }
 
 
-    public class Maker {
-        public long makerID;
-        public String makerName;
 
-        public String getName() {
-            return makerName;
-        }
-    }
 
     public class Model {
         public long modelID;
@@ -344,7 +331,7 @@ public class VehiclePickActivity extends BaseActivity {
 
         @Override
         public String getName(Maker maker) {
-            return maker.getName();
+            return maker.makerName;
         }
     }
 
