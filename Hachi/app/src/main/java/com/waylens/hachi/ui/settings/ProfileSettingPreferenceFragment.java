@@ -450,18 +450,15 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-                                    .delete()
-                                    .url(Constants.API_USER_VEHICLE + "/" + modelYearID)
-                                    .listner(new Response.Listener<JSONObject>() {
+                                HachiService.createHachiApiService().deleteVehicle(modelYearID)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
                                         @Override
-                                        public void onResponse(JSONObject response) {
+                                        public void onNext(SimpleBoolResponse simpleBoolResponse) {
                                             mVehicle.removePreference(preference);
                                         }
-                                    })
-                                    .build();
-
-                                mRequestQueue.add(request.setTag(TAG));
+                                    });
                             }
                         })
                         .build();

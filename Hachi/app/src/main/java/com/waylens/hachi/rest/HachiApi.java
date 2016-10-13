@@ -239,6 +239,9 @@ public interface HachiApi {
     @POST("api/users/vehicle")
     Observable<SimpleBoolResponse> addUserVehicle(@Body AddVehicleBody addVehicleBody);
 
+    @DELETE("api/users/vehicle/{modelYearID}")
+    Observable<SimpleBoolResponse> deleteVehicle(@Path("modelYearID") long modelYearID);
+
     @POST("api/devices/login")
     Observable<AuthorizeResponse> deviceLoginRx(@Body DeviceLoginBody loginBody);
 

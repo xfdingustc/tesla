@@ -25,9 +25,6 @@ public class Constants {
 
     public static final String API_BLOCK = HOST_URL + "api/friends/block";
 
-    public static final String API_USER_VEHICLE = HOST_URL + "api/users/vehicle";
-
-
     public static final String PARAM_SORT_UPLOAD_TIME = "uploadtime_desc";
 
     public static final String API_DEVICE_ACTIVATION = HOST_URL + "api/devices/login";
