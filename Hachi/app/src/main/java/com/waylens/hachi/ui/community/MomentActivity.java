@@ -130,7 +130,6 @@ public class MomentActivity extends BaseActivity {
     private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
     private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
-    private HachiApi mHachi = HachiService.createHachiApiService();
     private BottomSheetDialog mBottomSheetDialog;
 
     private MomentPlayFragment mMomentPlayFragment;
@@ -504,7 +503,7 @@ public class MomentActivity extends BaseActivity {
 
     private void queryMomentInfo() {
 
-        mHachi.getMomentInfo(mMomentId)
+        HachiService.createHachiApiService().getMomentInfo(mMomentId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext(new Action1<retrofit2.Response<MomentInfo>>() {
@@ -972,7 +971,7 @@ public class MomentActivity extends BaseActivity {
             return true;
         } else {
 
-            Call<UserInfo> userInfoCall = mHachi.getUserInfo(mSessionManager.getUserId());
+            Call<UserInfo> userInfoCall = HachiService.createHachiApiService().getUserInfo(mSessionManager.getUserId());
             userInfoCall.enqueue(new Callback<UserInfo>() {
                 @Override
                 public void onResponse(Call<UserInfo> call, retrofit2.Response<UserInfo> response) {

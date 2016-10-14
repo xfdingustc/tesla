@@ -1,10 +1,14 @@
 package com.waylens.hachi.rest;
 
+import android.net.Network;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.utils.ConnectivityHelper;
+import com.waylens.hachi.utils.VersionHelper;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Xiaofei on 2016/6/8.
  */
 public class HachiService {
-
+    private static final String TAG = HachiService.class.getSimpleName();
     public static HachiApi mHachiApiInstance = null;
 
     private static String USER_AGENT = "Android " + Build.VERSION.SDK + ";" + Build.BRAND + Build.MODEL;
@@ -35,9 +39,13 @@ public class HachiService {
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.HOST_URL);
 
+        Logger.t(TAG).d("herer");
+
         final String token = SessionManager.getInstance().getToken();
+
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
         if (!TextUtils.isEmpty(token)) {
-            OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
+            clientBuilder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Request request = chain.request();
@@ -47,10 +55,20 @@ public class HachiService {
                         .build();
                     return chain.proceed(newReq);
                 }
-            }).build();
-
-            builder.client(client);
+            });
         }
+
+//        if (VersionHelper.isGreaterThanLollipop()) {
+//            if (ConnectivityHelper.isConnected2VdtCamera()) {
+//                Network network = ConnectivityHelper.getCelullarNetwork();
+//                if (network != null) {
+//                    Logger.t(TAG).d("use celullar data");
+//                    clientBuilder.socketFactory(network.getSocketFactory());
+//                }
+//            }
+//        }
+
+        builder.client(clientBuilder.build());
 
         return builder.build().create(HachiApi.class);
 
@@ -78,6 +96,7 @@ public class HachiService {
                 .readTimeout(timeout, timeUnit)
                 .connectTimeout(timeout, timeUnit)
                 .build();
+
 
             builder.client(client);
         }

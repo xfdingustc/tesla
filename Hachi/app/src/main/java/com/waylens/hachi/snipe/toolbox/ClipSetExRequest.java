@@ -104,7 +104,7 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
 
             int numStreams = response.readi16();
             int flag = response.readi16();
-            Logger.t(TAG).d("Flag: " + flag);
+//            Logger.t(TAG).d("Flag: " + flag);
 
             if (numStreams > 0) {
                 readStreamInfo(clip, 0, response);
@@ -244,7 +244,7 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                     clip.raceTimingPoints = new ArrayList<>(6);
                     long utc_sec_start = -1;
                     long utc_usec_start = -1;
-                    Logger.t(TAG).d("utc_sec_start" + utc_sec_start + "utc_usec_start" + utc_usec_start);
+//                    Logger.t(TAG).d("utc_sec_start" + utc_sec_start + "utc_usec_start" + utc_usec_start);
                     long utc_sec_move_begin = response.readui32();
                     long utc_usec_move_begin = response.readui32();
                     long utc_msec_move_begin = utc_usec_move_begin / 1000 + utc_sec_move_begin * 1000;

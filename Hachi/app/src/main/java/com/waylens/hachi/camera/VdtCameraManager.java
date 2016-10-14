@@ -1,14 +1,22 @@
 package com.waylens.hachi.camera;
 
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.os.Build;
 import android.util.Log;
 
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 
-
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +46,31 @@ public class VdtCameraManager {
     private VdtCamera mCurrentCamera;
 
 
-    public synchronized void connectCamera(VdtCamera.ServiceInfo serviceInfo, String from) {
+    public synchronized void connectCamera(final VdtCamera.ServiceInfo serviceInfo, final String from) {
 
+        ConnectivityManager mConnectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            final NetworkRequest networkRequest = new NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                .build();
+            mConnectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(Network network) {
+                    connectCameraImpl(serviceInfo, from);
+                }
+            });
+        } else {
+            connectCameraImpl(serviceInfo, from);
+        }
+
+
+//        vdtCamera.startClient();
+
+
+    }
+
+    private void connectCameraImpl(VdtCamera.ServiceInfo serviceInfo, String from) {
         if (cameraExistsIn(serviceInfo.inetAddr, serviceInfo.port, mConnectedVdtCameras)) {
 //            Logger.t(TAG).d("already existed in connected");
             return;
@@ -50,6 +81,7 @@ public class VdtCameraManager {
             return;
         }
         Log.d(TAG, "connect Camera  " + serviceInfo.inetAddr + " port: " + serviceInfo.port + " from " + from);
+
 
         VdtCamera vdtCamera = new VdtCamera(serviceInfo, new VdtCamera.OnConnectionChangeListener() {
             @Override
@@ -82,9 +114,6 @@ public class VdtCameraManager {
 
 
         mConnectingVdtCameras.add(vdtCamera);
-//        vdtCamera.startClient();
-
-
     }
 
     private boolean cameraExistsIn(InetAddress inetAddr, int port, List<VdtCamera> list) {

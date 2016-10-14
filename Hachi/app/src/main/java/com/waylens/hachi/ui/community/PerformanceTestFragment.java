@@ -91,9 +91,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private LeaderBoardAdapter mAdapter;
 
-    private HachiApi hachiApi;
-
-    private RequestQueue mRequestQueue;
 
     private LinearLayoutManager mLinearLayoutManager;
 
@@ -181,8 +178,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         Bundle arguments = getArguments();
         if (arguments != null) {
         }
-        hachiApi = HachiService.createHachiApiService();
-        mRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mAdapter = new LeaderBoardAdapter(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -371,11 +366,11 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         Observable.create(new Observable.OnSubscribe<List<Pair<Maker, Model>>>() {
             @Override
             public void call(Subscriber<? super List<Pair<Maker, Model>>> subscriber) {
-                Call<MakerResponse> makerResponseCall = hachiApi.getAllMaker();
+                Call<MakerResponse> makerResponseCall = HachiService.createHachiApiService().getAllMaker();
                 try {
                     MakerResponse makerResponse = makerResponseCall.execute().body();
                     for (Maker maker : makerResponse.makers) {
-                        Call<ModelResponse> modelResponseCall = hachiApi.getModelByMaker(maker.makerID);
+                        Call<ModelResponse> modelResponseCall = HachiService.createHachiApiService().getModelByMaker(maker.makerID);
                         ModelResponse modelResponse = modelResponseCall.execute().body();
                         List<Pair<Maker, Model>> makerModelList = new ArrayList<>();
                         for (Model model : modelResponse.models) {
@@ -451,7 +446,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         }
         raceQueryBody.end = mLeaderBoardEnd;
         raceQueryBody.count = mLeaderBoardItemCount = 100;
-        Call<RaceQueryResponse> raceQueryResponseCall = hachiApi.queryRace(raceQueryBody.mode, raceQueryBody.start, raceQueryBody.end, mMaker, mModel, raceQueryBody.count);
+        Call<RaceQueryResponse> raceQueryResponseCall = HachiService.createHachiApiService().queryRace(raceQueryBody.mode, raceQueryBody.start, raceQueryBody.end, mMaker, mModel, raceQueryBody.count);
         raceQueryResponseCall.enqueue(new Callback<RaceQueryResponse>() {
             @Override
             public void onResponse(Call<RaceQueryResponse> call, retrofit2.Response<RaceQueryResponse> response) {

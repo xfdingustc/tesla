@@ -69,6 +69,15 @@ public class WifiAutoConnectManager {
 
                 } else {
                     Logger.t(TAG).d("WifiInfo is created");
+
+
+                    Logger.t(TAG).d("current network info: " + mWifiManager.getConnectionInfo().toString());
+                    mWifiManager.disableNetwork(mWifiManager.getConnectionInfo().getNetworkId());
+                    mWifiManager.removeNetwork(mWifiManager.getConnectionInfo().getNetworkId());
+                    subscriber.onNext(STATUS_DISABLE_NETWORK);
+
+                    mWifiManager.disconnect();
+
                     WifiConfiguration tempConfig = isExsits(ssid);
 
                     int netID;
@@ -78,10 +87,6 @@ public class WifiAutoConnectManager {
                         netID = tempConfig.networkId;
                     }
 
-                    Logger.t(TAG).d("current network info: " + mWifiManager.getConnectionInfo().toString());
-                    mWifiManager.disableNetwork(mWifiManager.getConnectionInfo().getNetworkId());
-                    subscriber.onNext(STATUS_DISABLE_NETWORK);
-
 
                     Logger.t(TAG).d("add network " + wifiConfig.toString());
 
@@ -89,6 +94,9 @@ public class WifiAutoConnectManager {
                     subscriber.onNext(STATUS_RECONNECT_TO_NETWORK);
 
                     Logger.t(TAG).d("enableNetwork status enable=" + enabled);
+
+                    mWifiManager.saveConfiguration();
+//                    mWifiManager.disconnect();
                     boolean connected = mWifiManager.reconnect();
                     Logger.t(TAG).d("enableNetwork connected=" + connected);
                     Logger.t(TAG).d("current network info: " + mWifiManager.getConnectionInfo().toString());

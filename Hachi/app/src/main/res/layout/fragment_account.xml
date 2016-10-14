@@ -7,14 +7,58 @@
               android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/video_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/toolbarColor"
-        app:elevation="@dimen/default_elevation"
-        app:layout_scrollFlags="scroll"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        android:layout_height="0dp"
+        android:layout_below="@id/title"
+        android:background="@drawable/stroke_rect"
+        app:farfl_xratio="9dp"
+        app:farfl_yratio="4dp">
+
+        <ImageView
+            android:id="@+id/blur_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/screenshot"/>
+
+
+        <LinearLayout
+            android:id="@+id/ll_user_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_avatar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/ic_account_circle"/>
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"
+                tools:text="xfding"/>
+
+
+        </LinearLayout>
+
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+
+
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,42 +68,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="2dp">
-
-                <LinearLayout
-                    android:id="@+id/ll_user_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/cardViewBgColor"
-                    android:orientation="horizontal">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/user_avatar"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginBottom="12dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginTop="12dp"
-                        android:src="@drawable/ic_account_circle"/>
-
-                    <TextView
-                        android:id="@+id/user_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="16dp"
-                        android:textColor="?attr/appTextColorPrimary"
-                        android:textSize="20sp"
-                        tools:text="xfding"/>
-
-
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
 
 
             <android.support.v7.widget.CardView

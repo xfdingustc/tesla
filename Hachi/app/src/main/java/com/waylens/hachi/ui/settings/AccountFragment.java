@@ -1,14 +1,19 @@
 package com.waylens.hachi.ui.settings;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
@@ -20,6 +25,7 @@ import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
+import com.waylens.hachi.utils.FastBlurUtil;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +44,9 @@ public class AccountFragment extends BaseFragment {
 
     @BindView(R.id.user_avatar)
     CircleImageView userAvatar;
+
+    @BindView(R.id.blur_bg)
+    ImageView blurBg;
 
     @BindView(R.id.ll_waylens_cloud)
     View llWaylensCloud;
@@ -138,16 +147,23 @@ public class AccountFragment extends BaseFragment {
     private void initViews() {
         setupToolbar();
         if (SessionManager.getInstance().isLoggedIn()) {
+            showUserAvatar(SessionManager.getInstance().getAvatarUrl());
             Glide.with(this)
                 .load(SessionManager.getInstance().getAvatarUrl())
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(userAvatar);
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(getBlurBgTarget());
+
             userName.setText(SessionManager.getInstance().getUserName());
             llWaylensCloud.setVisibility(View.VISIBLE);
         } else {
             userName.setText(R.string.click_2_login);
             llWaylensCloud.setVisibility(View.GONE);
+            userAvatar.setImageResource(R.drawable.ic_account_circle);
+            Glide.with(this)
+                .load(R.drawable.screenshot)
+                .asBitmap()
+                .into(getBlurBgTarget());
         }
 
         if (VdtCameraManager.getManager().isConnected()) {
@@ -158,9 +174,26 @@ public class AccountFragment extends BaseFragment {
 
     }
 
-    @Override
-    public void setupToolbar() {
-        super.setupToolbar();
-        getToolbar().setTitle(R.string.account);
+
+    private void showUserAvatar(String avatarUrl) {
+        Glide.with(this)
+            .load(avatarUrl)
+            .dontAnimate()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(userAvatar);
+    }
+
+    private Target getBlurBgTarget() {
+        return new SimpleTarget() {
+            @Override
+            public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
+                if (!(resource instanceof Bitmap)) {
+                    return;
+                }
+                Bitmap bitmap = (Bitmap) resource;
+                Bitmap blurBitmap = FastBlurUtil.doBlur(bitmap, 8, true);
+                blurBg.setImageBitmap(blurBitmap);
+            }
+        };
     }
 }

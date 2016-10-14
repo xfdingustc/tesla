@@ -5,7 +5,7 @@ import android.net.wifi.WifiManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 
@@ -55,6 +55,7 @@ public class DeviceScanner extends Thread {
         if (!mbRunning) {
             mbRunning = true;
             start();
+            allowMulticast();
         }
     }
 
@@ -64,8 +65,11 @@ public class DeviceScanner extends Thread {
             mbRunning = false;
             interrupt();
             notifyAll();
+            releaseMulticast();
         }
     }
+
+
 
 
     @Override
@@ -80,6 +84,7 @@ public class DeviceScanner extends Thread {
                 break;
             }
             try {
+
                 Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
                 while (en.hasMoreElements()) {
                     NetworkInterface ni = en.nextElement();
@@ -162,5 +167,17 @@ public class DeviceScanner extends Thread {
         }
     };
 
+    private void allowMulticast() {
+        WifiManager wifiManager = (WifiManager) Hachi.getContext().getSystemService(Context.WIFI_SERVICE);
+        mLock = wifiManager.createMulticastLock("multicast.test");
+        mLock.acquire();
+    }
+
+    private void releaseMulticast() {
+        if (mLock != null) {
+            mLock.release();
+            mLock = null;
+        }
+    }
 
 }

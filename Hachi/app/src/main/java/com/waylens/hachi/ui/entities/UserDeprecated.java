@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Created by Richard on 8/26/15.
  */
-
+@Deprecated
 public class UserDeprecated implements Serializable {
     public String userID;
 

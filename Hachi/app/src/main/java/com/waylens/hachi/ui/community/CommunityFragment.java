@@ -138,7 +138,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @Override
     public void onStart() {
         super.onStart();
-        ConnectivityHelper.requestInternetNetwork();
+//        ConnectivityHelper.requestInternetNetwork();
         mListScrollSubscription = RxBus.getDefault().toObserverable(ScrollEvent.class)
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<ScrollEvent>() {

@@ -28,6 +28,7 @@ public class ConnectivityHelper {
 
         final ConnectivityManager connectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
+
         Network[] network = connectivityManager.getAllNetworks();
         if (network != null && network.length > 0) {
             for (int i = 0; i < network.length; i++) {
@@ -43,6 +44,38 @@ public class ConnectivityHelper {
             }
         }
 
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static Network getCelullarNetwork() {
+        final ConnectivityManager connectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+
+        Network[] network = connectivityManager.getAllNetworks();
+        if (network != null && network.length > 0) {
+            for (int i = 0; i < network.length; i++) {
+                NetworkInfo networkInfo = connectivityManager.getNetworkInfo(network[i]);
+                if (networkInfo == null) {
+                    continue;
+                }
+                Logger.t(TAG).d("networkInfo: " + networkInfo.toString());
+                int networkType = networkInfo.getType();
+                if (ConnectivityManager.TYPE_MOBILE == networkType) {
+                    return network[i];
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public static boolean isConnected2VdtCamera() {
+        WifiManager wifiManager = (WifiManager) Hachi.getContext().getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo != null && wifiInfo.getSSID().contains("C9J")) {
+            return true;
+        }
+        return false;
     }
 
 
@@ -82,7 +115,7 @@ public class ConnectivityHelper {
             Toast.makeText(Hachi.getContext(), R.string.using_cellular, Toast.LENGTH_LONG).show();
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            boolean bind = manager.bindProcessToNetwork(network);
+//            boolean bind = manager.bindProcessToNetwork(network);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            boolean bind = ConnectivityManager.setProcessDefaultNetwork(network);
         }

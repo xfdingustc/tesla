@@ -26,6 +26,7 @@ import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.MomentAmount;
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
@@ -310,7 +311,7 @@ public class UserProfileActivity extends BaseActivity {
                 @Override
                 public MomentListResponse call(MomentListResponse momentInfo) {
                     for (MomentEx moment : momentInfo.moments) {
-                        moment.owner = new UserDeprecated();
+                        moment.owner = new User();
                         moment.owner.userID = mUserID;
                         moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
                     }
