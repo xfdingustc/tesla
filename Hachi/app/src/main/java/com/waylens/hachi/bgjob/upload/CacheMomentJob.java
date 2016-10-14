@@ -108,25 +108,25 @@ public class CacheMomentJob extends UploadMomentJob {
         }
         setUploadState(UPLOAD_STATE_GET_URL_INFO);
 
-        // Step3: get thumbnail:
-        Logger.t(TAG).d("Try to get thumbnail");
+        // Step3: get videoThumbnail:
+        Logger.t(TAG).d("Try to get videoThumbnail");
         final Clip firstClip = playlistClipSet.getClip(0);
         ClipPos clipPos = new ClipPos(firstClip.getVdbId(), firstClip.cid, firstClip.getClipDate(), firstClip.getStartTimeMs(), ClipPos.TYPE_POSTER, false);
         VdbRequestFuture<Bitmap> thumbnailRequestFuture = VdbRequestFuture.newFuture();
         VdbImageRequest imageRequest = new VdbImageRequest(clipPos, thumbnailRequestFuture, thumbnailRequestFuture);
         mVdbRequestQueue.add(imageRequest);
         Bitmap thumbnail = thumbnailRequestFuture.get();
-        Logger.t(TAG).d("Got thumbnail");
+        Logger.t(TAG).d("Got videoThumbnail");
         setUploadState(UPLOAD_STATE_GET_VIDEO_COVER);
         checkIfCancelled();
 
-        // Step4: Store thumbnail:
+        // Step4: Store videoThumbnail:
         File cacheDir = Hachi.getContext().getExternalCacheDir();
         File file = new File(cacheDir, "t" + firstClip.getStartTimeMs() + ".jpg");
         FileOutputStream fos = new FileOutputStream(file);
         thumbnail.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, fos);
         mLocalMoment.thumbnailPath = file.getAbsolutePath();
-        Logger.t(TAG).d("Saved thumbnail: " + mLocalMoment.thumbnailPath);
+        Logger.t(TAG).d("Saved videoThumbnail: " + mLocalMoment.thumbnailPath);
         setUploadState(UPLOAD_STATE_STORE_VIDEO_COVER);
         checkIfCancelled();
 

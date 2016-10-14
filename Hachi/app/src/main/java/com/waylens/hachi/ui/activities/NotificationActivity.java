@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.activities;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,11 +12,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.RequestFuture;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Notification;
+import com.waylens.hachi.rest.response.NotificationResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.NotificationAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -26,8 +28,11 @@ import com.waylens.hachi.ui.entities.FollowEvent;
 import com.waylens.hachi.ui.entities.LikeEvent;
 import com.waylens.hachi.ui.entities.NotificationEvent;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,20 +42,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by xiaofei on 2015/8/4.
  */
-public class NotificationActivity extends BaseActivity implements RecyclerViewExt.OnLoadMoreListener {
+public class NotificationActivity extends BaseActivity {
     public static final String TAG = NotificationActivity.class.getSimpleName();
-    public static final int DEFAULT_COUNT = 10;
+    public static final int DEFAULT_COUNT = 20;
 
     @BindView(R.id.notification_view_animator)
     ViewAnimator mNotificationViewAnimator;
@@ -65,21 +70,16 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
 
     private Map<Long, NotiEvent> mUnreadEventMap;
 
-    private ArrayList<CommentEvent> mCommentList;
 
-    private ArrayList<LikeEvent> mLikeList;
 
-    private ArrayList<FollowEvent> mFollowList;
+    private long mCommentCursor = 0;
 
-    private int mCommentCursor = 0;
+    private long mLikeCursor = 0;
 
-    private int mLikeCursor = 0;
+    private long mFollowCursor = 0;
 
-    private int mFollowCursor = 0;
 
-    ArrayList<NotificationEvent> mNotificationList;
-
-    NotificationAdapter mAdapter;
+    private NotificationAdapter mAdapter;
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, NotificationActivity.class);
@@ -120,15 +120,17 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
             }
         });
         mRvNotificationList.setAdapter(mAdapter);
-        mRvNotificationList.setOnLoadMoreListener(this);
+
         mRvNotificationList.setLayoutManager(new LinearLayoutManager(this));
-        mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
+        if (ThemeHelper.isDarkTheme()) {
+            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
+        }
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadNotifications(true);
+                loadNotificationsRx(true);
             }
         });
     }
@@ -137,217 +139,99 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
     @Override
     public void onStart() {
         super.onStart();
-        loadNotifications(true);
+        loadNotificationsRx(true);
     }
 
-    private Observable<Void> LoadComments(boolean isRefresh) {
-        if (isRefresh) {
-            mCommentCursor = 0;
-        }
-        final String qs = String.format(Constants.API_QS_COMMON, mCommentCursor, DEFAULT_COUNT);
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    if (mCommentCursor < 0) {
-                        subscriber.onCompleted();
-                        return;
-                    }
-                    RequestFuture<JSONObject> future = RequestFuture.newFuture();
-                    AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.GET,
-                        Constants.API_NOTIFICATIONS_COMMENTS + qs, future, future);
-                    mRequestQueue.add(request);
-                    JSONObject response = future.get();
-
-                    Logger.t(TAG).d("load comments successfully");
-
-                    JSONArray jsonNotifications = response.optJSONArray("notifications");
-                    if (jsonNotifications == null) {
-                        return;
-                    }
-                    mCommentList = new ArrayList<>();
-                    for (int i = 0; i < jsonNotifications.length(); i++) {
-                        CommentEvent commentEvent = CommentEvent.fromJson(jsonNotifications.optJSONObject(i));
-                        mCommentList.add(commentEvent);
-                        NotiEvent notiEvent = new NotiEvent();
-                        notiEvent.isRead = commentEvent.isRead;
-                        notiEvent.eventType = Constants.EventType.COMMENT_MOMENT;
-                        if (!notiEvent.isRead) {
-                            mUnreadEventMap.put(commentEvent.eventID, notiEvent);
-                        }
-                    }
-                    int nextCursor = response.optInt("nextCursor");
-                    Logger.t(TAG).d("next comment cursor " + nextCursor);
-                    if (nextCursor != 0) {
-                        mCommentCursor = nextCursor;
-                    } else {
-                        mCommentCursor = -1;
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    Logger.t(TAG).d(e.getMessage());
-                }
-                subscriber.onCompleted();
-
-            }
-        }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    private Observable<Void> LoadLikes(boolean isRefresh) {
-        if (isRefresh) {
-            mLikeCursor = 0;
-        }
-        final String qs = String.format(Constants.API_QS_COMMON, mLikeCursor, DEFAULT_COUNT);
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    if (mLikeCursor < 0) {
-                        subscriber.onCompleted();
-                        return;
-                    }
-                    RequestFuture<JSONObject> future = RequestFuture.newFuture();
-                    AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.GET,
-                        Constants.API_NOTIFICATIONS_LIKES + qs, future, future);
-                    mRequestQueue.add(request);
-                    JSONObject response = future.get();
-                    Logger.t(TAG).d("load likes successfully");
-                    JSONArray jsonNotifications = response.optJSONArray("notifications");
-                    if (jsonNotifications == null) {
-                        return;
-                    }
-                    mLikeList = new ArrayList<>();
-                    for (int i = 0; i < jsonNotifications.length(); i++) {
-                        LikeEvent likeEvent = LikeEvent.fromJson(jsonNotifications.optJSONObject(i));
-                        mLikeList.add(likeEvent);
-                        NotiEvent notiEvent = new NotiEvent();
-                        notiEvent.isRead = likeEvent.isRead;
-                        notiEvent.eventType = Constants.EventType.LIKE_MOMENT;
-                        if (!notiEvent.isRead) {
-                            mUnreadEventMap.put(likeEvent.eventID, notiEvent);
-                        }
-                    }
-                    int nextCursor = response.optInt("nextCursor");
-                    Logger.t(TAG).d("next like cursor: " + nextCursor);
-                    if (nextCursor != 0) {
-                        mLikeCursor = nextCursor;
-                    } else {
-                        mLikeCursor = -1;
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    Logger.t(TAG).d(e.getMessage());
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    private Observable<Void> LoadFollows(boolean isRefresh) {
-        if (isRefresh) {
-            mFollowCursor = 0;
-        }
-        final String qs = String.format(Constants.API_QS_COMMON, mFollowCursor, DEFAULT_COUNT);
-        return Observable.create(new Observable.OnSubscribe<Void>() {
-            @Override
-            public void call(Subscriber<? super Void> subscriber) {
-                try {
-                    if (mFollowCursor < 0) {
-                        subscriber.onCompleted();
-                        return;
-                    }
-                    RequestFuture<JSONObject> future = RequestFuture.newFuture();
-                    AuthorizedJsonRequest request = new AuthorizedJsonRequest(Request.Method.GET,
-                        Constants.API_NOTIFICATIONS_FOLLOWS + qs, future, future);
-                    mRequestQueue.add(request);
-                    JSONObject response = future.get();
-                    Logger.t(TAG).d("load follows successfully");
-                    JSONArray jsonNotifications = response.optJSONArray("notifications");
-                    if (jsonNotifications == null) {
-                        return;
-                    }
-                    mFollowList = new ArrayList<>();
-                    for (int i = 0; i < jsonNotifications.length(); i++) {
-                        FollowEvent followEvent = FollowEvent.fromJson(jsonNotifications.optJSONObject(i));
-                        mFollowList.add(followEvent);
-                        NotiEvent notiEvent = new NotiEvent();
-                        notiEvent.isRead = followEvent.isRead;
-                        notiEvent.eventType = Constants.EventType.FOLLOW_USER;
-                        if (!notiEvent.isRead) {
-                            mUnreadEventMap.put(followEvent.eventID, notiEvent);
-                        }
-                    }
-                    int nextCursor = response.optInt("nextCursor");
-                    Logger.t(TAG).d("next follow cursor: " + nextCursor);
-                    if (nextCursor != 0) {
-                        mFollowCursor = nextCursor;
-                    } else {
-                        mFollowCursor = -1;
-                    }
-                } catch (InterruptedException | ExecutionException e) {
-                    Logger.t(TAG).d(e.getMessage());
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    private void loadNotifications(final boolean isRefresh) {
-        Observable.merge(LoadComments(isRefresh), LoadLikes(isRefresh), LoadFollows(isRefresh))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<Void>() {
+    private void loadNotificationsRx(final boolean isRefresh) {
+        HachiApi hachiApi = HachiService.createHachiApiService();
+        Observable<NotificationResponse> commentObservable = hachiApi.getCommentNotificationRx(mCommentCursor, DEFAULT_COUNT)
+            .doOnNext(new Action1<NotificationResponse>() {
                 @Override
-                public void onCompleted() {
-                    if (mRefreshLayout != null) {
-                        mRefreshLayout.setRefreshing(false);
+                public void call(NotificationResponse notificationResponse) {
+                    mCommentCursor = notificationResponse.nextCursor;
+                    for (Notification notification : notificationResponse.notifications) {
+                        notification.notificationType = Notification.NOTIFICATION_TYPE_COMMENT;
                     }
-                    Logger.t(TAG).d("on completed!");
-                    mNotificationList = new ArrayList<>();
-                    mNotificationList.addAll(mCommentList);
-                    mNotificationList.addAll(mLikeList);
-                    mNotificationList.addAll(mFollowList);
-                    mCommentList.clear();
-                    mLikeList.clear();
-                    mFollowList.clear();
-                    Logger.t(TAG).d("notification list length = " + mNotificationList.size());
-                    Collections.sort(mNotificationList, new Comparator<NotificationEvent>() {
+                }
+            });
+
+        Observable<NotificationResponse> likeObservable = hachiApi.getLikeNotificationRx(mLikeCursor, DEFAULT_COUNT)
+            .doOnNext(new Action1<NotificationResponse>() {
+                @Override
+                public void call(NotificationResponse notificationResponse) {
+                    mLikeCursor = notificationResponse.nextCursor;
+                    for (Notification notification : notificationResponse.notifications) {
+                        notification.notificationType = Notification.NOTIFICATION_TYPE_LIKE;
+                    }
+                }
+            });
+        Observable<NotificationResponse> followObservable = hachiApi.getFollowNotificationRx(mCommentCursor, DEFAULT_COUNT)
+            .doOnNext(new Action1<NotificationResponse>() {
+                @Override
+                public void call(NotificationResponse notificationResponse) {
+                    mFollowCursor = notificationResponse.nextCursor;
+                    for (Notification notification : notificationResponse.notifications) {
+                        notification.notificationType = Notification.NOTIFICATION_TYPE_FOLLOW;
+                    }
+                }
+            });
+
+        Observable.zip(commentObservable, likeObservable, followObservable,
+            new Func3<NotificationResponse, NotificationResponse, NotificationResponse, NotificationResponse>() {
+
+                @Override
+                public NotificationResponse call(NotificationResponse comment, NotificationResponse like, NotificationResponse follow) {
+                    NotificationResponse zipedResponse = new NotificationResponse();
+                    zipedResponse.notifications = new ArrayList<>();
+                    zipedResponse.notifications.addAll(comment.notifications);
+                    zipedResponse.notifications.addAll(like.notifications);
+                    zipedResponse.notifications.addAll(follow.notifications);
+                    Collections.sort(zipedResponse.notifications, new Comparator<Notification>() {
                         @Override
-                        public int compare(NotificationEvent notificationEvent, NotificationEvent t1) {
-                            if (notificationEvent.time <= t1.time)
+                        public int compare(Notification o1, Notification o2) {
+                            if (o1.getCreateTime() <= o2.getCreateTime()) {
                                 return 1;
-                            else
+                            } else {
                                 return -1;
+                            }
                         }
                     });
-                    mAdapter.addNotifications(mNotificationList, isRefresh);
+                    return zipedResponse;
+                }
+            })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<NotificationResponse>() {
+                @Override
+                public void onNext(NotificationResponse notificationResponse) {
+                    mAdapter.addNotifications(notificationResponse.notifications, isRefresh);
                     if (mNotificationViewAnimator != null) {
                         mNotificationViewAnimator.setDisplayedChild(1);
                     }
-
-                    Logger.t(TAG).d("c f l: " + mCommentCursor + " " + mFollowCursor + " " + mLikeCursor);
                     mRvNotificationList.setIsLoadingMore(false);
-
                     if (mCommentCursor > 0 || mFollowCursor > 0 || mLikeCursor > 0) {
                         mRvNotificationList.setEnableLoadMore(true);
                         mAdapter.setHasMore(true);
+                        mRvNotificationList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+                            @Override
+                            public void loadMore() {
+                                loadNotificationsRx(false);
+                            }
+                        });
                     } else {
                         mAdapter.setHasMore(false);
                     }
-
                 }
 
                 @Override
                 public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(Void aVoid) {
-
+                    ServerErrorHelper.showErrorMessage(mRvNotificationList, e);
+                    if (mNotificationViewAnimator != null) {
+                        mNotificationViewAnimator.setDisplayedChild(1);
+                    }
                 }
             });
+
     }
 
 
@@ -365,11 +249,6 @@ public class NotificationActivity extends BaseActivity implements RecyclerViewEx
         });
         getToolbar().setTitle(R.string.notification);
 
-    }
-
-    @Override
-    public void loadMore() {
-        loadNotifications(false);
     }
 
     void markRead() {

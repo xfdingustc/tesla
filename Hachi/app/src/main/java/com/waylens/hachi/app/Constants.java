@@ -33,13 +33,6 @@ public class Constants {
 
 
 
-    public static final String API_NOTIFICATIONS_COMMENTS = HOST_URL + "api/events/comments";
-
-    public static final String API_NOTIFICATIONS_LIKES = HOST_URL + "api/events/likes";
-
-    public static final String API_NOTIFICATIONS_FOLLOWS = HOST_URL + "api/events/follows";
-
-    public static final String API_QS_COMMON = "?cursor=%s&count=%s";
 
     public static final String API_COMMENTS_MARK_READ = HOST_URL + "api/events/mark_read";
 

@@ -39,8 +39,6 @@ public class HachiService {
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.HOST_URL);
 
-        Logger.t(TAG).d("herer");
-
         final String token = SessionManager.getInstance().getToken();
 
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();

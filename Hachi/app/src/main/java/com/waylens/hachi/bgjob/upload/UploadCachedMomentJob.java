@@ -158,7 +158,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
                 Logger.t(TAG).d("uploadDataResponse: " + uploadDataResponse);
             }
 
-            // Step3: upload thumbnail;
+            // Step3: upload videoThumbnail;
             UploadProgressRequestBody newRequest = UploadProgressRequestBody.newInstance(new File(mLocalMoment.thumbnailPath), new UploadProgressListener() {
                 @Override
                 public void update(long bytesWritten, long contentLength, boolean done) {

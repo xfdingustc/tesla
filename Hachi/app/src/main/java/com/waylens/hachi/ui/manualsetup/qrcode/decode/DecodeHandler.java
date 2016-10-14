@@ -127,7 +127,7 @@ public final class DecodeHandler extends Handler {
     }
 
     /**
-     * create thumbnail
+     * create videoThumbnail
      *
      * @param source
      * @param bundle

@@ -7,6 +7,7 @@ import org.json.JSONObject;
 /**
  * Created by Richard on 9/8/15.
  */
+@Deprecated
 public class NotificationEvent {
     public static final int NOTIFICATION_TYPE_COMMENT = 0;
     public static final int NOTIFICATION_TYPE_FOLLOW = 1;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:id="@+id/like_root_layout"
+<LinearLayout android:id="@+id/comment_root_layout"
               xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
@@ -9,11 +9,11 @@
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/like_user_avatar"
+        android:id="@+id/comment_user_avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="16dp"
-        android:src="@drawable/settings_profile_photo_default"
+        android:src="@drawable/ic_account_circle_placeholder"
         />
 
     <LinearLayout
@@ -23,38 +23,40 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-
-        <TextView
-            android:id="@+id/like_user_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/HachiTextViewSubHeader"
-            android:ellipsize="end"
-            android:maxLines="2"
-            tools:text="richardliang likes your post"/>
-
-        <TextView
-            android:id="@+id/like_time"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/app_text_color_secondary"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/comment_user_name"
+                style="@style/HachiTextViewSubHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                tools:text="richardliang"/>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/comment_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?attr/appTextColorSecondary"
             android:textSize="14dp"
-            tools:text="Just now"/>
+            tools:text="1 day ago"/>
     </LinearLayout>
 
     <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/video_fragment_container"
+        android:id="@+id/thumbnail_container"
         android:layout_width="72dp"
         android:layout_height="0dp"
         android:layout_margin="16dp"
+        android:background="@drawable/stroke_rect"
         app:farfl_xratio="16dp"
         app:farfl_yratio="9dp">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.12"
-            android:background="@drawable/stroke_rect"></FrameLayout>
 
         <ImageView
             android:id="@+id/moment_thumbnail"

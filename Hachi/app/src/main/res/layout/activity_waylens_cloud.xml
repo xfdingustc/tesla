@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical">
 
     <include layout="@layout/toolbar_default"/>
@@ -15,72 +16,77 @@
         android:text="@string/videos_shared"/>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
         <TextView
-            style="@style/HachiTextViewBody"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:text="@string/video_count"/>
+
         <TextView
             android:id="@+id/video_count"
-            style="@style/HachiTextViewBody"
-            android:layout_alignParentRight="true"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
+            tools:text="5"
             />
     </RelativeLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
         <TextView
-            style="@style/HachiTextViewBody"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:text="@string/video_duration"/>
+
         <TextView
             android:id="@+id/video_duration"
-            style="@style/HachiTextViewBody"
-            android:layout_alignParentRight="true"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
+            tools:text="109s"
             />
 
     </RelativeLayout>
 
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
         <TextView
-            style="@style/HachiTextViewBody"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:text="@string/video_size"/>
+
         <TextView
             android:id="@+id/video_size"
-            style="@style/HachiTextViewBody"
-            android:layout_alignParentRight="true"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
+            tools:text="28MB"
             />
 
     </RelativeLayout>
@@ -88,7 +94,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/settings_line_separator"></View>
+        android:background="?attr/separateColor"/>
 
     <TextView
         android:id="@+id/weekly_info"
@@ -99,32 +105,34 @@
         android:text="@string/weekly_uploading_quota"/>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
         <TextView
-            style="@style/HachiTextViewBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
-            android:text="@string/upload_quota"/>
+            android:text="@string/upload_quota"
+            android:textSize="14sp"/>
+
         <TextView
             android:id="@+id/weekly_quota"
-            style="@style/HachiTextViewBody"
-            android:layout_alignParentRight="true"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/not_available"/>
     </RelativeLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
         <TextView
-            style="@style/HachiTextViewBody"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -133,28 +141,29 @@
 
         <TextView
             android:id="@+id/weekly_available"
-            style="@style/HachiTextViewBody"
-            android:layout_alignParentRight="true"
+            android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
             android:text="@string/not_available"/>
 
 
-    </RelativeLayout>>
+    </RelativeLayout>
+    >
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/settings_line_separator"></View>
+        android:background="?attr/separateColor"/>
 
 
     <TextView
         android:id="@+id/cycle_info"
-        style="@style/HachiTextViewBody"
+        android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"/>
 
 </LinearLayout>

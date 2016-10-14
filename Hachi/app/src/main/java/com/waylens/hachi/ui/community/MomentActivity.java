@@ -105,7 +105,7 @@ public class MomentActivity extends BaseActivity {
 
     private static final int DEFAULT_COUNT = 10;
 
-    public static final String EXTRA_THUMBNAIL = "thumbnail";
+    public static final String EXTRA_THUMBNAIL = "videoThumbnail";
     public static final String EXTRA_MOMENT_ID = "momentId";
     public static final int REQUEST_GOOGLE_AUTHORIZE = 0x1000;
     public static final int REQUEST_FACEBOOK_AUTHORIZE = 0x1001;

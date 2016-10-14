@@ -45,6 +45,7 @@ import com.waylens.hachi.rest.response.MomentPlayInfo;
 import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.rest.response.MusicList;
+import com.waylens.hachi.rest.response.NotificationResponse;
 import com.waylens.hachi.rest.response.PublishCommentResponse;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
@@ -274,4 +275,16 @@ public interface HachiApi {
 
     @POST("api/comments")
     Observable<PublishCommentResponse> publishCommentRx(@Body PublishCommentBody publishCommentBody);
+
+    @GET("api/events/comments")
+    Observable<NotificationResponse> getCommentNotificationRx(@Query("cursor") long cursor, @Query("count") int count);
+
+    @GET("api/events/likes")
+    Observable<NotificationResponse> getLikeNotificationRx(@Query("cursor") long cursor, @Query("count") int count);
+
+    @GET("api/events/shares")
+    Observable<NotificationResponse> getShareNotificationRx(@Query("cursor") long cursor, @Query("count") int count);
+
+    @GET("api/events/follows")
+    Observable<NotificationResponse> getFollowNotificationRx(@Query("cursor") long cursor, @Query("count") int count);
 }
