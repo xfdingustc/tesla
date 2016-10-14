@@ -33,16 +33,9 @@ public class FirstInstallActivity extends BaseActivity {
     @BindView(R.id.ll_point_indicator)
     LinearLayout mllPointIndicator;
 
-    @BindView(R.id.btn_next)
-    ImageView mBtnNext;
 
     @BindView(R.id.skip)
     View mSkip;
-
-    @OnClick(R.id.btn_next)
-    public void onBtnNextClicked() {
-        mViewPager.setCurrentItem(mCurrentItem + 1);
-    }
 
     @OnClick(R.id.skip)
     public void onBtnSkipClicked() {
@@ -109,10 +102,8 @@ public class FirstInstallActivity extends BaseActivity {
                 mImages[position].setEnabled(false);
                 mCurrentItem = position;
                 if (mCurrentItem == mCount - 1) {
-                    mBtnNext.setVisibility(View.GONE);
                     mSkip.setVisibility(View.GONE);
                 } else {
-                    mBtnNext.setVisibility(View.VISIBLE);
                     mSkip.setVisibility(View.VISIBLE);
                 }
             }

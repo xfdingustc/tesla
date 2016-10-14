@@ -13,6 +13,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.ThemeHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -53,12 +54,8 @@ public class SettingActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_setting);
         setupToolbar();
-        String theme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
-        if (theme.equals("dark")) {
-            btnLightTheme.setChecked(false);
-        } else {
-            btnLightTheme.setChecked(true);
-        }
+
+        btnLightTheme.setChecked(!ThemeHelper.isDarkTheme());
 
         btnLightTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

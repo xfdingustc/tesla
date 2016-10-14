@@ -12,14 +12,7 @@
 
     </android.support.v4.view.ViewPager>
 
-    <ImageView
-        android:id="@+id/btn_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/walkthrough_next"
-        android:layout_gravity="bottom|center_horizontal"
-        android:tint="@color/app_text_color_primary"
-        android:layout_marginBottom="32dp"/>
+
 
 
     <TextView

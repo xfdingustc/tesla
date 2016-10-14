@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:paddingBottom="8dp"
-                android:src="@drawable/social_more"
+                android:src="@drawable/ic_more"
                 />
 
         </RelativeLayout>

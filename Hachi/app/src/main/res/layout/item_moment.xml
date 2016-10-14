@@ -83,7 +83,7 @@
         android:layout_below="@id/video_fragment_container"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
-        android:src="@drawable/social_more"/>
+        android:src="@drawable/ic_more"/>
 
 
     <TextView

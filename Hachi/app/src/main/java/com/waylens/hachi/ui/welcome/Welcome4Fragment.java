@@ -61,14 +61,7 @@ public class Welcome4Fragment extends BaseFragment {
         writeVersionName();
     }
 
-    @OnClick(R.id.buy_waylens_camera)
-    public void onBuyWaylensCameraClicked() {
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri contentUri = Uri.parse("http://www.waylens.com/");
-        intent.setData(contentUri);
-        startActivity(intent);
-    }
+
 
     @Nullable
     @Override
