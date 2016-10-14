@@ -40,7 +40,7 @@
     </LinearLayout>
 
     <View
-        style="@style/HachiSepatator"
+        android:background="?attr/separateColor"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 
@@ -77,7 +77,7 @@
     </LinearLayout>
 
     <View
-        style="@style/HachiSepatator"
+        android:background="?attr/separateColor"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 
@@ -113,7 +113,7 @@
     </LinearLayout>
 
     <View
-        style="@style/HachiSepatator"
+        android:background="?attr/separateColor"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 
@@ -151,7 +151,7 @@
     </LinearLayout>
 
     <View
-        style="@style/HachiSepatator"
+        android:background="?attr/separateColor"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 
@@ -185,7 +185,7 @@
     </LinearLayout>
 
     <View
-        style="@style/HachiSepatator"
+        android:background="?attr/separateColor"
         android:layout_width="match_parent"
         android:layout_height="1dp"></View>
 </LinearLayout>
