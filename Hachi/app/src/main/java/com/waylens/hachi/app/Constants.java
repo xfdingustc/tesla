@@ -29,6 +29,8 @@ public class Constants {
 
     public static final String API_DEVICE_ACTIVATION = HOST_URL + "api/devices/login";
 
+    public static final String DEFAULT_AVATAR= "https://d3dxhfn6er5hd4.cloudfront.net/avatar/default.png";
+
 
 
     public static final String API_NOTIFICATIONS_COMMENTS = HOST_URL + "api/events/comments";

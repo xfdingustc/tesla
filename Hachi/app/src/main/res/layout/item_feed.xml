@@ -16,12 +16,26 @@
         android:background="?attr/cardViewBgColor"
         android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_avatar"
+        <ViewAnimator
+            android:id="@+id/avatar_va"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="16dp"
-            tools:src="@drawable/menu_profile_photo_default"/>
+            android:layout_margin="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:src="@drawable/ic_account_circle"/>
+
+            <com.github.pavlospt.roundedletterview.RoundedLetterView
+                android:id="@+id/rlv_name_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:rlv_titleColor="@android:color/white"
+                app:rlv_titleSize="24dp"/>
+
+        </ViewAnimator>
 
 
         <TextView
@@ -29,7 +43,7 @@
             style="@style/HachiTextViewSubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/user_avatar"
+            android:layout_below="@id/avatar_va"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -41,9 +55,9 @@
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/user_avatar"
+            android:layout_alignTop="@id/avatar_va"
             android:layout_gravity="top"
-            android:layout_toRightOf="@id/user_avatar"
+            android:layout_toRightOf="@id/avatar_va"
             android:textColor="?attr/appTextColorPrimary"
             android:textSize="16dp"
             android:textStyle="bold"
@@ -54,11 +68,11 @@
             android:id="@+id/place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/user_avatar"
+            android:layout_alignBottom="@id/avatar_va"
             android:layout_below="@id/user_name"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="16dp"
-            android:layout_toRightOf="@id/user_avatar"
+            android:layout_toRightOf="@id/avatar_va"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/appTextColorSecondary"
@@ -102,27 +116,25 @@
 
             <TextView
                 android:id="@+id/video_duration"
-                android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="8dp"
                 android:background="@drawable/round_rectangle_background"
                 android:textColor="#eed7cc"
+                android:textSize="12sp"
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-
 
 
         <LinearLayout
             android:id="@+id/ll_action_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
+            android:layout_alignParentStart="true"
             android:layout_below="@+id/video_fragment_container"
-            android:layout_alignParentStart="true">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <ImageButton
                 android:id="@+id/btn_like"
@@ -180,8 +192,6 @@
                 android:src="@drawable/ic_more"/>
 
 
-
-
             <TextView
                 android:id="@+id/btn_follow"
                 android:layout_width="wrap_content"
@@ -203,9 +213,9 @@
 
             <View
                 android:id="@+id/separator"
-                android:background="?attr/separateColor"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"/>
+                android:layout_height="1dp"
+                android:background="?attr/separateColor"/>
 
             <TextView
                 android:id="@+id/comment_user1"

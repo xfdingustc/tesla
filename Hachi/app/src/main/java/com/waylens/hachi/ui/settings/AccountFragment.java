@@ -148,22 +148,16 @@ public class AccountFragment extends BaseFragment {
         setupToolbar();
         if (SessionManager.getInstance().isLoggedIn()) {
             showUserAvatar(SessionManager.getInstance().getAvatarUrl());
-            Glide.with(this)
-                .load(SessionManager.getInstance().getAvatarUrl())
-                .asBitmap()
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(getBlurBgTarget());
-
             userName.setText(SessionManager.getInstance().getUserName());
             llWaylensCloud.setVisibility(View.VISIBLE);
         } else {
             userName.setText(R.string.click_2_login);
             llWaylensCloud.setVisibility(View.GONE);
             userAvatar.setImageResource(R.drawable.ic_account_circle);
-            Glide.with(this)
-                .load(R.drawable.screenshot)
-                .asBitmap()
-                .into(getBlurBgTarget());
+//            Glide.with(this)
+//                .load(R.drawable.screenshot)
+//                .asBitmap()
+//                .into(blurBg);
         }
 
         if (VdtCameraManager.getManager().isConnected()) {
@@ -183,17 +177,5 @@ public class AccountFragment extends BaseFragment {
             .into(userAvatar);
     }
 
-    private Target getBlurBgTarget() {
-        return new SimpleTarget() {
-            @Override
-            public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
-                if (!(resource instanceof Bitmap)) {
-                    return;
-                }
-                Bitmap bitmap = (Bitmap) resource;
-                Bitmap blurBitmap = FastBlurUtil.doBlur(bitmap, 8, true);
-                blurBg.setImageBitmap(blurBitmap);
-            }
-        };
-    }
+
 }

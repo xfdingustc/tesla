@@ -23,7 +23,7 @@ public class ServerErrorHelper {
                 String errorMessage = httpException.response().errorBody().string();
                 Gson gson = new GsonBuilder().create();
                 ErrorMessageResponse response = gson.fromJson(errorMessage, ErrorMessageResponse.class);
-                Snackbar.make(view, response.msg, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view, response.msg, Snackbar.LENGTH_LONG).show();
             } catch (IOException e) {
                 e.printStackTrace();
             }

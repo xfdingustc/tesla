@@ -151,6 +151,7 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer:r1.5.9'
     compile 'com.xfdingustc:rxutils:0.1'
     compile 'com.roughike:bottom-bar:2.0.2'
+    compile 'com.github.pavlospt:roundedletterview:1.2'
 }
 
 apply plugin: 'com.google.gms.google-services'

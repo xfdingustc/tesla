@@ -26,6 +26,7 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.rxutils.library.RxBus;
@@ -193,7 +194,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     private void onLoadMomentFailed(Throwable e) {
         mRefreshLayout.setRefreshing(false);
         mRvVideoList.setIsLoadingMore(false);
-        Snackbar.make(mRootView, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+        ServerErrorHelper.showErrorMessage(mRootView, e);
     }
 
 

@@ -25,7 +25,9 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.session.SessionManager;
@@ -41,6 +43,8 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
+import com.waylens.hachi.utils.AvatarHelper;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -183,12 +187,20 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final MomentEx momentEx = mMoments.get(position);
         final MomentAbstract moment = momentEx.moment;
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
-        Glide.with(mContext)
-            .load(momentEx.owner.avatarUrl)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
-            .dontAnimate()
-            .into(holder.userAvatar);
+        String avatar = momentEx.owner.avatarUrl;
+        if (!TextUtils.isEmpty(avatar) && !avatar.equals(Constants.DEFAULT_AVATAR)) {
+            Glide.with(mContext)
+                .load(momentEx.owner.avatarUrl)
+                .placeholder(R.drawable.ic_account_circle_placeholder)
+                .crossFade()
+                .dontAnimate()
+                .into(holder.userAvatar);
+            holder.vaAvatar.setDisplayedChild(0);
+        } else {
+            holder.vaAvatar.setDisplayedChild(1);
+            holder.nameAvatarView.setBackgroundColor(mContext.getResources().getColor(AvatarHelper.getRandomAvatarBackgroundColor()));
+            holder.nameAvatarView.setTitleText(momentEx.owner.userName.substring(0, 1).toUpperCase());
+        }
 
         if (!TextUtils.isEmpty(moment.title)) {
             holder.title.setVisibility(View.VISIBLE);
@@ -450,8 +462,15 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.avatar_va)
+        ViewAnimator vaAvatar;
+
         @BindView(R.id.user_avatar)
         CircleImageView userAvatar;
+
+        @BindView(R.id.rlv_name_view)
+        RoundedLetterView nameAvatarView;
+
 
         @BindView(R.id.title)
         TextView title;
