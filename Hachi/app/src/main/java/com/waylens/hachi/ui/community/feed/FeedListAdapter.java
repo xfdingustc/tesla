@@ -330,7 +330,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
         }
-        holder.userAvatar.setOnClickListener(new View.OnClickListener() {
+        holder.vaAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!SessionManager.getInstance().isLoggedIn()) {

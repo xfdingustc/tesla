@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.adapters;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,14 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.Notification;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
+import com.waylens.hachi.utils.AvatarHelper;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -80,7 +84,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case Notification.NOTIFICATION_TYPE_COMMENT:
             case Notification.NOTIFICATION_TYPE_LIKE:
             case Notification.NOTIFICATION_TYPE_FOLLOW:
-                itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_notification, parent, false);
+                itemView = LayoutInflater.from(mContext).inflate(R.layout.item_notification, parent, false);
                 return new NotificationViewHolder(itemView);
             default:
                 break;
@@ -150,12 +154,22 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 /*        if (commentEvent.isRead) {
             holder.commentRootLayout.setAlpha((float) 0.5);
         }*/
-        Context context = holder.commentUserAvatar.getContext();
-        Glide.with(context)
-            .load(notification.getUserAvatarUrl())
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(holder.commentUserAvatar);
+
+        String avatar = notification.getUserAvatarUrl();
+        if (!TextUtils.isEmpty(avatar) && !avatar.equals(Constants.DEFAULT_AVATAR)) {
+            Glide.with(mContext)
+                .load(avatar)
+                .placeholder(R.drawable.ic_account_circle_placeholder)
+                .crossFade()
+                .dontAnimate()
+                .into(holder.userAvatar);
+            holder.vaAvatar.setDisplayedChild(0);
+        } else {
+            holder.vaAvatar.setDisplayedChild(1);
+            holder.rlvAvatar.setBackgroundColor(mContext.getResources().getColor(AvatarHelper.getRandomAvatarBackgroundColor()));
+            holder.rlvAvatar.setTitleText(notification.getUser().userName.substring(0, 1).toUpperCase());
+        }
+
         holder.commentUserName.setText(notification.getDescription());
         holder.commentTime.setText(mPrettyTime.formatUnrounded(new Date(notification.getCreateTime())));
 
@@ -192,11 +206,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
 
+        @BindView(R.id.vaAvatar)
+        ViewAnimator vaAvatar;
+
+        @BindView(R.id.comment_user_avatar)
+        CircleImageView userAvatar;
+
+        @BindView(R.id.rlv_avatar)
+        RoundedLetterView rlvAvatar;
+
         @BindView(R.id.comment_root_layout)
         LinearLayout commentRootLayout;
 
-        @BindView(R.id.comment_user_avatar)
-        CircleImageView commentUserAvatar;
+
 
         @BindView(R.id.comment_user_name)
         TextView commentUserName;

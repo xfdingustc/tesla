@@ -213,7 +213,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         holder.videoDuration.setText(DateUtils.formatElapsedTime(momentAbstract.duration / 1000l));
-        holder.userAvatar.setOnClickListener(new View.OnClickListener() {
+        holder.vaAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!SessionManager.getInstance().isLoggedIn()) {

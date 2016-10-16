@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:id="@+id/comment_root_layout"
               xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              xmlns:app="http://schemas.android.com/apk/res-auto">
+              android:orientation="horizontal">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/comment_user_avatar"
+    <ViewAnimator
+        android:id="@+id/vaAvatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_account_circle_placeholder"
-        />
+        android:layout_margin="16dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/comment_user_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_account_circle_placeholder"/>
+
+        <com.github.pavlospt.roundedletterview.RoundedLetterView
+            android:id="@+id/rlv_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rlv_titleColor="@android:color/white"
+            app:rlv_titleSize="24dp"/>
+    </ViewAnimator>
+
 
     <LinearLayout
         android:layout_width="0dp"
@@ -35,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="2"
-                tools:text="richardliang"/>
+                tools:text="xfding"/>
 
 
         </LinearLayout>

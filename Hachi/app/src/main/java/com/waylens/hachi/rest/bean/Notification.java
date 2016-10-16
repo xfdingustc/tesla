@@ -55,4 +55,16 @@ public class Notification {
         }
         return null;
     }
+
+    public User getUser() {
+        switch (notificationType) {
+            case NOTIFICATION_TYPE_COMMENT:
+                return comment.author;
+            case NOTIFICATION_TYPE_LIKE:
+                return like.user;
+            case NOTIFICATION_TYPE_FOLLOW:
+                return follow.user;
+        }
+        return null;
+    }
 }
