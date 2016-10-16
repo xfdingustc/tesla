@@ -127,12 +127,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         mRvVideoList.setAdapter(mAdapter);
         mRvVideoList.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
-        mRvVideoList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-            @Override
-            public void loadMore() {
-                loadFeed(mCurrentCursor, false);
-            }
-        });
+
 
         if (ThemeHelper.isDarkTheme()) {
             mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
@@ -222,6 +217,12 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         if (momentList.nextCursor != 0) {
             mAdapter.setHasMore(true);
             mCurrentCursor = momentList.nextCursor;
+            mRvVideoList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+                @Override
+                public void loadMore() {
+                    loadFeed(mCurrentCursor, false);
+                }
+            });
         } else {
             mRvVideoList.setEnableLoadMore(false);
             mAdapter.setHasMore(false);

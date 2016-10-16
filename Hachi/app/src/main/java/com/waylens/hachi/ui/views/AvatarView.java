@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.utils.AvatarHelper;
 
 import butterknife.BindView;
@@ -46,6 +47,9 @@ public class AvatarView extends FrameLayout {
         ButterKnife.bind(this);
     }
 
+    public void loadAvatar(User user) {
+        loadAvatar(user.avatarUrl, user.userName);
+    }
 
     public void loadAvatar(String avatarUrl, String userName) {
         if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {

@@ -74,6 +74,7 @@ import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.TransitionHelper;
@@ -168,11 +169,11 @@ public class MomentActivity extends BaseActivity {
     @BindView(R.id.like_count)
     TextSwitcher mTsLikeCount;
 
-    @BindView(R.id.user_avatar)
-    CircleImageView mUserAvatar;
+    @BindView(R.id.avatar_view)
+    AvatarView avatarView;
 
-    @BindView(R.id.current_user_avatar)
-    CircleImageView mCurrentUserAvatar;
+    @BindView(R.id.current_user_avatar_view)
+    AvatarView currentUserAvatarView;
 
     @BindView(R.id.comment_list)
     RecyclerView mCommentList;
@@ -586,20 +587,8 @@ public class MomentActivity extends BaseActivity {
 
         mTsLikeCount.setCurrentText(String.valueOf(mMomentInfo.moment.likesCount));
 
-        Glide.with(MomentActivity.this)
-            .load(mSessionManager.getAvatarUrl())
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .dontAnimate()
-            .into(mCurrentUserAvatar);
-
-
-        Glide.with(MomentActivity.this)
-            .load(mMomentInfo.owner.avatarUrl)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .dontAnimate()
-            .into(mUserAvatar);
+        currentUserAvatarView.loadAvatar(mSessionManager.getAvatarUrl(), mSessionManager.getUserName());
+        avatarView.loadAvatar(mMomentInfo.owner.avatarUrl, mMomentInfo.owner.userName);
 
         if (isDestroyed()) {
             Logger.t(TAG).d("activity is destroyed, so we must return here");

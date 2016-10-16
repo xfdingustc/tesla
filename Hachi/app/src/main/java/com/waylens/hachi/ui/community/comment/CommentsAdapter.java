@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.Comment;
+import com.waylens.hachi.ui.views.AvatarView;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -130,13 +131,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         CommentViewHolder viewHolder = (CommentViewHolder) holder;
         final Comment comment = mComments.get(position);
 
-        Context context = viewHolder.avatarView.getContext();
-        Glide.with(context)
-            .load(comment.author.avatarUrl)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .dontAnimate()
-            .into(viewHolder.avatarView);
+
+        viewHolder.avatarView.loadAvatar(comment.author.avatarUrl, comment.author.userName);
         viewHolder.tvUserName.setText(comment.author.userName);
         viewHolder.commentContentViews.setText(comment.toSpannable());
         viewHolder.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
@@ -253,8 +249,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.user_avatar)
-        CircleImageView avatarView;
+        @BindView(R.id.avatar_view)
+        AvatarView avatarView;
 
         @BindView(R.id.tvUserName)
         TextView tvUserName;
