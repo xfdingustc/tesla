@@ -43,6 +43,7 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
+import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.AvatarHelper;
 
 
@@ -187,20 +188,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final MomentEx momentEx = mMoments.get(position);
         final MomentAbstract moment = momentEx.moment;
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
-        String avatar = momentEx.owner.avatarUrl;
-        if (!TextUtils.isEmpty(avatar) && !avatar.equals(Constants.DEFAULT_AVATAR)) {
-            Glide.with(mContext)
-                .load(momentEx.owner.avatarUrl)
-                .placeholder(R.drawable.ic_account_circle_placeholder)
-                .crossFade()
-                .dontAnimate()
-                .into(holder.userAvatar);
-            holder.vaAvatar.setDisplayedChild(0);
-        } else {
-            holder.vaAvatar.setDisplayedChild(1);
-            holder.nameAvatarView.setBackgroundColor(mContext.getResources().getColor(AvatarHelper.getRandomAvatarBackgroundColor()));
-            holder.nameAvatarView.setTitleText(momentEx.owner.userName.substring(0, 1).toUpperCase());
-        }
+        holder.avatarView.loadAvatar(momentEx.owner.avatarUrl, momentEx.owner.userName);
 
         if (!TextUtils.isEmpty(moment.title)) {
             holder.title.setVisibility(View.VISIBLE);
@@ -330,7 +318,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
         }
-        holder.vaAvatar.setOnClickListener(new View.OnClickListener() {
+        holder.avatarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!SessionManager.getInstance().isLoggedIn()) {
@@ -462,14 +450,10 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.avatar_va)
-        ViewAnimator vaAvatar;
 
-        @BindView(R.id.user_avatar)
-        CircleImageView userAvatar;
 
-        @BindView(R.id.rlv_name_view)
-        RoundedLetterView nameAvatarView;
+        @BindView(R.id.avatar_view)
+        AvatarView avatarView;
 
 
         @BindView(R.id.title)

@@ -21,6 +21,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.Notification;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
+import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.AvatarHelper;
 
 import org.ocpsoft.prettytime.PrettyTime;
@@ -155,20 +156,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.commentRootLayout.setAlpha((float) 0.5);
         }*/
 
-        String avatar = notification.getUserAvatarUrl();
-        if (!TextUtils.isEmpty(avatar) && !avatar.equals(Constants.DEFAULT_AVATAR)) {
-            Glide.with(mContext)
-                .load(avatar)
-                .placeholder(R.drawable.ic_account_circle_placeholder)
-                .crossFade()
-                .dontAnimate()
-                .into(holder.userAvatar);
-            holder.vaAvatar.setDisplayedChild(0);
-        } else {
-            holder.vaAvatar.setDisplayedChild(1);
-            holder.rlvAvatar.setBackgroundColor(mContext.getResources().getColor(AvatarHelper.getRandomAvatarBackgroundColor()));
-            holder.rlvAvatar.setTitleText(notification.getUser().userName.substring(0, 1).toUpperCase());
-        }
+        holder.avatarView.loadAvatar(notification.getUserAvatarUrl(), notification.getUser().userName);
 
         holder.commentUserName.setText(notification.getDescription());
         holder.commentTime.setText(mPrettyTime.formatUnrounded(new Date(notification.getCreateTime())));
@@ -206,14 +194,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public static class NotificationViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.vaAvatar)
-        ViewAnimator vaAvatar;
-
-        @BindView(R.id.comment_user_avatar)
-        CircleImageView userAvatar;
-
-        @BindView(R.id.rlv_avatar)
-        RoundedLetterView rlvAvatar;
+        @BindView(R.id.avatar_view)
+        AvatarView avatarView;
 
         @BindView(R.id.comment_root_layout)
         LinearLayout commentRootLayout;

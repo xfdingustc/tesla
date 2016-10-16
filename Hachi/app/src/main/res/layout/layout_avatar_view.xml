@@ -1,0 +1,24 @@
+<ViewAnimator
+    android:id="@+id/avatar_va"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout_height="40dp"
+    tools:layout_width="40dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:src="@drawable/ic_account_circle"/>
+
+    <com.github.pavlospt.roundedletterview.RoundedLetterView
+        android:id="@+id/rlv_name_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rlv_titleColor="@android:color/white"
+        app:rlv_titleSize="24dp"/>
+
+</ViewAnimator>

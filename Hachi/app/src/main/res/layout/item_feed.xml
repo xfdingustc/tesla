@@ -16,26 +16,11 @@
         android:background="?attr/cardViewBgColor"
         android:orientation="vertical">
 
-        <ViewAnimator
-            android:id="@+id/avatar_va"
+        <com.waylens.hachi.ui.views.AvatarView
+            android:id="@+id/avatar_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="16dp">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/user_avatar"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:src="@drawable/ic_account_circle"/>
-
-            <com.github.pavlospt.roundedletterview.RoundedLetterView
-                android:id="@+id/rlv_name_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:rlv_titleColor="@android:color/white"
-                app:rlv_titleSize="24dp"/>
-
-        </ViewAnimator>
+            android:layout_margin="16dp"></com.waylens.hachi.ui.views.AvatarView>
 
 
         <TextView
@@ -43,7 +28,7 @@
             style="@style/HachiTextViewSubHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/avatar_va"
+            android:layout_below="@id/avatar_view"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -55,9 +40,9 @@
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/avatar_va"
+            android:layout_alignTop="@id/avatar_view"
             android:layout_gravity="top"
-            android:layout_toRightOf="@id/avatar_va"
+            android:layout_toRightOf="@id/avatar_view"
             android:textColor="?attr/appTextColorPrimary"
             android:textSize="16dp"
             android:textStyle="bold"
@@ -68,11 +53,11 @@
             android:id="@+id/place"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/avatar_va"
+            android:layout_alignBottom="@id/avatar_view"
             android:layout_below="@id/user_name"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="16dp"
-            android:layout_toRightOf="@id/avatar_va"
+            android:layout_toRightOf="@id/avatar_view"
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="?attr/appTextColorSecondary"
