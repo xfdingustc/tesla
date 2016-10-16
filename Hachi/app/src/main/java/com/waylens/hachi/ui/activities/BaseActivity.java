@@ -18,6 +18,7 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.VolleyUtil;
 
 
@@ -74,12 +75,9 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        String theme = PreferenceUtils.getString(PreferenceUtils.APP_THEME, "dark");
-        if (theme.equals("dark")) {
-            Logger.t(TAG).d("dark theme");
+        if (ThemeHelper.isDarkTheme()) {
             setTheme(R.style.DarkTheme);
         } else {
-            Logger.t(TAG).d("light theme");
             setTheme(R.style.LightTheme);
         }
         super.setContentView(layoutResID);

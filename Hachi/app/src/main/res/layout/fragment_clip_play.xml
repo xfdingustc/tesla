@@ -62,6 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/fragment_view"
+        android:background="@color/windowBackground"
         android:orientation="vertical">
 
 
@@ -70,11 +71,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:background="@color/windowBackground"
             app:barHeight="4dp"
-            app:circleColor="?attr/appTextColorPrimary"
+            app:circleColor="@color/app_text_color_primary"
             app:circleSize="4dp"
-            app:progressColor="@color/style_color_accent"
-            tools:visibility="gone"/>
+            app:progressColor="@color/style_color_accent"/>
 
 
         <LinearLayout
@@ -101,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="0:00/0:00"
-                    android:textColor="?attr/appTextColorPrimary"/>
+                    android:textColor="@color/app_text_color_primary"/>
 
             </FrameLayout>
 
@@ -126,11 +127,5 @@
         </LinearLayout>
     </LinearLayout>
 
-    <View
-        style="@style/HachiSepatator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/control_panel"
-        />
 
 </RelativeLayout>

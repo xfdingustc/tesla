@@ -3,9 +3,18 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:background="@android:color/black"
               android:orientation="vertical">
 
-    <include layout="@layout/toolbar_default"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:elevation="@dimen/default_elevation"
+        app:layout_scrollFlags="scroll"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/ic_close"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,7 +25,6 @@
         android:id="@+id/player_fragment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         tools:layout_height="275dp"/>
 
     <FrameLayout

@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.clips.preview;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,6 +38,7 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.StatusBarHelper;
 import com.waylens.hachi.utils.TransitionHelper;
 
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ public class PreviewActivity extends ClipPlayActivity {
     private void initViews() {
         setContentView(R.layout.activity_preview);
         setupToolbar();
+
 
         mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
@@ -309,6 +312,7 @@ public class PreviewActivity extends ClipPlayActivity {
                 onBackPressed();
             }
         });
+        StatusBarHelper.setStatusBarColor(this, Color.BLACK);
     }
 
     private boolean verifyLogin() {
