@@ -3,7 +3,8 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical">
+              android:orientation="vertical"
+    android:background="@color/windowBackground">
 
     <include layout="@layout/toolbar_default"/>
 
@@ -29,6 +30,11 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/settings_line_separator"
+                />
 
             <LinearLayout
                 android:id="@+id/enhance_action_bar"
@@ -68,7 +74,11 @@
 
             </LinearLayout>
 
-            <include layout="@layout/layout_line_break"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/settings_line_separator"
+                />
 
             <ViewAnimator
                 android:id="@+id/view_animator"
