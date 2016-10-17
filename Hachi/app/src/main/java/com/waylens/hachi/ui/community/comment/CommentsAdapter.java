@@ -2,19 +2,22 @@ package com.waylens.hachi.ui.community.comment;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.transition.AutoTransition;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.AnimUtils;
+import com.waylens.hachi.utils.TransitionUtils;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -24,12 +27,18 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_COMMENT = 0;
     private static final int VIEW_TYPE_TAIL = 1;
+
+    private static final int EXPAND = 0x1;
+    private static final int COLLAPSE = 0x2;
+    private static final int COMMENT_LIKE = 0x3;
+    private static final int REPLY = 0x4;
+
+    private final RecyclerView mCommentListView;
 
     private List<Comment> mComments;
 
@@ -43,9 +52,37 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private boolean mHasMore = false;
 
-    public CommentsAdapter(List<Comment> comments) {
+    private final Transition mExpandCollapse;
+
+    private final Context mContext;
+
+    private int mExpandedCommentPosition = RecyclerView.NO_POSITION;
+
+    private CommentAnimator mCommentAnimator;
+
+
+    public CommentsAdapter(RecyclerView commentList, Context context, List<Comment> comments) {
+        mCommentListView = commentList;
+        mCommentAnimator = new CommentAnimator();
+        mCommentListView.setItemAnimator(mCommentAnimator);
+        mContext = context;
         mComments = comments;
         mPrettyTime = new PrettyTime();
+        mExpandCollapse = new AutoTransition();
+        mExpandCollapse.setDuration(120);
+        mExpandCollapse.setInterpolator(AnimUtils.getFastOutSlowInInterpolator(mContext));
+        mExpandCollapse.addListener(new TransitionUtils.TransitionListenerAdapter() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                super.onTransitionStart(transition);
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                super.onTransitionEnd(transition);
+                mCommentAnimator.setAnimateMoves(true);
+            }
+        });
     }
 
     public void setComments(List<Comment> comments, boolean hasMore) {
@@ -84,7 +121,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void setIsLoadMore(boolean isLoading) {
-       mIsLoadingMore = isLoading;
+        mIsLoadingMore = isLoading;
     }
 
     @Override
@@ -126,7 +163,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-
     private void onBindCommentView(RecyclerView.ViewHolder holder, final int position) {
         CommentViewHolder viewHolder = (CommentViewHolder) holder;
         final Comment comment = mComments.get(position);
@@ -149,6 +185,21 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (mOnCommentClickListener != null) {
                     mOnCommentClickListener.onCommentClicked(comment, position);
                 }
+
+                Comment clickedComment = getComment(position);
+                TransitionManager.beginDelayedTransition(mCommentListView, mExpandCollapse);
+                mCommentAnimator.setAnimateMoves(false);
+
+                if (mExpandedCommentPosition != RecyclerView.NO_POSITION) {
+                    notifyItemChanged(mExpandedCommentPosition, COLLAPSE);
+                }
+
+                if (mExpandedCommentPosition != position) {
+                    mExpandedCommentPosition = position;
+                    notifyItemChanged(position, EXPAND);
+                } else {
+                    mExpandedCommentPosition = RecyclerView.NO_POSITION;
+                }
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -160,8 +211,18 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return true;
             }
         });
+        final boolean isExpanded = position == mExpandedCommentPosition;
+        setExpanded((CommentViewHolder) holder, isExpanded);
     }
 
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
+        if (holder instanceof CommentViewHolder) {
+            bindPartialCommentChange((CommentViewHolder) holder, position, payloads);
+        } else {
+            onBindViewHolder(holder, position);
+        }
+    }
 
     private void onBindTailView(RecyclerView.ViewHolder holder, int position) {
         final CommentTailViewHolder viewHolder = (CommentTailViewHolder) holder;
@@ -194,6 +255,24 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         });
     }
 
+    private void bindPartialCommentChange(CommentViewHolder holder, int position, List<Object> partialChangePayloads) {
+        // for certain changes we don't need to rebind data, just update some view state
+        if ((partialChangePayloads.contains(EXPAND)
+            || partialChangePayloads.contains(COLLAPSE))
+            || partialChangePayloads.contains(REPLY)) {
+            setExpanded(holder, position == mExpandedCommentPosition);
+        } else if (partialChangePayloads.contains(COMMENT_LIKE)) {
+            return; // nothing to do
+        } else {
+            onBindViewHolder(holder, position);
+        }
+    }
+
+    private void setExpanded(CommentViewHolder holder, boolean isExpanded) {
+        holder.itemView.setActivated(isExpanded);
+        holder.btnReply.setVisibility((isExpanded) ? View.VISIBLE : View.GONE);
+    }
+
     private void updateTailView(CommentTailViewHolder viewHolder) {
         if (mIsLoadingMore) {
             viewHolder.tailInfo.setVisibility(View.INVISIBLE);
@@ -224,8 +303,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    private Comment getComment(int adapterPosition) {
+        return mComments.get(adapterPosition); // description
+    }
+
     public interface OnCommentClickListener {
         void onCommentClicked(Comment comment, int position);
+
         void onCommentLongClicked(Comment comment, int position);
     }
 
@@ -263,6 +347,9 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.status_container)
         ViewAnimator commentViewAnimator;
+
+        @BindView(R.id.reply)
+        ImageButton btnReply;
 
 
         public CommentViewHolder(View itemView) {

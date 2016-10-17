@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.waylens.hachi"
-        minSdkVersion 18
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 116
         versionName "0.5.4.0"

@@ -71,6 +71,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
+import com.waylens.hachi.ui.community.comment.CommentAnimator;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
@@ -679,7 +680,8 @@ public class MomentActivity extends BaseActivity {
 
     private void setupCommentList() {
         mCommentList.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new CommentsAdapter(null);
+
+        mAdapter = new CommentsAdapter(mCommentList, this, null);
         mAdapter.setOnCommentClickListener(new CommentsAdapter.OnCommentClickListener() {
             @Override
             public void onCommentClicked(final Comment comment, final int position) {
