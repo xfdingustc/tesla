@@ -31,7 +31,8 @@
 
 
     <color name="btn_unable_color">#d7d7d7</color>
-    <color name="trip_name_color">#b2ebf2</color>
+
+    <color name="ripple_light">#99ffffff</color>
 
     <color name="tutu_cyan1">#00bcd4</color>
     <color name="tutu_cyan2">#26c6da</color>

@@ -2,6 +2,10 @@
 <resources>
 
 
+    <style name="LightRippleOverlay">
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+    </style>
+
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">@color/windowBackground</item>
     </style>

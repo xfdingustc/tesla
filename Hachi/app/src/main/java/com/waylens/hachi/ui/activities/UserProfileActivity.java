@@ -314,6 +314,7 @@ public class UserProfileActivity extends BaseActivity {
                         moment.owner = new User();
                         moment.owner.userID = mUserID;
                         moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
+                        moment.owner.userName = mUserInfoEx.userInfo.userName;
                     }
                     return momentInfo;
                 }

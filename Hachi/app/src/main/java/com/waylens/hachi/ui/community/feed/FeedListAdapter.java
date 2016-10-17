@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.community.feed;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -10,13 +9,13 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
@@ -25,9 +24,7 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.session.SessionManager;
@@ -44,8 +41,6 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
-import com.waylens.hachi.utils.AvatarHelper;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,7 +54,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/9/13.
@@ -240,23 +234,31 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (moment.isRecommended) {
             holder.recommend.setVisibility(View.VISIBLE);
-//            if (!momentEx.owner.isMyFollowing) {
-//                holder.btnFollow.setVisibility(View.VISIBLE);
-//                holder.btnFollow.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        BgJobHelper.followUser(momentEx.owner.userID, true);
-//                        holder.btnFollow.setVisibility(View.GONE);
-//                        momentEx.owner.isMyFollowing = true;
-//                    }
-//                });
-//            } else {
-//                holder.btnFollow.setVisibility(View.GONE);
-//            }
+
+            holder.follow.setVisibility(View.VISIBLE);
+            holder.follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (holder.follow.isActivated()) {
+                        BgJobHelper.followUser(momentEx.owner.userID, false);
+                        holder.follow.setText(R.string.follow);
+                        holder.follow.setActivated(false);
+                    } else {
+                        BgJobHelper.followUser(momentEx.owner.userID, true);
+                        holder.follow.setText(R.string.following);
+                        holder.follow.setActivated(true);
+                    }
+                }
+            });
+
+            holder.follow.setActivated(false);
+            holder.follow.setText(R.string.follow);
+
 
         } else {
             holder.recommend.setVisibility(View.GONE);
-            holder.btnFollow.setVisibility(View.GONE);
+            holder.follow.setVisibility(View.GONE);
+
         }
 
         if (momentEx.lastComments.size() > 0) {
@@ -451,9 +453,11 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
 
-
         @BindView(R.id.avatar_view)
         AvatarView avatarView;
+
+        @BindView(R.id.follow)
+        Button follow;
 
 
         @BindView(R.id.title)
@@ -474,9 +478,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.recommend)
         ImageView recommend;
-
-        @BindView(R.id.btn_follow)
-        TextView btnFollow;
 
         @BindView(R.id.place)
         TextView place;

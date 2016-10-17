@@ -35,7 +35,6 @@ android {
 }
 
     dexOptions {
-        incremental true
         javaMaxHeapSize "2g"
     }
 
