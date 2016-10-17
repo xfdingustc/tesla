@@ -164,7 +164,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     private void onBindCommentView(RecyclerView.ViewHolder holder, final int position) {
-        CommentViewHolder viewHolder = (CommentViewHolder) holder;
+        final CommentViewHolder viewHolder = (CommentViewHolder) holder;
         final Comment comment = mComments.get(position);
 
 
@@ -182,11 +182,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                final int adapterPosition = viewHolder.getAdapterPosition();
                 if (mOnCommentClickListener != null) {
-                    mOnCommentClickListener.onCommentClicked(comment, position);
+                    mOnCommentClickListener.onCommentClicked(comment, adapterPosition);
                 }
 
-                Comment clickedComment = getComment(position);
                 TransitionManager.beginDelayedTransition(mCommentListView, mExpandCollapse);
                 mCommentAnimator.setAnimateMoves(false);
 
@@ -194,25 +194,33 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     notifyItemChanged(mExpandedCommentPosition, COLLAPSE);
                 }
 
-                if (mExpandedCommentPosition != position) {
-                    mExpandedCommentPosition = position;
-                    notifyItemChanged(position, EXPAND);
+                if (mExpandedCommentPosition != adapterPosition) {
+                    mExpandedCommentPosition = adapterPosition;
+                    notifyItemChanged(adapterPosition, EXPAND);
                 } else {
                     mExpandedCommentPosition = RecyclerView.NO_POSITION;
                 }
             }
         });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+
+
+        viewHolder.btnReply.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
-                if (mOnCommentClickListener != null) {
-                    mOnCommentClickListener.onCommentLongClicked(comment, position);
+            public void onClick(View v) {
+                final int adapterPosition = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) {
+                    return;
                 }
-                return true;
+
+                mExpandedCommentPosition = RecyclerView.NO_POSITION;
+                notifyItemChanged(adapterPosition, REPLY);
+                if (mOnCommentClickListener != null) {
+                    mOnCommentClickListener.onReplyClicked(comment);
+                }
             }
         });
         final boolean isExpanded = position == mExpandedCommentPosition;
-        setExpanded((CommentViewHolder) holder, isExpanded);
+        setExpanded(viewHolder, isExpanded);
     }
 
     @Override
@@ -303,14 +311,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
-    private Comment getComment(int adapterPosition) {
-        return mComments.get(adapterPosition); // description
-    }
-
     public interface OnCommentClickListener {
         void onCommentClicked(Comment comment, int position);
 
-        void onCommentLongClicked(Comment comment, int position);
+        void onReplyClicked(Comment comment);
     }
 
     public interface OnLoadMoreListener {

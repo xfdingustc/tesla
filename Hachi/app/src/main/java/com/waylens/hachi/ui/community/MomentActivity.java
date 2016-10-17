@@ -37,22 +37,17 @@ import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
-import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.User;
@@ -71,21 +66,17 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
-import com.waylens.hachi.ui.community.comment.CommentAnimator;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.SendCommentButton;
-import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -683,6 +674,16 @@ public class MomentActivity extends BaseActivity {
 
         mAdapter = new CommentsAdapter(mCommentList, this, null);
         mAdapter.setOnCommentClickListener(new CommentsAdapter.OnCommentClickListener() {
+
+            @Override
+            public void onReplyClicked(Comment comment) {
+                mReplyTo = comment.author;
+                addComment();
+                if (mNewCommentView != null) {
+                    mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
+                }
+            }
+
             @Override
             public void onCommentClicked(final Comment comment, final int position) {
                 if (!mSessionManager.isLoggedIn()) {
@@ -771,8 +772,8 @@ public class MomentActivity extends BaseActivity {
 
             }
 
-            @Override
-            public void onCommentLongClicked(final Comment comment, final int position) {
+//            @Override
+//            public void onCommentLongClicked(final Comment comment, final int position) {
 //                BottomSheet builder = new BottomSheet.Builder(MomentActivity.this)
 //                    .sheet(R.menu.menu_report_comment)
 //                    .darkTheme()
@@ -812,7 +813,9 @@ public class MomentActivity extends BaseActivity {
 //
 //                builder.show();
 
-            }
+//            }
+
+
         });
         mAdapter.setOnLoadMoreListener(new CommentsAdapter.OnLoadMoreListener() {
             @Override
