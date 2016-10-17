@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
+import com.waylens.hachi.view.InkPageIndicator;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -23,15 +24,13 @@ public class FirstInstallActivity extends BaseActivity {
     private static final String TAG = FirstInstallActivity.class.getSimpleName();
 
     private int mCount;
-    private ImageView[] mImages;
     private int mCurrentItem;
 
     @BindView(R.id.viewPager)
     ViewPager mViewPager;
 
-
-    @BindView(R.id.ll_point_indicator)
-    LinearLayout mllPointIndicator;
+    @BindView(R.id.indicator)
+    InkPageIndicator inkPageIndicator;
 
 
     @BindView(R.id.skip)
@@ -79,14 +78,9 @@ public class FirstInstallActivity extends BaseActivity {
         mViewPager.setAdapter(mAdapter);
 
         mCount = mAdapter.getCount();
-        mImages = new ImageView[mCount];
-        for (int i = 0; i < mCount; i++) {
-            mImages[i] = (ImageView) mllPointIndicator.getChildAt(i);
-            mImages[i].setEnabled(true);
-            mImages[i].setTag(i);
-        }
+
         mCurrentItem = 0;
-        mImages[mCurrentItem].setEnabled(false);
+
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -98,8 +92,6 @@ public class FirstInstallActivity extends BaseActivity {
                 if (position < 0 || position > mCount - 1 || mCurrentItem == position) {
                     return;
                 }
-                mImages[mCurrentItem].setEnabled(true);
-                mImages[position].setEnabled(false);
                 mCurrentItem = position;
                 if (mCurrentItem == mCount - 1) {
                     mSkip.setVisibility(View.GONE);
@@ -113,6 +105,7 @@ public class FirstInstallActivity extends BaseActivity {
 
             }
         });
+        inkPageIndicator.setViewPager(mViewPager);
     }
 
 

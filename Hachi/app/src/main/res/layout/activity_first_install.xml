@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-    android:background="@color/windowBackgroundLight">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/windowBackgroundLight"
+             android:orientation="vertical">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
@@ -13,63 +14,29 @@
     </android.support.v4.view.ViewPager>
 
 
-
-
     <TextView
         android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/skip"
         android:layout_gravity="end"
-        android:textAllCaps="true"
-        android:textColor="@color/app_text_color_primary_light"
+        android:layout_margin="16dp"
         android:background="@drawable/skip_background"
-        android:layout_margin="16dp"/>
+        android:text="@string/skip"
+        android:textAllCaps="true"
+        android:textColor="@color/app_text_color_primary_light"/>
 
-    <LinearLayout
-        android:id="@+id/ll_point_indicator"
+    <com.waylens.hachi.view.InkPageIndicator
+        android:id="@+id/indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:visibility="visible">
-
-        <ImageView
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:layout_margin="8dip"
-            android:src="@drawable/selector_page_point"/>
-
-        <ImageView
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:layout_margin="8dip"
-            android:src="@drawable/selector_page_point"/>
-
-        <ImageView
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:layout_margin="8dip"
-            android:src="@drawable/selector_page_point"/>
-
-        <ImageView
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:layout_margin="8dp"
-            android:src="@drawable/selector_page_point"/>
+        android:layout_marginBottom="16dp"
+        app:animationDuration="320"
+        app:currentPageIndicatorColor="@color/style_color_accent"
+        app:dotDiameter="8dp"
+        app:dotGap="8dp"
+        app:pageIndicatorColor="@color/material_grey_300"/>
 
 
-
-
-    </LinearLayout>
 
 </FrameLayout>
