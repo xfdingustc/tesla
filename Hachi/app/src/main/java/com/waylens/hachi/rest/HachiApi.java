@@ -203,6 +203,9 @@ public interface HachiApi {
     @GET("/api/musics/categories")
     Call<MusicCategoryResponse> getMusicCategories();
 
+    @GET("/api/musics/categories")
+    Observable<MusicCategoryResponse> getMusicCategoriesRx();
+
     @GET("/api/musics/categories/{categoryId}")
     Observable<MusicList> getMusicList(@Path("categoryId") long categoryId);
 

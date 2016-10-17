@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:padding="2dp">
+
     <ViewSwitcher
         android:id="@+id/vs_root"
         android:layout_width="match_parent"
@@ -11,8 +13,8 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/style_color_accent"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/style_color_accent"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/music_style_list"

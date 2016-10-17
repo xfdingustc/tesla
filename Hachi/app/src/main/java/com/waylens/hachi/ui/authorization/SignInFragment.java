@@ -83,7 +83,6 @@ public class SignInFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mVolleyRequestQueue = VolleyUtil.newVolleyRequestQueue(getActivity());
         mTransformationMethod = new PasswordTransformationMethod();
     }
 
@@ -130,13 +129,6 @@ public class SignInFragment extends BaseFragment {
     }
 
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mVolleyRequestQueue != null) {
-            mVolleyRequestQueue.cancelAll(TAG_REQUEST_SIGN_IN);
-        }
-    }
 
 
     void initViews() {

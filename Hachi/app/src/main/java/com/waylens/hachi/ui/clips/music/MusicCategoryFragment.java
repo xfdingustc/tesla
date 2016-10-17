@@ -15,11 +15,15 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MusicCategoryResponse;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.ServerErrorHelper;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/8/18.
@@ -56,22 +60,24 @@ public class MusicCategoryFragment extends BaseFragment {
     }
 
     private void fetchMusicCategory() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
-        final Call<MusicCategoryResponse> musicCategoryResponseCall = hachiApi.getMusicCategories();
-        musicCategoryResponseCall.enqueue(new Callback<MusicCategoryResponse>() {
-            @Override
-            public void onResponse(Call<MusicCategoryResponse> call, Response<MusicCategoryResponse> response) {
-                mVsRoot.showNext();
-                mMusicCategoryList = response.body();
-                mMusicCategoryAdapter.setCategories(mMusicCategoryList);
+        HachiService.createHachiApiService().getMusicCategoriesRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MusicCategoryResponse>() {
+                @Override
+                public void onNext(MusicCategoryResponse musicCategoryResponse) {
+                    mVsRoot.showNext();
+                    mMusicCategoryList = musicCategoryResponse;
+                    mMusicCategoryAdapter.setCategories(mMusicCategoryList);
 
-                Logger.t(TAG).d("update: " + mMusicCategoryList.lastUpdateTime + " categoies size: " + mMusicCategoryList.categories.size());
-            }
+                    Logger.t(TAG).d("update: " + mMusicCategoryList.lastUpdateTime + " categoies size: " + mMusicCategoryList.categories.size());
+                }
 
-            @Override
-            public void onFailure(Call<MusicCategoryResponse> call, Throwable t) {
-                Logger.t(TAG).d("Get music error");
-            }
-        });
+                @Override
+                public void onError(Throwable e) {
+                    ServerErrorHelper.showErrorMessage(mMusicStyleList, e);
+                }
+            });
+
     }
 }
