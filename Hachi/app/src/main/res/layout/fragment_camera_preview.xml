@@ -20,14 +20,32 @@
             android:id="@+id/liveViewLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_below="@+id/statusErrorLayout"
+            android:layout_below="@+id/infoPanel"
             android:clipChildren="false">
+
+
 
             <com.xfdingustc.mjpegview.library.MjpegView
                 android:id="@+id/camera_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+
+
+
+            <FrameLayout
+                android:id="@+id/statusErrorLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/infoPanel">
+
+
+                <include layout="@layout/fragment_camera_preview_status_panel"/>
+
+
+                <include layout="@layout/fragment_camera_preview_error_panel"/>
+
+            </FrameLayout>
 
             <com.waylens.hachi.ui.views.GaugeView
                 android:id="@+id/gaugeView"
@@ -39,19 +57,7 @@
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
-        <FrameLayout
-            android:id="@+id/statusErrorLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/infoPanel">
 
-
-            <include layout="@layout/fragment_camera_preview_status_panel"/>
-
-
-            <include layout="@layout/fragment_camera_preview_error_panel"/>
-
-        </FrameLayout>
 
 
         <RelativeLayout android:id="@+id/controlPanel"

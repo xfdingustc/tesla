@@ -4,8 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:orientation="vertical"
-              android:background="@color/windowBackground"
-              android:visibility="gone">
+              xmlns:tools="http://schemas.android.com/tools">
 
 
     <LinearLayout
@@ -30,6 +29,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            tools:text="empty_sd_card"
             android:textColor="@color/text_camera_info"/>
 
 

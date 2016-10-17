@@ -10,4 +10,8 @@ public class VersionHelper {
     public static boolean isGreaterThanLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
+
+    public static boolean isGreaterThanKitkat() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+    }
 }
