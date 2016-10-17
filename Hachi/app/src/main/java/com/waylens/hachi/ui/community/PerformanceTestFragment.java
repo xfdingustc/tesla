@@ -25,6 +25,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.response.MakerResponse;
@@ -461,7 +462,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     ArrayList<Moment> momentList = new ArrayList<>();
                     for (int i = 0; i < raceQueryResponse.leaderboard.size(); i++) {
                         Moment moment = raceQueryResponse.leaderboard.get(i).moment;
-                        moment.owner = new UserDeprecated();
+                        moment.owner = new User();
                         UserDeprecated owner = raceQueryResponse.leaderboard.get(i).owner;
                         moment.owner.userID = owner.userID;
                         moment.owner.avatarUrl = owner.avatarUrl;
@@ -592,7 +593,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     AuthorizeActivity.launch(getActivity());
                     return;
                 }
-                UserProfileActivity.launch(getActivity(), sessionManager.getUserId());
+//                UserProfileActivity.launch(getActivity(), sessionManager.getUserId(), mMyAvatar);
 
             }
         });
@@ -604,7 +605,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                     AuthorizeActivity.launch(getActivity());
                     return;
                 }
-                UserProfileActivity.launch(getActivity(), sessionManager.getUserId());
+//                UserProfileActivity.launch(getActivity(), sessionManager.getUserId(), mMyAvatar);
 
             }
         });

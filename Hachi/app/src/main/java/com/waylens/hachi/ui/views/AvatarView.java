@@ -65,7 +65,7 @@ public class AvatarView extends FrameLayout {
             vaAvatar.setDisplayedChild(0);
         } else {
             vaAvatar.setDisplayedChild(1);
-            rlvNameView.setBackgroundColor(getContext().getResources().getColor(AvatarHelper.getRandomAvatarBackgroundColor()));
+            rlvNameView.setBackgroundColor(getContext().getResources().getColor(AvatarHelper.getAvatarBackgroundColor(userName)));
             rlvNameView.setTitleText(userName.substring(0, 1).toUpperCase());
         }
     }

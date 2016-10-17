@@ -6,6 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <com.waylens.hachi.ui.views.RecyclerViewExt
+        android:id="@+id/rvUserMomentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    </com.waylens.hachi.ui.views.RecyclerViewExt>
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -20,20 +29,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_collapseMode="parallax">
-
-                <ImageView
-                    android:id="@+id/user_cover"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    tools:layout_height="202dp"
-                    tools:src="@drawable/walkthrough1"/>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:alpha="0.7"
-                    android:background="@color/windowBackground"/>
 
                 <LinearLayout
                     android:id="@+id/vUserProfileRoot"
@@ -53,18 +48,19 @@
                         android:layout_height="wrap_content"
                         android:clipChildren="false">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <com.waylens.hachi.ui.views.AvatarView
                             android:id="@+id/userAvatar"
                             android:layout_width="88dp"
                             android:layout_height="88dp"
                             android:layout_marginRight="16dp"
+                            android:transitionName="@string/trans_avatar"
                             tools:src="@drawable/menu_profile_photo_default"/>
 
 
-                        <LinearLayout
+                        <FrameLayout
                             android:id="@+id/vUserDetails"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:orientation="vertical">
 
@@ -72,31 +68,39 @@
                                 android:id="@+id/user_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="24sp"
                                 android:textColor="@android:color/white"
+                                android:textSize="24sp"
                                 tools:text="xfding"/>
 
 
                             <Button
-                                android:id="@+id/btnFollow"
-                                style="@style/ActionButton"
-                                android:layout_width="match_parent"
-                                android:layout_height="24dp"
-                                android:layout_marginRight="24dp"
-                                android:layout_marginTop="16dp"
-                                android:textSize="12sp"
-                                tools:text="Follow"/>
+                                android:id="@+id/follow"
+                                style="@style/Widget.AppCompat.Button.Colored"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawablePadding="8dp"
+                                android:layout_gravity="bottom"
+                                android:drawableStart="@drawable/asl_follow"
+                                android:paddingBottom="8dp"
+                                android:paddingEnd="16dp"
+                                android:paddingStart="16dp"
+                                android:text="@string/follow"
+                                android:textColor="@android:color/white"
+                                android:theme="@style/LightRippleOverlay"
+                                android:layout_alignTop="@+id/user_name"
+                                android:layout_alignParentEnd="true"
+                                android:layout_alignBottom="@+id/avatar_view"/>
 
-                        </LinearLayout>
+                        </FrameLayout>
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/vUserStats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp">
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -109,8 +113,8 @@
                                 android:id="@+id/moment_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="20sp"
                                 android:textColor="@android:color/white"
+                                android:textSize="20sp"
                                 tools:text="1167"/>
 
                             <TextView
@@ -134,8 +138,8 @@
                                 android:id="@+id/btnFollowersCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="20sp"
                                 android:textColor="@android:color/white"
+                                android:textSize="20sp"
                                 tools:text="888"/>
 
                             <TextView
@@ -158,8 +162,8 @@
                                 android:id="@+id/following_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="20sp"
                                 android:textColor="@android:color/white"
+                                android:textSize="20sp"
                                 tools:text="485"/>
 
                             <TextView
@@ -191,15 +195,6 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
-
-
-    <com.waylens.hachi.ui.views.RecyclerViewExt
-        android:id="@+id/rvUserMomentList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-    </com.waylens.hachi.ui.views.RecyclerViewExt>
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -165,7 +165,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, moment.owner.userID);
+                UserProfileActivity.launch((Activity) mContext, moment.owner, holder.userAvatar);
 
             }
         });
@@ -176,7 +176,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, moment.owner.userID);
+                UserProfileActivity.launch((Activity) mContext, moment.owner, holder.userAvatar);
 
             }
         });

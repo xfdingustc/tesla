@@ -33,4 +33,14 @@ public class AvatarHelper {
         int resourceIndex = (int)(Math.random() * AVATAR_BACKGROUND_COLOR.length);
         return AVATAR_BACKGROUND_COLOR[resourceIndex];
     }
+
+    public static @ColorRes int getAvatarBackgroundColor(String name) {
+        byte[] bytes = name.getBytes();
+        int sum = 0;
+        for (int i = 0; i < bytes.length; i++) {
+            sum += bytes[i];
+        }
+        int resourceIndex = sum % AVATAR_BACKGROUND_COLOR.length;
+        return AVATAR_BACKGROUND_COLOR[resourceIndex];
+    }
 }

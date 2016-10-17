@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -23,7 +26,6 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
-import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.bean.User;
@@ -37,7 +39,9 @@ import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
+import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
@@ -53,16 +57,18 @@ import rx.schedulers.Schedulers;
  */
 public class UserProfileActivity extends BaseActivity {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
-    private static final String EXTRA_USER_ID = "user_id";
+    private static final String EXTRA_USER = "user";
+//    private static final String EXTRA_USER_ID = "user_id";
+//    private static final String EXTRA_USER_AVATAR = "user_avatar";
 
-    private String mUserID;
+//    private String mUserID;
     private MomentsListAdapter mMomentRvAdapter;
 
     private String mReportReason;
 
-    private HachiApi mHachiApi = HachiService.createHachiApiService();
-
     private UserProfileZip mUserInfoEx;
+
+    private User mUser;
 
     private int mCurrentCursor;
 
@@ -71,16 +77,28 @@ public class UserProfileActivity extends BaseActivity {
     RecyclerViewExt mRvUserMomentList;
 
 
-    public static void launch(Activity activity, String userID) {
-        Intent intent = new Intent(activity, UserProfileActivity.class);
-        intent.putExtra(EXTRA_USER_ID, userID);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        activity.startActivity(intent);
+//    public static void launch(Activity activity, String userID, View transitionView) {
+//        Intent intent = new Intent(activity, UserProfileActivity.class);
+//        intent.putExtra(EXTRA_USER_ID, userID);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+//            false, new Pair<>(transitionView, activity.getString(R.string.trans_avatar)));
+//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+//        ActivityCompat.startActivity(activity, intent, options.toBundle());
+//    }
 
+    public static void launch(Activity activity, User user, View transitionView) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        intent.putExtra(EXTRA_USER, user);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+            false, new Pair<>(transitionView, activity.getString(R.string.trans_avatar)));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
     @BindView(R.id.userAvatar)
-    ImageView civUserAvatar;
+    AvatarView userAvatar;
 
     @BindView(R.id.btnFollowersCount)
     TextView mTvFollowersCount;
@@ -88,14 +106,12 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.following_count)
     TextView followingCount;
 
-    @BindView(R.id.btnFollow)
+    @BindView(R.id.follow)
     Button mBtnFollow;
 
     @BindView(R.id.user_name)
     TextView mUserName;
 
-    @BindView(R.id.user_cover)
-    ImageView userCover;
 
     @BindView(R.id.moment_count)
     TextView momentCount;
@@ -103,16 +119,16 @@ public class UserProfileActivity extends BaseActivity {
 
     @OnClick(R.id.ll_followers)
     public void onBtnFollowerCountClicked() {
-        FollowListActivity.launch(this, mUserID, true);
+        FollowListActivity.launch(this, mUser.userID, true);
     }
 
     @OnClick(R.id.ll_following)
     public void onFollowingCountClicked() {
-        FollowListActivity.launch(this, mUserID, false);
+        FollowListActivity.launch(this, mUser.userID, false);
     }
 
 
-    @OnClick(R.id.btnFollow)
+    @OnClick(R.id.follow)
     public void onBtnFollowClicked() {
         if (!SessionManager.getInstance().isLoggedIn()) {
             AuthorizeActivity.launch(this);
@@ -128,7 +144,7 @@ public class UserProfileActivity extends BaseActivity {
             return;
         }
         JobManager jobManager = BgJobManager.getManager();
-        FollowJob job = new FollowJob(mUserID, !mUserInfoEx.followInfo.isMyFollowing);
+        FollowJob job = new FollowJob(mUser.userID, !mUserInfoEx.followInfo.isMyFollowing);
         jobManager.addJobInBackground(job);
         mUserInfoEx.followInfo.isMyFollowing = !mUserInfoEx.followInfo.isMyFollowing;
         if (!mUserInfoEx.followInfo.isMyFollowing) {
@@ -151,7 +167,7 @@ public class UserProfileActivity extends BaseActivity {
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        mUserID = intent.getStringExtra(EXTRA_USER_ID);
+        mUser = (User)intent.getSerializableExtra(EXTRA_USER);
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
@@ -168,16 +184,20 @@ public class UserProfileActivity extends BaseActivity {
 
         fetchUserProfile();
 
+        if (mUser != null) {
+            userAvatar.loadAvatar(mUser);
+        }
+
 
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void fetchUserProfile() {
-        Observable<UserInfo> userInfoObservable = mHachiApi.getUserInfoRx(mUserID);
+        Observable<UserInfo> userInfoObservable = HachiService.createHachiApiService().getUserInfoRx(mUser.userID);
 
-        Observable<FollowInfo> followInfoObservable = mHachiApi.getFollowInfoRx(mUserID);
+        Observable<FollowInfo> followInfoObservable = HachiService.createHachiApiService().getFollowInfoRx(mUser.userID);
 
-        Observable<MomentAmount> getMomentAmount = mHachiApi.getUserMomentAmountRx(mUserID);
+        Observable<MomentAmount> getMomentAmount = HachiService.createHachiApiService().getUserMomentAmountRx(mUser.userID);
 
 //        Observable<MomentListResponse> momentListResponseObservable = mHachiApi.getUserMomentsRx(mUserID, mCurrentCursor);
 
@@ -208,13 +228,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void setupUserProfileHeaderView() {
-        Glide.with(this)
-            .load(mUserInfoEx.userInfo.avatarUrl)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
-            .into(civUserAvatar);
-
+        userAvatar.loadAvatar(mUserInfoEx.userInfo.avatarUrl, mUserInfoEx.userInfo.userName);
 
         mUserName.setText(mUserInfoEx.userInfo.displayName);
         momentCount.setText(String.valueOf(mUserInfoEx.amount.amount));
@@ -232,7 +246,7 @@ public class UserProfileActivity extends BaseActivity {
         super.setupToolbar();
         getToolbar().getMenu().clear();
         getToolbar().inflateMenu(R.menu.menu_user_profile);
-        if (mUserID.equals(SessionManager.getInstance().getUserId())) {
+        if (mUser.userID.equals(SessionManager.getInstance().getUserId())) {
             getToolbar().getMenu().removeItem(R.id.report);
         }
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -292,7 +306,7 @@ public class UserProfileActivity extends BaseActivity {
     private void doReportUser() {
         JobManager jobManager = BgJobManager.getManager();
         ReportUserBody reportUserBody = new ReportUserBody();
-        reportUserBody.userID = mUserID;
+        reportUserBody.userID = mUser.userID;
         reportUserBody.reason = mReportReason;
         reportUserBody.detail = "";
         Logger.t(TAG).d(mReportReason);
@@ -304,13 +318,13 @@ public class UserProfileActivity extends BaseActivity {
 
     private void loadUserMoment(int cursor, final boolean isRefresh) {
         Logger.t(TAG).d("load user moment, cursor: " + cursor);
-        mHachiApi.getUserMomentsRx(mUserID, cursor)
+        HachiService.createHachiApiService().getUserMomentsRx(mUser.userID, cursor)
             .map(new Func1<MomentListResponse, MomentListResponse>() {
                 @Override
                 public MomentListResponse call(MomentListResponse momentInfo) {
                     for (MomentEx moment : momentInfo.moments) {
                         moment.owner = new User();
-                        moment.owner.userID = mUserID;
+                        moment.owner.userID = mUser.userID;
                         moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
                         moment.owner.userName = mUserInfoEx.userInfo.userName;
                     }
@@ -331,16 +345,6 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void onLoadUserMoment(MomentListResponse momentListResponse, boolean isRefresh) {
-        if (momentListResponse.moments.size() > 0) {
-            int random = (int) (Math.random() * (momentListResponse.moments.size() - 1));
-            Logger.t(TAG).d("Display: " + momentListResponse.moments.get(random).moment.thumbnail);
-            Glide.with(UserProfileActivity.this)
-                .load(momentListResponse.moments.get(random).moment.thumbnail)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(userCover);
-        }
-
         mCurrentCursor += momentListResponse.moments.size();
         if (isRefresh) {
             mMomentRvAdapter.setMoments(momentListResponse.moments);
@@ -369,8 +373,10 @@ public class UserProfileActivity extends BaseActivity {
         if (!SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
             if (mUserInfoEx.followInfo.isMyFollowing) {
                 mBtnFollow.setText(R.string.followed);
+                mBtnFollow.setActivated(true);
             } else {
                 mBtnFollow.setText(R.string.follow);
+                mBtnFollow.setActivated(false);
             }
         }
 

@@ -3,6 +3,7 @@ package com.waylens.hachi.rest.response;
 
 
 
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.ui.entities.UserDeprecated;
@@ -18,7 +19,7 @@ import java.util.Map;
 public class MomentInfo implements Serializable {
     public MomentBasicInfo moment;
 
-    public UserDeprecated owner;
+    public User owner;
 
     public ArrayList<RawDataUrl> rawDataurl;
 

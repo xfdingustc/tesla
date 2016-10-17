@@ -20,13 +20,12 @@
             android:id="@+id/avatar_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_margin="16dp"></com.waylens.hachi.ui.views.AvatarView>
+            android:layout_margin="16dp"/>
         <Button
             android:id="@+id/follow"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:drawablePadding="8dp"
             android:drawableStart="@drawable/asl_follow"
             android:paddingBottom="8dp"

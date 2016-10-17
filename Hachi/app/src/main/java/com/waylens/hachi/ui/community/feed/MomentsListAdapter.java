@@ -201,7 +201,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, momentEx.owner.userID);
+                UserProfileActivity.launch((Activity) mContext, momentEx.owner, holder.avatarView);
 
             }
         });

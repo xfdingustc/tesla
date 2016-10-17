@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.entities;
 import android.text.Spannable;
 
 import com.google.gson.annotations.Expose;
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
@@ -62,7 +63,7 @@ public class Moment implements Serializable {
 
     public transient Spannable comments;
 
-    public UserDeprecated owner;
+    public User owner;
 
     public int type;
 

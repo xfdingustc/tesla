@@ -203,14 +203,14 @@ public class MomentActivity extends BaseActivity {
         updateLikeCount();
     }
 
-    @OnClick(R.id.user_avatar)
+    @OnClick(R.id.avatar_view)
     public void onUserAvatarClick() {
         if (!mSessionManager.isLoggedIn()) {
             AuthorizeActivity.launch(this);
             return;
 
         }
-        UserProfileActivity.launch(this, mMomentInfo.owner.userID);
+        UserProfileActivity.launch(this, mMomentInfo.owner, avatarView);
 
     }
 
