@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.adapters;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,12 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.Notification;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
-import com.waylens.hachi.utils.AvatarHelper;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
@@ -32,7 +28,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/10/14.
@@ -134,7 +129,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case Notification.NOTIFICATION_TYPE_COMMENT:
                 case Notification.NOTIFICATION_TYPE_LIKE:
                 case Notification.NOTIFICATION_TYPE_FOLLOW:
-                    onBindCommentViewHolder((NotificationViewHolder)holder, position);
+                    onBindCommentViewHolder((NotificationViewHolder) holder, position);
                     break;
                 default:
                     break;
@@ -182,8 +177,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 
-
-
     private void onBindLoadingViewHolder(LoadingViewHolder holder, int position) {
         if (mHasMore) {
             holder.viewAnimator.setDisplayedChild(0);
@@ -199,7 +192,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @BindView(R.id.comment_root_layout)
         LinearLayout commentRootLayout;
-
 
 
         @BindView(R.id.comment_user_name)
@@ -221,9 +213,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ButterKnife.bind(this, itemView);
         }
     }
-
-
-
 
 
     public interface OnListItemClickListener {

@@ -1,49 +1,38 @@
 package com.waylens.hachi.ui.adapters;
 
 import android.app.Activity;
-import android.support.v7.widget.RecyclerView;
 import android.content.Context;
-import android.support.v7.widget.PopupMenu;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
-import android.view.Gravity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
-import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
-import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
-import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by lshw on 16/9/2.
  */
-public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     private static final String TAG = LeaderBoardAdapter.class.getSimpleName();
@@ -85,7 +74,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 rank = i + 1;
                 mRankings.add(i, rank);
                 raceTime = curTime;
-            } else if (curTime == raceTime){
+            } else if (curTime == raceTime) {
                 mRankings.add(i, rank);
             }
         }
@@ -146,11 +135,11 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         final Moment moment = mMoments.get(position);
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         Glide.with(mContext)
-                .load(moment.owner.avatarUrl)
-                .placeholder(R.drawable.menu_profile_photo_default)
-                .crossFade()
-                .dontAnimate()
-                .into(holder.userAvatar);
+            .load(moment.owner.avatarUrl)
+            .placeholder(R.drawable.menu_profile_photo_default)
+            .crossFade()
+            .dontAnimate()
+            .into(holder.userAvatar);
         holder.userName.setText(moment.owner.userName);
         if (moment.momentVehicleInfo.vehicleMaker != null) {
             holder.vehicleInfo.setText(moment.momentVehicleInfo.vehicleMaker + " " + moment.momentVehicleInfo.vehicleModel + " " + moment.momentVehicleInfo.vehicleYear);
@@ -212,7 +201,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        if (mMoments.size()  == 100) {
+        if (mMoments.size() == 100) {
             return mMoments.size() + 1;
         } else {
             return mMoments.size();
@@ -260,7 +249,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public static class LeaderBoardItemViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.user_avatar)
-        CircleImageView userAvatar;
+        ImageView userAvatar;
 
         @BindView(R.id.user_name)
         TextView userName;

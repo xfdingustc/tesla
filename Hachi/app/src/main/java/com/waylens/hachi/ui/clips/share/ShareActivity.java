@@ -32,9 +32,9 @@ import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.GeoInfo;
-import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
+import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
@@ -51,9 +51,8 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.ShareSettingActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
-import com.waylens.hachi.utils.StringUtils;
+import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.ViewUtils;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +62,6 @@ import java.util.TimeZone;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Response;
 import rx.Observable;
@@ -83,6 +81,8 @@ public class ShareActivity extends ClipPlayActivity {
     private static final int REQUEST_CODE_FACEBOOK = 0x100;
     private static final int REQUEST_CODE_YOUTUBE = 0x101;
     private static final int REQUEST_SHARE_SETTING = 0x102;
+
+    private String mSocialPrivacy;
 
     private int mPlayListId;
 
@@ -144,9 +144,9 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.vehicle_desc)
     TextInputEditText mVehicleDesc;
 
-    private String mSocialPrivacy;
+
     @BindView(R.id.user_avatar)
-    CircleImageView mUserAvatar;
+    AvatarView mUserAvatar;
 
     @BindView(R.id.user_name)
     TextView mUserName;
@@ -365,54 +365,54 @@ public class ShareActivity extends ClipPlayActivity {
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new Observer<Clip>() {
-            @Override
-            public void onCompleted() {
-                if (mVehicleMaker != null) {
-                    mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<Clip>() {
+                @Override
+                public void onCompleted() {
+                    if (mVehicleMaker != null) {
+                        mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+                    }
+                    if (mLocation != null) {
+                        mTvGeoInfo.setText(mLocation);
+                    }
+                    if (!TextUtils.isEmpty(mTvVehicleInfo.getText()) && !TextUtils.isEmpty(mTvGeoInfo.getText())) {
+                        mInfoSeparator.setVisibility(View.VISIBLE);
+                    }
                 }
-                if (mLocation != null) {
-                    mTvGeoInfo.setText(mLocation);
-                }
-                if (!TextUtils.isEmpty(mTvVehicleInfo.getText()) && !TextUtils.isEmpty(mTvGeoInfo.getText())) {
-                    mInfoSeparator.setVisibility(View.VISIBLE);
-                }
-            }
 
-            @Override
-            public void onError(Throwable e) {
-                Logger.t(TAG).d(e.getMessage());
+                @Override
+                public void onError(Throwable e) {
+                    Logger.t(TAG).d(e.getMessage());
 
-            }
+                }
 
-            @Override
-            public void onNext(Clip clip) {
-                Logger.t(TAG).d("typeRace:" + clip.typeRace);
-                Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
-                //mRaceLayout.setVisibility(View.VISIBLE);
-                switch (clip.typeRace & Clip.MASK_RACE) {
-                    case Clip.TYPE_RACE_AU3T:
-                        momentType = "RACING_AU3T";
-                        break;
-                    case Clip.TYPE_RACE_AU6T:
-                        momentType = "RACING_AU6T";
-                        break;
-                    case Clip.TYPE_RACE_CD3T:
-                        momentType = "RACING_CD3T";
-                        break;
-                    case Clip.TYPE_RACE_CD6T:
-                        momentType = "RACING_CD6T";
-                        break;
-                    default:
-                        break;
+                @Override
+                public void onNext(Clip clip) {
+                    Logger.t(TAG).d("typeRace:" + clip.typeRace);
+                    Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
+                    //mRaceLayout.setVisibility(View.VISIBLE);
+                    switch (clip.typeRace & Clip.MASK_RACE) {
+                        case Clip.TYPE_RACE_AU3T:
+                            momentType = "RACING_AU3T";
+                            break;
+                        case Clip.TYPE_RACE_AU6T:
+                            momentType = "RACING_AU6T";
+                            break;
+                        case Clip.TYPE_RACE_CD3T:
+                            momentType = "RACING_CD3T";
+                            break;
+                        case Clip.TYPE_RACE_CD6T:
+                            momentType = "RACING_CD6T";
+                            break;
+                        default:
+                            break;
+                    }
+                    for (long time : timingPoints) {
+                        Logger.t(TAG).d(time);
+                    }
+                    Logger.t(TAG).d(clip.getStartTimeMs());
                 }
-                for (long time : timingPoints) {
-                    Logger.t(TAG).d(time);
-                }
-                Logger.t(TAG).d(clip.getStartTimeMs());
-            }
-        });
+            });
 
         embedVideoPlayFragment();
         setupSocialPolicy();
@@ -424,12 +424,8 @@ public class ShareActivity extends ClipPlayActivity {
         });
 
         SessionManager sessionManager = SessionManager.getInstance();
-        Glide.with(this)
-            .load(sessionManager.getAvatarUrl())
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(mUserAvatar);
+
+        mUserAvatar.loadAvatar(sessionManager.getAvatarUrl(), sessionManager.getUserName());
         mUserName.setText(sessionManager.getUserName());
 
 
@@ -498,8 +494,6 @@ public class ShareActivity extends ClipPlayActivity {
             }
         });
     }
-
-
 
 
     private void setupParallex() {

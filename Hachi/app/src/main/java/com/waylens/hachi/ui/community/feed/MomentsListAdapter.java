@@ -18,10 +18,8 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -32,12 +30,10 @@ import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
-import com.waylens.hachi.utils.AvatarHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -51,7 +47,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -220,7 +215,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 final String cover;
                 if (!TextUtils.isEmpty(momentPicture.bigThumbnail)) {
                     cover = momentPicture.bigThumbnail;
-                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)){
+                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)) {
                     cover = momentPicture.smallThumbnail;
                 } else {
                     cover = momentPicture.original;
@@ -234,7 +229,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PhotoViewActivity.launch((BaseActivity)mContext, cover);
+                        PhotoViewActivity.launch((BaseActivity) mContext, cover);
                     }
                 });
             } else {
@@ -314,8 +309,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-
-
     private void onDeleteClick(final long momentId, final int position) {
         DialogHelper.showDeleteMomentConfirmDialog(mContext, momentId, new DialogHelper.onPositiveClickListener() {
             @Override
@@ -328,7 +321,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private void onEditClick(MomentAbstract moment, final MomentViewHolder holder) {
-        MomentEditActivity.launch((Activity)mContext, moment.id, moment.title, holder.videoCover);
+        MomentEditActivity.launch((Activity) mContext, moment.id, moment.title, holder.videoCover);
     }
 
 
@@ -336,9 +329,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public int getItemCount() {
         return mMoments.size() + 1 + (mHeaderView == null ? 0 : 1);
     }
-
-
-
 
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {

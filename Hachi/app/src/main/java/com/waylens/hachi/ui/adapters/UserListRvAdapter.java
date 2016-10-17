@@ -5,19 +5,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.ui.entities.UserDeprecated;
+import com.waylens.hachi.ui.views.AvatarView;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2015/9/23.
@@ -52,12 +51,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         viewHolder.mTvUserName.setText(userInfo.userName);
 
-        Glide.with(mContext)
-            .load(userInfo.avatarUrl)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .into(viewHolder.mUserAvater);
+        viewHolder.mUserAvater.loadAvatar(userInfo.avatarUrl, userInfo.userName);
 
         if (userInfo.getIsFollowing()) {
             setFollowButton(viewHolder, true);
@@ -123,13 +117,13 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public class UserListViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.userAvatar)
-        CircleImageView mUserAvater;
+        AvatarView mUserAvater;
 
         @BindView(R.id.tvUserName)
         TextView mTvUserName;
 
         @BindView(R.id.btnFollow)
-        TextView mTvFollow;
+        Button mTvFollow;
 
         public UserListViewHolder(View itemView) {
             super(itemView);

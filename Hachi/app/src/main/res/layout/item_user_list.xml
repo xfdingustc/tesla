@@ -1,54 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="vertical">
+              android:orientation="horizontal">
+
+
+    <com.waylens.hachi.ui.views.AvatarView
+        android:id="@+id/userAvatar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        tools:src="@drawable/menu_profile_photo_default"/>
+
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/app_text_color_primary"
+        android:textStyle="bold"
+        tools:text="xfding"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_weight="1"></LinearLayout>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/userAvatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="16dp"
-            app:civ_border_color="@color/app_text_color_primary"
-            tools:src="@drawable/menu_profile_photo_default"/>
-
-        <TextView
-            android:id="@+id/tvUserName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:textColor="@color/app_text_color_primary"
-            tools:text="xfding"
-            android:textStyle="bold"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></LinearLayout>
-
-        <TextView
-            android:id="@+id/btnFollow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginRight="16dp"
-            android:background="@drawable/button_with_stroke"
-            android:paddingBottom="4dp"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:paddingTop="4dp"
-            android:textAllCaps="true"
-            android:text="@string/add_follow"
-            android:textColor="@color/style_color_accent"/>
-
-    </LinearLayout>
+    <Button
+        android:id="@+id/follow"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/avatar_view"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/user_name"
+        android:layout_gravity="center_vertical"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/asl_follow"
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:text="@string/follow"
+        android:textColor="@android:color/white"
+        android:theme="@style/LightRippleOverlay"/>
 
 
 </LinearLayout>

@@ -41,15 +41,10 @@ import com.waylens.hachi.utils.FastBlurUtil;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import rx.Observable;
 import rx.Subscriber;
@@ -72,7 +67,7 @@ public class AccountActivity extends BaseActivity {
 
 
     @BindView(R.id.avatar)
-    CircleImageView mAvatar;
+    ImageView mAvatar;
 
     @BindView(R.id.btnAddPhoto)
     ImageButton mBtnAddPhoto;
@@ -262,10 +257,10 @@ public class AccountActivity extends BaseActivity {
 
                         Bitmap bitmap = (Bitmap) resource;
 
-                        float aspectRatio = (float)mBlurAvatar.getWidth() / mBlurAvatar.getHeight();
-                        int cropHeight = (int)(bitmap.getWidth() / aspectRatio);
+                        float aspectRatio = (float) mBlurAvatar.getWidth() / mBlurAvatar.getHeight();
+                        int cropHeight = (int) (bitmap.getWidth() / aspectRatio);
                         Logger.t(TAG).d("ratio: " + aspectRatio + " cropHeight: " + cropHeight);
-                        Bitmap cropBitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - cropHeight) /2 , bitmap.getWidth(), cropHeight);
+                        Bitmap cropBitmap = Bitmap.createBitmap(bitmap, 0, (bitmap.getHeight() - cropHeight) / 2, bitmap.getWidth(), cropHeight);
                         Palette.generateAsync(cropBitmap, 24, new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
@@ -332,7 +327,6 @@ public class AccountActivity extends BaseActivity {
         });
         getToolbar().setTitle(R.string.account);
     }
-
 
 
 }

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
@@ -13,22 +14,23 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.utils.AvatarHelper;
+import com.waylens.hachi.utils.CircleTransform;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/10/16.
  */
 
 public class AvatarView extends FrameLayout {
+    private CircleTransform mCircleTransform;
 
     @BindView(R.id.avatar_va)
     ViewAnimator vaAvatar;
 
     @BindView(R.id.user_avatar)
-    CircleImageView userAvatar;
+    ImageView userAvatar;
 
     @BindView(R.id.rlv_name_view)
     RoundedLetterView rlvNameView;
@@ -45,6 +47,7 @@ public class AvatarView extends FrameLayout {
     private void initViews(Context context) {
         View.inflate(context, R.layout.layout_avatar_view, this);
         ButterKnife.bind(this);
+        mCircleTransform = new CircleTransform(getContext());
     }
 
     public void loadAvatar(User user) {
@@ -55,9 +58,9 @@ public class AvatarView extends FrameLayout {
         if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {
             Glide.with(getContext())
                 .load(avatarUrl)
+                .transform(mCircleTransform)
                 .placeholder(R.drawable.ic_account_circle_placeholder)
                 .crossFade()
-                .dontAnimate()
                 .into(userAvatar);
             vaAvatar.setDisplayedChild(0);
         } else {

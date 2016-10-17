@@ -35,7 +35,6 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.UserDeprecated;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
@@ -43,7 +42,6 @@ import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
@@ -82,7 +80,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     @BindView(R.id.userAvatar)
-    CircleImageView civUserAvatar;
+    ImageView civUserAvatar;
 
     @BindView(R.id.btnFollowersCount)
     TextView mTvFollowersCount;
@@ -214,7 +212,7 @@ public class UserProfileActivity extends BaseActivity {
             .load(mUserInfoEx.userInfo.avatarUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .placeholder(R.drawable.menu_profile_photo_default)
-            .dontAnimate()
+            .crossFade()
             .into(civUserAvatar);
 
 

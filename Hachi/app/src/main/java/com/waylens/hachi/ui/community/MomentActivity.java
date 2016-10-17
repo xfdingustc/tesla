@@ -31,6 +31,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -83,7 +84,6 @@ import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import rx.android.schedulers.AndroidSchedulers;
@@ -391,7 +391,7 @@ public class MomentActivity extends BaseActivity {
         View view = getLayoutInflater().inflate(R.layout.bottom_sheet_add_comment, null);
         mNewCommentView = (EditText) view.findViewById(R.id.comment_edit);
 
-        CircleImageView avatar = (CircleImageView) view.findViewById(R.id.current_user_avatar);
+        ImageView avatar = (ImageView) view.findViewById(R.id.current_user_avatar);
         Glide.with(this)
             .load(mSessionManager.getAvatarUrl())
             .diskCacheStrategy(DiskCacheStrategy.ALL)

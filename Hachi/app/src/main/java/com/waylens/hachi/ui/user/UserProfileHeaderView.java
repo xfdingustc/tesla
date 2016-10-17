@@ -2,15 +2,10 @@ package com.waylens.hachi.ui.user;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.os.Build;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,10 +13,6 @@ import android.widget.TextView;
 import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobManager;
@@ -29,17 +20,14 @@ import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.FollowListActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.IMomentListAdapterHeaderView;
 import com.waylens.hachi.ui.settings.AccountActivity;
-import com.waylens.hachi.utils.FastBlurUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/7/21.
@@ -76,8 +64,6 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
             .into(holder.civUserAvatar);
 
 
-
-
         holder.mUserName.setText(mUserInfo.displayName);
 
         if (SessionManager.getInstance().isCurrentUser(mUserInfo.userName)) {
@@ -91,7 +77,6 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
 
         updateFollowInfo(holder);
     }
-
 
 
     private void updateFollowInfo(UserProfileHeaderViewHolder viewHolder) {
@@ -112,7 +97,7 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
     public class UserProfileHeaderViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.userAvatar)
-        CircleImageView civUserAvatar;
+        ImageView civUserAvatar;
 
         @BindView(R.id.btnFollowersCount)
         TextView mTvFollowersCount;
@@ -131,7 +116,6 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
         ImageButton mBtnAccountSetting;
 
 
-
         @OnClick(R.id.btnFollowersCount)
         public void onBtnFollowerCountClicked() {
             FollowListActivity.launch(mActivity, mUserId, true);
@@ -145,7 +129,7 @@ public class UserProfileHeaderView implements IMomentListAdapterHeaderView {
         @OnClick(R.id.btnFollow)
         public void onBtnFollowClicked() {
             if (!SessionManager.getInstance().isLoggedIn()) {
-                AuthorizeActivity.launch( mActivity);
+                AuthorizeActivity.launch(mActivity);
                 return;
             }
             if (!SessionManager.checkUserVerified(mActivity)) {

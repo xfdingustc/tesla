@@ -7,48 +7,29 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.DrawerLayout;
-import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.lapism.searchview.SearchView;
 import com.orhanobut.logger.Logger;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.waylens.hachi.R;
-import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.gcm.RegistrationIntentService;
-import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
-import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.AccountFragment;
-import com.waylens.hachi.ui.settings.SettingsFragment;
-import com.waylens.hachi.utils.PreferenceUtils;
-
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/1/15.
@@ -180,8 +161,6 @@ public class MainActivity extends BaseActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
     }
-
-
 
 
     public void switchFragment(int tag) {

@@ -19,11 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
@@ -46,7 +44,6 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
-import com.waylens.hachi.utils.VolleyUtil;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -56,7 +53,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import rx.Observable;
@@ -139,7 +135,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     SwipeRefreshLayout mRefreshLayout;
 
     @BindView(R.id.my_avatar)
-    CircleImageView mMyAvatar;
+    ImageView mMyAvatar;
 
     @BindView(R.id.my_name)
     TextView mMyName;

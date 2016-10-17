@@ -8,7 +8,7 @@
     tools:layout_height="40dp"
     tools:layout_width="40dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/user_avatar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

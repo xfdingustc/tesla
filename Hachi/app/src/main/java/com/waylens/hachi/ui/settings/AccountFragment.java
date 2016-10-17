@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.settings;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,9 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
@@ -25,8 +21,6 @@ import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
-import com.waylens.hachi.utils.FastBlurUtil;
-
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -34,7 +28,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Xiaofei on 2016/9/28.
@@ -43,7 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AccountFragment extends BaseFragment {
 
     @BindView(R.id.user_avatar)
-    CircleImageView userAvatar;
+    ImageView userAvatar;
 
     @BindView(R.id.blur_bg)
     ImageView blurBg;
