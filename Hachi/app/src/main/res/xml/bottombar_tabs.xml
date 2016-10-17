@@ -12,7 +12,7 @@
     <tab
         id="@+id/live_view"
         icon="@drawable/tab_liveview_n"
-        title="@string/live_view" />
+        title="@string/live_view"/>
 
     <tab
         id="@+id/video"

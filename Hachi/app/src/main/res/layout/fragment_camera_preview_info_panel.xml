@@ -4,7 +4,7 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:alpha="0.9"
-              android:background="#141618"
+              android:background="@color/windowBackground"
               android:orientation="vertical"
               xmlns:tools="http://schemas.android.com/tools">
 
@@ -31,14 +31,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:textColor="@color/app_text_color_primary"
             tools:text="3.9GB ready to record"/>
-
-
-
-
-
-
-
 
         <ImageView
             android:id="@+id/remote_ctrl"
