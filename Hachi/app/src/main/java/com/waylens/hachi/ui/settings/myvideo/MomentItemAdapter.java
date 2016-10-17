@@ -15,10 +15,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.community.MomentActivity;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
-
-import org.ocpsoft.prettytime.PrettyTime;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +33,6 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private final Activity mActivity;
     private List<MomentEx> mUploadedMomentList = new ArrayList<>();
-    private PrettyTime mPrettyTime = new PrettyTime();
 
 
     public MomentItemAdapter(Activity activity) {
@@ -63,7 +60,7 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
         videoItemViewHolder.momentTitle.setText(uploadedMoment.moment.title);
         videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
-        videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(uploadedMoment.moment.uploadTime)));
+        videoItemViewHolder.description.setText(PrettyTimeUtils.getTimeAgo(uploadedMoment.moment.uploadTime));
         videoItemViewHolder.description.setVisibility(View.VISIBLE);
         Glide.with(mActivity)
             .load(uploadedMoment.moment.thumbnail)
@@ -81,10 +78,7 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
 
-
     }
-
-
 
 
     @Override
@@ -115,8 +109,6 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @BindView(R.id.btn_more)
         ImageButton btnMore;
-
-
 
 
         public VideoItemViewHolder(View itemView) {

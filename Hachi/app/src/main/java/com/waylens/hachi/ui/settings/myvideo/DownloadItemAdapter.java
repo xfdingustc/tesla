@@ -27,12 +27,10 @@ import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 
-
-import org.ocpsoft.prettytime.PrettyTime;
 
 import java.io.File;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,8 +43,6 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Activity mActivity;
 
     private DownloadManager mDownloadManager = DownloadManager.getManager();
-
-    private PrettyTime mPrettyTime = new PrettyTime();
 
     private File[] mDownloadedFileList;
 
@@ -110,20 +106,20 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void onBindDownloadedViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
-        final DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
+        final DownloadVideoItemViewHolder viewHolder = (DownloadVideoItemViewHolder) holder;
 
         final File oneDownloadedFile = mDownloadedFileList[position];
 
         Glide.with(mActivity)
             .loadFromMediaStore(Uri.fromFile(oneDownloadedFile))
             .crossFade()
-            .into(videoItemViewHolder.videoCover);
+            .into(viewHolder.videoCover);
 
 
-        videoItemViewHolder.momentTitle.setText(oneDownloadedFile.getName());
-        videoItemViewHolder.uploadProgress.setVisibility(View.INVISIBLE);
+        viewHolder.momentTitle.setText(oneDownloadedFile.getName());
+        viewHolder.uploadProgress.setVisibility(View.INVISIBLE);
 
-        videoItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -131,14 +127,14 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 mActivity.startActivity(intent);
             }
         });
-        videoItemViewHolder.videoDuration.setVisibility(View.GONE);
+        viewHolder.videoDuration.setVisibility(View.GONE);
 
-        videoItemViewHolder.btnMore.setVisibility(View.VISIBLE);
-        videoItemViewHolder.description.setText(mPrettyTime.formatUnrounded(new Date(oneDownloadedFile.lastModified())));
-        videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
+        viewHolder.btnMore.setVisibility(View.VISIBLE);
+        viewHolder.description.setText(PrettyTimeUtils.getTimeAgo(oneDownloadedFile.lastModified()));
+        viewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
+                PopupMenu popupMenu = new PopupMenu(mActivity, viewHolder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_downloaded, popupMenu.getMenu());
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

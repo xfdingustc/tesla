@@ -17,9 +17,10 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.AnimUtils;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 import com.waylens.hachi.utils.TransitionUtils;
 
-import org.ocpsoft.prettytime.PrettyTime;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,8 +42,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private final RecyclerView mCommentListView;
 
     private List<Comment> mComments;
-
-    private PrettyTime mPrettyTime;
 
     private OnCommentClickListener mOnCommentClickListener;
 
@@ -67,7 +66,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mCommentListView.setItemAnimator(mCommentAnimator);
         mContext = context;
         mComments = comments;
-        mPrettyTime = new PrettyTime();
         mExpandCollapse = new AutoTransition();
         mExpandCollapse.setDuration(120);
         mExpandCollapse.setInterpolator(AnimUtils.getFastOutSlowInInterpolator(mContext));
@@ -171,7 +169,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         viewHolder.avatarView.loadAvatar(comment.author.avatarUrl, comment.author.userName);
         viewHolder.tvUserName.setText(comment.author.userName);
         viewHolder.commentContentViews.setText(comment.toSpannable());
-        viewHolder.commentTimeView.setText(mPrettyTime.formatUnrounded(new Date(comment.createTime)));
+        viewHolder.commentTimeView.setText(PrettyTimeUtils.getTimeAgo(comment.createTime));
         if (comment.commentID == Comment.UNASSIGNED_ID) {
             viewHolder.commentViewAnimator.setVisibility(View.VISIBLE);
             viewHolder.commentViewAnimator.setDisplayedChild(0);

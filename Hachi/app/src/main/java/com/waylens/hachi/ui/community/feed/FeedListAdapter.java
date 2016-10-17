@@ -41,16 +41,14 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,7 +67,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private final Context mContext;
 
-    private PrettyTime mPrettyTime;
+//    private PrettyTime mPrettyTime;
 
 
     private boolean mHasMore = true;
@@ -92,8 +90,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public FeedListAdapter(Context context) {
         this.mContext = context;
-        mPrettyTime = new PrettyTime(Locale.US);
-
         EventBus.getDefault().register(this);
 
     }
@@ -194,18 +190,12 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (!TextUtils.isEmpty(momentEx.owner.userName)) {
             holder.userName.setText(momentEx.owner.userName);
-        } else {
-            holder.userName.setText(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
         }
 
 
         StringBuilder stringBuilder = new StringBuilder();
         if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
             VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
-//            stringBuilder.append(vehicleInfo.vehicleMaker).append(" ")
-//                .append(vehicleInfo.vehicleModel).append(" ")
-//                .append(vehicleInfo.vehicleYear)
-//                .append(" • ");
             holder.carInfo.setVisibility(View.VISIBLE);
             holder.carInfo.setText(vehicleInfo.toString());
         } else {
@@ -215,7 +205,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             stringBuilder.append(momentEx.moment.place.toString()).append(" • ");
         }
 
-        stringBuilder.append(mPrettyTime.formatUnrounded(new Date(moment.uploadTime)));
+        stringBuilder.append(PrettyTimeUtils.getTimeAgo(moment.uploadTime));
         holder.place.setText(stringBuilder.toString());
 
 

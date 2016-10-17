@@ -34,11 +34,12 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.ocpsoft.prettytime.PrettyTime;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,9 +61,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private final Context mContext;
 
-    private PrettyTime mPrettyTime;
-
-
     private boolean mHasMore = true;
 
     private IMomentListAdapterHeaderView mHeaderView = null;
@@ -83,8 +81,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public MomentsListAdapter(Context context) {
         this.mContext = context;
-        mPrettyTime = new PrettyTime(Locale.US);
-
         EventBus.getDefault().register(this);
 
     }
@@ -182,10 +178,11 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.title.setText(R.string.no_title);
         }
 
+        String timeAgo = PrettyTimeUtils.getTimeAgo(momentAbstract.uploadTime);
         if (!TextUtils.isEmpty(momentEx.owner.userName)) {
-            holder.userName.setText(momentEx.owner.userName + " • " + mPrettyTime.formatUnrounded(new Date(momentAbstract.uploadTime)));
+            holder.userName.setText(momentEx.owner.userName + " • " + timeAgo);
         } else {
-            holder.userName.setText(mPrettyTime.formatUnrounded(new Date(momentAbstract.uploadTime)));
+            holder.userName.setText(timeAgo);
         }
 
         if (momentAbstract.momentVehicleInfo != null && !TextUtils.isEmpty(momentAbstract.momentVehicleInfo.vehicleModel)) {

@@ -19,8 +19,8 @@ import com.waylens.hachi.rest.bean.Notification;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 
-import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,8 +41,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private final OnListItemClickListener mOnListItemClickListener;
 
-    PrettyTime mPrettyTime;
-
     Context mContext;
 
     private boolean mHasMore = true;
@@ -50,7 +48,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public NotificationAdapter(List<Notification> notificationEvents, Context context, OnListItemClickListener listener) {
         mNotificationEvents = notificationEvents;
-        mPrettyTime = new PrettyTime();
         mContext = context;
         mOnListItemClickListener = listener;
     }
@@ -154,7 +151,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.avatarView.loadAvatar(notification.getUserAvatarUrl(), notification.getUser().userName);
 
         holder.commentUserName.setText(notification.getDescription());
-        holder.commentTime.setText(mPrettyTime.formatUnrounded(new Date(notification.getCreateTime())));
+        holder.commentTime.setText(PrettyTimeUtils.getTimeAgo(notification.getCreateTime()));
 
 
         if (notification.moment != null) {
