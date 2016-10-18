@@ -18,6 +18,8 @@
     <attr name="overtureBgColor" format="color"/>
     <attr name="overtureLogoTint" format="color"/>
     <attr name="cardViewBgColor" format="color"/>
+    <attr name="tagBgColor" format="color"/>
+    <attr name="tagTextColor" format="color"/>
 
 
     <declare-styleable name="VideoTrimmer">
