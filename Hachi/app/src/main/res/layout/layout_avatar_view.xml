@@ -9,7 +9,7 @@
     tools:layout_width="40dp">
 
     <ImageView
-        android:id="@+id/user_avatar"
+        android:id="@+id/user_avatar_iv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:src="@drawable/ic_account_circle"/>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -20,6 +21,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.views.AvatarView;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -109,7 +111,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_VIEW_TYPE_MOMENT) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_leader_board, parent, false);
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_leader_board, parent, false);
             return new LeaderBoardItemViewHolder(itemView);
         } else {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_leader_board_tail, parent, false);
@@ -134,12 +136,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private void onBindLeaderBoardItemViewHolder(final LeaderBoardItemViewHolder holder, final int position) {
         final Moment moment = mMoments.get(position);
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
-        Glide.with(mContext)
-            .load(moment.owner.avatarUrl)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
-            .dontAnimate()
-            .into(holder.userAvatar);
+        holder.userAvatar.loadAvatar(moment.owner);
         holder.userName.setText(moment.owner.userName);
         if (moment.momentVehicleInfo.vehicleMaker != null) {
             holder.vehicleInfo.setText(moment.momentVehicleInfo.vehicleMaker + " " + moment.momentVehicleInfo.vehicleModel + " " + moment.momentVehicleInfo.vehicleYear);
@@ -181,7 +178,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         });
 
-        holder.leaderboardPlay.setOnClickListener(new View.OnClickListener() {
+        holder.playLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.leaderboardPlay);
@@ -249,7 +246,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public static class LeaderBoardItemViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.user_avatar)
-        ImageView userAvatar;
+        AvatarView userAvatar;
 
         @BindView(R.id.user_name)
         TextView userName;
@@ -259,6 +256,9 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @BindView(R.id.race_time)
         TextView raceTime;
+
+        @BindView(R.id.play_layout)
+        LinearLayout playLayout;
 
         @BindView(R.id.leaderboard_play)
         ImageView leaderboardPlay;

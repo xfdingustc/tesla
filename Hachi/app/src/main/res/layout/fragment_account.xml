@@ -34,7 +34,7 @@
             android:layout_gravity="bottom"
             android:orientation="horizontal">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <com.waylens.hachi.ui.views.AvatarView
                 android:id="@+id/user_avatar"
                 android:layout_width="64dp"
                 android:layout_height="64dp"

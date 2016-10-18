@@ -214,7 +214,8 @@ public interface HachiApi {
 
     @GET("/api/moments/race")
     Call<RaceQueryResponse> queryRace(@Query("mode") int mode, @Query("start") int start,
-                                      @Query("end") int end, @Query("maker") String maker,
+                                      @Query("end") int end, @Query("upper") Long upper,
+                                      @Query("lower") Long lower, @Query("maker") String maker,
                                       @Query("model") String model, @Query("count") int count);
 
     @GET("/api/place")

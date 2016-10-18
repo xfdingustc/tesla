@@ -21,6 +21,7 @@ import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
+import com.waylens.hachi.ui.views.AvatarView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,7 +37,7 @@ import butterknife.OnClick;
 public class AccountFragment extends BaseFragment {
 
     @BindView(R.id.user_avatar)
-    ImageView userAvatar;
+    AvatarView userAvatar;
 
     @BindView(R.id.blur_bg)
     ImageView blurBg;
@@ -163,11 +164,7 @@ public class AccountFragment extends BaseFragment {
 
 
     private void showUserAvatar(String avatarUrl) {
-        Glide.with(this)
-            .load(avatarUrl)
-            .dontAnimate()
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(userAvatar);
+        userAvatar.loadAvatar(avatarUrl, null);
     }
 
 

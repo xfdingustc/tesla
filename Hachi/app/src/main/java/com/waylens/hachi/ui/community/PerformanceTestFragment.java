@@ -22,14 +22,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.body.RaceQueryBody;
-import com.waylens.hachi.rest.response.MakerResponse;
-import com.waylens.hachi.rest.response.ModelResponse;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -43,10 +42,10 @@ import com.waylens.hachi.ui.entities.UserDeprecated;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
+import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -56,11 +55,6 @@ import java.util.List;
 import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 
 public class PerformanceTestFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
@@ -87,9 +81,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     private int mLeaderBoardMode = TEST_MODE_AUTO;
 
     private LeaderBoardAdapter mAdapter;
-
-
     private LinearLayoutManager mLinearLayoutManager;
+    private HachiApi mHachiApi;
 
     private int mCurrentCursor;
 
@@ -100,6 +93,10 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     private int mLeaderBoardStart;
 
     private int mLeaderBoardEnd;
+
+    private Long mUpper;
+
+    private Long mLower;
 
     private VehicleInfo myVehicleInfo;
 
@@ -113,6 +110,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private List<View> popupViews = new ArrayList<>();
 
+    private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
+    private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
     private String headers[] = {"mode", "type", "model"};
 
     private ListDropDownAdapter modeAdapter;
@@ -122,6 +121,12 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     private ListDropDownAdapter typeAdapterMetric;
 
     private ListDropDownAdapter modelAdapter;
+
+    private ListDropDownAdapter groupAdapter60;
+
+    private ListDropDownAdapter groupAdapter30;
+
+    private ListDropDownAdapter currentGroupAdapter;
 
     @BindView(R.id.main_layout)
     FrameLayout mLayoutMain;
@@ -136,7 +141,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     SwipeRefreshLayout mRefreshLayout;
 
     @BindView(R.id.my_avatar)
-    ImageView mMyAvatar;
+    AvatarView mMyAvatar;
 
     @BindView(R.id.my_name)
     TextView mMyName;
@@ -175,6 +180,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         Bundle arguments = getArguments();
         if (arguments != null) {
         }
+        mHachiApi = HachiService.createHachiApiService();
         mAdapter = new LeaderBoardAdapter(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -211,16 +217,16 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         typeAdapterEnglish = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_english)));
         typeView.setAdapter(typeAdapterEnglish);
         typeAdapterMetric = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_metric)));
-
-        final ListView modelView = new ListView(getActivity());
-        modelView.setDividerHeight(0);
-        modelAdapter = new ListDropDownAdapter(getActivity());
-        modelView.setAdapter(modelAdapter);
-        modelAdapter.add(getResources().getString(R.string.all_car));
+        groupAdapter30 = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_time_030)));
+        groupAdapter60 = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_time_060)));
+        currentGroupAdapter = groupAdapter30;
+        final ListView groupView = new ListView(getActivity());
+        groupView.setDividerHeight(0);
+        groupView.setAdapter(currentGroupAdapter);
 
         popupViews.add(modeView);
         popupViews.add(typeView);
-        popupViews.add(modelView);
+        popupViews.add(groupView);
 
         TextView contentView = new TextView(getActivity());
         contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -306,9 +312,18 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         typeAdapterMetric.setCheckItem(position);
                         mDropDownMenu.setTabText((String) typeAdapterMetric.getItem(position));
                     }
-
                 }
                 if (type != mRaceType) {
+                    if (position == 1) {
+                        currentGroupAdapter = groupAdapter60;
+                    } else {
+                        currentGroupAdapter = groupAdapter30;
+                    }
+                    groupView.setAdapter(currentGroupAdapter);
+                    currentGroupAdapter.setCheckItem(0);
+                    mDropDownMenu.setTabTextAt((String) currentGroupAdapter.getItem(0), 2);
+                    mUpper = null;
+                    mLower = null;
                     mRaceType = type;
                     loadLeaderBoard(0, true);
                 }
@@ -316,38 +331,23 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
 
-        mDropDownMenu.setTabTextAt((String) modelAdapter.getItem(0), 2);
-        modelAdapter.setCheckItem(0);
+        mDropDownMenu.setTabTextAt((String) groupAdapter30.getItem(0), 2);
 
-        modelView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        groupView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                switch (i) {
-                    case 0:
-                        mMaker = null;
-                        mModel = null;
-                        break;
-                    case 1:
-                        if (modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
-                            mMaker = myVehicleInfo.vehicleMaker;
-                            mModel = myVehicleInfo.vehicleModel;
-                        } else {
-                            mMaker = mMakerModelList.get(1).first.makerName;
-                            mModel = mMakerModelList.get(1).second.modelName;
-                        }
-                        break;
-                    default:
-                        if (modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
-                            mMaker = mMakerModelList.get(i - 2).first.makerName;
-                            mModel = mMakerModelList.get(i - 2).second.modelName;
-                        } else {
-                            mMaker = mMakerModelList.get(i - 1).first.makerName;
-                            mModel = mMakerModelList.get(i - 1).second.modelName;
-                        }
-                        break;
+                if (i == 0) {
+                    mUpper = null;
+                    mLower = null;
+                } else if (mRaceType == RACE_TYPE_30MPH || mRaceType == RACE_TYPE_50KMH ) {
+                    mLower = splitTime30[i-1];
+                    mUpper = splitTime30[i];
+                } else {
+                    mLower = splitTime60[i-1];
+                    mUpper = splitTime60[i];
                 }
-                modelAdapter.setCheckItem(i);
-                mDropDownMenu.setTabText((String) modelAdapter.getItem(i));
+                currentGroupAdapter.setCheckItem(i);
+                mDropDownMenu.setTabText((String) currentGroupAdapter.getItem(i));
                 mDropDownMenu.closeMenu();
                 loadLeaderBoard(0, true);
                 onRefresh();
@@ -357,55 +357,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
-
         mMakerModelList = new ArrayList<>();
-
-        Observable.create(new Observable.OnSubscribe<List<Pair<Maker, Model>>>() {
-            @Override
-            public void call(Subscriber<? super List<Pair<Maker, Model>>> subscriber) {
-                Call<MakerResponse> makerResponseCall = HachiService.createHachiApiService().getAllMaker();
-                try {
-                    MakerResponse makerResponse = makerResponseCall.execute().body();
-                    for (Maker maker : makerResponse.makers) {
-                        Call<ModelResponse> modelResponseCall = HachiService.createHachiApiService().getModelByMaker(maker.makerID);
-                        ModelResponse modelResponse = modelResponseCall.execute().body();
-                        List<Pair<Maker, Model>> makerModelList = new ArrayList<>();
-                        for (Model model : modelResponse.models) {
-                            makerModelList.add(new Pair<>(maker, model));
-                        }
-                        if (!makerModelList.isEmpty()) {
-                            subscriber.onNext(makerModelList);
-                        }
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<List<Pair<Maker, Model>>>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(List<Pair<Maker, Model>> pairs) {
-                    mMakerModelList.addAll(pairs);
-                    List<String> stringList = new ArrayList<>();
-                    for (Pair<Maker, Model> item : pairs) {
-                        stringList.add(item.first.makerName + " " + item.second.modelName);
-                    }
-                    modelAdapter.addAll(stringList);
-                    modelAdapter.notifyDataSetChanged();
-                }
-            });
         return view;
     }
 
@@ -443,7 +395,9 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         }
         raceQueryBody.end = mLeaderBoardEnd;
         raceQueryBody.count = mLeaderBoardItemCount = 100;
-        Call<RaceQueryResponse> raceQueryResponseCall = HachiService.createHachiApiService().queryRace(raceQueryBody.mode, raceQueryBody.start, raceQueryBody.end, mMaker, mModel, raceQueryBody.count);
+        Logger.t(TAG).d("mUpper" + mUpper + "mLower" + mLower);
+        Call<RaceQueryResponse> raceQueryResponseCall = mHachiApi.queryRace(raceQueryBody.mode,
+                raceQueryBody.start, raceQueryBody.end, mUpper, mLower, mMaker, mModel, raceQueryBody.count);
         raceQueryResponseCall.enqueue(new Callback<RaceQueryResponse>() {
             @Override
             public void onResponse(Call<RaceQueryResponse> call, retrofit2.Response<RaceQueryResponse> response) {
@@ -538,12 +492,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private void initMyTestView(RaceQueryResponse.UserRankItem userRankItem) {
         final SessionManager sessionManager = SessionManager.getInstance();
-        Glide.with(getActivity())
-            .load(SessionManager.getInstance().getAvatarUrl())
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .crossFade()
-            .dontAnimate()
-            .into(mMyAvatar);
+        mMyAvatar.loadAvatar(sessionManager.getAvatarUrl(), sessionManager.getUserName());
         mMyName.setText(sessionManager.getUserName());
         if (userRankItem.vehicle.vehicleMaker != null) {
             mMyVehicleInfo.setText(userRankItem.vehicle.vehicleMaker + " " + userRankItem.vehicle.vehicleModel + " " + userRankItem.vehicle.vehicleYear);

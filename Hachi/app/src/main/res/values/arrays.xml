@@ -267,4 +267,23 @@
         <item>@string/kmh100</item>
         <item>@string/switch_to_english_units</item>
     </string-array>
+
+    <string-array name="race_time_030" translatable="false">
+        <item>All</item>
+        <item>0~2s</item>
+        <item>2~4s</item>
+        <item>4~8s</item>
+        <item>8s+</item>
+    </string-array>
+
+    <string-array name="race_time_060" translatable="false">
+        <item>All</item>
+        <item>0~3s</item>
+        <item>3~3.5s</item>
+        <item>3.5~4s</item>
+        <item>4~5s</item>
+        <item>5~7s</item>
+        <item>7~10s</item>
+        <item>10s+</item>
+    </string-array>
 </resources>

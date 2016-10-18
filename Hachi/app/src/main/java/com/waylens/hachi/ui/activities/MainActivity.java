@@ -41,8 +41,8 @@ public class MainActivity extends BaseActivity {
     public static final int TAB_TAG_VIDEO = 0;
     public static final int TAB_TAG_LIVE_VIEW = 1;
     public static final int TAB_TAG_MOMENTS = 2;
-    public static final int TAB_TAG_LEADERBOARD = 3;
     public static final int TAB_TAG_ACCOUNT = 3;
+    public static final int TAB_TAG_LEADERBOARD = 4;
 
     public static final int REQUEST_CODE_SIGN_UP_FROM_MOMENTS = 100;
 
@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity {
         mTab2MenuId.put(TAB_TAG_ACCOUNT, R.id.setting);
         mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
         mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.live_view);
-//        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderboard);
+        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderboard);
 
 
         initViews();
@@ -139,9 +139,9 @@ public class MainActivity extends BaseActivity {
                     case R.id.live_view:
                         switchFragment(TAB_TAG_LIVE_VIEW);
                         break;
-//                    case R.id.leaderboard:
-//                        switchFragment(TAB_TAG_LEADERBOARD);
-//                        break;
+                    case R.id.leaderboard:
+                        switchFragment(TAB_TAG_LEADERBOARD);
+                        break;
                 }
             }
         });

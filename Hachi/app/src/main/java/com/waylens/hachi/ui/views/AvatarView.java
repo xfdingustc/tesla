@@ -29,7 +29,7 @@ public class AvatarView extends FrameLayout {
     @BindView(R.id.avatar_va)
     ViewAnimator vaAvatar;
 
-    @BindView(R.id.user_avatar)
+    @BindView(R.id.user_avatar_iv)
     ImageView userAvatar;
 
     @BindView(R.id.rlv_name_view)
@@ -72,5 +72,10 @@ public class AvatarView extends FrameLayout {
             rlvNameView.setBackgroundColor(getContext().getResources().getColor(AvatarHelper.getAvatarBackgroundColor(userName)));
             rlvNameView.setTitleText(userName.substring(0, 1).toUpperCase());
         }
+    }
+
+    public void setImageResource(int resource) {
+        userAvatar.setImageResource(resource);
+
     }
 }
