@@ -178,93 +178,11 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final MomentEx momentEx = mMoments.get(position);
         final MomentAbstract moment = momentEx.moment;
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
-        holder.avatarView.loadAvatar(momentEx.owner.avatarUrl, momentEx.owner.userName);
 
-        if (!TextUtils.isEmpty(moment.title)) {
-            holder.title.setVisibility(View.VISIBLE);
-            holder.title.setText(moment.title);
-        } else {
-            holder.title.setVisibility(View.GONE);
-        }
+        bindMomentBasicInfo(holder, position);
+        bindMomentExtraInfo(holder, position);
+        bindMomentCommentInfo(holder, position);
 
-
-        if (!TextUtils.isEmpty(momentEx.owner.userName)) {
-            holder.userName.setText(momentEx.owner.userName);
-        }
-
-
-        StringBuilder stringBuilder = new StringBuilder();
-        if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
-            VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
-            holder.carInfo.setVisibility(View.VISIBLE);
-            holder.carInfo.setText(vehicleInfo.toString());
-        } else {
-            holder.carInfo.setVisibility(View.GONE);
-        }
-        if (moment.withGeoTag && !TextUtils.isEmpty(momentEx.moment.place.toString())) {
-            stringBuilder.append(momentEx.moment.place.toString()).append(" • ");
-        }
-
-        stringBuilder.append(PrettyTimeUtils.getTimeAgo(moment.uploadTime));
-        holder.place.setText(stringBuilder.toString());
-
-
-        holder.commentUser1.setVisibility(View.GONE);
-        holder.commentUser2.setVisibility(View.GONE);
-        holder.commentUser3.setVisibility(View.GONE);
-
-
-        if (momentEx.lastComments.size() == 0) {
-            holder.separator.setVisibility(View.GONE);
-            holder.bottomPadding.setVisibility(View.GONE);
-        } else {
-            holder.separator.setVisibility(View.VISIBLE);
-            holder.bottomPadding.setVisibility(View.VISIBLE);
-        }
-
-        if (moment.isRecommended) {
-            holder.recommend.setVisibility(View.VISIBLE);
-
-            holder.follow.setVisibility(View.VISIBLE);
-            holder.follow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (holder.follow.isActivated()) {
-                        BgJobHelper.followUser(momentEx.owner.userID, false);
-                        holder.follow.setText(R.string.follow);
-                        holder.follow.setActivated(false);
-                    } else {
-                        BgJobHelper.followUser(momentEx.owner.userID, true);
-                        holder.follow.setText(R.string.following);
-                        holder.follow.setActivated(true);
-                    }
-                }
-            });
-
-            holder.follow.setActivated(false);
-            holder.follow.setText(R.string.follow);
-
-
-        } else {
-            holder.recommend.setVisibility(View.GONE);
-            holder.follow.setVisibility(View.GONE);
-
-        }
-
-        if (momentEx.lastComments.size() > 0) {
-            holder.commentUser1.setVisibility(View.VISIBLE);
-            holder.commentUser1.setText(getCommentString(momentEx.lastComments.get(0).author.userName, momentEx.lastComments.get(0).content));
-        }
-
-        if (momentEx.lastComments.size() > 1) {
-            holder.commentUser2.setVisibility(View.VISIBLE);
-            holder.commentUser2.setText(getCommentString(momentEx.lastComments.get(1).author.userName, momentEx.lastComments.get(1).content));
-        }
-
-        if (momentEx.lastComments.size() > 2) {
-            holder.commentUser3.setVisibility(View.VISIBLE);
-            holder.commentUser3.setText(getCommentString(momentEx.lastComments.get(2).author.userName, momentEx.lastComments.get(2).content));
-        }
 
 
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
@@ -310,47 +228,10 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
         }
-        holder.avatarView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!SessionManager.getInstance().isLoggedIn()) {
-                    AuthorizeActivity.launch((Activity) mContext);
-                    return;
-                }
-                UserProfileActivity.launch((Activity) mContext, momentEx.owner, holder.avatarView);
-
-            }
-        });
 
 
-        if (moment.isLiked) {
-            holder.btnLike.setImageResource(R.drawable.ic_favorite);
-        } else {
-            holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
-        }
 
-        holder.tsLikeCounter.setCurrentText(Integer.toString(moment.likesCount));
 
-        holder.btnLike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                holder.tsLikeCounter.setCurrentText(Integer.toString(moment.likesCount));
-                if (!moment.isLiked) {
-                    holder.tsLikeCounter.setText(Integer.toString(moment.likesCount + 1));
-                    moment.likesCount++;
-                    holder.btnLike.setImageResource(R.drawable.ic_favorite);
-                } else {
-                    holder.tsLikeCounter.setText(Integer.toString(moment.likesCount - 1));
-                    moment.likesCount--;
-                    holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
-                }
-                BgJobHelper.addLike(moment.id, moment.isLiked);
-                moment.isLiked = !moment.isLiked;
-
-            }
-        });
-
-        holder.commentCount.setText(Integer.toString(moment.commentsCount));
 
 
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -388,6 +269,151 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         });
 
     }
+
+    private void bindMomentCommentInfo(MomentViewHolder holder, int position) {
+        final MomentEx momentEx = mMoments.get(position);
+        holder.commentUser1.setVisibility(View.GONE);
+        holder.commentUser2.setVisibility(View.GONE);
+        holder.commentUser3.setVisibility(View.GONE);
+        if (momentEx.lastComments.size() == 0) {
+            holder.separator.setVisibility(View.GONE);
+            holder.bottomPadding.setVisibility(View.GONE);
+        } else {
+            holder.separator.setVisibility(View.VISIBLE);
+            holder.bottomPadding.setVisibility(View.VISIBLE);
+        }
+
+
+
+        if (momentEx.lastComments.size() > 0) {
+            holder.commentUser1.setVisibility(View.VISIBLE);
+            holder.commentUser1.setText(getCommentString(momentEx.lastComments.get(0).author.userName, momentEx.lastComments.get(0).content));
+        }
+
+        if (momentEx.lastComments.size() > 1) {
+            holder.commentUser2.setVisibility(View.VISIBLE);
+            holder.commentUser2.setText(getCommentString(momentEx.lastComments.get(1).author.userName, momentEx.lastComments.get(1).content));
+        }
+
+        if (momentEx.lastComments.size() > 2) {
+            holder.commentUser3.setVisibility(View.VISIBLE);
+            holder.commentUser3.setText(getCommentString(momentEx.lastComments.get(2).author.userName, momentEx.lastComments.get(2).content));
+        }
+    }
+
+
+    private void bindMomentBasicInfo(final MomentViewHolder holder, int position) {
+        final MomentEx momentEx = mMoments.get(position);
+        final MomentAbstract moment = momentEx.moment;
+        holder.avatarView.loadAvatar(momentEx.owner.avatarUrl, momentEx.owner.userName);
+
+        if (!TextUtils.isEmpty(moment.title)) {
+            holder.title.setVisibility(View.VISIBLE);
+            holder.title.setText(moment.title);
+        } else {
+            holder.title.setVisibility(View.GONE);
+        }
+
+        if (!TextUtils.isEmpty(momentEx.owner.userName)) {
+            holder.userName.setText(momentEx.owner.userName);
+        }
+        if (moment.isRecommended) {
+            holder.recommend.setVisibility(View.VISIBLE);
+
+            holder.follow.setVisibility(View.VISIBLE);
+            holder.follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (holder.follow.isActivated()) {
+                        BgJobHelper.followUser(momentEx.owner.userID, false);
+                        holder.follow.setText(R.string.follow);
+                        holder.follow.setActivated(false);
+                    } else {
+                        BgJobHelper.followUser(momentEx.owner.userID, true);
+                        holder.follow.setText(R.string.following);
+                        holder.follow.setActivated(true);
+                    }
+                }
+            });
+
+            holder.follow.setActivated(false);
+            holder.follow.setText(R.string.follow);
+
+        } else {
+            holder.recommend.setVisibility(View.GONE);
+            holder.follow.setVisibility(View.GONE);
+
+        }
+
+        holder.avatarView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!SessionManager.getInstance().isLoggedIn()) {
+                    AuthorizeActivity.launch((Activity) mContext);
+                    return;
+                }
+                UserProfileActivity.launch((Activity) mContext, momentEx.owner, holder.avatarView);
+
+            }
+        });
+
+        if (moment.isLiked) {
+            holder.btnLike.setImageResource(R.drawable.ic_favorite);
+        } else {
+            holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
+        }
+
+        holder.tsLikeCounter.setCurrentText(Integer.toString(moment.likesCount));
+
+        holder.btnLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.tsLikeCounter.setCurrentText(Integer.toString(moment.likesCount));
+                if (!moment.isLiked) {
+                    holder.tsLikeCounter.setText(Integer.toString(moment.likesCount + 1));
+                    moment.likesCount++;
+                    holder.btnLike.setImageResource(R.drawable.ic_favorite);
+                } else {
+                    holder.tsLikeCounter.setText(Integer.toString(moment.likesCount - 1));
+                    moment.likesCount--;
+                    holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
+                }
+                BgJobHelper.addLike(moment.id, moment.isLiked);
+                moment.isLiked = !moment.isLiked;
+
+            }
+        });
+
+        holder.commentCount.setText(Integer.toString(moment.commentsCount));
+    }
+
+    private void bindMomentExtraInfo(MomentViewHolder holder, int position) {
+        final MomentEx momentEx = mMoments.get(position);
+        final MomentAbstract moment = momentEx.moment;
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
+            VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
+            holder.carInfo.setVisibility(View.VISIBLE);
+            holder.carInfo.setText(vehicleInfo.toString());
+        } else {
+            holder.carInfo.setVisibility(View.GONE);
+        }
+        if (moment.withGeoTag && !TextUtils.isEmpty(momentEx.moment.place.toString())) {
+            stringBuilder.append(momentEx.moment.place.toString()).append(" • ");
+        }
+
+        stringBuilder.append(PrettyTimeUtils.getTimeAgo(moment.uploadTime));
+        holder.place.setText(stringBuilder.toString());
+
+        if (moment.isRacingMoment()) {
+            holder.racingInfo.setVisibility(View.VISIBLE);
+            holder.raceType.setText(moment.getRaceType());
+            holder.raceTime.setText(moment.getRaceTime());
+        } else {
+            holder.racingInfo.setVisibility(View.GONE);
+        }
+    }
+
 
 
     private void onBindLoadingViewHolder(LoadingViewHolder holder, int position) {
@@ -500,6 +526,15 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.car_info)
         TextView carInfo;
+
+        @BindView(R.id.racing_info)
+        View racingInfo;
+
+        @BindView(R.id.race_type)
+        TextView raceType;
+
+        @BindView(R.id.race_time)
+        TextView raceTime;
 
         public MomentViewHolder(View itemView) {
             super(itemView);

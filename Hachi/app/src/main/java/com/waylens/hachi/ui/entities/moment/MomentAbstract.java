@@ -1,5 +1,8 @@
 package com.waylens.hachi.ui.entities.moment;
 
+import android.text.TextUtils;
+
+import com.waylens.hachi.rest.bean.MomentTimingInfo;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 
@@ -39,8 +42,26 @@ public class MomentAbstract {
 
     public VehicleInfo momentVehicleInfo;
 
+    public MomentTimingInfo momentTimingInfo;
+
     @Override
     public String toString() {
         return ToStringUtils.getString(this);
+    }
+
+    public boolean isRacingMoment() {
+        if (!TextUtils.isEmpty(momentType) && momentType.startsWith("RACING")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public String getRaceType() {
+        return momentTimingInfo.getRaceType(momentType);
+    }
+
+    public String getRaceTime() {
+        return momentTimingInfo.getRaceTime(momentType);
     }
 }
