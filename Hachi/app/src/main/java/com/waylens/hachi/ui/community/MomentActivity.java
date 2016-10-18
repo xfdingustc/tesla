@@ -392,14 +392,8 @@ public class MomentActivity extends BaseActivity {
         View view = getLayoutInflater().inflate(R.layout.bottom_sheet_add_comment, null);
         mNewCommentView = (EditText) view.findViewById(R.id.comment_edit);
 
-        ImageView avatar = (ImageView) view.findViewById(R.id.current_user_avatar);
-        Glide.with(this)
-            .load(mSessionManager.getAvatarUrl())
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.menu_profile_photo_default)
-            .dontAnimate()
-            .into(avatar);
-
+        AvatarView avatar = (AvatarView) view.findViewById(R.id.current_user_avatar);
+        avatar.loadAvatar(mSessionManager.getAvatarUrl(), mSessionManager.getUserName());
 
         mBottomSheetDialog.setContentView(view);
 

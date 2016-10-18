@@ -47,6 +47,9 @@ public class AvatarView extends FrameLayout {
     private void initViews(Context context) {
         View.inflate(context, R.layout.layout_avatar_view, this);
         ButterKnife.bind(this);
+        if (isInEditMode()) {
+            return;
+        }
         mCircleTransform = new CircleTransform(getContext());
     }
 
@@ -55,6 +58,7 @@ public class AvatarView extends FrameLayout {
     }
 
     public void loadAvatar(String avatarUrl, String userName) {
+
         if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {
             Glide.with(getContext())
                 .load(avatarUrl)
