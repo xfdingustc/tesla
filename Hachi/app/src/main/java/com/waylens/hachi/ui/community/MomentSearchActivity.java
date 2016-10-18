@@ -103,7 +103,7 @@ public class MomentSearchActivity extends BaseActivity {
         mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
         mSearchView.setTextSize(16);
         mSearchView.setHint(R.string.search_hint);
-        mSearchView.setTextInput(mQuery);
+        mSearchView.setText(mQuery);
         mSearchView.setDivider(false);
         mSearchView.setVoice(true);
         mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);

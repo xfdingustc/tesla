@@ -174,8 +174,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         if (!TextUtils.isEmpty(momentAbstract.title)) {
             holder.title.setText(momentAbstract.title);
+            holder.title.setVisibility(View.VISIBLE);
         } else {
-            holder.title.setText(R.string.no_title);
+            holder.title.setVisibility(View.GONE);
         }
 
         String timeAgo = PrettyTimeUtils.getTimeAgo(momentAbstract.uploadTime);
