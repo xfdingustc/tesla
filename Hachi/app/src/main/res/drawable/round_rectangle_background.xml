@@ -6,5 +6,5 @@
         android:top="4dp"
         android:right="4dp"
         android:bottom="4dp" />
-    <solid android:color="?attr/tagBgColor" />
+    <solid android:color="@color/black87" />
 </shape>

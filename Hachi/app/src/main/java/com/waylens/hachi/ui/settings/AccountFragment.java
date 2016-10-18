@@ -39,9 +39,6 @@ public class AccountFragment extends BaseFragment {
     @BindView(R.id.user_avatar)
     AvatarView userAvatar;
 
-    @BindView(R.id.blur_bg)
-    ImageView blurBg;
-
     @BindView(R.id.ll_waylens_cloud)
     View llWaylensCloud;
 

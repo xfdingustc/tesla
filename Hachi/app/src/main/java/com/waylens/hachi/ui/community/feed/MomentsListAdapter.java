@@ -18,6 +18,7 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.VehicleInfo;
@@ -189,9 +190,17 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (momentAbstract.momentVehicleInfo != null && !TextUtils.isEmpty(momentAbstract.momentVehicleInfo.vehicleModel)) {
             VehicleInfo vehicleInfo = momentAbstract.momentVehicleInfo;
             holder.carInfo.setVisibility(View.VISIBLE);
-            holder.carInfo.setText(vehicleInfo.toString());
+            holder.carModel.setText(vehicleInfo.toString());
         } else {
             holder.carInfo.setVisibility(View.GONE);
+        }
+
+        if (momentAbstract.isRacingMoment()) {
+            holder.racingInfo.setVisibility(View.VISIBLE);
+            holder.raceType.setTitleText(momentAbstract.getRaceType());
+            holder.raceTime.setText(momentAbstract.getRaceTime());
+        } else {
+            holder.racingInfo.setVisibility(View.GONE);
         }
 
         holder.videoDuration.setText(DateUtils.formatElapsedTime(momentAbstract.duration / 1000l));
@@ -351,8 +360,19 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         TextView userName;
 
         @BindView(R.id.car_info)
-        TextView carInfo;
+        View carInfo;
 
+        @BindView(R.id.car_model)
+        TextView carModel;
+
+        @BindView(R.id.racing_info)
+        View racingInfo;
+
+        @BindView(R.id.race_time)
+        TextView raceTime;
+
+        @BindView(R.id.race_type)
+        RoundedLetterView raceType;
 
         public MomentViewHolder(View itemView) {
             super(itemView);

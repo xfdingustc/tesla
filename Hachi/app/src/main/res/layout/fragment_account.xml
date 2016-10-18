@@ -16,15 +16,7 @@
         app:farfl_xratio="9dp"
         app:farfl_yratio="4dp">
 
-        <ImageView
-            android:id="@+id/blur_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:scaleX="1.1"
-            android:scaleY="1.1"
-            android:src="@drawable/blurbg"
-            android:visibility="gone"/>
+
 
 
         <LinearLayout

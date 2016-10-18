@@ -20,6 +20,8 @@
     <attr name="cardViewBgColor" format="color"/>
     <attr name="tagBgColor" format="color"/>
     <attr name="tagTextColor" format="color"/>
+    <attr name="foregroundActiveColor" format="color"/>
+
 
 
     <declare-styleable name="VideoTrimmer">

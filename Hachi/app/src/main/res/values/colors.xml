@@ -9,6 +9,9 @@
 
     <color name="toolbar_color">#212121</color>
 
+    <color name="white87">#DDDDDD</color>
+    <color name="black87">#212121</color>
+
     <color name="windowBackground">#1D1F23</color>
     <color name="windowBackgroundDark">#141618</color>
     <color name="dialogBackground">@color/material_blue_grey_900</color>

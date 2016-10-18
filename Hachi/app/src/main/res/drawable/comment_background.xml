@@ -4,7 +4,7 @@
     android:enterFadeDuration="120"
     android:exitFadeDuration="120">
 
-    <item android:drawable="@android:color/white" android:state_activated="true"/>
+    <item android:drawable="@drawable/background_drawable" android:state_activated="true"/>
     <item android:drawable="@android:color/transparent"/>
 
 </selector>
