@@ -103,50 +103,66 @@
                 android:id="@+id/recommend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/icon_recommend_for_you"
-                />
+                android:src="@drawable/icon_recommend_for_you"/>
 
-            <TextView
+            <FrameLayout
                 android:id="@+id/car_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|bottom"
                 android:layout_margin="8dp"
-                android:background="@drawable/vehicle_info_bg"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                tools:text="Toyota Camry 2014"/>
+                android:background="@drawable/race_info_bg">
 
-            <LinearLayout
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_directions_car"
+                    android:background="@drawable/chip_icon"/>
+
+                <TextView
+                    android:id="@+id/car_model"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/material_grey_700"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="12sp"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="8dp"
+                    tools:text="Toyota Camry 2014"/>
+
+            </FrameLayout>
+
+            <FrameLayout
                 android:id="@+id/racing_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|top"
                 android:layout_margin="8dp"
-                android:alpha="0.8"
-                android:background="@drawable/vehicle_info_bg"
-                android:orientation="horizontal">
-
-
-                <TextView
-                    android:id="@+id/race_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="4dp"
-                    android:background="@drawable/performance_icon_bg"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
-                    android:textColor="@color/app_text_color_primary_light"
-                    android:textSize="12sp"
-                    tools:text="60"/>
+                android:alpha="1.0"
+                android:background="@drawable/race_info_bg">
 
                 <TextView
                     android:id="@+id/race_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="8dp"
+                    android:textColor="@color/material_grey_700"
+
                     tools:text="0.96s"/>
 
-            </LinearLayout>
+                <com.github.pavlospt.roundedletterview.RoundedLetterView
+                    android:id="@+id/race_type"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    app:rlv_backgroundColorValue="@color/style_color_tag"
+                    app:rlv_titleColor="@android:color/white"
+                    app:rlv_titleSize="14dp"
+                    tools:rlv_titleText="60"/>
+
+            </FrameLayout>
 
 
             <TextView

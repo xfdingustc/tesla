@@ -24,6 +24,7 @@ import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.bean.VehicleInfo;
@@ -394,7 +395,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (!TextUtils.isEmpty(momentEx.moment.momentVehicleInfo.vehicleModel)) {
             VehicleInfo vehicleInfo = momentEx.moment.momentVehicleInfo;
             holder.carInfo.setVisibility(View.VISIBLE);
-            holder.carInfo.setText(vehicleInfo.toString());
+            holder.carModel.setText(vehicleInfo.toString());
         } else {
             holder.carInfo.setVisibility(View.GONE);
         }
@@ -407,7 +408,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (moment.isRacingMoment()) {
             holder.racingInfo.setVisibility(View.VISIBLE);
-            holder.raceType.setText(moment.getRaceType());
+            holder.raceType.setTitleText(moment.getRaceType());
             holder.raceTime.setText(moment.getRaceTime());
         } else {
             holder.racingInfo.setVisibility(View.GONE);
@@ -525,13 +526,16 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         View bottomPadding;
 
         @BindView(R.id.car_info)
-        TextView carInfo;
+        View carInfo;
+
+        @BindView(R.id.car_model)
+        TextView carModel;
 
         @BindView(R.id.racing_info)
         View racingInfo;
 
         @BindView(R.id.race_type)
-        TextView raceType;
+        RoundedLetterView raceType;
 
         @BindView(R.id.race_time)
         TextView raceTime;
