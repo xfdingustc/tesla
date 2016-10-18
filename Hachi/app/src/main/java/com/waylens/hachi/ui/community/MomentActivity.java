@@ -819,7 +819,7 @@ public class MomentActivity extends BaseActivity {
             }
         });
         mCommentList.setAdapter(mAdapter);
-        mCommentList.setItemAnimator(new DefaultItemAnimator());
+//        mCommentList.setItemAnimator(new DefaultItemAnimator());
         refreshComments();
     }
 
