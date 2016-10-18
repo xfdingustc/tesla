@@ -69,6 +69,28 @@
             android:text="@string/failed"/>
     </ViewAnimator>
 
+    <ImageButton
+        android:id="@+id/report"
+        style="@style/SelectableRippleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:layout_below="@id/comment_content"
+        android:layout_alignParentRight="true"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_report"/>
+
+
+    <ImageButton
+        android:id="@+id/delete"
+        style="@style/SelectableRippleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:padding="8dp"
+        android:layout_below="@id/comment_content"
+        android:layout_toLeftOf="@id/report"
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_delete"/>
 
     <ImageButton
         android:id="@+id/reply"
@@ -77,7 +99,7 @@
         android:layout_height="40dp"
         android:padding="8dp"
         android:layout_below="@id/comment_content"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@id/delete"
         android:background="?android:selectableItemBackgroundBorderless"
         android:src="@drawable/ic_reply"/>
 
