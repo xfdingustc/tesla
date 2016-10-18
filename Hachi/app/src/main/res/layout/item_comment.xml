@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingBottom="8dp"
-              android:paddingLeft="16dp"
-              android:paddingRight="16dp"
-              android:paddingTop="8dp">
+<com.waylens.hachi.ui.views.ForegroundRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     xmlns:tools="http://schemas.android.com/tools"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="wrap_content"
+                                                     android:background="@drawable/comment_background"
+                                                     android:descendantFocusability="blocksDescendants"
+                                                     android:foreground="?android:selectableItemBackground"
+                                                     android:orientation="vertical"
+                                                     android:paddingBottom="8dp"
+                                                     android:paddingLeft="16dp"
+                                                     android:paddingRight="16dp"
+                                                     android:paddingTop="8dp"
+                                                     android:stateListAnimator="@animator/comment_selection">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-        >
+                  android:orientation="horizontal">
 
 
         <com.waylens.hachi.ui.views.AvatarView
             android:id="@+id/avatar_view"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            android:stateListAnimator="@animator/raise"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -102,9 +106,9 @@
 
         <ImageButton
             android:id="@+id/reply"
+            style="@style/SelectableRippleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SelectableRippleButton"
             android:src="@drawable/ic_reply"/>
     </LinearLayout>
-</LinearLayout>
+</com.waylens.hachi.ui.views.ForegroundRelativeLayout>

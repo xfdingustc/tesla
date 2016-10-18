@@ -18,6 +18,7 @@ import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.AnimUtils;
 import com.waylens.hachi.utils.PrettyTimeUtils;
+import com.waylens.hachi.utils.TouchHelper;
 import com.waylens.hachi.utils.TransitionUtils;
 
 
@@ -60,7 +61,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private CommentAnimator mCommentAnimator;
 
 
-    public CommentsAdapter(RecyclerView commentList, Context context, List<Comment> comments) {
+    public CommentsAdapter(final RecyclerView commentList, Context context, List<Comment> comments) {
         mCommentListView = commentList;
         mCommentAnimator = new CommentAnimator();
         mCommentListView.setItemAnimator(mCommentAnimator);
@@ -73,12 +74,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             @Override
             public void onTransitionStart(Transition transition) {
                 super.onTransitionStart(transition);
+                commentList.setOnTouchListener(new TouchHelper.TouchEater());
             }
 
             @Override
             public void onTransitionEnd(Transition transition) {
                 super.onTransitionEnd(transition);
                 mCommentAnimator.setAnimateMoves(true);
+                commentList.setOnClickListener(null);
             }
         });
     }
