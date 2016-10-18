@@ -184,7 +184,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="8dp"
                 android:background="@drawable/round_rectangle_background"
-                android:textColor="#eed7cc"
+                android:textColor="?attr/tagTextColor"
                 android:textSize="12sp"
                 tools:text="01:08"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
