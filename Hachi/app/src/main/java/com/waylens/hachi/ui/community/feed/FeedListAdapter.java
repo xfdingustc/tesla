@@ -353,7 +353,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, momentEx.owner, holder.avatarView);
+                UserProfileActivity.launch((Activity) mContext, momentEx.owner, holder.avatarView, holder.itemView);
 
             }
         });

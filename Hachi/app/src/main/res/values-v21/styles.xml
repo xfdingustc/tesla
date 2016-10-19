@@ -80,5 +80,30 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="TextAppearance.CommentAuthor" parent="@android:style/TextAppearance.Material.Caption">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFeatureSettings">smcp, onum</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
 
+    <style name="Widget.Hachi.InlineActionButton" parent="@android:style/Widget.Material.Button">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textAppearance">@style/TextAppearance.CommentAuthor</item>
+        <item name="android:drawablePadding">@dimen/spacing_micro</item>
+        <item name="android:background">?android:selectableItemBackgroundBorderless</item>
+    </style>
+
+    <style name="DarkTheme.UserProfile">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/hachi_user_profile_shared_enter</item>
+        <item name="android:windowEnterTransition">@transition/hachi_user_profile_enter</item>
+        <item name="android:windowReturnTransition">@transition/hachi_user_profile_return</item>
+        <item name="android:windowTransitionBackgroundFadeDuration">200</item>
+
+    </style>
+
+    <dimen name="spacing_micro">4dp</dimen>
 </resources>

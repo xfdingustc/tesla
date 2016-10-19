@@ -2,8 +2,10 @@ package com.waylens.hachi.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -57,5 +59,14 @@ public class ViewUtils {
         Resources resources = Hachi.getContext().getResources();
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
         return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics) + 0.5f);
+    }
+
+    public static boolean isNavBarOnBottom(@NonNull Context context) {
+        final Resources res= context.getResources();
+        final Configuration cfg = context.getResources().getConfiguration();
+        final DisplayMetrics dm =res.getDisplayMetrics();
+        boolean canMove = (dm.widthPixels != dm.heightPixels &&
+            cfg.smallestScreenWidthDp < 600);
+        return(!canMove || dm.widthPixels < dm.heightPixels);
     }
 }

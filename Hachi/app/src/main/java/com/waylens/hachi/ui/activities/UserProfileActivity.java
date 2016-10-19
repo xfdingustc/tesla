@@ -12,15 +12,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
@@ -32,7 +30,6 @@ import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentListResponse;
-import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
@@ -42,6 +39,7 @@ import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.TransitionHelper;
+import com.waylens.hachi.view.ElasticDragDismissFrameLayout;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
@@ -50,7 +48,6 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
-import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
 /**
@@ -62,7 +59,9 @@ public class UserProfileActivity extends BaseActivity {
 //    private static final String EXTRA_USER_ID = "user_id";
 //    private static final String EXTRA_USER_AVATAR = "user_avatar";
 
-//    private String mUserID;
+    //    private String mUserID;
+
+    private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
     private MomentsListAdapter mMomentRvAdapter;
 
     private String mReportReason;
@@ -74,19 +73,32 @@ public class UserProfileActivity extends BaseActivity {
     private int mCurrentCursor;
 
 
-    @BindView(R.id.rvUserMomentList)
-    RecyclerViewExt mRvUserMomentList;
-
-
-    public static void launch(Activity activity, User user, View transitionView) {
+    public static void launch(Activity activity, User user, View avatarTransitionView) {
         Intent intent = new Intent(activity, UserProfileActivity.class);
         intent.putExtra(EXTRA_USER, user);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-            false, new Pair<>(transitionView, activity.getString(R.string.trans_avatar)));
+            false, new Pair<>(avatarTransitionView, activity.getString(R.string.trans_avatar)));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
+
+    public static void launch(Activity activity, User user, View avatarTransitionView, View bgTransView) {
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+        intent.putExtra(EXTRA_USER, user);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+            false,
+            new Pair<>(avatarTransitionView, activity.getString(R.string.trans_avatar)),
+            new Pair<>(bgTransView, activity.getString(R.string.transition_background)));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+    }
+
+
+    @BindView(R.id.rvUserMomentList)
+    RecyclerViewExt mRvUserMomentList;
+
 
     @BindView(R.id.userAvatar)
     AvatarView userAvatar;
@@ -107,16 +119,19 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.moment_count)
     TextView momentCount;
 
+    @BindView(R.id.user_description)
+    ViewGroup userDescription;
 
-    @OnClick(R.id.ll_followers)
-    public void onBtnFollowerCountClicked() {
-        FollowListActivity.launch(this, mUser.userID, true);
-    }
 
-    @OnClick(R.id.ll_following)
-    public void onFollowingCountClicked() {
-        FollowListActivity.launch(this, mUser.userID, false);
-    }
+//    @OnClick(R.id.ll_followers)
+//    public void onBtnFollowerCountClicked() {
+//        FollowListActivity.launch(this, mUser.userID, true);
+//    }
+//
+//    @OnClick(R.id.ll_following)
+//    public void onFollowingCountClicked() {
+//        FollowListActivity.launch(this, mUser.userID, false);
+//    }
 
 
     @OnClick(R.id.follow)
@@ -158,39 +173,36 @@ public class UserProfileActivity extends BaseActivity {
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        mUser = (User)intent.getSerializableExtra(EXTRA_USER);
+        mUser = (User) intent.getSerializableExtra(EXTRA_USER);
         mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
 
 
     private void initViews() {
-        setContentView(R.layout.activity_user_profile);
+        setContentView(R.layout.activity_user_profile2);
 
         userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);
 
         mUserName.setText(mUser.userName);
+
+        chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
 //        setupToolbar();
         mRvUserMomentList.setVisibility(View.VISIBLE);
         mMomentRvAdapter = new MomentsListAdapter(this);
 
-        mRvUserMomentList.setAdapter(mMomentRvAdapter);
+//        mRvUserMomentList.setAdapter(mMomentRvAdapter);
 
 
         fetchUserProfile();
 
-        if (mUser != null) {
-            userAvatar.loadAvatar(mUser);
-        }
-
-
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
+//        setExitSharedElementCallback();
     }
 
     private void fetchUserProfile() {
 
         final long currentTime = System.currentTimeMillis();
-
 
 
         Observable<FollowInfo> followInfoObservable = HachiService.createHachiApiService().getFollowInfoRx(mUser.userID)

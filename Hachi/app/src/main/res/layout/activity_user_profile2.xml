@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.waylens.hachi.view.ElasticDragDismissFrameLayout
+    android:id="@+id/draggable_frame"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:transitionGroup="false"
+    app:dragDismissDistance="@dimen/drag_dismiss_distance"
+    app:dragDismissScale="0.95">
+
+    <View
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/defaultBgColor"
+        android:elevation="@dimen/z_card"
+        android:transitionName="@string/transition_background"/>
+
+    <com.waylens.hachi.ui.views.AvatarView
+        android:id="@+id/userAvatar"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="28dp"
+        android:elevation="@dimen/z_card"
+        android:padding="4dp"
+        android:transitionName="@string/trans_avatar"/>
+
+
+    <LinearLayout
+        android:id="@+id/user_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/z_card"
+        android:orientation="vertical"
+        android:transitionGroup="false">
+
+        <Space
+            android:layout_width="4dp"
+            android:layout_height="160dp"/>
+
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingBottom="9dp"
+            android:paddingEnd="@dimen/padding_normal"
+            android:paddingStart="@dimen/padding_normal"
+            android:textSize="20sp"
+            tools:text="xfding"
+            />
+
+        <Button
+            android:id="@+id/follow"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:drawablePadding="8dp"
+            android:drawableStart="@drawable/asl_follow"
+            android:paddingBottom="8dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
+            android:text="@string/follow"
+            android:textColor="@android:color/white"
+            android:theme="@style/LightRippleOverlay"/>
+
+        <LinearLayout
+            android:id="@+id/stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/padding_normal"
+            android:paddingEnd="@dimen/padding_normal"
+            android:paddingStart="@dimen/padding_normal"
+            android:paddingTop="@dimen/spacing_normal">
+
+            <TextView
+                android:id="@+id/moment_count"
+                style="@style/Widget.Hachi.InlineActionButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableTop="@drawable/ic_movie_filter"
+                tools:text="1337 moments"/>
+
+            <TextView
+                android:id="@+id/btnFollowersCount"
+                style="@style/Widget.Hachi.InlineActionButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_group"
+                tools:text="1337 followers"/>
+
+            <TextView
+                android:id="@+id/following_count"
+                style="@style/Widget.Hachi.InlineActionButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_normal"
+                android:layout_weight="1"
+                android:background="@null"
+                android:drawableTop="@drawable/ic_people_outline"
+                tools:text="1,000,000 following"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <com.waylens.hachi.ui.views.RecyclerViewExt
+        android:id="@+id/rvUserMomentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:elevation="@dimen/z_card"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        android:visibility="gone"/>
+
+</com.waylens.hachi.view.ElasticDragDismissFrameLayout>

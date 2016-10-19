@@ -98,6 +98,9 @@ public class UploadAPI {
             if (timeOut > 0) {
                 clientBuilder.connectTimeout(timeOut, TimeUnit.SECONDS);
             }
+            clientBuilder.readTimeout(0, TimeUnit.SECONDS);
+            clientBuilder.writeTimeout(0, TimeUnit.SECONDS);
+            clientBuilder.connectTimeout(0, TimeUnit.SECONDS);
 
             OkHttpClient client = clientBuilder.build();
 

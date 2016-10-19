@@ -79,7 +79,11 @@
 
         <activity
             android:name=".ui.activities.UserProfileActivity"
+            android:theme="@style/DarkTheme.UserProfile"
             android:screenOrientation="portrait"/>
+        <!--<item name="android:windowEnterTransition">@transition/dribbble_player_enter</item>-->
+        <!--<item name="android:windowReturnTransition">@transition/dribbble_player_return</item>-->
+
 
         <activity
             android:name=".ui.activities.NotificationActivity"
@@ -144,8 +148,9 @@
             android:name=".ui.settings.GeneralSettingActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.settings.SettingActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.settings.SettingActivity"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.liveview.LiveViewSettingActivity"

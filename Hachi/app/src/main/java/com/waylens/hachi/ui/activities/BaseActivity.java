@@ -75,11 +75,11 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        if (ThemeHelper.isDarkTheme()) {
-            setTheme(R.style.DarkTheme);
-        } else {
-            setTheme(R.style.LightTheme);
-        }
+//        if (ThemeHelper.isDarkTheme()) {
+//            setTheme(R.style.DarkTheme);
+//        } else {
+//            setTheme(R.style.LightTheme);
+//        }
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
         //setupToolbar();

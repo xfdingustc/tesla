@@ -128,7 +128,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
                 date,
                 response.uploadServer.privateKey);
 
-            UploadAPI uploadAPI = new UploadAPI(response.uploadServer.url + "/", date, authorization);
+            UploadAPI uploadAPI = new UploadAPI(response.uploadServer.url + "/", date, authorization, -1);
 
             // Step 1: init upload;
             InitUploadResponse initUploadResponse = uploadAPI.initUploadSync(mLocalMoment.momentID, InitUploadBody.fromLocalMoment(mLocalMoment));

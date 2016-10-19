@@ -32,6 +32,7 @@
     <string name="moment_cover" translatable="false">moment_cover</string>
     <string name="trans_avatar" translatable="false">trans_avatar</string>
     <string name="clip_cover" translatable="false">clip_cover</string>
+    <string name="transition_background" translatable="false">transition_background</string>
 
     <string name="ten_seconds" translatable="false">10 seconds</string>
     <string name="thirty_seconds" translatable="false">30 seconds</string>
