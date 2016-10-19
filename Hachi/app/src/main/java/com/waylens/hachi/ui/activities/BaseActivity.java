@@ -49,6 +49,8 @@ public class BaseActivity extends AppCompatActivity {
     protected MaterialDialog mProgressDialog;
 
 
+
+
     private boolean mIsImmersive = false;
 
     @Nullable
@@ -67,7 +69,14 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         thisApp = (Hachi) getApplication();
     }
@@ -75,12 +84,15 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-//        if (ThemeHelper.isDarkTheme()) {
-//            setTheme(R.style.DarkTheme);
-//        } else {
-//            setTheme(R.style.LightTheme);
-//        }
+        if (!needOverrideTheme()) {
+            if (ThemeHelper.isDarkTheme()) {
+                setTheme(R.style.DarkTheme);
+            } else {
+                setTheme(R.style.LightTheme);
+            }
+        }
         super.setContentView(layoutResID);
+
         ButterKnife.bind(this);
         //setupToolbar();
     }
@@ -138,6 +150,10 @@ public class BaseActivity extends AppCompatActivity {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
 
         }
+    }
+
+    protected boolean needOverrideTheme() {
+        return false;
     }
 
 

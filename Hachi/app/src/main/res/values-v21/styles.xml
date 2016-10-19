@@ -105,5 +105,16 @@
 
     </style>
 
+    <style name="LightTheme.UserProfile">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/hachi_user_profile_shared_enter</item>
+        <item name="android:windowEnterTransition">@transition/hachi_user_profile_enter</item>
+        <item name="android:windowReturnTransition">@transition/hachi_user_profile_return</item>
+        <item name="android:windowTransitionBackgroundFadeDuration">200</item>
+
+    </style>
+
     <dimen name="spacing_micro">4dp</dimen>
 </resources>

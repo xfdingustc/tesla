@@ -38,6 +38,7 @@ import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.view.ElasticDragDismissFrameLayout;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -180,6 +181,11 @@ public class UserProfileActivity extends BaseActivity {
 
 
     private void initViews() {
+        if (ThemeHelper.isDarkTheme()) {
+            setTheme(R.style.DarkTheme_UserProfile);
+        } else {
+            setTheme(R.style.LightTheme_UserProfile);
+        }
         setContentView(R.layout.activity_user_profile2);
 
         userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);
@@ -198,6 +204,11 @@ public class UserProfileActivity extends BaseActivity {
 
         mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
 //        setExitSharedElementCallback();
+    }
+
+    @Override
+    protected boolean needOverrideTheme() {
+        return true;
     }
 
     private void fetchUserProfile() {

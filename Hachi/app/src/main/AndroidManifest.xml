@@ -79,7 +79,6 @@
 
         <activity
             android:name=".ui.activities.UserProfileActivity"
-            android:theme="@style/DarkTheme.UserProfile"
             android:screenOrientation="portrait"/>
         <!--<item name="android:windowEnterTransition">@transition/dribbble_player_enter</item>-->
         <!--<item name="android:windowReturnTransition">@transition/dribbble_player_return</item>-->
