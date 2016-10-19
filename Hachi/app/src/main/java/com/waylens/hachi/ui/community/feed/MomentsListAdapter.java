@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -44,9 +43,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -318,7 +315,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     private void onDeleteClick(final long momentId, final int position) {
-        DialogHelper.showDeleteMomentConfirmDialog(mContext, momentId, new DialogHelper.onPositiveClickListener() {
+        DialogHelper.showDeleteMomentConfirmDialog(mContext, momentId, new DialogHelper.OnPositiveClickListener() {
             @Override
             public void onPositiveClick() {
                 notifyItemRemoved(position);

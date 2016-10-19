@@ -17,9 +17,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -32,7 +30,6 @@ import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -40,21 +37,17 @@ import android.widget.ViewSwitcher;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
-import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.PublishCommentBody;
-import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.CommentListResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
@@ -115,7 +108,7 @@ public class MomentActivity extends BaseActivity {
 
     private User mReplyTo;
 
-    private String mReportReason;
+
 
     private boolean hasUpdates;
 
@@ -233,7 +226,7 @@ public class MomentActivity extends BaseActivity {
         }
         if (mFollowInfo != null && mFollowInfo.isMyFollowing) {
             DialogHelper.showUnfollowConfirmDialog(this, mMomentInfo.owner.userName, mMomentInfo.owner.userID,
-                !mFollowInfo.isMyFollower, new DialogHelper.onPositiveClickListener() {
+                !mFollowInfo.isMyFollower, new DialogHelper.OnPositiveClickListener() {
                     @Override
                     public void onPositiveClick() {
                         toggleFollowState();
@@ -355,7 +348,6 @@ public class MomentActivity extends BaseActivity {
         Intent intent = getIntent();
         mMomentId = intent.getLongExtra(EXTRA_MOMENT_ID, -1);
         mThumbnail = intent.getStringExtra(EXTRA_THUMBNAIL);
-        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
         initViews();
     }
 
@@ -742,30 +734,30 @@ public class MomentActivity extends BaseActivity {
 //                    .show();
             }
 
-            public void reportComment(final Comment comment) {
-                new MaterialDialog.Builder(MomentActivity.this)
-                    .title(R.string.report)
-                    .items(R.array.report_reason)
-                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                            return true;
-                        }
-                    })
-                    .positiveText(R.string.report)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            int index = dialog.getSelectedIndex();
-                            mReportReason = getResources().getStringArray(R.array.report_reason)[index];
-                            Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
-                            doReportComment(comment);
-                        }
-                    })
-                    .show();
-
-            }
+//            public void reportComment(final Comment comment) {
+//                new MaterialDialog.Builder(MomentActivity.this)
+//                    .title(R.string.report)
+//                    .items(R.array.report_reason)
+//                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+//                        @Override
+//                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+//                            return true;
+//                        }
+//                    })
+//                    .positiveText(R.string.report)
+//                    .negativeText(R.string.cancel)
+//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+//                        @Override
+//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+//                            int index = dialog.getSelectedIndex();
+//                            mReportReason = getResources().getStringArray(R.array.report_reason)[index];
+//                            Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
+//                            doReportComment(comment);
+//                        }
+//                    })
+//                    .show();
+//
+//            }
 
 //            @Override
 //            public void onCommentLongClicked(final Comment comment, final int position) {
@@ -855,18 +847,7 @@ public class MomentActivity extends BaseActivity {
             });
     }
 
-    private void doReportComment(Comment comment) {
 
-        JobManager jobManager = BgJobManager.getManager();
-        ReportCommentBody reportCommentBody = new ReportCommentBody();
-        reportCommentBody.commentID = comment.commentID;
-        reportCommentBody.reason = mReportReason;
-        reportCommentBody.detail = "";
-        Logger.t(TAG).d(mReportReason);
-        ReportJob job = new ReportJob(reportCommentBody, ReportJob.REPORT_TYPE_COMMENT);
-        jobManager.addJobInBackground(job);
-        Snackbar.make(mCommentList, "Report comment successfully", Snackbar.LENGTH_LONG).show();
-    }
 
     private void doDeleteComment(Comment comment) {
         JobManager jobManager = BgJobManager.getManager();

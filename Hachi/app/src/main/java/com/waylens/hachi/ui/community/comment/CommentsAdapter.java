@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.community.comment;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.transition.AutoTransition;
 import android.transition.Transition;
@@ -15,6 +16,7 @@ import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.Comment;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.AnimUtils;
 import com.waylens.hachi.utils.PrettyTimeUtils;
@@ -24,7 +26,6 @@ import com.waylens.hachi.utils.TransitionUtils;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,7 +39,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int EXPAND = 0x1;
     private static final int COLLAPSE = 0x2;
     private static final int COMMENT_LIKE = 0x3;
-    private static final int REPLY = 0x4;
+    private static final int ACTION = 0x4;
 
     private final RecyclerView mCommentListView;
 
@@ -214,10 +215,33 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
 
                 mExpandedCommentPosition = RecyclerView.NO_POSITION;
-                notifyItemChanged(adapterPosition, REPLY);
+                notifyItemChanged(adapterPosition, ACTION);
                 if (mOnCommentClickListener != null) {
                     mOnCommentClickListener.onReplyClicked(comment);
                 }
+            }
+        });
+
+        viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewHolder.btnReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int adapterPosition = viewHolder.getAdapterPosition();
+                DialogHelper.showReportCommentDialog(mContext, comment, new DialogHelper.OnPositiveClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        mExpandedCommentPosition = RecyclerView.NO_POSITION;
+                        notifyItemChanged(adapterPosition, ACTION);
+                        Snackbar.make(mCommentListView, R.string.report_comment, Snackbar.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         });
         final boolean isExpanded = position == mExpandedCommentPosition;
@@ -268,7 +292,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // for certain changes we don't need to rebind data, just update some view state
         if ((partialChangePayloads.contains(EXPAND)
             || partialChangePayloads.contains(COLLAPSE))
-            || partialChangePayloads.contains(REPLY)) {
+            || partialChangePayloads.contains(ACTION)) {
             setExpanded(holder, position == mExpandedCommentPosition);
         } else if (partialChangePayloads.contains(COMMENT_LIKE)) {
             return; // nothing to do

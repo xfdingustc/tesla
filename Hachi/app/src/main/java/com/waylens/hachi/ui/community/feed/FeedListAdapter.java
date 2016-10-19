@@ -438,7 +438,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
 
     private void onDeleteClick(final long momentId, final int position) {
-        DialogHelper.showDeleteMomentConfirmDialog(mContext, momentId, new DialogHelper.onPositiveClickListener() {
+        DialogHelper.showDeleteMomentConfirmDialog(mContext, momentId, new DialogHelper.OnPositiveClickListener() {
             @Override
             public void onPositiveClick() {
                 notifyItemRemoved(position);

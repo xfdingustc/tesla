@@ -275,9 +275,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:textColor="?attr/appTextColorSecondary"
-                tools:text="xfding Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
+                tools:text="xfding bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla bla "
                 />
 
 
@@ -287,6 +288,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/comment_user1"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:textColor="?attr/appTextColorSecondary"
                 tools:text="xfding beatiful"
                 />
@@ -298,6 +300,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/comment_user2"
                 android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:textColor="?attr/appTextColorSecondary"
                 tools:text="xfding beatiful"/>
 

@@ -1,15 +1,20 @@
 package com.waylens.hachi.bgjob;
 
+import android.support.design.widget.Snackbar;
+
 import com.birbit.android.jobqueue.JobManager;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
 import com.waylens.hachi.bgjob.timelapse.TimeLapseJob;
+import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.PictureUploadJob;
 import com.waylens.hachi.bgjob.upload.UploadCachedMomentJob;
-import com.waylens.hachi.bgjob.upload.CacheMomentJob;
+import com.waylens.hachi.rest.bean.Comment;
+import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.ui.entities.LocalMoment;
@@ -82,6 +87,18 @@ public class BgJobHelper {
         JobManager jobManager = BgJobManager.getManager();
         PictureUploadJob job = new PictureUploadJob(title, pictureUrl);
         jobManager.addJobInBackground(job);
+
+    }
+
+    public static void reportComent(Comment comment, String reason) {
+        JobManager jobManager = BgJobManager.getManager();
+        ReportCommentBody reportCommentBody = new ReportCommentBody();
+        reportCommentBody.commentID = comment.commentID;
+        reportCommentBody.reason = reason;
+        reportCommentBody.detail = "";
+        ReportJob job = new ReportJob(reportCommentBody, ReportJob.REPORT_TYPE_COMMENT);
+        jobManager.addJobInBackground(job);
+
 
     }
 
