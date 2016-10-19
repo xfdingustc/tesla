@@ -51,7 +51,7 @@
     <string name="delete">Delete</string>
     <string name="delete_bookmark_confirm">Deleting highlights is irreversible, are you sure?</string>
     <string name="discard">Discard </string>
-    <string name="discard_enhance_confirm">Your editing will NOT be saved. Confirm to preceed?</string>
+    <string name="discard_enhance_confirm">Your editing will NOT be saved. Confirm to proceed?</string>
     <string name="discard_the_enhance">Discard edits</string>
     <string name="distance_restrict">"3. Your mobile phone is within 30-meter radius of your camera."</string>
     <string name="download">Download</string>

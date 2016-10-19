@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="horizontal">
+
             <FrameLayout
                 android:id="@+id/car_info"
                 android:layout_width="wrap_content"
@@ -41,19 +42,19 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:background="@drawable/chip_icon"
                     android:padding="4dp"
-                    android:src="@drawable/ic_directions_car"
-                    android:background="@drawable/chip_icon"/>
+                    android:src="@drawable/ic_directions_car"/>
 
                 <TextView
                     android:id="@+id/car_model"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/tagTextColor"
                     android:layout_gravity="center_vertical"
-                    android:textSize="12sp"
                     android:paddingLeft="32dp"
                     android:paddingRight="8dp"
+                    android:textColor="?attr/tagTextColor"
+                    android:textSize="12sp"
                     tools:text="Toyota Camry 2014"/>
 
             </FrameLayout>
@@ -62,8 +63,8 @@
                 android:id="@+id/racing_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:alpha="0.8"
                 android:layout_margin="8dp"
+                android:alpha="0.8"
                 android:background="@drawable/race_info_bg">
 
                 <TextView
@@ -105,27 +106,30 @@
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 
+
+
     <LinearLayout
         android:id="@+id/title_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/video_fragment_container"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="16dp"
+        android:layout_below="@+id/video_fragment_container"
+        android:layout_alignParentStart="true">
 
         <com.waylens.hachi.ui.views.AvatarView
             android:id="@+id/avatar_view"
             android:layout_width="40dp"
             android:layout_height="40dp"
-
-            android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"/>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
 
             <TextView
@@ -133,26 +137,22 @@
                 style="@style/HachiTextViewSubHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/video_fragment_container"
-                android:layout_toLeftOf="@id/btn_more"
-                android:layout_toRightOf="@id/avatar_view"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="?attr/appTextColorPrimary"
-                tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
+                android:visibility="gone"
+                tools:text="Night video test! Figured out my blabla bla"/>
 
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/title"
-                android:layout_toLeftOf="@id/btn_more"
-                android:layout_toRightOf="@id/avatar_view"
                 android:textColor="?attr/appTextColorSecondary"
                 android:textSize="14dp"
                 tools:text="xfding"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/btn_more"
@@ -170,7 +170,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/title_info"
-        android:layout_marginTop="16dp"
         android:background="?attr/separateColor"/>
 
 </RelativeLayout>

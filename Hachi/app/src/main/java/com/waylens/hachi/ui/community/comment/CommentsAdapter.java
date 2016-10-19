@@ -279,7 +279,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private void setExpanded(CommentViewHolder holder, boolean isExpanded) {
         holder.itemView.setActivated(isExpanded);
-        holder.btnReply.setVisibility((isExpanded) ? View.VISIBLE : View.GONE);
+        int visibility = (isExpanded) ? View.VISIBLE : View.GONE;
+        holder.btnReply.setVisibility(visibility);
+        holder.btnReport.setVisibility(visibility);
+        holder.btnDelete.setVisibility(visibility);
     }
 
     private void updateTailView(CommentTailViewHolder viewHolder) {
@@ -355,6 +358,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.reply)
         ImageButton btnReply;
+
+        @BindView(R.id.delete)
+        ImageButton btnDelete;
+
+        @BindView(R.id.report)
+        ImageButton btnReport;
 
 
         public CommentViewHolder(View itemView) {
