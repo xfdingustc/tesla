@@ -4,6 +4,7 @@ import android.support.design.widget.Snackbar;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
@@ -103,4 +104,9 @@ public class BgJobHelper {
     }
 
 
+    public static void deleteComment(Comment comment) {
+        JobManager jobManager = BgJobManager.getManager();
+        DeleteCommentJob job = new DeleteCommentJob(comment.commentID);
+        jobManager.addJobInBackground(job);
+    }
 }

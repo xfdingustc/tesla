@@ -66,6 +66,7 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.SendCommentButton;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -680,129 +681,7 @@ public class MomentActivity extends BaseActivity {
                 if (!checkUserVerified()) {
                     return;
                 }
-//                final MaterialSimpleListAdapter adapter = new MaterialSimpleListAdapter(MomentActivity.this);
-//                adapter.add(new MaterialSimpleListItem.Builder(MomentActivity.this)
-//                    .content(R.string.reply)
-//                    .icon(R.drawable.comment_reply)
-//                    .backgroundColor(getResources().getColor(R.color.material_grey_800))
-//                    .build());
-//                MaterialSimpleListItem item = null;
-//
-//                if (comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
-//                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
-//                        .content(R.string.delete)
-//                        .icon(R.drawable.btn_edit_action_delete)
-//                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
-//                        .build();
-//                } else {
-//                    item = new MaterialSimpleListItem.Builder(MomentActivity.this)
-//                        .content(R.string.report)
-//                        .icon(R.drawable.comment_report)
-//                        .backgroundColor(getResources().getColor(R.color.material_grey_800))
-//                        .build();
-//
-//                }
-//                adapter.add(item);
-//
-//                new MaterialDialog.Builder(MomentActivity.this)
-//                    .title(R.string.comment)
-//                    .adapter(adapter, new MaterialDialog.ListCallback() {
-//                        @Override
-//                        public void onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-//                            switch (which) {
-//                                case 0:
-//                                    mReplyTo = comment.author;
-//                                    addComment();
-//                                    if (mNewCommentView != null) {
-//                                        mNewCommentView.setHint(getString(R.string.reply_to, comment.author.userName));
-//                                    }
-//                                    break;
-//                                case 1:
-//                                    if (!comment.author.userID.equals(SessionManager.getInstance().getUserId())) {
-//                                        reportComment(comment);
-//                                    } else {
-//                                        doDeleteComment(comment);
-//                                        mAdapter.removeComment(position);
-//                                    }
-//                                    break;
-//                                default:
-//                                    break;
-//                            }
-//                            dialog.dismiss();
-//                        }
-//                    })
-//                    .show();
             }
-
-//            public void reportComment(final Comment comment) {
-//                new MaterialDialog.Builder(MomentActivity.this)
-//                    .title(R.string.report)
-//                    .items(R.array.report_reason)
-//                    .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-//                        @Override
-//                        public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-//                            return true;
-//                        }
-//                    })
-//                    .positiveText(R.string.report)
-//                    .negativeText(R.string.cancel)
-//                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                        @Override
-//                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                            int index = dialog.getSelectedIndex();
-//                            mReportReason = getResources().getStringArray(R.array.report_reason)[index];
-//                            Logger.t(TAG).d("report reason:" + mReportReason + "index:" + index);
-//                            doReportComment(comment);
-//                        }
-//                    })
-//                    .show();
-//
-//            }
-
-//            @Override
-//            public void onCommentLongClicked(final Comment comment, final int position) {
-//                BottomSheet builder = new BottomSheet.Builder(MomentActivity.this)
-//                    .sheet(R.menu.menu_report_comment)
-//                    .darkTheme()
-//                    .listener(new MenuItem.OnMenuItemClickListener() {
-//                        @Override
-//                        public boolean onMenuItemClick(MenuItem item) {
-//                            switch (item.getItemId()) {
-//                                case R.id.report:
-//
-//                                    MaterialDialog dialog = new MaterialDialog.Builder(MomentActivity.this)
-//                                        .name(R.string.report)
-//                                        .items(R.array.report_reason)
-//                                        .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-//                                            @Override
-//                                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-//                                                mReportReason = getResources().getStringArray(R.array.report_reason)[which];
-//                                                return true;
-//                                            }
-//                                        })
-//                                        .positiveText(R.string.report)
-//                                        .negativeText(android.R.string.cancel)
-//                                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-//                                            @Override
-//                                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-//                                                doReportComment(comment);
-//                                            }
-//                                        })
-//                                        .show();
-//
-//
-//                                    break;
-//                            }
-//                            return true;
-//                        }
-//                    })
-//                    .build();
-//
-//                builder.show();
-
-//            }
-
-
         });
         mAdapter.setOnLoadMoreListener(new CommentsAdapter.OnLoadMoreListener() {
             @Override
@@ -811,7 +690,6 @@ public class MomentActivity extends BaseActivity {
             }
         });
         mCommentList.setAdapter(mAdapter);
-//        mCommentList.setItemAnimator(new DefaultItemAnimator());
         refreshComments();
     }
 
@@ -842,33 +720,9 @@ public class MomentActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-                    onLoadCommentsFailed(e);
+                    ServerErrorHelper.showErrorMessage(mCommentList, e);
                 }
             });
-    }
-
-
-
-    private void doDeleteComment(Comment comment) {
-        JobManager jobManager = BgJobManager.getManager();
-        DeleteCommentJob job = new DeleteCommentJob(comment.commentID);
-        jobManager.addJobInBackground(job);
-    }
-
-
-    private void showMessage(int resId) {
-        //Should not call this method if UI has been already destroyed.
-        try {
-            Snackbar.make(mCommentList, resId, Snackbar.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Logger.t(TAG).e(e.toString());
-        }
-    }
-
-    private void onLoadCommentsFailed(Throwable error) {
-//        ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-        Snackbar.make(mCommentList, error.getMessage(), Snackbar.LENGTH_SHORT).show();
-
     }
 
     private void onLoadCommentsSuccessful(CommentListResponse response, boolean isRefresh) {

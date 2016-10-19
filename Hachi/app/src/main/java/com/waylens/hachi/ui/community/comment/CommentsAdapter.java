@@ -16,6 +16,7 @@ import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.Comment;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.AnimUtils;
@@ -225,7 +226,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         viewHolder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DialogHelper.showDeleteCommentConfirmDialog(mContext, comment, new DialogHelper.OnPositiveClickListener() {
+                    @Override
+                    public void onPositiveClick() {
+                        mComments.remove(position);
+                        mExpandedCommentPosition = RecyclerView.NO_POSITION;
+                        notifyItemRemoved(position);
 
+                    }
+                });
             }
         });
 
@@ -307,6 +316,14 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.btnReply.setVisibility(visibility);
         holder.btnReport.setVisibility(visibility);
         holder.btnDelete.setVisibility(visibility);
+        if (visibility == View.VISIBLE) {
+            Comment comment = mComments.get(holder.getAdapterPosition());
+            if (SessionManager.getInstance().isCurrentUserId(comment.author.userID)) {
+                holder.btnReport.setVisibility(View.GONE);
+            } else {
+                holder.btnDelete.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void updateTailView(CommentTailViewHolder viewHolder) {

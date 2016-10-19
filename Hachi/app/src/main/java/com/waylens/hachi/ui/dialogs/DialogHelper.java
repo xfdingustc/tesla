@@ -192,6 +192,21 @@ public class DialogHelper {
             .show();
     }
 
+    public static MaterialDialog showDeleteCommentConfirmDialog(Context context, final Comment comment, final OnPositiveClickListener positiveClickListener) {
+        return new MaterialDialog.Builder(context)
+            .content(R.string.delete_your_comment)
+            .positiveText(R.string.delete)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    if (positiveClickListener != null) {
+                        positiveClickListener.onPositiveClick();
+                    }
+                    BgJobHelper.deleteComment(comment);
+                }
+            }).show();
+    }
 
 
     public interface OnPositiveClickListener {

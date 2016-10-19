@@ -2,6 +2,7 @@ package com.waylens.hachi.session;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -322,6 +323,14 @@ public class SessionManager {
         }
 
         return false;
+    }
+
+    public boolean isCurrentUserId(String userId) {
+        if (!TextUtils.isEmpty(userId) && userId.equals(getUserId())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
