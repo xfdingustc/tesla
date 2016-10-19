@@ -109,10 +109,8 @@ public class SignUpFragment extends BaseFragment {
 
     void initViews() {
         mRootView.requestFocus();
-        String email = null;
-        if (email != null) {
-            mTvSignUpEmail.setText(email);
-        }
+        String email = "";
+        mTvSignUpEmail.setText(email);
     }
 
 

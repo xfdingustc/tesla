@@ -1,5 +1,7 @@
 package com.waylens.hachi.ui.clips.player;
 
+import android.text.TextUtils;
+
 /**
  * Created by Xiaofei on 2016/3/7.
  */
@@ -29,7 +31,7 @@ public class GaugeInfoItem {
         this.id = id;
         this.title = title;
         this.option = option;
-        this.isEnabled = true;
+        this.isEnabled = !TextUtils.isEmpty(option);
     }
 
     public String getJSParam() {

@@ -440,9 +440,11 @@ public class SessionManager {
         hachiApi.deviceLogout().enqueue(new Callback<SimpleBoolResponse>() {
             @Override
             public void onResponse(Call<SimpleBoolResponse> call, Response<SimpleBoolResponse> response) {
-                Logger.t(TAG).d("device logout " + response.body().result);
-                PreferenceUtils.remove(PreferenceUtils.TOKEN);
-                PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
+                if (response.isSuccessful()) {
+                    Logger.t(TAG).d("device logout " + response.body().result);
+                    PreferenceUtils.remove(PreferenceUtils.TOKEN);
+                    PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
+                }
             }
 
             @Override

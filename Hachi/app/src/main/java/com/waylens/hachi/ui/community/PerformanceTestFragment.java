@@ -458,14 +458,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                             myVehicleInfo = new VehicleInfo();
                             myVehicleInfo.vehicleMaker = maker;
                             myVehicleInfo.vehicleModel = model;
-                            if (modelAdapter.getCount() >= 2) {
-                                if (!modelAdapter.getItem(1).equals(getResources().getString(R.string.same_car))) {
-                                    modelAdapter.insert(1, getResources().getString(R.string.same_car));
-                                    modelAdapter.notifyDataSetChanged();
-                                }
-                            } else {
-                                modelAdapter.add(getResources().getString(R.string.same_car));
-                            }
                         }
                     } else {
                         mMyTestLayout.setVisibility(View.GONE);
@@ -484,7 +476,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
             @Override
             public void onFailure(Call<RaceQueryResponse> call, Throwable t) {
-                Logger.t(TAG).d(t.getMessage());
+                t.printStackTrace();
             }
         });
     }

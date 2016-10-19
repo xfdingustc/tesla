@@ -1,5 +1,6 @@
 package com.waylens.hachi.app;
 
+import android.preference.Preference;
 import android.support.annotation.NonNull;
 
 import com.orhanobut.logger.Logger;
@@ -39,6 +40,16 @@ public class GaugeSettingManager  {
 
     public void saveSetting(GaugeInfoItem item) {
         PreferenceUtils.putString(item.title, item.getOption());
+    }
+
+    public static String getDefaultGaugeSetting(String gaugeName) {
+        String[] supportedGauges = Hachi.getContext().getResources().getStringArray(R.array.supported_gauges);
+        for (int i = 0; i < supportedGauges.length; i++) {
+            if (supportedGauges[i].equals(gaugeName)) {
+                return DEFAULT_OPTIONS_STR[i];
+            }
+        }
+        return "large";
     }
 
     public void saveTheme(String theme) {

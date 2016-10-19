@@ -35,6 +35,8 @@ public class GcmIntentService extends IntentService {
 
     public static final String KEY_REFER_USER = "@string/refer_user";
 
+    public static final String KEY_MOMENT_SHARE = "@string/moment_share";
+
     public static String TAG = GcmIntentService.class.getSimpleName();
 
     public GcmIntentService() {
@@ -88,6 +90,11 @@ public class GcmIntentService extends IntentService {
                     user = jsonArray.optString(0);
                     moment = jsonArray.optString(1);
                     msg = String.format(getResources().getString(R.string.reply_notification), user, moment);
+                    break;
+                case KEY_MOMENT_SHARE:
+                    user = jsonArray.optString(0);
+                    break;
+                default:
                     break;
             }
         } catch (JSONException e) {

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 
 import org.json.JSONException;
@@ -26,6 +27,7 @@ import butterknife.ButterKnife;
  * Created by Richard on 3/2/16.
  */
 public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> {
+    public static String TAG = GaugeListAdapter.class.getSimpleName();
 
     private final OnGaugeItemChangedListener mListener;
     List<GaugeInfoItem> mGaugeItems;
@@ -47,7 +49,7 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
     }
 
     @Override
-    public void onBindViewHolder(final VH holder, int position) {
+    public void onBindViewHolder(final VH holder, final int position) {
         final GaugeInfoItem gaugeItem = mGaugeItems.get(position);
         holder.titleView.setText(gaugeItem.title);
         if (gaugeItem.isEnabled) {
@@ -56,15 +58,20 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
         } else {
             holder.radioGroup.setVisibility(View.INVISIBLE);
         }
-
+        Logger.t(TAG).d("setChecked");
         holder.btnSwitch.setChecked(gaugeItem.isEnabled);
         holder.btnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                enableGauge(holder, isChecked);
-                gaugeItem.isEnabled = isChecked;
-                if (mListener != null) {
-                    mListener.onGaugeItemChanged(gaugeItem);
+                if (holder.btnSwitch.isPressed()) {
+                    enableGauge(holder, isChecked);
+                    gaugeItem.isEnabled = isChecked;
+                    gaugeItem.option = isChecked?GaugeSettingManager.getDefaultGaugeSetting(gaugeItem.title):"";
+                    Logger.t(TAG).d(gaugeItem.isEnabled);
+                    Logger.t(TAG).d(mGaugeItems.get(position).isEnabled);
+                    if (mListener != null) {
+                        mListener.onGaugeItemChanged(gaugeItem);
+                    }
                 }
             }
         });
@@ -97,7 +104,8 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
 
     void enableGauge(VH holder, boolean isChecked) {
         GaugeInfoItem gaugeItem = mGaugeItems.get(holder.getAdapterPosition());
-        gaugeItem.isEnabled = isChecked;
+        //gaugeItem.isEnabled = isChecked;
+        //gaugeItem.option = isChecked?GaugeSettingManager.getDefaultGaugeSetting(gaugeItem.title):"";
         if (isChecked) {
             holder.radioGroup.setVisibility(View.VISIBLE);
             holder.radioGroup.check(getRadioButtonID(gaugeItem.option));

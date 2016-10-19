@@ -258,7 +258,6 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
     }
 
-
     @Override
     public void cancelUpload() {
 

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -37,8 +36,6 @@ public class HachiService {
                     Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
                         .baseUrl(Constants.HOST_URL);
-
-
                     OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
                     clientBuilder.addInterceptor(new Interceptor() {
