@@ -13,7 +13,7 @@ public class Place {
     @Override
     public String toString() {
         if (!TextUtils.isEmpty(country) && !TextUtils.isEmpty(city)) {
-            return country + " " + city;
+            return city + ", " + country;
         } else {
             return "";
         }
