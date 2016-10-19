@@ -122,7 +122,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @BindView(R.id.tvUserName)
         TextView mTvUserName;
 
-        @BindView(R.id.btnFollow)
+        @BindView(R.id.follow)
         Button mTvFollow;
 
         public UserListViewHolder(View itemView) {

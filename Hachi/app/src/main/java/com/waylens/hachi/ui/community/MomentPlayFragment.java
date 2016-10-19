@@ -50,7 +50,6 @@ import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -570,9 +569,11 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             return;
         }
 
-        Observable<MomentInfo> observableMomentInfo = mHachi.getMomentInfoRx(mMomentId);
+        Observable<MomentInfo> observableMomentInfo = mHachi.getMomentInfoRx(mMomentId)
+            .subscribeOn(Schedulers.newThread());
 
-        Observable<MomentPlayInfo> observableMomentPlayInfo = mHachi.getMomentPlayInfo(mMomentId);
+        Observable<MomentPlayInfo> observableMomentPlayInfo = mHachi.getMomentPlayInfo(mMomentId)
+            .subscribeOn(Schedulers.newThread());
 
         Observable.zip(observableMomentInfo, observableMomentPlayInfo, new Func2<MomentInfo, MomentPlayInfo, MomentPlayInfo>() {
 
@@ -584,7 +585,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 //Logger.t(TAG).d(momentInfo.moment.overlay.toString());
                 return momentPlayInfo;
             }
-        }).subscribeOn(Schedulers.io())
+        })
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Observer<MomentPlayInfo>() {
                 @Override
@@ -986,7 +987,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             }
 
             long startTime = getRawDataIndex(currentTime);
-            if ( Math.abs(updateItem.getPtsMs() - currentTime) <= 5000 ) {
+            if (Math.abs(updateItem.getPtsMs() - currentTime) <= 5000) {
                 updateItem.setPtsMs(startTime + updateItem.getPtsMs());
                 return updateItem;
             } else {

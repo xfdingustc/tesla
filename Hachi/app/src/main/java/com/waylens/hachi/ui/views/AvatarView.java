@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
@@ -63,6 +64,7 @@ public class AvatarView extends FrameLayout {
             Glide.with(getContext())
                 .load(avatarUrl)
                 .transform(mCircleTransform)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_account_circle_placeholder)
                 .crossFade()
                 .into(userAvatar);

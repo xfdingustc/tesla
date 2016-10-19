@@ -49,6 +49,7 @@ import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
@@ -76,16 +77,6 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.rvUserMomentList)
     RecyclerViewExt mRvUserMomentList;
 
-
-//    public static void launch(Activity activity, String userID, View transitionView) {
-//        Intent intent = new Intent(activity, UserProfileActivity.class);
-//        intent.putExtra(EXTRA_USER_ID, userID);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-//            false, new Pair<>(transitionView, activity.getString(R.string.trans_avatar)));
-//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-//        ActivityCompat.startActivity(activity, intent, options.toBundle());
-//    }
 
     public static void launch(Activity activity, User user, View transitionView) {
         Intent intent = new Intent(activity, UserProfileActivity.class);
@@ -135,7 +126,7 @@ public class UserProfileActivity extends BaseActivity {
             return;
         }
 
-        if (SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
+        if (SessionManager.getInstance().isCurrentUserId(mUser.userID)) {
             ProfileSettingActivity.launch(this);
             return;
         }
@@ -175,6 +166,10 @@ public class UserProfileActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_user_profile);
+
+        userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);
+
+        mUserName.setText(mUser.userName);
 //        setupToolbar();
         mRvUserMomentList.setVisibility(View.VISIBLE);
         mMomentRvAdapter = new MomentsListAdapter(this);
@@ -193,27 +188,28 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void fetchUserProfile() {
-        Observable<UserInfo> userInfoObservable = HachiService.createHachiApiService().getUserInfoRx(mUser.userID);
 
-        Observable<FollowInfo> followInfoObservable = HachiService.createHachiApiService().getFollowInfoRx(mUser.userID);
+        final long currentTime = System.currentTimeMillis();
 
-        Observable<MomentAmount> getMomentAmount = HachiService.createHachiApiService().getUserMomentAmountRx(mUser.userID);
 
-//        Observable<MomentListResponse> momentListResponseObservable = mHachiApi.getUserMomentsRx(mUserID, mCurrentCursor);
 
-        Observable.zip(userInfoObservable, followInfoObservable, getMomentAmount, new Func3<UserInfo, FollowInfo, MomentAmount, UserProfileZip>() {
+        Observable<FollowInfo> followInfoObservable = HachiService.createHachiApiService().getFollowInfoRx(mUser.userID)
+            .subscribeOn(Schedulers.newThread());
+
+        Observable<MomentAmount> getMomentAmount = HachiService.createHachiApiService().getUserMomentAmountRx(mUser.userID)
+            .subscribeOn(Schedulers.newThread());
+
+        Observable.zip(followInfoObservable, getMomentAmount, new Func2<FollowInfo, MomentAmount, UserProfileZip>() {
 
             @Override
-            public UserProfileZip call(UserInfo userInfo, FollowInfo followInfo, MomentAmount amount) {
+            public UserProfileZip call(FollowInfo followInfo, MomentAmount amount) {
+                Logger.t(TAG).d("get info time: " + (System.currentTimeMillis() - currentTime));
                 UserProfileZip userInfoEx = new UserProfileZip();
-                userInfoEx.userInfo = userInfo;
                 userInfoEx.followInfo = followInfo;
                 userInfoEx.amount = amount;
-//                userInfoEx.momentList = momentListResponse;
                 return userInfoEx;
             }
         })
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<UserProfileZip>() {
                 @Override
@@ -228,12 +224,10 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void setupUserProfileHeaderView() {
-        userAvatar.loadAvatar(mUserInfoEx.userInfo.avatarUrl, mUserInfoEx.userInfo.userName);
 
-        mUserName.setText(mUserInfoEx.userInfo.displayName);
         momentCount.setText(String.valueOf(mUserInfoEx.amount.amount));
 
-        if (SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
+        if (SessionManager.getInstance().isCurrentUserId(SessionManager.getInstance().getUserId())) {
             mBtnFollow.setText(R.string.edit_profile);
         }
 
@@ -325,8 +319,8 @@ public class UserProfileActivity extends BaseActivity {
                     for (MomentEx moment : momentInfo.moments) {
                         moment.owner = new User();
                         moment.owner.userID = mUser.userID;
-                        moment.owner.avatarUrl = mUserInfoEx.userInfo.avatarUrl;
-                        moment.owner.userName = mUserInfoEx.userInfo.userName;
+                        moment.owner.avatarUrl = mUser.avatarUrl;
+                        moment.owner.userName = mUser.userName;
                     }
                     return momentInfo;
                 }
@@ -370,7 +364,7 @@ public class UserProfileActivity extends BaseActivity {
     private void updateFollowInfo() {
         mTvFollowersCount.setText(Integer.toString(mUserInfoEx.followInfo.followers));
         followingCount.setText(Integer.toString(mUserInfoEx.followInfo.followings));
-        if (!SessionManager.getInstance().isCurrentUser(mUserInfoEx.userInfo.userName)) {
+        if (!SessionManager.getInstance().isCurrentUserId(mUser.userID)) {
             if (mUserInfoEx.followInfo.isMyFollowing) {
                 mBtnFollow.setText(R.string.followed);
                 mBtnFollow.setActivated(true);
@@ -383,7 +377,6 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     public class UserProfileZip {
-        UserInfo userInfo;
         FollowInfo followInfo;
         MomentAmount amount;
     }

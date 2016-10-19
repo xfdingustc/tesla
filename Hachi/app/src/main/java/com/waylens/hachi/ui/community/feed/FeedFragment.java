@@ -155,7 +155,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
 
 
-        Observable<MomentListResponse> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME, true);
+        Observable<MomentListResponse> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME, true)
+            .subscribeOn(Schedulers.newThread());
 
         Observable<MomentListResponse> feedObservable;
 
@@ -171,7 +172,8 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                         }
                         return momentListResponse2;
                     }
-                });
+                })
+                .subscribeOn(Schedulers.newThread());
             feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse, MomentListResponse, MomentListResponse>() {
                 @Override
                 public MomentListResponse call(MomentListResponse recommendMoment, MomentListResponse feedMoment) {
@@ -182,7 +184,7 @@ public class FeedFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         }
 
 
-        feedObservable.subscribeOn(Schedulers.io())
+        feedObservable
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<MomentListResponse>() {
                 @Override
