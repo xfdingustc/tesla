@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -171,19 +172,26 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         holder.avatarView.loadAvatar(momentEx.owner.avatarUrl, momentEx.owner.userName);
 
-        if (!TextUtils.isEmpty(momentAbstract.title)) {
-            holder.title.setText(momentAbstract.title);
-            holder.title.setVisibility(View.VISIBLE);
-        } else {
-            holder.title.setVisibility(View.GONE);
+
+
+        StringBuilder secondDesBuilder = new StringBuilder();
+        secondDesBuilder.append(momentEx.owner.userName);
+
+        if (momentAbstract.withGeoTag && !TextUtils.isEmpty(momentEx.moment.place.toString())) {
+            secondDesBuilder.append(" • ").append(momentEx.moment.place.toString());
         }
 
-        String timeAgo = PrettyTimeUtils.getTimeAgo(momentAbstract.uploadTime);
-        if (!TextUtils.isEmpty(momentEx.owner.userName)) {
-            holder.userName.setText(momentEx.owner.userName + " • " + timeAgo);
+
+        if (!TextUtils.isEmpty(momentAbstract.title)) {
+            holder.title.setText(momentAbstract.title);
+            String timeAgo = PrettyTimeUtils.getTimeAgo(momentAbstract.uploadTime);
+            secondDesBuilder.append(" • ").append(timeAgo);
         } else {
-            holder.userName.setText(timeAgo);
+            SimpleDateFormat format = new SimpleDateFormat("MMM dd, yyyy");
+            holder.title.setText(format.format(momentAbstract.createTime));
         }
+
+        holder.userName.setText(secondDesBuilder.toString());
 
         if (momentAbstract.momentVehicleInfo != null && !TextUtils.isEmpty(momentAbstract.momentVehicleInfo.vehicleModel)) {
             VehicleInfo vehicleInfo = momentAbstract.momentVehicleInfo;
@@ -356,6 +364,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @BindView(R.id.user_name)
         TextView userName;
+
 
         @BindView(R.id.car_info)
         View carInfo;

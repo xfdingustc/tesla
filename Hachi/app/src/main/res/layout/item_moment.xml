@@ -124,7 +124,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"/>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -140,7 +140,6 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="?attr/appTextColorPrimary"
-                android:visibility="gone"
                 tools:text="Night video test! Figured out my blabla bla"/>
 
             <TextView
@@ -152,7 +151,8 @@
                 android:textSize="14dp"
                 tools:text="xfding"/>
 
-        </RelativeLayout>
+
+        </LinearLayout>
 
         <ImageButton
             android:id="@+id/btn_more"
@@ -161,7 +161,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/video_fragment_container"
-            android:layout_marginLeft="8dp"
+            android:paddingLeft="8dp"
             android:layout_marginRight="16dp"
             android:src="@drawable/ic_more"/>
     </LinearLayout>
