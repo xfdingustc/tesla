@@ -77,7 +77,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/btn_mic_on"/>
+                android:tint="@color/app_text_color_primary"
+                android:src="@drawable/ic_mic"/>
 
 
             <ImageButton
@@ -90,7 +91,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/ic_fullscreen"/>
+                android:src="@drawable/ic_fullscreen"
+                android:tint="@color/app_text_color_primary"/>
 
 
             <ImageButton

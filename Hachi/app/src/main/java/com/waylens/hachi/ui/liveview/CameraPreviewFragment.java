@@ -755,9 +755,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         if (mVdtCamera != null) {
             boolean micEnabled = mVdtCamera.isMicEnabled();
             if (micEnabled) {
-                mBtnMicControl.setImageResource(R.drawable.btn_mic_on);
+                mBtnMicControl.setImageResource(R.drawable.ic_mic);
             } else {
-                mBtnMicControl.setImageResource(R.drawable.btn_mic_off);
+                mBtnMicControl.setImageResource(R.drawable.ic_mic_off);
             }
         }
     }
