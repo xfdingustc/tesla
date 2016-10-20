@@ -49,17 +49,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MomentsListAdapter extends AbsMomentListAdapter {
     private static final String TAG = MomentsListAdapter.class.getSimpleName();
 
-    private static final int ITEM_VIEW_TYPE_MOMENT = 0;
-    private static final int ITEM_VIEW_TYPE_TAIL = 1;
 
-    private List<MomentEx> mMoments = new ArrayList<>();
+
 
     private final Context mContext;
 
-    private boolean mHasMore = true;
+
 
     private boolean mShowLoading = true;
 
@@ -88,37 +86,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    public void setMoments(List<MomentEx> moments) {
-        mMoments = moments;
-        notifyDataSetChanged();
-    }
 
 
-    public void addMoments(List<MomentEx> moments) {
-        if (mMoments == null) {
-            mMoments = new ArrayList<>();
-        }
-        int start = mMoments.size();
-        int count = moments.size();
-        mMoments.addAll(moments);
-        notifyItemRangeInserted(start, count);
-    }
-
-    public void setHasMore(boolean hasMore) {
-        mHasMore = hasMore;
-        notifyItemChanged(mMoments.size());
-    }
-
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position < mMoments.size()) {
-            return ITEM_VIEW_TYPE_MOMENT;
-        } else {
-            return ITEM_VIEW_TYPE_TAIL;
-        }
-
-    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

@@ -40,6 +40,7 @@ import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.view.ClipGridListView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -249,6 +250,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     private void initViews() {
+        if (ThemeHelper.isDarkTheme()) {
+            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
+        }
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

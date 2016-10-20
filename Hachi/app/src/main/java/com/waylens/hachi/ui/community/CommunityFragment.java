@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
@@ -35,11 +33,9 @@ import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
-import com.waylens.hachi.ui.community.feed.FeedFragment;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.utils.ConnectivityHelper;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -251,7 +247,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     private void setupViewPager() {
         mFeedPageAdapter = new FeedPageAdapter(getChildFragmentManager());
-        mFeedPageAdapter.addFragment(FeedFragment.newInstance(), getString(R.string.my_feed));
+        mFeedPageAdapter.addFragment(MomentListFragment.newInstance(MomentListFragment.FEED_TAG_NEW_FEED), getString(R.string.my_feed));
         mFeedPageAdapter.addFragment(MomentListFragment.newInstance(MomentListFragment.FEED_TAG_LATEST), getString(R.string.latest));
         mFeedPageAdapter.addFragment(MomentListFragment.newInstance(MomentListFragment.FEED_TAG_STAFF_PICKS), getString(R.string
             .staff_picks));

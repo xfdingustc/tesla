@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ViewAnimator;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,8 +21,12 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MomentListResponse;
+import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
@@ -39,8 +44,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
 
@@ -55,17 +63,21 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     private static final String FEED_TAG = "feed_tag";
 
 
+    public static final int FEED_TAG_NEW_FEED = 1;
     public static final int FEED_TAG_LATEST = 2;
     public static final int FEED_TAG_STAFF_PICKS = 4;
 
+    private static final int CHILD_SIGNUP_ENTRY = 0;
+    private static final int CHILD_MOMENTS = 1;
 
-    private MomentsListAdapter mAdapter;
+
+    private AbsMomentListAdapter mAdapter;
 
 
     private LinearLayoutManager mLinearLayoutManager;
 
 
-    private int mCurrentCursor;
+    private long mCurrentCursor;
 
     private int mFeedTag;
 
@@ -75,6 +87,17 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
+
+    @BindView(R.id.view_animator)
+    ViewAnimator mViewAnimator;
+
+
+    @OnClick(R.id.btn_sign_up)
+    public void onBtnSignupClicked() {
+        AuthorizeActivity.launchForResult(getActivity(), MainActivity.REQUEST_CODE_SIGN_UP_FROM_MOMENTS);
+    }
+
+
 
 
     public static MomentListFragment newInstance(int tag) {
@@ -93,7 +116,11 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         if (arguments != null) {
             mFeedTag = arguments.getInt(FEED_TAG, FEED_TAG_LATEST);
         }
-        mAdapter = new MomentsListAdapter(getActivity());
+        if (mFeedTag == FEED_TAG_NEW_FEED) {
+            mAdapter = new FeedListAdapter(getActivity());
+        } else {
+            mAdapter = new MomentsListAdapter(getActivity());
+        }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
     }
@@ -116,6 +143,21 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        if (needSignin() && !SessionManager.getInstance().isLoggedIn()) {
+            mViewAnimator.setDisplayedChild(CHILD_SIGNUP_ENTRY);
+            Logger.t(TAG).d("show sign up entry");
+        } else {
+            if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
+                mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
+                Logger.t(TAG).d("show loading progress");
+                onRefresh();
+            }
+        }
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
@@ -124,7 +166,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
 
-    private void loadFeed(int cursor, final boolean isRefresh) {
+    private void loadFeed(long cursor, final boolean isRefresh) {
         getMomentListObservable(cursor)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -156,13 +198,42 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         }
     }
 
-    private Observable<MomentListResponse> getMomentListObservable(int cursor) {
+    private Observable<MomentListResponse> getMomentListObservable(long cursor) {
         HachiApi hachiApi = HachiService.createHachiApiService();
         switch (mFeedTag) {
             case FEED_TAG_LATEST:
                 return hachiApi.getAllMomentsRx(cursor, DEFAULT_COUNT, "uploadtime_desc", null, true);
             case FEED_TAG_STAFF_PICKS:
                 return hachiApi.getAllMomentsRx(cursor, DEFAULT_COUNT, "uploadtime_desc", "featured", true);
+            case FEED_TAG_NEW_FEED:
+                Observable<MomentListResponse> feedMoment = hachiApi.getMyFeed(cursor, DEFAULT_COUNT, Constants.PARAM_SORT_UPLOAD_TIME, true)
+                    .subscribeOn(Schedulers.newThread());
+
+                Observable<MomentListResponse> feedObservable;
+
+                if (cursor != 0) {
+                    feedObservable = feedMoment;
+                } else {
+                    Observable<MomentListResponse> recommendMoment = hachiApi.getRecommendedMomentsRx(1)
+                        .map(new Func1<MomentListResponse, MomentListResponse>() {
+                            @Override
+                            public MomentListResponse call(MomentListResponse momentListResponse2) {
+                                for (MomentEx momentEx : momentListResponse2.moments) {
+                                    momentEx.moment.isRecommended = true;
+                                }
+                                return momentListResponse2;
+                            }
+                        })
+                        .subscribeOn(Schedulers.newThread());
+                    feedObservable = Observable.zip(recommendMoment, feedMoment, new Func2<MomentListResponse, MomentListResponse, MomentListResponse>() {
+                        @Override
+                        public MomentListResponse call(MomentListResponse recommendMoment, MomentListResponse feedMoment) {
+                            feedMoment.moments.addAll(0, recommendMoment.moments);
+                            return feedMoment;
+                        }
+                    });
+                }
+                return feedObservable;
         }
 
         return null;
@@ -178,8 +249,18 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
         mRvVideoList.setIsLoadingMore(false);
         mCurrentCursor += response.moments.size();
-        if (!response.hasMore) {
+
+        boolean hasMore;
+        if (mFeedTag == FEED_TAG_NEW_FEED) {
+            hasMore = (response.nextCursor != 0);
+            mCurrentCursor = response.nextCursor;
+        } else {
+            hasMore = response.hasMore;
+        }
+
+        if (!hasMore) {
             mRvVideoList.setEnableLoadMore(false);
+            mRvVideoList.setOnLoadMoreListener(null);
             mAdapter.setHasMore(false);
         } else {
             mAdapter.setHasMore(true);
@@ -211,6 +292,14 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     public void enableRefresh(boolean enabled) {
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(enabled);
+        }
+    }
+
+    public boolean needSignin() {
+        if (mFeedTag == FEED_TAG_NEW_FEED) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -266,7 +266,7 @@ public interface HachiApi {
     Observable<AuthorizeResponse> changePasswordRx(@Body ChangePwdBody changePwdBody);
 
     @GET("api/moments")
-    Observable<MomentListResponse> getAllMomentsRx(@Query("cursor") int cursor, @Query("count") int count,
+    Observable<MomentListResponse> getAllMomentsRx(@Query("cursor") long cursor, @Query("count") int count,
                                                    @Query("order") String order, @Query("filter") String filter,
                                                    @Query("showPic") boolean showPic);
 
