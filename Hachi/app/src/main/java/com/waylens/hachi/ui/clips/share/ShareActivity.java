@@ -52,6 +52,7 @@ import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.ShareSettingActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.VersionHelper;
 import com.waylens.hachi.utils.ViewUtils;
 
 import java.io.IOException;
@@ -157,8 +158,8 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.moment_title)
     TextInputEditText mEtMomentTitle;
 
-    @BindView(R.id.moment_description)
-    TextInputEditText mEtMomentDescription;
+//    @BindView(R.id.moment_description)
+//    TextInputEditText mEtMomentDescription;
 
     @BindArray(R.array.social_privacy_text)
     CharSequence[] mPrivacyText;
@@ -437,7 +438,7 @@ public class ShareActivity extends ClipPlayActivity {
 //        }
 
 //        checkLinkedAccount();
-
+        mUserName.requestFocus();
     }
 
 
@@ -496,13 +497,11 @@ public class ShareActivity extends ClipPlayActivity {
     }
 
 
+
     private void setupParallex() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
+        if (VersionHelper.isGreateThanMashmellow()) {
             final int width = mPlayerContainer.getMeasuredWidth();
             final int height = mPlayerContainer.getMeasuredHeight();
-
             final float originY = mPlayerContainer.getY();
 
 
@@ -533,7 +532,7 @@ public class ShareActivity extends ClipPlayActivity {
 //            name = "Created " + format.format(System.currentTimeMillis());
 //        }
 
-        String descrption = mEtMomentDescription.getEditableText().toString();
+        String descrption = "";//mEtMomentDescription.getEditableText().toString();
         String[] tags = new String[]{};
 
         Map<String, String> gaugeSettings = GaugeSettingManager.getManager().getGaugeSettingMap();

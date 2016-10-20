@@ -7,6 +7,11 @@ import android.os.Build;
  */
 
 public class VersionHelper {
+
+    public static boolean isGreateThanMashmellow() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
     public static boolean isGreaterThanLollipop() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }

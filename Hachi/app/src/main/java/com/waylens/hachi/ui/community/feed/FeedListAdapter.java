@@ -62,18 +62,12 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static final int ITEM_VIEW_TYPE_MOMENT = 0;
     private static final int ITEM_VIEW_TYPE_TAIL = 1;
-    private static final int ITEM_VIEW_TYPE_HEADER = 2;
 
     private List<MomentEx> mMoments = new ArrayList<>();
 
     private final Context mContext;
 
-//    private PrettyTime mPrettyTime;
-
-
     private boolean mHasMore = true;
-
-    private IMomentListAdapterHeaderView mHeaderView = null;
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -117,28 +111,15 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyItemChanged(mMoments.size());
     }
 
-    public void setHeaderView(IMomentListAdapterHeaderView headerView) {
-        mHeaderView = headerView;
-        notifyDataSetChanged();
-    }
 
     @Override
     public int getItemViewType(int position) {
-        if (mHeaderView == null) {
-            if (position < mMoments.size()) {
-                return ITEM_VIEW_TYPE_MOMENT;
-            } else {
-                return ITEM_VIEW_TYPE_TAIL;
-            }
+        if (position < mMoments.size()) {
+            return ITEM_VIEW_TYPE_MOMENT;
         } else {
-            if (position == 0) {
-                return ITEM_VIEW_TYPE_HEADER;
-            } else if (position <= mMoments.size()) {
-                return ITEM_VIEW_TYPE_MOMENT;
-            } else {
-                return ITEM_VIEW_TYPE_TAIL;
-            }
+            return ITEM_VIEW_TYPE_TAIL;
         }
+
 
     }
 
@@ -147,8 +128,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (viewType == ITEM_VIEW_TYPE_MOMENT) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_feed, parent, false);
             return new MomentViewHolder(itemView);
-        } else if (viewType == ITEM_VIEW_TYPE_HEADER) {
-            return mHeaderView.getHeaderViewHolder(parent);
         } else {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
             return new LoadingViewHolder(itemView);
@@ -161,13 +140,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         int viewType = getItemViewType(position);
         if (viewType == ITEM_VIEW_TYPE_MOMENT) {
             int momentPosition = position;
-            if (mHeaderView != null) {
-                momentPosition -= 1;
-            }
             onBindMomentViewHolder((MomentViewHolder) holder, momentPosition);
-            onBindMomentViewHolder((MomentViewHolder) holder, momentPosition);
-        } else if (viewType == ITEM_VIEW_TYPE_HEADER) {
-            mHeaderView.onBindHeaderViewHolder(holder);
         } else {
             onBindLoadingViewHolder((LoadingViewHolder) holder, position);
         }
@@ -183,7 +156,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         bindMomentBasicInfo(holder, position);
         bindMomentExtraInfo(holder, position);
         bindMomentCommentInfo(holder, position);
-
 
 
         if (!TextUtils.isEmpty(moment.momentType) && moment.momentType.equals("PICTURE")) {
@@ -229,10 +201,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             });
         }
-
-
-
-
 
 
         holder.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -283,7 +251,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.separator.setVisibility(View.VISIBLE);
             holder.bottomPadding.setVisibility(View.VISIBLE);
         }
-
 
 
         if (momentEx.lastComments.size() > 0) {
@@ -416,7 +383,6 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
 
-
     private void onBindLoadingViewHolder(LoadingViewHolder holder, int position) {
         if (mHasMore) {
             holder.viewAnimator.setDisplayedChild(0);
@@ -463,7 +429,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return mMoments.size() + 1 + (mHeaderView == null ? 0 : 1);
+        return mMoments.size() + 1;
     }
 
 

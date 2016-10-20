@@ -4,16 +4,13 @@ package com.waylens.hachi.ui.authorization;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.settings.AccountActivity;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 
 import butterknife.BindView;

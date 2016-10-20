@@ -100,10 +100,6 @@
             android:name=".ui.settings.VersionCheckActivity"
             android:screenOrientation="portrait"/>
 
-        <activity
-            android:name=".ui.settings.AccountActivity"
-            android:screenOrientation="portrait"/>
-
 
         <activity
             android:name=".ui.clips.FootageActivity"
@@ -142,10 +138,6 @@
             android:name=".ui.settings.SpaceInfoActivity"
             android:screenOrientation="portrait"/>
 
-
-        <activity
-            android:name=".ui.settings.GeneralSettingActivity"
-            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.SettingActivity"
