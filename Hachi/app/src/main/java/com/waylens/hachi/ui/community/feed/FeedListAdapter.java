@@ -317,6 +317,16 @@ public class FeedListAdapter extends AbsMomentListAdapter {
             }
         });
 
+        holder.btnComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!TextUtils.isEmpty(moment.momentType) && !moment.momentType.equals("PICTURE")) {
+                    MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover,
+                            MomentActivity.REQUEST_COMMENT);
+                }
+            }
+        });
+
         holder.commentCount.setText(Integer.toString(moment.commentsCount));
     }
 
@@ -449,6 +459,9 @@ public class FeedListAdapter extends AbsMomentListAdapter {
 
         @BindView(R.id.tv_comment_count)
         TextView commentCount;
+
+        @BindView(R.id.btn_comment)
+        ImageButton btnComment;
 
         @BindView(R.id.separator)
         View separator;

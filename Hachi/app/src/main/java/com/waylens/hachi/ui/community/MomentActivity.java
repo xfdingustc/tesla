@@ -95,8 +95,10 @@ public class MomentActivity extends BaseActivity {
 
     public static final String EXTRA_THUMBNAIL = "videoThumbnail";
     public static final String EXTRA_MOMENT_ID = "momentId";
+    public static final String EXTRA_REQUEST = "request";
     public static final int REQUEST_GOOGLE_AUTHORIZE = 0x1000;
     public static final int REQUEST_FACEBOOK_AUTHORIZE = 0x1001;
+    public static final int REQUEST_COMMENT = 0x2001;
 
     private long mMomentId;
     private MomentInfo mMomentInfo;
@@ -109,9 +111,11 @@ public class MomentActivity extends BaseActivity {
 
     private User mReplyTo;
 
-
+    private String mReportReason;
 
     private boolean hasUpdates;
+
+    private boolean isRequestComment = false;
 
 
     private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
@@ -133,6 +137,17 @@ public class MomentActivity extends BaseActivity {
         intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+        ActivityCompat.startActivity(activity, intent, options.toBundle());
+    }
+
+    public static void launch(Activity activity, long momentId, String thumbnail, View transitionView, int request) {
+        Intent intent = new Intent(activity, MomentActivity.class);
+        intent.putExtra(EXTRA_MOMENT_ID, momentId);
+        intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
+        intent.putExtra(EXTRA_REQUEST, request);
+        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+                false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
@@ -348,6 +363,11 @@ public class MomentActivity extends BaseActivity {
         Intent intent = getIntent();
         mMomentId = intent.getLongExtra(EXTRA_MOMENT_ID, -1);
         mThumbnail = intent.getStringExtra(EXTRA_THUMBNAIL);
+        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
+        int request = intent.getIntExtra(EXTRA_REQUEST, -1);
+        if (request == REQUEST_COMMENT) {
+            isRequestComment = true;
+        }
         initViews();
     }
 
@@ -531,6 +551,9 @@ public class MomentActivity extends BaseActivity {
                         MomentInfo momentInfo = response.body();
                         mMomentInfo = momentInfo;
                         showMomentInfo();
+                        if (isRequestComment) {
+                            addComment();
+                        }
                     } else {
                         Logger.t(TAG).d("code:" + response.code());
                         Logger.t(TAG).d("body:" + response.body());

@@ -214,8 +214,8 @@
             <ImageButton
                 android:id="@+id/btn_like"
                 style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_marginRight="8dp"
                 android:src="@drawable/ic_favorite_border"/>
 
@@ -239,10 +239,9 @@
             <ImageButton
                 android:id="@+id/btn_comment"
                 style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="8dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="8dp"
                 android:src="@drawable/social_comment"/>
 
             <TextView
