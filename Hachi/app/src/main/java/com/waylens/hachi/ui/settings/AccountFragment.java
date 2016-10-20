@@ -48,7 +48,7 @@ public class AccountFragment extends BaseFragment {
     @BindView(R.id.user_name)
     TextView userName;
 
-    @OnClick(R.id.ll_user_profile)
+    @OnClick(R.id.user_avatar)
     public void onUserProfileClicked() {
         if (SessionManager.getInstance().isLoggedIn()) {
             ProfileSettingActivity.launch(getActivity());

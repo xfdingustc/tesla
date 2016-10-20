@@ -419,8 +419,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-
-
     public void setMicEnabled(boolean enabled) {
         int micState = enabled ? STATE_MIC_ON : STATE_MIC_OFF;
         int gain = 5;
@@ -805,16 +803,10 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_REC_GET_OVERLAY_STATE);
         mCommunicationBus.sendCommand(CMD_GET_AUTO_POWER_OFF_DELAY);
         mCommunicationBus.sendCommand(CMD_GET_SCREEN_SAVER_STYLE);
-        long timeMillis = System.currentTimeMillis();
-        int timeZone = TimeZone.getDefault().getRawOffset();
-
-
-        mCommunicationBus.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
-            ((Integer) (timeZone / (3600 * 1000))).toString());
-
         mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
         mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
         mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
+        syncTimezone();
 
     }
 
@@ -996,12 +988,11 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void syncTimezone() {
-        long timeMillis = System.currentTimeMillis();
+        long timeMillis = System.currentTimeMillis() + TimeZone.getDefault().getDSTSavings();
         int timeZone = TimeZone.getDefault().getRawOffset();
         mCommunicationBus.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
-                ((Integer) (timeZone / (3600 * 1000))).toString());
+            ((Integer) (timeZone / (3600 * 1000))).toString());
     }
-
 
 
     public boolean isMicEnabled() {
@@ -1675,8 +1666,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
 
     }
-
-
 
 
     public interface OnRawDataUpdateListener {

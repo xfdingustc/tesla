@@ -7,53 +7,6 @@
               android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/video_fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@id/title"
-        android:background="@color/material_deep_orange_400"
-        app:farfl_xratio="9dp"
-        app:farfl_yratio="4dp">
-
-
-
-
-        <LinearLayout
-            android:id="@+id/ll_user_profile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal">
-
-            <com.waylens.hachi.ui.views.AvatarView
-                android:id="@+id/user_avatar"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginBottom="12dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="12dp"
-                android:src="@drawable/ic_account_circle"/>
-
-            <TextView
-                android:id="@+id/user_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:textColor="@android:color/white"
-                android:textSize="24sp"
-                tools:text="xfding"/>
-
-
-        </LinearLayout>
-
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-
-
-
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -62,6 +15,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <com.waylens.hachi.ui.views.AvatarView
+                    android:id="@+id/user_avatar"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginRight="16dp"
+                    android:src="@drawable/ic_account_circle"/>
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="24sp"
+                    tools:text="xfding"/>
+
+
+            </LinearLayout>
 
 
             <android.support.v7.widget.CardView
@@ -91,7 +68,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_cloud"
-                            android:tint="@color/material_amber_500"/>
+                            android:tint="@color/material_teal_200"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -118,8 +95,8 @@
                             android:layout_marginLeft="16dp"
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
-                            android:src="@drawable/ic_video"
-                            android:tint="@color/material_deep_purple_500"/>
+                            android:src="@drawable/ic_file_download"
+                            android:tint="@color/material_blue_a100"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -148,7 +125,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_cloud_upload"
-                            android:tint="@color/material_brown_500"/>
+                            android:tint="@color/material_orange_200"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -177,7 +154,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_movie_filter"
-                            android:tint="@color/material_red_500"/>
+                            android:tint="@color/material_blue_400"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -205,7 +182,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_notifications_full"
-                            android:tint="@color/material_green_500"/>
+                            android:tint="@color/material_red_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -252,7 +229,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_camera"
-                            android:tint="@color/material_blue_500"/>
+                            android:tint="@color/material_deep_orange_a200"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -280,7 +257,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_add_camera"
-                            android:tint="@color/material_purple_500"/>
+                            android:tint="@color/style_color_tag"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -327,7 +304,7 @@
                             android:layout_marginRight="16dp"
                             android:layout_marginTop="12dp"
                             android:src="@drawable/ic_settings"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
