@@ -5,10 +5,8 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
-import android.media.DrmInitData;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
@@ -27,8 +25,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.BtDevice;
@@ -52,12 +48,10 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
-import com.waylens.hachi.ui.settings.FirmwareUpdateActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
-import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -161,8 +155,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.ivBatterStatus)
     ImageView mIvBatterStatus;
 
-    @BindView(R.id.ivIsChanging)
-    ImageView mIsCharging;
 
     @BindView(R.id.tvBatteryVol)
     TextView mTvBatteryVol;
@@ -556,11 +548,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
             mControlPanel.setLayoutParams(params2);
             //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
-            RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-            params3.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-            params3.removeRule(RelativeLayout.BELOW);
-            mStatusErrorLayout.setLayoutParams(params3);
 
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit);
         } else {
@@ -572,15 +559,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
             mInfoView.setVisibility(View.VISIBLE);
 
-            RelativeLayout.LayoutParams params1 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-            params1.addRule(RelativeLayout.BELOW, mInfoView.getId());
-            params1.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
-            mStatusErrorLayout.setLayoutParams(params1);
 
             RelativeLayout.LayoutParams params2 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-            params2.addRule(RelativeLayout.BELOW, mStatusErrorLayout.getId());
+            params2.addRule(RelativeLayout.BELOW, mInfoView.getId());
             mLiveViewLayout.setLayoutParams(params2);
 
             RelativeLayout.LayoutParams params3 = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -950,25 +932,10 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             return;
         }
 
-        // update battery info:
-        int batteryStatus = mVdtCamera.getBatteryState();
-        if (batteryStatus != VdtCamera.STATE_BATTERY_CHARGING) {
-            mIsCharging.setVisibility(View.INVISIBLE);
-        } else {
-            mIsCharging.setVisibility(View.VISIBLE);
-        }
-
         int batterVol = mVdtCamera.getBatteryVolume();
 
-        if (batterVol < 25) {
-            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_4);
-        } else if (batterVol < 50) {
-            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_3);
-        } else if (batterVol < 75) {
-            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_2);
-        } else if (batterVol <= 100) {
-            mIvBatterStatus.setImageResource(R.drawable.rec_info_battery_1);
-        }
+
+        mIvBatterStatus.setImageResource(BatteryImageViewResHelper.getBatteryViewRes(mVdtCamera.getBatteryVolume(), mVdtCamera.getBatteryState()));
 
         String batterVolString = "" + batterVol + "%";
         mTvBatteryVol.setText(batterVolString);

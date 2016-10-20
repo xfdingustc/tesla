@@ -9,11 +9,9 @@
               xmlns:tools="http://schemas.android.com/tools">
 
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="24dp"
@@ -23,58 +21,57 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/rec_info_sdcard"
-            android:layout_marginRight="8dp"/>
+            android:src="@drawable/ic_sd_card"
+            android:tint="@color/app_text_color_primary"
+            android:layout_marginRight="8dp"
+            android:id="@+id/imageView"/>
 
         <TextView
             android:id="@+id/tv_space_left"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:textColor="@color/app_text_color_primary"
             tools:text="3.9GB ready to record"/>
 
         <ImageView
             android:id="@+id/remote_ctrl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginLeft="8dp"
-            android:rotation="90"
+            android:gravity="center_vertical"
             android:src="@drawable/rec_info_remote_control_on"/>
 
 
         <ImageView
             android:id="@+id/obd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:gravity="center_vertical"
             android:background="@drawable/rec_info_obd_on"/>
 
         <ImageView
             android:id="@+id/ivBatterStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="2dp"
-            android:gravity="center_vertical"
-            android:src="@drawable/rec_info_battery_1"/>
+            android:layout_width="24dp"
+            android:layout_height="24dp"
 
-        <ImageView
-            android:id="@+id/ivIsChanging"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:src="@drawable/rec_info_battery_charge"/>
+            android:tint="@color/app_text_color_primary"
+            android:src="@drawable/ic_battery_unknown"/>
+
+
 
         <TextView
             android:id="@+id/tvBatteryVol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:gravity="center_vertical"
             android:text="100%"
             android:textColor="@color/text_camera_info"
-            android:textSize="14sp"/>
+            android:textSize="16sp"/>
 
 
     </LinearLayout>
@@ -94,8 +91,9 @@
         android:id="@+id/pull"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:src="@drawable/rec_info_pull"
+        android:padding="8dp"
+        android:src="@drawable/ic_expand_more"
+        android:tint="@color/app_text_color_primary"
         android:layout_gravity="center_horizontal"/>
 
 
