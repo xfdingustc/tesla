@@ -218,7 +218,7 @@ public class UserProfileActivity extends BaseActivity {
 
         mLayoutManager = new LinearLayoutManager(this);
         mRvUserMomentList.setLayoutManager(mLayoutManager);
-        mMomentRvAdapter = new MomentsListAdapter(this);
+        mMomentRvAdapter = new MomentsListAdapter(this, false);
         mRvUserMomentList.setAdapter(mMomentRvAdapter);
         mRvUserMomentList.setItemAnimator(new SlideInItemAnimator());
         mRvUserMomentList.setOnTouchListener(new View.OnTouchListener() {

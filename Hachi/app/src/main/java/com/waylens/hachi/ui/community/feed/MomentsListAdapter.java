@@ -41,7 +41,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +54,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final int ITEM_VIEW_TYPE_MOMENT = 0;
     private static final int ITEM_VIEW_TYPE_TAIL = 1;
-    private static final int ITEM_VIEW_TYPE_HEADER = 2;
 
     private List<MomentEx> mMoments = new ArrayList<>();
 
@@ -63,7 +61,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private boolean mHasMore = true;
 
-    private IMomentListAdapterHeaderView mHeaderView = null;
+    private boolean mShowLoading = true;
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -80,9 +78,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public MomentsListAdapter(Context context) {
+        this(context, true);
+    }
+
+    public MomentsListAdapter(Context context, boolean showLoading) {
         this.mContext = context;
         EventBus.getDefault().register(this);
-
+        mShowLoading = showLoading;
     }
 
 
@@ -107,27 +109,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyItemChanged(mMoments.size());
     }
 
-    public void setHeaderView(IMomentListAdapterHeaderView headerView) {
-        mHeaderView = headerView;
-        notifyDataSetChanged();
-    }
 
     @Override
     public int getItemViewType(int position) {
-        if (mHeaderView == null) {
-            if (position < mMoments.size()) {
-                return ITEM_VIEW_TYPE_MOMENT;
-            } else {
-                return ITEM_VIEW_TYPE_TAIL;
-            }
+        if (position < mMoments.size()) {
+            return ITEM_VIEW_TYPE_MOMENT;
         } else {
-            if (position == 0) {
-                return ITEM_VIEW_TYPE_HEADER;
-            } else if (position <= mMoments.size()) {
-                return ITEM_VIEW_TYPE_MOMENT;
-            } else {
-                return ITEM_VIEW_TYPE_TAIL;
-            }
+            return ITEM_VIEW_TYPE_TAIL;
         }
 
     }
@@ -137,8 +125,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (viewType == ITEM_VIEW_TYPE_MOMENT) {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_moment, parent, false);
             return new MomentViewHolder(itemView);
-        } else if (viewType == ITEM_VIEW_TYPE_HEADER) {
-            return mHeaderView.getHeaderViewHolder(parent);
         } else {
             View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false);
             return new LoadingViewHolder(itemView);
@@ -151,20 +137,12 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         int viewType = getItemViewType(position);
         if (viewType == ITEM_VIEW_TYPE_MOMENT) {
             int momentPosition = position;
-            if (mHeaderView != null) {
-                momentPosition -= 1;
-            }
             onBindMomentViewHolder((MomentViewHolder) holder, momentPosition);
-            onBindMomentViewHolder((MomentViewHolder) holder, momentPosition);
-        } else if (viewType == ITEM_VIEW_TYPE_HEADER) {
-            mHeaderView.onBindHeaderViewHolder(holder);
         } else {
             onBindLoadingViewHolder((LoadingViewHolder) holder, position);
         }
 
     }
-
-
 
 
     private void onBindMomentViewHolder(final MomentViewHolder holder, final int position) {
@@ -173,7 +151,6 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
         holder.avatarView.loadAvatar(momentEx.owner.avatarUrl, momentEx.owner.userName);
-
 
 
         StringBuilder secondDesBuilder = new StringBuilder();
@@ -342,12 +319,13 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return mMoments.size() + 1 + (mHeaderView == null ? 0 : 1);
+        return mMoments.size() + (mShowLoading ? 1 : 0);
     }
 
     public int getDataItemCount() {
         return mMoments.size();
     }
+
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.avatar_view)
