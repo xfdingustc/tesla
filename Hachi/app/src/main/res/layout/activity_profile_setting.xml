@@ -7,6 +7,53 @@
     <include layout="@layout/toolbar_default"/>
 
     <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="128dp">
+
+        <ImageView
+            android:id="@+id/blur_avatar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <FrameLayout
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp">
+
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_account_circle"/>
+
+
+            <ProgressBar
+                android:id="@+id/avatar_upload_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:indeterminateTint="@color/style_color_accent"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
+
+        <ImageButton
+            android:id="@+id/btnAddPhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/settings_add_photo"/>
+
+
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></FrameLayout>

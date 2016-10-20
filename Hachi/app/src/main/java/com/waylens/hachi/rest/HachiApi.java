@@ -133,6 +133,9 @@ public interface HachiApi {
     @GET("/api/users/me")
     Call<UserInfo> getMyUserInfo();
 
+    @GET("/api/users/me")
+    Observable<UserInfo> getMyUserInfoRx();
+
     @GET("/api/share/accounts")
     Call<LinkedAccounts> getLinkedAccounts();
 

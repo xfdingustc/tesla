@@ -20,6 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:elevation="2dp"
+                android:layout_marginBottom="4dp"
                 android:padding="16dp">
 
                 <com.waylens.hachi.ui.views.AvatarView
@@ -54,33 +56,7 @@
                     android:background="?attr/cardViewBgColor"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/ll_waylens_cloud"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
-                            android:src="@drawable/ic_cloud"
-                            android:tint="@color/material_teal_200"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/waylens_cloud"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/ll_exported_video"
@@ -91,12 +67,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_file_download"
-                            android:tint="@color/material_blue_a100"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -120,12 +93,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_cloud_upload"
-                            android:tint="@color/material_orange_200"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -149,12 +119,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_movie_filter"
-                            android:tint="@color/material_blue_400"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -177,12 +144,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_notifications_full"
-                            android:tint="@color/material_red_500"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -191,6 +155,31 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="16dp"
                             android:text="@string/notification"
+                            android:textColor="?attr/appTextColorPrimary"
+                            android:textSize="18sp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_waylens_cloud"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_margin="16dp"
+                            android:src="@drawable/ic_cloud"
+                            android:tint="@color/material_teal_500"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="16dp"
+                            android:text="@string/waylens_cloud"
                             android:textColor="?attr/appTextColorPrimary"
                             android:textSize="18sp"/>
 
@@ -224,12 +213,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_camera"
-                            android:tint="@color/material_deep_orange_a200"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -252,12 +238,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_add_camera"
-                            android:tint="@color/style_color_tag"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -299,12 +282,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_settings"
-                            android:tint="@color/material_grey_500"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -327,12 +307,9 @@
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"
-                            android:layout_marginTop="12dp"
+                            android:layout_margin="16dp"
                             android:src="@drawable/ic_info_outline"
-                            android:tint="@color/material_light_blue_500"/>
+                            android:tint="@color/material_teal_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
