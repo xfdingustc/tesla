@@ -9,8 +9,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,11 +37,13 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
+import com.waylens.hachi.ui.recyclerview.SlideInItemAnimator;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.TransitionHelper;
+import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.view.ElasticDragDismissFrameLayout;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -71,6 +75,8 @@ public class UserProfileActivity extends BaseActivity {
 
     private User mUser;
 
+    private LinearLayoutManager mLayoutManager;
+
     private int mCurrentCursor;
 
 
@@ -97,6 +103,9 @@ public class UserProfileActivity extends BaseActivity {
     }
 
 
+    @BindView(R.id.draggable_frame)
+    ElasticDragDismissFrameLayout draggableFrame;
+
     @BindView(R.id.rvUserMomentList)
     RecyclerViewExt mRvUserMomentList;
 
@@ -105,7 +114,7 @@ public class UserProfileActivity extends BaseActivity {
     AvatarView userAvatar;
 
     @BindView(R.id.btnFollowersCount)
-    TextView mTvFollowersCount;
+    TextView tvFollowersCount;
 
     @BindView(R.id.following_count)
     TextView followingCount;
@@ -169,6 +178,17 @@ public class UserProfileActivity extends BaseActivity {
         init();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        draggableFrame.addListener(chromeFader);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        draggableFrame.removeListener(chromeFader);
+    }
 
     @Override
     protected void init() {
@@ -195,14 +215,36 @@ public class UserProfileActivity extends BaseActivity {
         chromeFader = new ElasticDragDismissFrameLayout.SystemChromeFader(this);
 //        setupToolbar();
         mRvUserMomentList.setVisibility(View.VISIBLE);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRvUserMomentList.setLayoutManager(mLayoutManager);
         mMomentRvAdapter = new MomentsListAdapter(this);
+        mRvUserMomentList.setAdapter(mMomentRvAdapter);
+        mRvUserMomentList.setItemAnimator(new SlideInItemAnimator());
+        mRvUserMomentList.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int firstVisible = mLayoutManager.findFirstVisibleItemPosition();
+                if (firstVisible > 0) return false;
 
-//        mRvUserMomentList.setAdapter(mMomentRvAdapter);
+                // if no data loaded then pass through
+                if (mMomentRvAdapter.getDataItemCount() == 0) {
+                    return userDescription.dispatchTouchEvent(event);
+                }
 
+                final RecyclerView.ViewHolder vh = mRvUserMomentList.findViewHolderForAdapterPosition(0);
+                if (vh == null) {
+                    return false;
+                }
+                final int firstTop = vh.itemView.getTop();
+                if (event.getY() < firstTop) {
+                    return userDescription.dispatchTouchEvent(event);
+                }
+                return false;
+            }
+        });
 
         fetchUserProfile();
-
-        mRvUserMomentList.setLayoutManager(new LinearLayoutManager(this));
 //        setExitSharedElementCallback();
     }
 
@@ -247,8 +289,7 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void setupUserProfileHeaderView() {
-
-        momentCount.setText(String.valueOf(mUserInfoEx.amount.amount));
+        momentCount.setText(getString(R.string.moment_account, mUserInfoEx.amount.amount));
 
         if (SessionManager.getInstance().isCurrentUserId(SessionManager.getInstance().getUserId())) {
             mBtnFollow.setText(R.string.edit_profile);
@@ -365,6 +406,7 @@ public class UserProfileActivity extends BaseActivity {
         mCurrentCursor += momentListResponse.moments.size();
         if (isRefresh) {
             mMomentRvAdapter.setMoments(momentListResponse.moments);
+            ViewUtils.setPaddingTop(mRvUserMomentList, userDescription.getHeight());
         } else {
             mMomentRvAdapter.addMoments(momentListResponse.moments);
         }
@@ -385,8 +427,8 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void updateFollowInfo() {
-        mTvFollowersCount.setText(Integer.toString(mUserInfoEx.followInfo.followers));
-        followingCount.setText(Integer.toString(mUserInfoEx.followInfo.followings));
+        tvFollowersCount.setText(getString(R.string.followers_count, mUserInfoEx.followInfo.followers));
+        followingCount.setText(getString(R.string.following_count, mUserInfoEx.followInfo.followings));
         if (!SessionManager.getInstance().isCurrentUserId(mUser.userID)) {
             if (mUserInfoEx.followInfo.isMyFollowing) {
                 mBtnFollow.setText(R.string.followed);

@@ -69,4 +69,33 @@ public class ViewUtils {
             cfg.smallestScreenWidthDp < 600);
         return(!canMove || dm.widthPixels < dm.heightPixels);
     }
+
+    public static void setPaddingStart(View view, int paddingStart) {
+        view.setPaddingRelative(paddingStart,
+            view.getPaddingTop(),
+            view.getPaddingEnd(),
+            view.getPaddingBottom());
+    }
+
+    public static void setPaddingTop(View view, int paddingTop) {
+        view.setPaddingRelative(view.getPaddingStart(),
+            paddingTop,
+            view.getPaddingEnd(),
+            view.getPaddingBottom());
+    }
+
+    public static void setPaddingEnd(View view, int paddingEnd) {
+        view.setPaddingRelative(view.getPaddingStart(),
+            view.getPaddingTop(),
+            paddingEnd,
+            view.getPaddingBottom());
+    }
+
+    public static void setPaddingBottom(View view, int paddingBottom) {
+        view.setPaddingRelative(view.getPaddingStart(),
+            view.getPaddingTop(),
+            view.getPaddingEnd(),
+            paddingBottom);
+    }
+
 }

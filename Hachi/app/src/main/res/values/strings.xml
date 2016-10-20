@@ -504,5 +504,9 @@
     <string name="phone_to_camera">phone to camera</string>
     <string name="report_comment">Report comment successfully</string>
     <string name="delete_your_comment">"Delete your comment?"</string>
+    <string name="moment_account">%1$d moments</string>
+    <string name="followers_count">%1$d followers</string>
+    <string name="following_count">%1$d followings</string>
+
 
 </resources>

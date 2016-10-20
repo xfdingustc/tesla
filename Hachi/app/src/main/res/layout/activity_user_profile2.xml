@@ -123,7 +123,6 @@
         android:clipToPadding="false"
         android:elevation="@dimen/z_card"
         android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical"
-        android:visibility="gone"/>
+        android:scrollbars="vertical"/>
 
 </com.waylens.hachi.view.ElasticDragDismissFrameLayout>

@@ -165,6 +165,8 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
+
+
     private void onBindMomentViewHolder(final MomentViewHolder holder, final int position) {
         final MomentEx momentEx = mMoments.get(position);
         final MomentAbstract momentAbstract = momentEx.moment;
@@ -343,7 +345,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return mMoments.size() + 1 + (mHeaderView == null ? 0 : 1);
     }
 
-
+    public int getDataItemCount() {
+        return mMoments.size();
+    }
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.avatar_view)
