@@ -133,15 +133,15 @@ public class UserProfileActivity extends BaseActivity {
     ViewGroup userDescription;
 
 
-//    @OnClick(R.id.ll_followers)
-//    public void onBtnFollowerCountClicked() {
-//        FollowListActivity.launch(this, mUser.userID, true);
-//    }
-//
-//    @OnClick(R.id.ll_following)
-//    public void onFollowingCountClicked() {
-//        FollowListActivity.launch(this, mUser.userID, false);
-//    }
+    @OnClick(R.id.btnFollowersCount)
+    public void onBtnFollowerCountClicked() {
+        FollowListActivity.launch(this, mUser.userID, true);
+    }
+
+    @OnClick(R.id.following_count)
+    public void onFollowingCountClicked() {
+        FollowListActivity.launch(this, mUser.userID, false);
+    }
 
 
     @OnClick(R.id.follow)

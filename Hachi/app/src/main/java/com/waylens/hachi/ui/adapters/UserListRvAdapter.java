@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.entities.UserDeprecated;
 import com.waylens.hachi.ui.views.AvatarView;
 
@@ -21,7 +24,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Xiaofei on 2015/9/23.
  */
-public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
+public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = UserListRvAdapter.class.getSimpleName();
 
     private final Context mContext;
@@ -45,7 +48,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        UserListViewHolder viewHolder = (UserListViewHolder) holder;
+        final UserListViewHolder viewHolder = (UserListViewHolder) holder;
 
         UserDeprecated userInfo = mUserList.get(position);
 
@@ -53,35 +56,33 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         viewHolder.mUserAvater.loadAvatar(userInfo.avatarUrl, userInfo.userName);
 
-        if (userInfo.getIsFollowing()) {
-            setFollowButton(viewHolder, true);
+        if (SessionManager.getInstance().isCurrentUserId(userInfo.userID)) {
+            viewHolder.mTvFollow.setVisibility(View.GONE);
         } else {
-            setFollowButton(viewHolder, false);
-
+            viewHolder.mTvFollow.setVisibility(View.VISIBLE);
+            if (userInfo.getIsFollowing()) {
+                setFollowButton(viewHolder, true);
+            } else {
+                setFollowButton(viewHolder, false);
+            }
         }
-        viewHolder.mTvFollow.setTag(viewHolder);
-        viewHolder.mTvFollow.setOnClickListener(this);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mUserList != null ? mUserList.size() : 0;
-    }
-
-    @Override
-    public void onClick(View v) {
-        UserListViewHolder viewHolder = (UserListViewHolder) v.getTag();
-        switch (v.getId()) {
-            case R.id.btnFollow:
-                int position = viewHolder.getPosition();
+        viewHolder.mTvFollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
                 String userID = mUserList.get(position).userID;
                 if (mUserList.get(position).getIsFollowing()) {
                     unfollowUser(userID, viewHolder);
                 } else {
                     followUser(userID, viewHolder);
                 }
-                break;
-        }
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return mUserList != null ? mUserList.size() : 0;
     }
 
     public void followUser(final String userID, final UserListViewHolder viewHolder) {
@@ -97,14 +98,17 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void setFollowButton(UserListViewHolder viewHolder, boolean isFollowing) {
+        Logger.t(TAG).d("set follow button: " + isFollowing);
         if (isFollowing) {
-            viewHolder.mTvFollow.setText(R.string.following);
-            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(android.R.color.white));
+//            viewHolder.mTvFollow.setText(R.string.following);
+//            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(android.R.color.white));
             viewHolder.mTvFollow.setBackgroundResource(R.drawable.round_rectangle_button);
+            viewHolder.mTvFollow.setActivated(false);
         } else {
-            viewHolder.mTvFollow.setText(R.string.add_follow);
-            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.style_color_accent));
+//            viewHolder.mTvFollow.setText(R.string.add_follow);
+//            viewHolder.mTvFollow.setTextColor(mContext.getResources().getColor(R.color.style_color_accent));
             viewHolder.mTvFollow.setBackgroundResource(R.drawable.button_with_stroke);
+            viewHolder.mTvFollow.setActivated(true);
         }
     }
 
@@ -123,7 +127,7 @@ public class UserListRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView mTvUserName;
 
         @BindView(R.id.follow)
-        Button mTvFollow;
+        ImageButton mTvFollow;
 
         public UserListViewHolder(View itemView) {
             super(itemView);

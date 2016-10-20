@@ -14,6 +14,8 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.ui.adapters.UserListRvAdapter;
+import com.waylens.hachi.utils.ServerErrorHelper;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import rx.Subscriber;
@@ -103,21 +105,16 @@ public class FollowListActivity extends BaseActivity {
         hachiApi.getFriendListRx(follow, mUserId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<FriendList>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
+            .subscribe(new SimpleSubscribe<FriendList>() {
                 @Override
                 public void onNext(FriendList friendList) {
                     mUserListAdatper.setUserList(friendList.friends);
                     viewAnimator.setDisplayedChild(1);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    ServerErrorHelper.showErrorMessage(mToolbar, e);
                 }
             });
     }

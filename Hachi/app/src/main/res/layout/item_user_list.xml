@@ -27,23 +27,20 @@
         android:layout_height="match_parent"
         android:layout_weight="1"></LinearLayout>
 
-    <Button
+
+    <ImageButton
         android:id="@+id/follow"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/avatar_view"
+        android:layout_height="32dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/user_name"
         android:layout_gravity="center_vertical"
-        android:drawablePadding="8dp"
-        android:drawableStart="@drawable/asl_follow"
-        android:paddingBottom="8dp"
-        android:paddingEnd="16dp"
-        android:paddingStart="16dp"
-        android:text="@string/follow"
-        android:textColor="@android:color/white"
-        android:theme="@style/LightRippleOverlay"/>
+        android:layout_marginRight="16dp"
+        android:backgroundTint="?attr/colorAccent"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:src="@drawable/asl_follow"
+        android:theme="@style/LightRippleOverlay"
+        />
 
 
 </LinearLayout>
