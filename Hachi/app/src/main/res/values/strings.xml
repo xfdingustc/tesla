@@ -7,7 +7,7 @@
     <string name="add_clip_hint2">to add a highlight or footage</string>
     <string name="add_more_clips">Add More Clips</string>
     <string name="add_music">Add Music</string>
-    <string name="add_new_camera">Setup New Camera</string>
+    <string name="add_new_camera">Setup new camera</string>
     <string name="after">After</string>
     <string name="already_a_member">Already a member?</string>
     <string name="also_post_on">Also share on other social network:</string>
@@ -197,7 +197,7 @@
     <string name="video">Video </string>
     <string name="video_setting">Video Settings</string>
     <string name="volume">Volume</string>
-    <string name="waylens_cloud">Waylens Cloud</string>
+    <string name="waylens_cloud">Waylens cloud</string>
     <string name="welcome_back">Welcome Back</string>
     <string name="what_to_do_next">What to do next</string>
     <string name="yesterday">Yesterday</string>

@@ -187,7 +187,18 @@
                 android:textColor="@color/white87"
                 android:textSize="12sp"
                 android:alpha="0.8"
+                tools:visibility="gone"
                 tools:text="01:08"/>
+
+            <ImageView
+                android:id="@+id/image_moment"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="12dp"
+                android:alpha="0.8"
+                android:tint="@android:color/white"
+                android:src="@drawable/ic_landscape"/>
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 

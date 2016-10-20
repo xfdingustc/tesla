@@ -185,6 +185,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 holder.videoCover.setOnClickListener(null);
             }
             holder.videoDuration.setVisibility(View.GONE);
+            holder.imageMoment.setVisibility(View.VISIBLE);
 
         } else {
             Glide.with(mContext)
@@ -193,6 +194,7 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 .crossFade()
                 .into(holder.videoCover);
             holder.videoDuration.setVisibility(View.VISIBLE);
+            holder.imageMoment.setVisibility(View.GONE);
             holder.videoDuration.setText(DateUtils.formatElapsedTime(moment.duration / 1000l));
             holder.videoCover.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -505,6 +507,9 @@ public class FeedListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         @BindView(R.id.race_time)
         TextView raceTime;
+
+        @BindView(R.id.image_moment)
+        ImageView imageMoment;
 
         public MomentViewHolder(View itemView) {
             super(itemView);

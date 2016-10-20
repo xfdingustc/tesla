@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:id="@+id/infoPanel"
               xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:alpha="0.9"
               android:background="@color/windowBackground"
-              android:orientation="vertical"
-              xmlns:tools="http://schemas.android.com/tools">
+              android:orientation="vertical">
 
 
     <LinearLayout
@@ -19,12 +19,12 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_sd_card"
-            android:tint="@color/app_text_color_primary"
+            android:id="@+id/imageView"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginRight="8dp"
-            android:id="@+id/imageView"/>
+            android:src="@drawable/ic_sd_card"
+            android:tint="@color/app_text_color_primary"/>
 
         <TextView
             android:id="@+id/tv_space_left"
@@ -37,8 +37,8 @@
 
         <ImageView
             android:id="@+id/remote_ctrl"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginLeft="8dp"
             android:gravity="center_vertical"
             android:src="@drawable/rec_info_remote_control_on"/>
@@ -46,22 +46,21 @@
 
         <ImageView
             android:id="@+id/obd"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/rec_info_obd_on"/>
+            android:background="@drawable/rec_info_obd_on"
+            android:gravity="center_vertical"/>
 
         <ImageView
             android:id="@+id/ivBatterStatus"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
 
             android:gravity="center_vertical"
-            android:tint="@color/app_text_color_primary"
-            android:src="@drawable/ic_battery_unknown"/>
-
+            android:src="@drawable/ic_battery_unknown"
+            android:tint="@color/app_text_color_primary"/>
 
 
         <TextView
@@ -70,8 +69,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:text="100%"
-            android:textColor="@color/text_camera_info"
-            android:textSize="16sp"/>
+            android:textColor="@color/text_camera_info"/>
 
 
     </LinearLayout>
@@ -85,16 +83,14 @@
         android:layout_marginTop="16dp"></com.waylens.hachi.ui.views.AnimationProgressBar>
 
 
-
-
     <ImageView
         android:id="@+id/pull"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:padding="8dp"
         android:src="@drawable/ic_expand_more"
-        android:tint="@color/app_text_color_primary"
-        android:layout_gravity="center_horizontal"/>
+        android:tint="@color/app_text_color_primary"/>
 
 
 </LinearLayout>

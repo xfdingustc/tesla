@@ -229,6 +229,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
 
             holder.videoDuration.setVisibility(View.GONE);
+            holder.imageMoment.setVisibility(View.VISIBLE);
 
         } else {
             Glide.with(mContext)
@@ -243,6 +244,7 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
             });
             holder.videoDuration.setVisibility(View.VISIBLE);
+            holder.imageMoment.setVisibility(View.GONE);
         }
 
 
@@ -362,6 +364,9 @@ public class MomentsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
         @BindView(R.id.race_type)
         RoundedLetterView raceType;
+
+        @BindView(R.id.image_moment)
+        ImageView imageMoment;
 
         public MomentViewHolder(View itemView) {
             super(itemView);
