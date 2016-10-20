@@ -63,6 +63,8 @@
     <string name="error_check_fir">Error! Failed to check latest version</string>
     <string name="error_loading_musics">Failed to load the music list, \n check the network.</string>
     <string name="error_msg_no_card">Failed to detect micro-SD card on this camera.</string>
+    <string name="error_sdcard_error">SD card error!</string>
+    <string name="error_sdcard_full">SD card full!</string>
     <string name="error_no_connection">Failed to connect to Waylens cloud service.</string>
     <string name="error_no_write_external_storage_permission">Grant the permission of "Write external storage" and try again.</string>
     <string name="failed">Failed</string>

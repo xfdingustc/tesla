@@ -179,9 +179,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.errorPanel)
     LinearLayout mErrorPanel;
 
-    @BindView(R.id.tvErrorMessage)
-    TextView mTvErrorMessage;
-
     @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
@@ -333,7 +330,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                     mTvCameraRecStatus.setText(DateUtils.formatElapsedTime(recordTime));
                     mRecordDot.setVisibility(View.VISIBLE);
 
-                    Logger.t(TAG).d("record state: " + mVdtCamera.getRecordState());
+//                    Logger.t(TAG).d("record state: " + mVdtCamera.getRecordState());
                 }
                 break;
             case CameraStateChangeEvent.CAMERA_STATE_REC_ERROR:
@@ -341,10 +338,15 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 Logger.t(TAG).d("On Rec Error: " + error);
 
                 mErrorPanel.setVisibility(View.VISIBLE);
-                mTvErrorIndicator.setText(R.string.recording_error);
                 switch (error) {
                     case VdtCamera.ERROR_START_RECORD_NO_CARD:
-                        mTvErrorMessage.setText(R.string.error_msg_no_card);
+                        mTvErrorIndicator.setText(R.string.error_msg_no_card);
+                        break;
+                    case VdtCamera.ERROR_START_RECORD_CARD_ERROR:
+                        mTvErrorIndicator.setText(R.string.error_sdcard_error);
+                        break;
+                    case VdtCamera.ERROR_START_RECORD_CARD_FULL:
+                        mTvErrorIndicator.setText(R.string.error_sdcard_full);
                         break;
                 }
 
@@ -487,6 +489,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             mEventBus.register(this);
         }
 
+        Logger.t(TAG).d("register");
         mCameraStateChangeEventSubscription = RxBus.getDefault().toObserverable(CameraStateChangeEvent.class)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<CameraStateChangeEvent>() {
@@ -525,6 +528,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
         mEventBus.unregister(this);
         if (!mCameraStateChangeEventSubscription.isUnsubscribed()) {
             mCameraStateChangeEventSubscription.unsubscribe();
+            Logger.t(TAG).d("unregister");
         }
     }
 
@@ -731,7 +735,7 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
                 @Override
                 public void onNext(SpaceInfo spaceInfo) {
-                    Logger.t(TAG).d("response: " + spaceInfo.toString());
+//                    Logger.t(TAG).d("response: " + spaceInfo.toString());
                     mStorageView.getProgressDrawable().clearColorFilter();
                     mStorageView.setMax((int) (spaceInfo.total / (1024 * 1024)));
                     mStorageView.setProgress((int) (spaceInfo.marked / (1024 * 1024)));
@@ -802,12 +806,12 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
+//                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
                     }
                 }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
+//                    Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
                 }
             });
             mVdbRequestQueue.add(request);

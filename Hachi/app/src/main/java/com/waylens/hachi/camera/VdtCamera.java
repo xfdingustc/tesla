@@ -1136,7 +1136,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private void ack_Rec_error(String p1, String p2) {
         int error = Integer.parseInt(p1);
-        mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_ERROR, VdtCamera.this, error));
+        Logger.t(TAG).d("rec error");
+        mRxBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC_ERROR, VdtCamera.this, error));
     }
 
 
@@ -1291,7 +1292,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void ack_Rec_get_RecMode(String p1, String p2) {
         int index = Integer.parseInt(p1);
         if (mRecordModeIndex != index) {
-            mEventBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
+            mRxBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
             mRecordModeIndex = index;
         }
     }

@@ -33,11 +33,6 @@ import butterknife.ButterKnife;
  */
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
-    static final private String IS_LOCAL = "isLocal";
-    static final private String IS_PC_SERVER = "isPcServer";
-    static final private String SSID = "ssid";
-    static final private String HOST_STRING = "hostString";
-
 
     public Hachi thisApp;
 
