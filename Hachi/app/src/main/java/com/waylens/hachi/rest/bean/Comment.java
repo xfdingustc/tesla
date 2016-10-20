@@ -12,10 +12,12 @@ import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by Richard on 8/26/15.
  */
-public class Comment {
+public class Comment implements Serializable{
     public static final int TYPE_NORMAL = 0;
 
     public static final int TYPE_LOAD_MORE_INDICATOR = 1;

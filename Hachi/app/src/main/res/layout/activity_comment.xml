@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        style="@style/HachiTextViewSubHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/comment"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp">
+
+
+        <com.waylens.hachi.ui.views.AvatarView
+            android:id="@+id/current_user_avatar_view"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="16dp"/>
+
+        <EditText
+            android:id="@+id/comment_new"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:hint="@string/add_public_comment"
+            android:inputType="text"
+            android:minHeight="36dp"
+            android:textCursorDrawable="@drawable/color_cursor"
+            />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>

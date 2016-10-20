@@ -145,7 +145,8 @@ public class AccountFragment extends BaseFragment {
     private void initViews() {
         setupToolbar();
         if (SessionManager.getInstance().isLoggedIn()) {
-            showUserAvatar(SessionManager.getInstance().getAvatarUrl());
+            SessionManager sessionManager = SessionManager.getInstance();
+            userAvatar.loadAvatar(sessionManager.getAvatarUrl(), sessionManager.getUserName());
             userName.setText(SessionManager.getInstance().getUserName());
         } else {
             userName.setText(R.string.click_2_login);

@@ -124,7 +124,7 @@
 
         <activity
             android:name=".ui.avatar.AvatarActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.settings.CameraSettingActivity"
@@ -237,6 +237,10 @@
 
         <activity
             android:name=".ui.community.PhotoViewActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.community.CommentActivity"
             android:screenOrientation="portrait"/>
 
         <activity

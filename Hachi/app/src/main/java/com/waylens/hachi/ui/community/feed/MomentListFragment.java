@@ -24,6 +24,7 @@ import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.community.event.MomentModifyEvent;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -70,17 +72,15 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     private static final int CHILD_SIGNUP_ENTRY = 0;
     private static final int CHILD_MOMENTS = 1;
 
+    private Subscription mSubscription;
 
     private AbsMomentListAdapter mAdapter;
 
-
     private LinearLayoutManager mLinearLayoutManager;
-
 
     private long mCurrentCursor;
 
     private int mFeedTag;
-
 
     @BindView(R.id.video_list_view)
     RecyclerViewExt mRvVideoList;
@@ -122,7 +122,18 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
             mAdapter = new MomentsListAdapter(getActivity());
         }
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        initEventHandler();
+    }
 
+    private void initEventHandler() {
+        mSubscription = RxBus.getDefault().toObserverable(MomentModifyEvent.class)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleSubscribe<MomentModifyEvent>() {
+                    @Override
+                    public void onNext(MomentModifyEvent momentModifyEvent) {
+                        handleMomentModifyEvent(momentModifyEvent);
+                    }
+                });
     }
 
 
@@ -162,9 +173,28 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         super.onViewCreated(view, savedInstanceState);
         mCurrentCursor = 0;
         loadFeed(mCurrentCursor, true);
-
     }
 
+    private void handleMomentModifyEvent(MomentModifyEvent event) {
+        switch (event.eventType) {
+            case MomentModifyEvent.LIKE_EVENT:
+                Boolean like = (Boolean) event.what;
+                int index = event.momentIndex;
+
+                break;
+            case MomentModifyEvent.COMMENT_EVENT:
+
+                break;
+            case MomentModifyEvent.DELETE_EVENT:
+
+                break;
+            case MomentModifyEvent.EDIT_EVENT:
+
+                break;
+            default:
+
+        }
+    }
 
     private void loadFeed(long cursor, final boolean isRefresh) {
         getMomentListObservable(cursor)
@@ -292,6 +322,14 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     public void enableRefresh(boolean enabled) {
         if (mRefreshLayout != null) {
             mRefreshLayout.setEnabled(enabled);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
         }
     }
 

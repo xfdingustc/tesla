@@ -4,11 +4,13 @@ import android.text.TextUtils;
 
 import com.waylens.hachi.utils.StringUtils;
 
+import java.io.Serializable;
+
 /**
  * Created by Xiaofei on 2016/10/18.
  */
 
-public class MomentTimingInfo {
+public class MomentTimingInfo implements Serializable{
     public long t1;
     public long t2;
     public long t3_1;

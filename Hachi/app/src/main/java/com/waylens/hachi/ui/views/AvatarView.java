@@ -69,10 +69,13 @@ public class AvatarView extends FrameLayout {
                 .crossFade()
                 .into(userAvatar);
             vaAvatar.setDisplayedChild(0);
-        } else {
+        } else if (!TextUtils.isEmpty(userName)){
             vaAvatar.setDisplayedChild(1);
             rlvNameView.setBackgroundColor(getContext().getResources().getColor(AvatarHelper.getAvatarBackgroundColor(userName)));
             rlvNameView.setTitleText(userName.substring(0, 1).toUpperCase());
+        } else {
+            vaAvatar.setDisplayedChild(0);
+            setImageResource(R.drawable.ic_account_circle);
         }
     }
 

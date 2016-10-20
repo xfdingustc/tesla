@@ -1,5 +1,106 @@
-<uk.co.senab.photoview.PhotoView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/iv_photo"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:background="#ff000000"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/top_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+
+        <ImageButton
+            android:id="@+id/btn_more"
+            style="@style/SelectableRippleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_more"/>
+
+    </RelativeLayout>
+
+    <uk.co.senab.photoview.PhotoView
+        android:id="@+id/iv_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/HachiTextViewSubHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_action_bar"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/ll_action_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="150dp"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/btn_like"
+            style="@style/SelectableRippleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/ic_favorite_border"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_like_counter"
+            android:layout_gravity="center_vertical"
+            tools:text="999"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/btn_comment"
+            style="@style/SelectableRippleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/social_comment"/>
+
+        <TextView
+            android:id="@+id/tv_comment_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            tools:text="777"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

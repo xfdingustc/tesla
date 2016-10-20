@@ -141,7 +141,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PhotoViewActivity.launch((BaseActivity) mContext, cover);
+                        PhotoViewActivity.launch((BaseActivity) mContext, momentEx, cover, position);
                     }
                 });
             } else {

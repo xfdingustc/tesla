@@ -190,7 +190,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        PhotoViewActivity.launch((BaseActivity) mContext, cover);
+                        PhotoViewActivity.launch((BaseActivity) mContext, momentEx, cover, position);
                     }
                 });
             } else {
@@ -280,7 +280,6 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                 mMoments.remove(position);
             }
         });
-
     }
 
     private void onEditClick(MomentAbstract moment, final MomentViewHolder holder) {

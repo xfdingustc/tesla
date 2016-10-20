@@ -244,7 +244,6 @@ public class MomentActivity extends BaseActivity {
     @OnClick(R.id.comment_new)
     public void onCommentNewClicked() {
         addComment();
-
     }
 
     @OnClick(R.id.btn_repost)

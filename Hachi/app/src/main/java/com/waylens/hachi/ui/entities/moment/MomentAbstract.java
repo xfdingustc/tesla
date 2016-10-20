@@ -7,12 +7,13 @@ import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/9/13.
  */
-public class MomentAbstract {
+public class MomentAbstract implements Serializable{
     public long id;
     public String title;
     public String description;
