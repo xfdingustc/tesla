@@ -17,24 +17,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
 import com.birbit.android.jobqueue.JobManager;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.bean.Follow;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.ReportUserBody;
@@ -45,7 +39,6 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
-import com.waylens.hachi.ui.manualsetup.qrcode.util.Constants;
 import com.waylens.hachi.ui.recyclerview.SlideInItemAnimator;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.AvatarView;
@@ -56,15 +49,10 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.view.ElasticDragDismissFrameLayout;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
-import org.json.JSONObject;
-
 import butterknife.BindView;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
@@ -120,6 +108,9 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.draggable_frame)
     ElasticDragDismissFrameLayout draggableFrame;
 
+    @BindView(R.id.follow_edit_switch)
+    ViewSwitcher followEditSwitch;
+
     @BindView(R.id.rvUserMomentList)
     RecyclerViewExt mRvUserMomentList;
 
@@ -165,11 +156,6 @@ public class UserProfileActivity extends BaseActivity {
             return;
         }
 
-        if (SessionManager.getInstance().isCurrentUserId(mUser.userID)) {
-            ProfileSettingActivity.launch(this);
-            return;
-        }
-
         if (!SessionManager.checkUserVerified(this)) {
             return;
         }
@@ -183,6 +169,11 @@ public class UserProfileActivity extends BaseActivity {
             mUserInfoEx.followInfo.followers++;
         }
         updateFollowInfo();
+    }
+
+    @OnClick(R.id.editProfile)
+    public void onEditProfileClicked() {
+        ProfileSettingActivity.launch(this);
     }
 
 
@@ -220,7 +211,7 @@ public class UserProfileActivity extends BaseActivity {
         } else {
             setTheme(R.style.LightTheme_UserProfile);
         }
-        setContentView(R.layout.activity_user_profile2);
+        setContentView(R.layout.activity_user_profile);
 
         userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);
 
@@ -305,8 +296,8 @@ public class UserProfileActivity extends BaseActivity {
     private void setupUserProfileHeaderView() {
         momentCount.setText(getString(R.string.moment_account, mUserInfoEx.amount.amount));
 
-        if (SessionManager.getInstance().isCurrentUserId(SessionManager.getInstance().getUserId())) {
-            mBtnFollow.setText(R.string.edit_profile);
+        if (SessionManager.getInstance().isCurrentUserId(mUser.userID)) {
+            followEditSwitch.showNext();
         }
 
         updateFollowInfo();

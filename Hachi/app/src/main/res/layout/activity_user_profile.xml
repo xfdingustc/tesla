@@ -56,20 +56,42 @@
             tools:text="xfding"
             />
 
-        <Button
-            android:id="@+id/follow"
-            style="@style/Widget.AppCompat.Button.Colored"
+        <ViewSwitcher
+            android:id="@+id/follow_edit_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:drawablePadding="8dp"
-            android:drawableStart="@drawable/asl_follow"
-            android:paddingBottom="8dp"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
-            android:text="@string/follow"
-            android:textColor="@android:color/white"
-            android:theme="@style/LightRippleOverlay"/>
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/follow"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/asl_follow"
+                android:paddingBottom="8dp"
+                android:paddingEnd="16dp"
+                android:layout_gravity="center_horizontal"
+                android:paddingStart="16dp"
+                android:text="@string/follow"
+                android:textColor="@android:color/white"
+                android:theme="@style/LightRippleOverlay"/>
+
+            <Button
+                android:id="@+id/editProfile"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_edit"
+                android:paddingBottom="8dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
+                android:text="@string/edit_profile"
+                android:textColor="@android:color/white"
+                android:theme="@style/LightRippleOverlay"/>
+        </ViewSwitcher>
 
         <LinearLayout
             android:id="@+id/stats"
@@ -122,6 +144,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:elevation="@dimen/z_card"
+        tools:visibility="gone"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"/>
 
