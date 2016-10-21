@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -12,6 +13,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ThemeHelper;
 
@@ -28,10 +30,20 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.btn_light_theme)
     Switch btnLightTheme;
 
+    @BindView(R.id.btn_logout)
+    Button btnLogout;
+
     @OnClick(R.id.btn_logout)
     public void onBtnLogoutClicked() {
-        SessionManager.getInstance().logout();
+        DialogHelper.showSignoutConfirmDialog(this, new DialogHelper.OnPositiveClickListener() {
+            @Override
+            public void onPositiveClick() {
+                refreshBtnLogout();
+            }
+        });
     }
+
+
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, SettingActivity.class);
@@ -77,6 +89,8 @@ public class SettingActivity extends BaseActivity {
                 System.exit(0);
             }
         });
+
+        refreshBtnLogout();
     }
 
 
@@ -90,5 +104,14 @@ public class SettingActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    private void refreshBtnLogout() {
+        if (SessionManager.getInstance().isLoggedIn()) {
+            btnLogout.setVisibility(View.VISIBLE);
+        } else {
+            btnLogout.setVisibility(View.GONE);
+        }
+
     }
 }

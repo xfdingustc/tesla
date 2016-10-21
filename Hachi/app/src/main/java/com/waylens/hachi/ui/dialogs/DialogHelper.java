@@ -12,6 +12,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.Firmware;
+import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.settings.FirmwareUpdateActivity;
 
 import java.io.File;
@@ -204,6 +205,22 @@ public class DialogHelper {
                         positiveClickListener.onPositiveClick();
                     }
                     BgJobHelper.deleteComment(comment);
+                }
+            }).show();
+    }
+
+    public static MaterialDialog showSignoutConfirmDialog(Context context, final OnPositiveClickListener positiveClickListener) {
+        return new MaterialDialog.Builder(context)
+            .content(R.string.logout_confirm)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    SessionManager.getInstance().logout();
+                    if (positiveClickListener != null) {
+                        positiveClickListener.onPositiveClick();
+                    }
                 }
             }).show();
     }

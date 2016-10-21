@@ -97,6 +97,7 @@
     <string name="login_cancelled">Login cancelled</string>
     <string name="login_error_facebook">Error occurred while connecting to Facebook</string>
     <string name="logout">Logout</string>
+    <string name="logout_confirm">Logout?</string>
     <string name="male">Male</string>
     <string name="manual">Manual</string>
     <string name="manual_info">The entire video clip is marked as a highlight when manually recorded</string>
