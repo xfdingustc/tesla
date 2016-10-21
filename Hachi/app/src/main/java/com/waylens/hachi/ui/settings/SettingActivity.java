@@ -8,13 +8,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
+import com.waylens.hachi.utils.DataCleanManager;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.ThemeHelper;
 
 import butterknife.BindView;
@@ -33,6 +37,9 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.btn_logout)
     Button btnLogout;
 
+    @BindView(R.id.cache_size)
+    TextView cacheSize;
+
     @OnClick(R.id.btn_logout)
     public void onBtnLogoutClicked() {
         DialogHelper.showSignoutConfirmDialog(this, new DialogHelper.OnPositiveClickListener() {
@@ -41,6 +48,13 @@ public class SettingActivity extends BaseActivity {
                 refreshBtnLogout();
             }
         });
+    }
+
+    @OnClick(R.id.ll_cache_clear)
+    public void onCacheClearClicked() {
+        DataCleanManager.clearAllCache(this);
+        refreshCacheSize();
+        Toast.makeText(this, R.string.cache_cleared, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -91,7 +105,10 @@ public class SettingActivity extends BaseActivity {
         });
 
         refreshBtnLogout();
+        refreshCacheSize();
     }
+
+
 
 
     @Override
@@ -111,6 +128,16 @@ public class SettingActivity extends BaseActivity {
             btnLogout.setVisibility(View.VISIBLE);
         } else {
             btnLogout.setVisibility(View.GONE);
+        }
+
+    }
+
+    private void refreshCacheSize() {
+        try {
+            String cache = DataCleanManager.getTotalCacheSize(this);
+            cacheSize.setText(cache);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
