@@ -46,9 +46,8 @@ import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
-import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.utils.StringUtils;
-import com.waylens.hachi.utils.Utils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -351,7 +350,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     public void onClick(View view) {
                         mDownloadInfo = response.main;
                         doDownloadStream(mDownloadInfo);
-                        DownloadVideoActivity.launch(EnhanceActivity.this);
+                        ExportedVideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });
@@ -361,7 +360,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     public void onClick(View view) {
                         mDownloadInfo = response.sub;
                         doDownloadStream(mDownloadInfo);
-                        DownloadVideoActivity.launch(EnhanceActivity.this);
+                        ExportedVideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });

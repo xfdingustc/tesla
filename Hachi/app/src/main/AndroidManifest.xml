@@ -188,7 +188,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.settings.myvideo.DownloadVideoActivity"
+            android:name=".ui.settings.myvideo.ExportedVideoActivity"
             android:screenOrientation="portrait"/>
 
         <activity

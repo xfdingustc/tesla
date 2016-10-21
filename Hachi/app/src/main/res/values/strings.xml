@@ -514,5 +514,6 @@
     <string name="following_count">%1$d followings</string>
     <string name="cache_cleared">Cache has been cleared</string>
     <string name="gauge_setting">Gauge setting</string>
+    <string name="no_video_found">No exported clips found</string>
 
 </resources>

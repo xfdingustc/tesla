@@ -21,11 +21,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
-import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
-import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.utils.DateTime;
 import com.waylens.hachi.snipe.vdb.Clip;
@@ -37,7 +33,7 @@ import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.settings.myvideo.DownloadVideoActivity;
+import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
@@ -260,7 +256,7 @@ public class FootageActivity extends ClipPlayActivity {
         Logger.t(TAG).d("clip start time: " + getClipSet().getClip(0).getStartTimeMs());
         BgJobHelper.timeLapse(getClipSet().getClip(0), speed);
         mTimeLaspeBottomSheetDialog.dismiss();
-        DownloadVideoActivity.launch(FootageActivity.this);
+        ExportedVideoActivity.launch(FootageActivity.this);
     }
 
     private void setupClipProgressBar() {
