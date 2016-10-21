@@ -37,6 +37,28 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_gauge_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:text="@string/gauge_setting"
+            android:textColor="?attr/appTextColorPrimary"
+            android:textSize="18sp"/>
+
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/ll_cache_clear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

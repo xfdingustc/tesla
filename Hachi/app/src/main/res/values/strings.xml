@@ -513,5 +513,6 @@
     <string name="followers_count">%1$d followers</string>
     <string name="following_count">%1$d followings</string>
     <string name="cache_cleared">Cache has been cleared</string>
+    <string name="gauge_setting">Gauge setting</string>
 
 </resources>

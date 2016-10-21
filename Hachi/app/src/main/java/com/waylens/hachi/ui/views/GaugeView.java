@@ -13,7 +13,6 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.IioData;
 import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
@@ -21,17 +20,15 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 
-
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.text.SimpleDateFormat;
+
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 /**
  * Created by Xiaofei on 2016/4/6.
@@ -50,8 +47,6 @@ public class GaugeView extends FrameLayout {
     private DateFormat mDateFormat;
 
     private boolean mIsLoadingFinish = false;
-
-
 
 
     private int iioPressure;
@@ -110,8 +105,6 @@ public class GaugeView extends FrameLayout {
     }
 
 
-
-
     @Subscribe
     public void onGaugeEvent(GaugeEvent event) {
         switch (event.getWhat()) {
@@ -160,23 +153,34 @@ public class GaugeView extends FrameLayout {
         });
     }
 
+    public void initDefaultGauge() {
+        String jsApi = "javascript:initDefaultGauge()";
+        mWebView.loadUrl(jsApi);
+    }
+
     public void setVisibility(boolean show) {
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             mWebView.setVisibility(View.INVISIBLE);
         }
     }
 
 
     public void showGauge(boolean show) {
+        showGauge(show, false);
+    }
+
+    public void showGauge(boolean show, final boolean showAll) {
         //CameraPreview and ClipPlay need to initialize gauge style, using initGaugeView
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
             mWebView.setWebViewClient(new WebViewClient() {
                 @Override
                 public void onPageFinished(WebView view, String url) {
+                    if (showAll) {
+                        initDefaultGauge();
+                    }
                     initGaugeView();
                 }
             });
@@ -378,7 +382,7 @@ public class GaugeView extends FrameLayout {
 
 
         String callJS1 = "javascript:setRawData(" + sb.toString() + ")";
-//        Logger.t(TAG).d(callJS1);
+        Logger.t(TAG).d(callJS1);
 //        String callJS2 = "javascript:setRawData(" + "{time:" + data + "})";
 //        Logger.t(TAG).d("callJS: " + callJS1);
         mWebView.loadUrl(callJS1);
@@ -391,7 +395,7 @@ public class GaugeView extends FrameLayout {
     public boolean dispatchTouchEvent(MotionEvent event) {
         return false;
     }
-    
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         return false;
@@ -463,7 +467,7 @@ public class GaugeView extends FrameLayout {
                 state.put("showGforce", "");
                 state.put("showRollPitch", "");
             }
-        }catch (JSONException e) {
+        } catch (JSONException e) {
             Logger.t(TAG).e("showIioGauge", e);
         }
         String callJS = "javascript:setState(" + state.toString() + ")";

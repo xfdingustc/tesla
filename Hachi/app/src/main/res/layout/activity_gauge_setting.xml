@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/video_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/title"
+        android:background="@drawable/stroke_rect"
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/gauge_bg"/>
+
+        <com.waylens.hachi.ui.views.GaugeView
+            android:id="@+id/gaugeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            ></com.waylens.hachi.ui.views.GaugeView>
+
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RadioGroup
+            android:id="@+id/style_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
+
+            <RadioButton
+                android:id="@+id/btnThemeOff"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/btn_gauge_theme_none"
+                android:button="@android:color/transparent"/>
+
+            <RadioButton
+                android:id="@+id/btnThemeDefault"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/btn_gauge_theme_1"
+                android:button="@android:color/transparent"
+                android:checked="true"/>
+
+            <RadioButton
+                android:id="@+id/btnThemeNeo"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/btn_gauge_theme_2"
+                android:button="@android:color/transparent"/>
+        </RadioGroup>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gauge_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/style_radio_group"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

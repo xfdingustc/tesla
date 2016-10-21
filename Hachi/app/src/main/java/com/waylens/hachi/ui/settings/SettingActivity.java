@@ -57,6 +57,11 @@ public class SettingActivity extends BaseActivity {
         Toast.makeText(this, R.string.cache_cleared, Toast.LENGTH_SHORT).show();
     }
 
+    @OnClick(R.id.ll_gauge_setting)
+    public void onGaugeSettingClicked() {
+        GaugeSettingActivity.launch(this);
+    }
+
 
 
     public static void launch(Activity activity) {

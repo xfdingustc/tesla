@@ -228,6 +228,9 @@
             android:name=".ui.settings.ChooseWifiActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.settings.GaugeSettingActivity"
+                  android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.settings.WaylensCloudActivity"
             android:screenOrientation="portrait"/>
