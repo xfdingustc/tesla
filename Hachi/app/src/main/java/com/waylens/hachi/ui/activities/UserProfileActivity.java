@@ -214,6 +214,7 @@ public class UserProfileActivity extends BaseActivity {
         setContentView(R.layout.activity_user_profile);
 
         userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);
+//        userAvatar.setTitleSize(ViewUtils.dp2px(72));
 
         mUserName.setText(mUser.userName);
 

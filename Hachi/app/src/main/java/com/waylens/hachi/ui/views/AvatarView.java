@@ -78,6 +78,9 @@ public class AvatarView extends FrameLayout {
 
     public void setImageResource(int resource) {
         userAvatar.setImageResource(resource);
+    }
 
+    public void setTitleSize(float titleSize) {
+        rlvNameView.setTitleSize(titleSize);
     }
 }
