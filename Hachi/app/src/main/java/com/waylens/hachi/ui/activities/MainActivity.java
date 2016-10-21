@@ -18,6 +18,7 @@ import com.orhanobut.logger.Logger;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
@@ -113,11 +114,14 @@ public class MainActivity extends BaseActivity {
 
         RegistrationIntentService.launch(this);
 
-//        if (VdtCameraManager.getManager().isConnected()) {
+        if (VdtCameraManager.getManager().isConnected()) {
+//            mBottomBar.selectTabWithId(R.id.live_view);
+            mBottomBar.setDefaultTab(R.id.live_view);
 //            initFragment(TAB_TAG_LIVE_VIEW);
-//        } else {
+        } else {
 //            initFragment(TAB_TAG_MOMENTS);
-//        }
+            mBottomBar.setDefaultTab(R.id.moments);
+        }
     }
 
 
