@@ -58,7 +58,7 @@
         <item name="tagBgColor">@color/black87</item>
         <item name="tagTextColor">@color/white87</item>
         <item name="foregroundActiveColor">@color/windowBackgroundDark</item>
-        <item name="avatarPlaceHolderColor">#FF1F1F1F</item>
+        <item name="avatarPlaceHolderColor">@color/material_grey_600</item>
     </style>
 
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
