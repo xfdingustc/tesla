@@ -42,6 +42,16 @@ public class AccountFragment extends BaseFragment {
     @BindView(R.id.ll_camera_setting)
     View llCameraSetting;
 
+    @BindView(R.id.ll_uploading)
+    View llUploading;
+
+    @BindView(R.id.ll_my_moment)
+    View llMyMoment;
+
+    @BindView(R.id.ll_notification)
+    View llNofitication;
+
+
     @BindView(R.id.user_name)
     TextView userName;
 
@@ -74,7 +84,7 @@ public class AccountFragment extends BaseFragment {
         MyMomentActivity.launch(getActivity());
     }
 
-    @OnClick(R.id.ll_notificatino)
+    @OnClick(R.id.ll_notification)
     public void onNotificatinoClicked() {
         NotificationActivity.launch(getActivity());
     }
@@ -137,15 +147,9 @@ public class AccountFragment extends BaseFragment {
         if (SessionManager.getInstance().isLoggedIn()) {
             showUserAvatar(SessionManager.getInstance().getAvatarUrl());
             userName.setText(SessionManager.getInstance().getUserName());
-            llWaylensCloud.setVisibility(View.VISIBLE);
         } else {
             userName.setText(R.string.click_2_login);
-            llWaylensCloud.setVisibility(View.GONE);
             userAvatar.setImageResource(R.drawable.ic_account_circle);
-//            Glide.with(this)
-//                .load(R.drawable.screenshot)
-//                .asBitmap()
-//                .into(blurBg);
         }
 
         if (VdtCameraManager.getManager().isConnected()) {
@@ -154,6 +158,22 @@ public class AccountFragment extends BaseFragment {
             llCameraSetting.setVisibility(View.GONE);
         }
 
+        refreshLoginRelatedPrefs();
+
+    }
+
+    private void refreshLoginRelatedPrefs() {
+        int visibility;
+        if (SessionManager.getInstance().isLoggedIn()) {
+            visibility = View.VISIBLE;
+        } else {
+            visibility = View.GONE;
+        }
+
+        llUploading.setVisibility(visibility);
+        llMyMoment.setVisibility(visibility);
+        llNofitication.setVisibility(visibility);
+        llWaylensCloud.setVisibility(visibility);
     }
 
 
