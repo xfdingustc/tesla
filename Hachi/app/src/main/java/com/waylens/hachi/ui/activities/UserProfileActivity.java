@@ -20,13 +20,21 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.birbit.android.jobqueue.JobManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.Follow;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.ReportUserBody;
@@ -37,6 +45,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.feed.MomentsListAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
+import com.waylens.hachi.ui.manualsetup.qrcode.util.Constants;
 import com.waylens.hachi.ui.recyclerview.SlideInItemAnimator;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.AvatarView;
@@ -47,10 +56,15 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.view.ElasticDragDismissFrameLayout;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
+import org.json.JSONObject;
+
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
@@ -254,21 +268,20 @@ public class UserProfileActivity extends BaseActivity {
     }
 
     private void fetchUserProfile() {
+        HachiApi hachiApi = HachiService.createHachiApiService();
 
-        final long currentTime = System.currentTimeMillis();
 
 
-        Observable<FollowInfo> followInfoObservable = HachiService.createHachiApiService().getFollowInfoRx(mUser.userID)
+        Observable<FollowInfo> followInfoObservable = hachiApi.getFollowInfoRx(mUser.userID)
             .subscribeOn(Schedulers.newThread());
 
-        Observable<MomentAmount> getMomentAmount = HachiService.createHachiApiService().getUserMomentAmountRx(mUser.userID)
+        Observable<MomentAmount> getMomentAmount = hachiApi.getUserMomentAmountRx(mUser.userID)
             .subscribeOn(Schedulers.newThread());
 
         Observable.zip(followInfoObservable, getMomentAmount, new Func2<FollowInfo, MomentAmount, UserProfileZip>() {
 
             @Override
             public UserProfileZip call(FollowInfo followInfo, MomentAmount amount) {
-                Logger.t(TAG).d("get info time: " + (System.currentTimeMillis() - currentTime));
                 UserProfileZip userInfoEx = new UserProfileZip();
                 userInfoEx.followInfo = followInfo;
                 userInfoEx.amount = amount;
@@ -280,12 +293,13 @@ public class UserProfileActivity extends BaseActivity {
                 @Override
                 public void onNext(UserProfileZip userProfileZip) {
                     mUserInfoEx = userProfileZip;
-                    Logger.t(TAG).d("get user info ex");
                     setupUserProfileHeaderView();
-
                     loadUserMoment(mCurrentCursor, true);
                 }
             });
+
+
+
     }
 
     private void setupUserProfileHeaderView() {

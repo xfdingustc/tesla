@@ -1,14 +1,10 @@
 package com.waylens.hachi.rest;
 
-import android.net.Network;
 import android.os.Build;
 import android.text.TextUtils;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.utils.ConnectivityHelper;
-import com.waylens.hachi.utils.VersionHelper;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -35,40 +31,42 @@ public class HachiService {
     }
 
     public static HachiApi createHachiApiService() {
-        Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(Constants.HOST_URL);
+        if (mHachiApiInstance == null) {
+            synchronized (HachiService.class) {
+                if (mHachiApiInstance == null) {
+                    Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .baseUrl(Constants.HOST_URL);
 
-        final String token = SessionManager.getInstance().getToken();
 
-        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
-        if (!TextUtils.isEmpty(token)) {
-            clientBuilder.addInterceptor(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
-                    Request request = chain.request();
-                    Request newReq = request.newBuilder()
-                        .addHeader("X-Auth-Token", token)
-                        .addHeader("User-Agent", USER_AGENT)
-                        .build();
-                    return chain.proceed(newReq);
+                    OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
+                    clientBuilder.addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Chain chain) throws IOException {
+                            Request request = chain.request();
+                            Request.Builder newReqBuilder = request.newBuilder()
+                                .addHeader("User-Agent", USER_AGENT);
+
+
+                            final String token = SessionManager.getInstance().getToken();
+                            if (!TextUtils.isEmpty(token)) {
+                                newReqBuilder.addHeader("X-Auth-Token", token);
+                            }
+
+                            return chain.proceed(newReqBuilder.build());
+                        }
+                    });
+
+                    builder.client(clientBuilder.build());
+
+                    mHachiApiInstance = builder.build().create(HachiApi.class);
                 }
-            });
+            }
         }
 
-//        if (VersionHelper.isGreaterThanLollipop()) {
-//            if (ConnectivityHelper.isConnected2VdtCamera()) {
-//                Network network = ConnectivityHelper.getCelullarNetwork();
-//                if (network != null) {
-//                    Logger.t(TAG).d("use celullar data");
-//                    clientBuilder.socketFactory(network.getSocketFactory());
-//                }
-//            }
-//        }
+        return mHachiApiInstance;
 
-        builder.client(clientBuilder.build());
-
-        return builder.build().create(HachiApi.class);
 
     }
 

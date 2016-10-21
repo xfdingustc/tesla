@@ -61,6 +61,7 @@ import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -114,9 +115,9 @@ public interface HachiApi {
     @GET("/api/moments/{momentId}")
     Observable<MomentInfo> getMomentInfoRx(@Path("momentId") long momentId);
 
-
     @GET("/api/friends/{userId}")
     Observable<FollowInfo> getFollowInfoRx(@Path("userId") String userId);
+
 
     @GET("/api/users/{userId}")
     Call<UserInfo> getUserInfo(@Path("userId") String userId);
