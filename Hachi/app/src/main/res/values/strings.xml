@@ -515,5 +515,6 @@
     <string name="cache_cleared">Cache has been cleared</string>
     <string name="gauge_setting">Gauge setting</string>
     <string name="no_video_found">No exported clips found</string>
+    <string name="no_uploading_moments">No uploading moments</string>
 
 </resources>

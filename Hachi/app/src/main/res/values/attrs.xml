@@ -21,6 +21,7 @@
     <attr name="tagBgColor" format="color"/>
     <attr name="tagTextColor" format="color"/>
     <attr name="foregroundActiveColor" format="color"/>
+    <attr name="avatarPlaceHolderColor" format="color"/>
 
 
 

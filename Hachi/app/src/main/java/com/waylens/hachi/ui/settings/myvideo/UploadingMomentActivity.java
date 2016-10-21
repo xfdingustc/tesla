@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -28,6 +29,9 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
 
     @BindView(R.id.uploading_list)
     RecyclerView mRvUploadingList;
+
+    @BindView(R.id.root_switch)
+    ViewSwitcher rootSwitch;
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, UploadingMomentActivity.class);
@@ -61,14 +65,18 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
 
     @Override
     public void onUploadJobAdded() {
-
+        rootSwitch.showPrevious();
     }
 
     @Override
     public void onUploadJobRemoved() {
         Logger.t(TAG).d("auto exit: " + mAutoExit + " count: " + mUploadItemAdapter);
-        if (mAutoExit && mUploadItemAdapter.getItemCount() == 0) {
-            finish();
+        if (mUploadItemAdapter.getItemCount() == 0) {
+            if (mAutoExit) {
+                finish();
+            } else {
+                rootSwitch.showNext();
+            }
         }
     }
 
@@ -78,6 +86,10 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
         mRvUploadingList.setLayoutManager(new LinearLayoutManager(this));
         mUploadItemAdapter = new UploadItemAdapter(this);
         mRvUploadingList.setAdapter(mUploadItemAdapter);
+
+        if (mUploadItemAdapter.getItemCount() == 0) {
+            rootSwitch.showNext();
+        }
     }
 
 

@@ -69,7 +69,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_file_download"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_cloud_upload"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -121,7 +121,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_movie_filter"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -146,7 +146,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_notifications_full"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -171,7 +171,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_cloud"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -215,7 +215,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_camera"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -240,7 +240,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_add_camera"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -284,7 +284,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_settings"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -309,7 +309,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_info_outline"
-                            android:tint="@color/material_teal_500"/>
+                            android:tint="@color/material_grey_600"/>
 
                         <TextView
                             android:layout_width="match_parent"

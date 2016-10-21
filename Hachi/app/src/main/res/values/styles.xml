@@ -25,6 +25,7 @@
         <item name="tagBgColor">@color/white87</item>
         <item name="tagTextColor">@color/black87</item>
         <item name="foregroundActiveColor">@android:color/white</item>
+        <item name="avatarPlaceHolderColor">#ffe0e0e0</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -57,6 +58,7 @@
         <item name="tagBgColor">@color/black87</item>
         <item name="tagTextColor">@color/white87</item>
         <item name="foregroundActiveColor">@color/windowBackgroundDark</item>
+        <item name="avatarPlaceHolderColor">#FF1F1F1F</item>
     </style>
 
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
