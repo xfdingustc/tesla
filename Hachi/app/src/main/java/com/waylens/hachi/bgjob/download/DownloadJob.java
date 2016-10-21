@@ -51,7 +51,11 @@ public class DownloadJob extends Job implements Exportable {
 
     @Override
     public void onRun() throws Throwable {
-        downloadVideo();
+        try {
+            downloadVideo();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -103,6 +107,7 @@ public class DownloadJob extends Job implements Exportable {
 
 
         HttpRemuxer remuxer = new HttpRemuxer(0);
+
         remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
@@ -121,7 +126,6 @@ public class DownloadJob extends Job implements Exportable {
                 }
             }
         });
-
 
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
