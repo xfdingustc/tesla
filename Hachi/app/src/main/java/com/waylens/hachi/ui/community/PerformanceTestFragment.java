@@ -45,6 +45,7 @@ import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ThemeHelper;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -353,8 +354,9 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 onRefresh();
             }
         });
-
-        mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
+        if (ThemeHelper.isDarkTheme()) {
+            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
+        }
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mMakerModelList = new ArrayList<>();

@@ -6,7 +6,7 @@
         title="@string/moments" />
     <tab
         id="@+id/leaderboard"
-        icon="@drawable/ic_leaderboard"
+        icon="@drawable/ic_virtual_racing"
         title="@string/leaderboard" />
 
     <tab
