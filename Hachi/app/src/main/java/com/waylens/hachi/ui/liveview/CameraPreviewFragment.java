@@ -510,6 +510,8 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
                 }
             });
 
+        mGaugeView.initGaugeView();
+
     }
 
 
