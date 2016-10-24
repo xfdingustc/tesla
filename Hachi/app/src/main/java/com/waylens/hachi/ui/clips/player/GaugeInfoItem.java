@@ -19,6 +19,10 @@ public class GaugeInfoItem {
             "showGps",
     };
 
+    public static final int MASK_LARGE_SIZE = 0b0100;
+    public static final int MASK_MEDIUM_SIZE = 0b0010;
+    public static final int MASK_SMALL_SIZE = 0b0001;
+
     private final int id;
 
     public final String title;

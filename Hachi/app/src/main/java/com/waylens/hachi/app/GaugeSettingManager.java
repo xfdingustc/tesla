@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.utils.PreferenceUtils;
 
@@ -68,8 +69,16 @@ public class GaugeSettingManager  {
             itemList.add(item);
         }
 
-
         return itemList;
+    }
+
+    public List<Integer> getSupportedSetting() {
+        int[] support_gauge_setting =  Hachi.getContext().getResources().getIntArray(R.array.supported_gauge_settings);
+        List<Integer> settingList = new ArrayList<>();
+        for (int size : support_gauge_setting) {
+            settingList.add(size);
+        }
+        return settingList;
     }
 
     public String getTheme() {

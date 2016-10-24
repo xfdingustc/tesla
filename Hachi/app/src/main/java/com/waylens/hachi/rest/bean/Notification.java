@@ -59,7 +59,14 @@ public class Notification {
             case NOTIFICATION_TYPE_FOLLOW:
                 return follow.user.userName + " " + Hachi.getContext().getResources().getString(R.string.start_follow);
             case NOTIFICATION_TYPE_SHARE:
-                return String.format(Hachi.getContext().getResources().getString(R.string.share_social_media_success), "", share.provider);
+                if (share.status.equals("POST_COMPLETED")) {
+                    return String.format(Hachi.getContext().getResources().getString(R.string.share_social_media_success), "", share.provider);
+                } else {
+                    return String.format(Hachi.getContext().getResources().getString(R.string.share_social_media_failed), "", share.provider);
+                }
+
+            default:
+                break;
         }
         return null;
     }

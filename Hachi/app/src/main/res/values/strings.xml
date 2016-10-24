@@ -398,8 +398,8 @@
     <string name="like_notification">%1$s liked your moment \'%2$s\'.</string>
     <string name="follow_notification">%1$s started following you.</string>
     <string name="reply_notification">%1$s replied to you in moment \'%2$s\'.</string>
-    <string name="share_social_media_success">Your moment %1$s is shared to %2$s successfully.</string>
-    <string name="share_social_media_failed">Failed to share your moment %1$s to %2$s.</string>
+    <string name="share_social_media_success">Your moment %1$sis shared to %2$s successfully</string>
+    <string name="share_social_media_failed">Failed to share your moment %1$sto %2$s</string>
     <string name="edit">Edit</string>
     <string name="edit_moment">Edit Moment</string>
     <string name="display">Display</string>

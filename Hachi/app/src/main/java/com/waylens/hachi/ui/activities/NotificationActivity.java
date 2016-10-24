@@ -23,6 +23,7 @@ import com.waylens.hachi.rest.response.NotificationResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.NotificationAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.entities.NotificationEvent;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
@@ -103,7 +104,7 @@ public class NotificationActivity extends BaseActivity {
         setContentView(R.layout.activity_notification);
         setupToolbar();
         Logger.t(TAG).d("initial view");
-        mAdapter = new NotificationAdapter(null, this, new NotificationAdapter.OnListItemClickListener() {
+        mAdapter = new NotificationAdapter(new ArrayList<Notification>(), this, new NotificationAdapter.OnListItemClickListener() {
             @Override
             public void onItemClicked(long eventID) {
                 NotiEvent notiEvent = mUnreadEventMap.get(eventID);
@@ -211,6 +212,7 @@ public class NotificationActivity extends BaseActivity {
             .subscribe(new SimpleSubscribe<NotificationResponse>() {
                 @Override
                 public void onNext(NotificationResponse notificationResponse) {
+                    mRefreshLayout.setRefreshing(false);
                     mAdapter.addNotifications(notificationResponse.notifications, isRefresh);
                     if (mNotificationViewAnimator != null) {
                         mNotificationViewAnimator.setDisplayedChild(1);
@@ -240,7 +242,6 @@ public class NotificationActivity extends BaseActivity {
             });
 
     }
-
 
     @Override
     public void setupToolbar() {

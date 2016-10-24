@@ -115,6 +115,17 @@
         <item>Gps</item>
     </string-array>
 
+    <integer-array name="supported_gauge_settings" translatable="false">
+        <item>7</item>
+        <item>7</item>
+        <item>7</item>
+        <item>7</item>
+        <item>1</item>
+        <item>7</item>
+        <item>7</item>
+        <item>6</item>
+    </integer-array>
+
     <string-array name="theme_remix" translatable="false">
         <item>default</item>
         <item>neo</item>

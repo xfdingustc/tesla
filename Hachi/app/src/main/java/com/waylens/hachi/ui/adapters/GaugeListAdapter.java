@@ -31,6 +31,7 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
 
     private final OnGaugeItemChangedListener mListener;
     List<GaugeInfoItem> mGaugeItems;
+    List<Integer> mSupportSetting;
 
     public interface OnGaugeItemChangedListener {
         void onGaugeItemChanged(GaugeInfoItem item);
@@ -38,7 +39,7 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
 
     public GaugeListAdapter(OnGaugeItemChangedListener listener) {
         mGaugeItems = GaugeSettingManager.getManager().getSetting();
-
+        mSupportSetting = GaugeSettingManager.getManager().getSupportedSetting();
         this.mListener = listener;
     }
 
@@ -51,6 +52,18 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
     @Override
     public void onBindViewHolder(final VH holder, final int position) {
         final GaugeInfoItem gaugeItem = mGaugeItems.get(position);
+        final int supportSetting = mSupportSetting.get(position);
+        if (supportSetting != 7) {
+            if ((supportSetting & GaugeInfoItem.MASK_LARGE_SIZE) == 0) {
+                holder.btnLarge.setVisibility(View.GONE);
+            }
+            if ((supportSetting & GaugeInfoItem.MASK_MEDIUM_SIZE) == 0) {
+                holder.btnMedium.setVisibility(View.GONE);
+            }
+            if ((supportSetting & GaugeInfoItem.MASK_SMALL_SIZE) == 0) {
+                holder.btnSmall.setVisibility(View.GONE);
+            }
+        }
         holder.titleView.setText(gaugeItem.title);
         if (gaugeItem.isEnabled) {
             holder.radioGroup.setVisibility(View.VISIBLE);
@@ -64,9 +77,9 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (holder.btnSwitch.isPressed()) {
-                    enableGauge(holder, isChecked);
                     gaugeItem.isEnabled = isChecked;
                     gaugeItem.option = isChecked?GaugeSettingManager.getDefaultGaugeSetting(gaugeItem.title):"";
+                    enableGauge(holder, isChecked);
                     Logger.t(TAG).d(gaugeItem.isEnabled);
                     Logger.t(TAG).d(mGaugeItems.get(position).isEnabled);
                     if (mListener != null) {
