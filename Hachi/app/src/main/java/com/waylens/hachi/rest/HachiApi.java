@@ -222,6 +222,12 @@ public interface HachiApi {
                                       @Query("lower") Long lower, @Query("maker") String maker,
                                       @Query("model") String model, @Query("count") int count);
 
+    @GET("/api/moments/race")
+    Observable<RaceQueryResponse> queryRaceRx(@Query("mode") int mode, @Query("start") int start,
+                                      @Query("end") int end, @Query("upper") Long upper,
+                                      @Query("lower") Long lower, @Query("maker") String maker,
+                                      @Query("model") String model, @Query("count") int count);
+
     @GET("/api/place")
     Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
 

@@ -19,10 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
@@ -33,7 +31,6 @@ import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.LeaderBoardAdapter;
 import com.waylens.hachi.ui.adapters.ListDropDownAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -45,7 +42,9 @@ import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ThemeHelper;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -56,6 +55,8 @@ import java.util.List;
 import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class PerformanceTestFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
@@ -83,7 +84,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private LeaderBoardAdapter mAdapter;
     private LinearLayoutManager mLinearLayoutManager;
-    private HachiApi mHachiApi;
+
 
     private int mCurrentCursor;
 
@@ -181,7 +182,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         Bundle arguments = getArguments();
         if (arguments != null) {
         }
-        mHachiApi = HachiService.createHachiApiService();
         mAdapter = new LeaderBoardAdapter(getActivity());
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
@@ -340,11 +340,11 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 if (i == 0) {
                     mUpper = null;
                     mLower = null;
-                } else if (mRaceType == RACE_TYPE_30MPH || mRaceType == RACE_TYPE_50KMH ) {
-                    mLower = splitTime30[i-1];
+                } else if (mRaceType == RACE_TYPE_30MPH || mRaceType == RACE_TYPE_50KMH) {
+                    mLower = splitTime30[i - 1];
                     mUpper = splitTime30[i];
                 } else {
-                    mLower = splitTime60[i-1];
+                    mLower = splitTime60[i - 1];
                     mUpper = splitTime60[i];
                 }
                 currentGroupAdapter.setCheckItem(i);
@@ -398,89 +398,82 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         raceQueryBody.end = mLeaderBoardEnd;
         raceQueryBody.count = mLeaderBoardItemCount = 100;
         Logger.t(TAG).d("mUpper" + mUpper + "mLower" + mLower);
-        Call<RaceQueryResponse> raceQueryResponseCall = mHachiApi.queryRace(raceQueryBody.mode,
-                raceQueryBody.start, raceQueryBody.end, mUpper, mLower, mMaker, mModel, raceQueryBody.count);
-        raceQueryResponseCall.enqueue(new Callback<RaceQueryResponse>() {
-            @Override
-            public void onResponse(Call<RaceQueryResponse> call, retrofit2.Response<RaceQueryResponse> response) {
-                mRefreshLayout.setRefreshing(false);
-                if (response.isSuccessful()) {
-                    Logger.t(TAG).d("get RaceQueryResponse");
-/*                  try {
-                        Logger.t(TAG).d(response.raw().body().string());
-                    } catch (IOException e) {
-                        Logger.t(TAG).d(e.getMessage());
-                    }*/
-                    RaceQueryResponse raceQueryResponse = response.body();
-                    if (raceQueryResponse.leaderboard == null) {
-                        return;
-                    }
-                    ArrayList<Moment> momentList = new ArrayList<>();
-                    for (int i = 0; i < raceQueryResponse.leaderboard.size(); i++) {
-                        Moment moment = raceQueryResponse.leaderboard.get(i).moment;
-                        moment.owner = new User();
-                        UserDeprecated owner = raceQueryResponse.leaderboard.get(i).owner;
-                        moment.owner.userID = owner.userID;
-                        moment.owner.avatarUrl = owner.avatarUrl;
-                        moment.owner.userName = owner.userName;
-                        momentList.add(moment);
-                        Logger.t(TAG).d("i:" + i + " vehicle info:" + moment.momentVehicleInfo.vehicleMaker);
-                    }
+        HachiService.createHachiApiService().queryRaceRx(raceQueryBody.mode,
+            raceQueryBody.start, raceQueryBody.end, mUpper, mLower, mMaker, mModel, raceQueryBody.count)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<RaceQueryResponse>() {
+                @Override
+                public void onNext(RaceQueryResponse raceQueryResponse) {
+                    mRefreshLayout.setRefreshing(false);
+                    onHandleRaceQuery(raceQueryResponse, isRefresh);
+                }
 
-                    Logger.t(TAG).d("moment list size:" + momentList.size());
-                    if (isRefresh) {
-                        mAdapter.setMoments(momentList, mRaceType, mLeaderBoardMode);
-                        if (momentList.size() == 0) {
-                            mNoDataLayout.setVisibility(View.VISIBLE);
-                        } else {
-                            mNoDataLayout.setVisibility(View.INVISIBLE);
-                        }
-                    } else {
-                        mAdapter.addMoments(momentList);
-                    }
-                    int bestRankIndex = -1;
-                    int rank = -1;
-                    for (int i = 0; i < raceQueryResponse.userRankings.size(); i++) {
-                        if (rank <= 0) {
-                            rank = raceQueryResponse.userRankings.get(i).rank;
-                            bestRankIndex = i;
-                        } else {
-                            if (rank > raceQueryResponse.userRankings.get(i).rank) {
-                                rank = raceQueryResponse.userRankings.get(i).rank;
-                                bestRankIndex = i;
-                            }
-                        }
-                    }
-                    if (rank > 0 && bestRankIndex >= 0) {
-                        mMyTestLayout.setVisibility(View.VISIBLE);
-                        initMyTestView(raceQueryResponse.userRankings.get(bestRankIndex));
-                        String maker = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleMaker;
-                        String model = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleModel;
-                        if (maker != null && model != null) {
-                            myVehicleInfo = new VehicleInfo();
-                            myVehicleInfo.vehicleMaker = maker;
-                            myVehicleInfo.vehicleModel = model;
-                        }
-                    } else {
-                        mMyTestLayout.setVisibility(View.GONE);
-                    }
-                    mRvLeaderboardList.setIsLoadingMore(false);
-                    mCurrentCursor += momentList.size();
+                @Override
+                public void onError(Throwable e) {
+                    mRefreshLayout.setRefreshing(false);
+                    ServerErrorHelper.showErrorMessage(mRootView, e);
+                }
+            });
 
-                    mRvLeaderboardList.setEnableLoadMore(false);
-                    mAdapter.setHasMore(false);
-                } else {
-                    Logger.t(TAG).d("fail to get RaceQueryResponse");
-                    Logger.t(TAG).d(response.message());
-                    Logger.t(TAG).d(response.code());
+    }
+
+    private void onHandleRaceQuery(RaceQueryResponse raceQueryResponse, boolean isRefresh) {
+        if (raceQueryResponse.leaderboard == null) {
+            return;
+        }
+        ArrayList<Moment> momentList = new ArrayList<>();
+        for (int i = 0; i < raceQueryResponse.leaderboard.size(); i++) {
+            Moment moment = raceQueryResponse.leaderboard.get(i).moment;
+            moment.owner = new User();
+            UserDeprecated owner = raceQueryResponse.leaderboard.get(i).owner;
+            moment.owner.userID = owner.userID;
+            moment.owner.avatarUrl = owner.avatarUrl;
+            moment.owner.userName = owner.userName;
+            momentList.add(moment);
+        }
+
+        if (isRefresh) {
+            mAdapter.setMoments(momentList, mRaceType, mLeaderBoardMode);
+            if (momentList.size() == 0) {
+                mNoDataLayout.setVisibility(View.VISIBLE);
+            } else {
+                mNoDataLayout.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            mAdapter.addMoments(momentList);
+        }
+        int bestRankIndex = -1;
+        int rank = -1;
+        for (int i = 0; i < raceQueryResponse.userRankings.size(); i++) {
+            if (rank <= 0) {
+                rank = raceQueryResponse.userRankings.get(i).rank;
+                bestRankIndex = i;
+            } else {
+                if (rank > raceQueryResponse.userRankings.get(i).rank) {
+                    rank = raceQueryResponse.userRankings.get(i).rank;
+                    bestRankIndex = i;
                 }
             }
-
-            @Override
-            public void onFailure(Call<RaceQueryResponse> call, Throwable t) {
-                t.printStackTrace();
+        }
+        if (rank > 0 && bestRankIndex >= 0) {
+            mMyTestLayout.setVisibility(View.VISIBLE);
+            initMyTestView(raceQueryResponse.userRankings.get(bestRankIndex));
+            String maker = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleMaker;
+            String model = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleModel;
+            if (maker != null && model != null) {
+                myVehicleInfo = new VehicleInfo();
+                myVehicleInfo.vehicleMaker = maker;
+                myVehicleInfo.vehicleModel = model;
             }
-        });
+        } else {
+            mMyTestLayout.setVisibility(View.GONE);
+        }
+        mRvLeaderboardList.setIsLoadingMore(false);
+        mCurrentCursor += momentList.size();
+
+        mRvLeaderboardList.setEnableLoadMore(false);
+        mAdapter.setHasMore(false);
     }
 
 
