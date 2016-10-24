@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.views;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.utils.AvatarHelper;
 import com.waylens.hachi.utils.CircleTransform;
+import com.waylens.hachi.utils.VersionHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,12 +62,20 @@ public class AvatarView extends FrameLayout {
 
     public void loadAvatar(String avatarUrl, String userName) {
 
+
+
         if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {
+            Drawable placeHolderDrawable;
+            if (VersionHelper.isGreaterThanLollipop()) {
+                placeHolderDrawable = getContext().getResources().getDrawable(R.drawable.ic_account_circle_placeholder, null);
+            } else {
+                placeHolderDrawable = getContext().getResources().getDrawable(R.drawable.ic_account_circle_placeholder);
+            }
             Glide.with(getContext())
                 .load(avatarUrl)
                 .transform(mCircleTransform)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.ic_account_circle_placeholder)
+                .placeholder(placeHolderDrawable)
                 .crossFade()
                 .into(userAvatar);
             vaAvatar.setDisplayedChild(0);
