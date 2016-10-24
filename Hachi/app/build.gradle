@@ -9,8 +9,8 @@ bugtags {
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
 
     defaultConfig {
@@ -100,11 +100,11 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //    compile(name: 'rangebar-release', ext: 'aar')
     //    compile project(':mediatranscoder')
-    compile 'com.android.support:support-v13:24.2.1'
-    compile 'com.android.support:design:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:support-v13:25.0.0'
+    compile 'com.android.support:design:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:palette-v7:24.2.1'
+    compile 'com.android.support:palette-v7:25.0.0'
 
 //    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.orhanobut:logger:1.15'
