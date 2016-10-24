@@ -28,7 +28,7 @@ public class MomentAbstract implements Serializable{
     public Gps gps;
     public boolean withGeoTag;
 
-    public Place place;
+    public PlaceInfo place;
 
     public String accessLevel;
 

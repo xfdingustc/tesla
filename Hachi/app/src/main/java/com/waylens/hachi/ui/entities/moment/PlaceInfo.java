@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Created by Xiaofei on 2016/9/13.
  */
-public class Place implements Serializable{
+public class PlaceInfo implements Serializable{
     public String country;
     public String region;
     public String city;
