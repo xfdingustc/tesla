@@ -2,6 +2,7 @@ package com.waylens.hachi.rest.bean;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.session.SessionManager;
 
 /**
  * Created by Xiaofei on 2016/10/14.
@@ -11,6 +12,7 @@ public class Notification {
     public static final int NOTIFICATION_TYPE_COMMENT = 0;
     public static final int NOTIFICATION_TYPE_FOLLOW = 1;
     public static final int NOTIFICATION_TYPE_LIKE = 2;
+    public static final int NOTIFICATION_TYPE_SHARE = 3;
     public MomentSimple moment;
     public Comment comment;
     public Like like;
@@ -28,6 +30,8 @@ public class Notification {
                 return follow.createTime;
             case NOTIFICATION_TYPE_LIKE:
                 return like.createTime;
+            case NOTIFICATION_TYPE_SHARE:
+                return share.createTime;
         }
         return 0;
     }
@@ -40,6 +44,8 @@ public class Notification {
                 return follow.user.avatarUrl;
             case NOTIFICATION_TYPE_LIKE:
                 return like.user.avatarUrl;
+            case NOTIFICATION_TYPE_SHARE:
+                return SessionManager.getInstance().getAvatarUrl();
         }
         return null;
     }
@@ -52,18 +58,22 @@ public class Notification {
                 return like.user.userName + " " + Hachi.getContext().getResources().getString(R.string.like_your_post);
             case NOTIFICATION_TYPE_FOLLOW:
                 return follow.user.userName + " " + Hachi.getContext().getResources().getString(R.string.start_follow);
+            case NOTIFICATION_TYPE_SHARE:
+                return String.format(Hachi.getContext().getResources().getString(R.string.share_social_media_success), "", share.provider);
         }
         return null;
     }
 
-    public User getUser() {
+    public String getUserName() {
         switch (notificationType) {
             case NOTIFICATION_TYPE_COMMENT:
-                return comment.author;
+                return comment.author.userName;
             case NOTIFICATION_TYPE_LIKE:
-                return like.user;
+                return like.user.userName;
             case NOTIFICATION_TYPE_FOLLOW:
-                return follow.user;
+                return follow.user.userName;
+            case NOTIFICATION_TYPE_SHARE:
+                return SessionManager.getInstance().getUserName();
         }
         return null;
     }

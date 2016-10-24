@@ -47,6 +47,12 @@ android {
             keyAlias 'hachi'
             keyPassword 'transee00'
         }
+        debug {
+            storeFile file('../keystore/release.keystore')
+            storePassword 'transee00'
+            keyAlias 'hachi'
+            keyPassword 'transee00'
+        }
     }
 
     buildTypes {

@@ -40,9 +40,18 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="8dp"
                         android:layout_toLeftOf="@id/tvCameraStatus"
-                        android:background="@drawable/record_dot_anim">
+                        android:background="@drawable/record_dot_anim"/>
 
-
+                    <ImageView
+                        android:id="@+id/cardNotification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8dp"
+                        android:layout_toRightOf="@id/tvCameraStatus"
+                        android:background="@drawable/ic_report_problem"
+                        android:visibility="gone"
+                        android:tint="#F39800">
                     </ImageView>
                 </RelativeLayout>
 

@@ -351,7 +351,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
             case CameraStateChangeEvent.CAMEAR_STATE_MICROPHONE_STATUS_CHANGED:
                 updateMicControlButton();
                 break;
-
         }
 
     }

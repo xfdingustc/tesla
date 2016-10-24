@@ -3,6 +3,8 @@ package com.waylens.hachi.ui.community;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
@@ -10,6 +12,8 @@ import android.support.v7.widget.PopupMenu;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -110,6 +114,7 @@ public class PhotoViewActivity extends BaseActivity {
         mMomentEx = (MomentEx)intent.getSerializableExtra(EXTRA_MOMENT);
         mIndex = intent.getIntExtra(EXTRA_MOMENT_INDEX, -1);
         initView();
+        setStatusBarColor(Color.BLACK);
     }
 
     private void initView() {
@@ -201,6 +206,20 @@ public class PhotoViewActivity extends BaseActivity {
                 popupMenu.show();
             }
         });
+    }
+
+    public void setStatusBarColor(int statusBarColor) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // If both system bars are black, we can remove these from our layout,
+            // removing or shrinking the SurfaceFlinger overlay required for our views.
+            Window window = getWindow();
+            if (statusBarColor == Color.BLACK && window.getNavigationBarColor() == Color.BLACK) {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            } else {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            }
+            window.setStatusBarColor(Color.parseColor("#4CAF50"));
+        }
     }
 
     private void toggleOtherView() {

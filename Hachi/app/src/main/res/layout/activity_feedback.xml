@@ -15,7 +15,7 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:padding="8dp"
-        android:background="?attr/momentPlaceHolderColor"
+        android:background="@color/app_color_control_normal"
         android:gravity="top"
         android:hint="@string/feedback_hint"
         android:inputType="textMultiLine"

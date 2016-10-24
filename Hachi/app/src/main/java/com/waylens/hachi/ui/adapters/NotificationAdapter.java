@@ -17,6 +17,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.Notification;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.PrettyTimeUtils;
@@ -77,6 +78,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case Notification.NOTIFICATION_TYPE_COMMENT:
             case Notification.NOTIFICATION_TYPE_LIKE:
             case Notification.NOTIFICATION_TYPE_FOLLOW:
+            case Notification.NOTIFICATION_TYPE_SHARE:
                 itemView = LayoutInflater.from(mContext).inflate(R.layout.item_notification, parent, false);
                 return new NotificationViewHolder(itemView);
             default:
@@ -126,6 +128,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 case Notification.NOTIFICATION_TYPE_COMMENT:
                 case Notification.NOTIFICATION_TYPE_LIKE:
                 case Notification.NOTIFICATION_TYPE_FOLLOW:
+                case Notification.NOTIFICATION_TYPE_SHARE:
                     onBindCommentViewHolder((NotificationViewHolder) holder, position);
                     break;
                 default:
@@ -148,7 +151,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.commentRootLayout.setAlpha((float) 0.5);
         }*/
 
-        holder.avatarView.loadAvatar(notification.getUserAvatarUrl(), notification.getUser().userName);
+        holder.avatarView.loadAvatar(notification.getUserAvatarUrl(), notification.getUserName());
 
         holder.commentUserName.setText(notification.getDescription());
         holder.commentTime.setText(PrettyTimeUtils.getTimeAgo(notification.getCreateTime()));
@@ -168,7 +171,11 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.commentRootLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MomentActivity.launch((BaseActivity) mContext, notification.moment.momentID, notification.moment.videoThumbnail, holder.momentThumbnail);
+                if (notification.notificationType == Notification.NOTIFICATION_TYPE_FOLLOW) {
+                    UserProfileActivity.launch((BaseActivity) mContext, notification.follow.user, holder.avatarView);
+                } else {
+                    MomentActivity.launch((BaseActivity) mContext, notification.moment.momentID, notification.moment.videoThumbnail, holder.momentThumbnail);
+                }
             }
         });
     }

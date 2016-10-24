@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.orhanobut.logger.Logger;
@@ -35,7 +36,9 @@ public class GcmIntentService extends IntentService {
 
     public static final String KEY_REFER_USER = "@string/refer_user";
 
-    public static final String KEY_MOMENT_SHARE = "@string/moment_share";
+    public static final String KEY_MOMENT_SHARE_SUCCESSFULLY = "@string/share_successfully";
+
+    public static final String KEY_MOMENT_SHARE_FAILED = "@string/share_failed";
 
     public static String TAG = GcmIntentService.class.getSimpleName();
 
@@ -68,6 +71,7 @@ public class GcmIntentService extends IntentService {
         String stringArray = data.getString("gcm.notification.body_loc_args");
         Logger.t(TAG).d(stringArray);
         String user, moment;
+        String title, platform;
         String msg = null;
         try {
             JSONArray jsonArray = new JSONArray(stringArray);
@@ -91,8 +95,25 @@ public class GcmIntentService extends IntentService {
                     moment = jsonArray.optString(1);
                     msg = String.format(getResources().getString(R.string.reply_notification), user, moment);
                     break;
-                case KEY_MOMENT_SHARE:
-                    user = jsonArray.optString(0);
+                case KEY_MOMENT_SHARE_SUCCESSFULLY:
+                    title = jsonArray.optString(0);
+                    if (!TextUtils.isEmpty(title)) {
+                        title = title + " ";
+                    } else {
+                        title = "";
+                    }
+                    platform = jsonArray.optString(1);
+                    msg = String.format(getResources().getString(R.string.share_social_media_success), title, platform);
+                    break;
+                case KEY_MOMENT_SHARE_FAILED:
+                    title = jsonArray.optString(0);
+                    if (!TextUtils.isEmpty(title)) {
+                        title = title + " ";
+                    } else {
+                        title = "";
+                    }
+                    platform = jsonArray.optString(1);
+                    msg = String.format(getResources().getString(R.string.share_social_media_failed), title, platform);
                     break;
                 default:
                     break;

@@ -43,7 +43,7 @@ import butterknife.BindView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func3;
+import rx.functions.Func4;
 import rx.schedulers.Schedulers;
 
 /**
@@ -66,14 +66,13 @@ public class NotificationActivity extends BaseActivity {
 
     private Map<Long, NotiEvent> mUnreadEventMap;
 
-
-
     private long mCommentCursor = 0;
 
     private long mLikeCursor = 0;
 
     private long mFollowCursor = 0;
 
+    private long mShareCursor = 0;
 
     private NotificationAdapter mAdapter;
 
@@ -172,16 +171,28 @@ public class NotificationActivity extends BaseActivity {
                 }
             });
 
-        Observable.zip(commentObservable, likeObservable, followObservable,
-            new Func3<NotificationResponse, NotificationResponse, NotificationResponse, NotificationResponse>() {
+        Observable<NotificationResponse> shareObservable = hachiApi.getShareNotificationRx(mShareCursor, DEFAULT_COUNT)
+            .doOnNext(new Action1<NotificationResponse>() {
+                @Override
+                public void call(NotificationResponse notificationResponse) {
+                    mShareCursor = notificationResponse.nextCursor;
+                    for (Notification notification : notificationResponse.notifications) {
+                        notification.notificationType = Notification.NOTIFICATION_TYPE_SHARE;
+                    }
+                }
+            });
+
+        Observable.zip(commentObservable, likeObservable, followObservable, shareObservable,
+            new Func4<NotificationResponse, NotificationResponse, NotificationResponse, NotificationResponse, NotificationResponse>() {
 
                 @Override
-                public NotificationResponse call(NotificationResponse comment, NotificationResponse like, NotificationResponse follow) {
+                public NotificationResponse call(NotificationResponse comment, NotificationResponse like, NotificationResponse follow, NotificationResponse share) {
                     NotificationResponse zipedResponse = new NotificationResponse();
                     zipedResponse.notifications = new ArrayList<>();
                     zipedResponse.notifications.addAll(comment.notifications);
                     zipedResponse.notifications.addAll(like.notifications);
                     zipedResponse.notifications.addAll(follow.notifications);
+                    zipedResponse.notifications.addAll(share.notifications);
                     Collections.sort(zipedResponse.notifications, new Comparator<Notification>() {
                         @Override
                         public int compare(Notification o1, Notification o2) {
