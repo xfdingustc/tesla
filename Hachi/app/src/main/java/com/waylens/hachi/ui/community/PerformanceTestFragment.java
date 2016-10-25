@@ -422,26 +422,17 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         if (raceQueryResponse.leaderboard == null) {
             return;
         }
-        ArrayList<Moment> momentList = new ArrayList<>();
-        for (int i = 0; i < raceQueryResponse.leaderboard.size(); i++) {
-            Moment moment = raceQueryResponse.leaderboard.get(i).moment;
-            moment.owner = new User();
-            UserDeprecated owner = raceQueryResponse.leaderboard.get(i).owner;
-            moment.owner.userID = owner.userID;
-            moment.owner.avatarUrl = owner.avatarUrl;
-            moment.owner.userName = owner.userName;
-            momentList.add(moment);
-        }
+
 
         if (isRefresh) {
-            mAdapter.setMoments(momentList, mRaceType, mLeaderBoardMode);
-            if (momentList.size() == 0) {
+            mAdapter.setMoments(raceQueryResponse.leaderboard, mRaceType, mLeaderBoardMode);
+            if (raceQueryResponse.leaderboard.size() == 0) {
                 mNoDataLayout.setVisibility(View.VISIBLE);
             } else {
                 mNoDataLayout.setVisibility(View.INVISIBLE);
             }
         } else {
-            mAdapter.addMoments(momentList);
+            mAdapter.addMoments(raceQueryResponse.leaderboard);
         }
         int bestRankIndex = -1;
         int rank = -1;
@@ -470,7 +461,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             mMyTestLayout.setVisibility(View.GONE);
         }
         mRvLeaderboardList.setIsLoadingMore(false);
-        mCurrentCursor += momentList.size();
+        mCurrentCursor += raceQueryResponse.leaderboard.size();
 
         mRvLeaderboardList.setEnableLoadMore(false);
         mAdapter.setHasMore(false);
@@ -549,7 +540,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         mMyLeaderBoardPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MomentActivity.launch((BaseActivity) getActivity(), moment.id, moment.thumbnail, mMyLeaderBoardPlay);
+                MomentActivity.launch(getActivity(), moment.id, moment.thumbnail, mMyLeaderBoardPlay);
             }
         });
 
