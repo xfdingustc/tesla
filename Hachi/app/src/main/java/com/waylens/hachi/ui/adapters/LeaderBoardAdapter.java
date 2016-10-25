@@ -14,6 +14,9 @@ import android.widget.ViewAnimator;
 import com.bumptech.glide.Glide;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.rest.bean.LeaderBoardItem;
+import com.waylens.hachi.rest.bean.User;
+import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
@@ -21,6 +24,8 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.entities.Moment;
+import com.waylens.hachi.ui.entities.moment.MomentAbstract;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
 
 import java.text.DecimalFormat;
@@ -42,7 +47,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int ITEM_VIEW_TYPE_MOMENT = 0;
     private static final int ITEM_VIEW_TYPE_TAIL = 1;
 
-    private List<Moment> mMoments = new ArrayList<>();
+    private List<LeaderBoardItem> mMoments = new ArrayList<>();
 
     private List<Integer> mRankings = new ArrayList<>();
 
@@ -60,7 +65,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    public void setMoments(List<Moment> moments, int raceType, int testMode) {
+    public void setMoments(List<LeaderBoardItem> moments, int raceType, int testMode) {
         mMoments = moments;
         mRaceType = raceType;
         mTestMode = testMode;
@@ -70,8 +75,8 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return;
         }
         for (int i = 0; i < mMoments.size(); i++) {
-            Moment moment = mMoments.get(i);
-            double curTime = getRaceTime(moment);
+            LeaderBoardItem moment = mMoments.get(i);
+            double curTime = getRaceTime(moment.moment);
             if (curTime > raceTime) {
                 rank = i + 1;
                 mRankings.add(i, rank);
@@ -84,7 +89,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
 
-    public void addMoments(List<Moment> moments) {
+    public void addMoments(List<LeaderBoardItem> moments) {
         if (mMoments == null) {
             mMoments = new ArrayList<>();
         }
@@ -134,10 +139,11 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
 
     private void onBindLeaderBoardItemViewHolder(final LeaderBoardItemViewHolder holder, final int position) {
-        final Moment moment = mMoments.get(position);
+        final MomentAbstract moment = mMoments.get(position).moment;
+        final User owner = mMoments.get(position).owner;
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
-        holder.userAvatar.loadAvatar(moment.owner);
-        holder.userName.setText(moment.owner.userName);
+        holder.userAvatar.loadAvatar(owner);
+        holder.userName.setText(owner.userName);
         if (moment.momentVehicleInfo.vehicleMaker != null) {
             holder.vehicleInfo.setText(moment.momentVehicleInfo.vehicleMaker + " " + moment.momentVehicleInfo.vehicleModel + " " + moment.momentVehicleInfo.vehicleYear);
         } else {
@@ -162,7 +168,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, moment.owner, holder.userAvatar);
+                UserProfileActivity.launch((Activity) mContext, owner, holder.userAvatar);
 
             }
         });
@@ -173,7 +179,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     AuthorizeActivity.launch((Activity) mContext);
                     return;
                 }
-                UserProfileActivity.launch((Activity) mContext, moment.owner, holder.userAvatar);
+                UserProfileActivity.launch((Activity) mContext, owner, holder.userAvatar);
 
             }
         });
@@ -205,7 +211,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public double getRaceTime(Moment moment) {
+    public double getRaceTime(MomentAbstract moment) {
         double raceTime = 0.0;
         switch (mRaceType) {
             case PerformanceTestFragment.RACE_TYPE_30MPH:
