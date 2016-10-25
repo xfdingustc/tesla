@@ -335,7 +335,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
-                            android:src="@drawable/ic_settings_about"
+                            android:src="@drawable/ic_info_outline"
                             android:tint="@color/material_grey_600"/>
 
                         <TextView
