@@ -23,7 +23,6 @@ import com.waylens.hachi.rest.response.NotificationResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.adapters.NotificationAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.entities.NotificationEvent;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
