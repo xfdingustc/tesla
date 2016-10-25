@@ -437,11 +437,11 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         int bestRankIndex = -1;
         int rank = -1;
         for (int i = 0; i < raceQueryResponse.userRankings.size(); i++) {
-            if (rank <= 0) {
+            if (rank < 0) {
                 rank = raceQueryResponse.userRankings.get(i).rank;
                 bestRankIndex = i;
             } else {
-                if (rank > raceQueryResponse.userRankings.get(i).rank) {
+                if (rank < raceQueryResponse.userRankings.get(i).rank) {
                     rank = raceQueryResponse.userRankings.get(i).rank;
                     bestRankIndex = i;
                 }
