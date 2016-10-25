@@ -63,9 +63,6 @@ public class FeedListAdapter extends AbsMomentListAdapter {
 
     private final Context mContext;
 
-
-
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMomentChanged(MomentChangeEvent event) {
         for (int i = 0; i < mMoments.size(); i++) {
@@ -256,7 +253,6 @@ public class FeedListAdapter extends AbsMomentListAdapter {
         }
         if (moment.isRecommended) {
             holder.recommend.setVisibility(View.VISIBLE);
-
             holder.follow.setVisibility(View.VISIBLE);
             holder.follow.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -265,16 +261,23 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                         BgJobHelper.followUser(momentEx.owner.userID, false);
                         holder.follow.setText(R.string.follow);
                         holder.follow.setActivated(false);
+                        isRecommendFollowed = false;
                     } else {
                         BgJobHelper.followUser(momentEx.owner.userID, true);
                         holder.follow.setText(R.string.following);
                         holder.follow.setActivated(true);
+                        isRecommendFollowed = true;
                     }
                 }
             });
+            if (!isRecommendFollowed) {
+                holder.follow.setActivated(false);
+                holder.follow.setText(R.string.follow);
+            } else {
+                holder.follow.setActivated(true);
+                holder.follow.setText(R.string.following);
+            }
 
-            holder.follow.setActivated(false);
-            holder.follow.setText(R.string.follow);
 
         } else {
             holder.recommend.setVisibility(View.GONE);

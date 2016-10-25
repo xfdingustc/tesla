@@ -20,11 +20,14 @@ public abstract class AbsMomentListAdapter extends RecyclerView.Adapter<Recycler
 
     protected List<MomentEx> mMoments = new ArrayList<>();
 
+    public boolean isRecommendFollowed = false;
+
 
 
 
     public void setMoments(List<MomentEx> moments) {
         mMoments = moments;
+        isRecommendFollowed = false;
         notifyDataSetChanged();
     }
 
