@@ -111,6 +111,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:palette-v7:25.0.0'
+    compile 'com.android.support.constraint:constraint-layout:+'
 
 //    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.orhanobut:logger:1.15'

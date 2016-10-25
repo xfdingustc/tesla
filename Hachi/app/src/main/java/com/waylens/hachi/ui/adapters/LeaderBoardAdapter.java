@@ -184,7 +184,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
         });
 
-        holder.playLayout.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.leaderboardPlay);
@@ -263,8 +263,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @BindView(R.id.race_time)
         TextView raceTime;
 
-        @BindView(R.id.play_layout)
-        LinearLayout playLayout;
+
 
         @BindView(R.id.leaderboard_play)
         ImageView leaderboardPlay;

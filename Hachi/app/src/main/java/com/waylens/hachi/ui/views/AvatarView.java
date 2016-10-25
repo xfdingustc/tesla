@@ -61,9 +61,6 @@ public class AvatarView extends FrameLayout {
     }
 
     public void loadAvatar(String avatarUrl, String userName) {
-
-
-
         if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {
             Drawable placeHolderDrawable;
             if (VersionHelper.isGreaterThanLollipop()) {
