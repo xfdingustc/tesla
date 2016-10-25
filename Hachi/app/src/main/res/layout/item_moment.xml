@@ -57,7 +57,10 @@
                     android:paddingRight="8dp"
                     android:textColor="?attr/tagTextColor"
                     android:textSize="12sp"
-                    tools:text="Toyota Camry 2014"/>
+                    android:singleLine="true"
+                    android:maxLength="32"
+                    android:ellipsize="end"
+                    tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
 
             </FrameLayout>
 

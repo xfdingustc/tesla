@@ -87,6 +87,7 @@ public class VersionCheckActivity extends BaseActivity {
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         Logger.t(TAG).d("select index: " + getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
                         PreferenceUtils.putString("server", getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
+                        PreferenceUtils.putBoolean("debug", true);
                     }
                 })
                 .show();

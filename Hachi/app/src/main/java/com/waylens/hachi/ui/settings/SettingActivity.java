@@ -31,6 +31,9 @@ import butterknife.OnClick;
 public class SettingActivity extends BaseActivity {
     private static final String TAG = SettingActivity.class.getSimpleName();
 
+    @BindView(R.id.ll_lighttheme)
+    View llLightTheme;
+
     @BindView(R.id.btn_light_theme)
     Switch btnLightTheme;
 
@@ -108,6 +111,10 @@ public class SettingActivity extends BaseActivity {
                 System.exit(0);
             }
         });
+
+        if (PreferenceUtils.getBoolean("debug", false) == true) {
+            llLightTheme.setVisibility(View.VISIBLE);
+        }
 
         refreshBtnLogout();
         refreshCacheSize();

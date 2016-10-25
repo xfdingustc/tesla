@@ -51,7 +51,7 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:maxLines="2"
-            tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"/>
+            tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute babababa"/>
 
         <TextView
             android:id="@+id/user_name"
@@ -135,7 +135,10 @@
                         android:textSize="12sp"
                         android:paddingLeft="32dp"
                         android:paddingRight="8dp"
-                        tools:text="Toyota Camry 2014"/>
+                        android:singleLine="true"
+                        android:maxLength="32"
+                        android:ellipsize="end"
+                        tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
 
                 </FrameLayout>
 

@@ -6,6 +6,7 @@
     <include layout="@layout/toolbar_default"/>
 
     <LinearLayout
+        android:id="@+id/ll_lighttheme"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
