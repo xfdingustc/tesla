@@ -179,6 +179,10 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                     popupMenu.getMenu().removeItem(R.id.delete);
                     popupMenu.getMenu().removeItem(R.id.edit);
                 }
+
+                if (momentEx.moment.isPictureMoment()) {
+                    popupMenu.getMenu().removeItem(R.id.edit);
+                }
                 popupMenu.getMenu().removeItem(R.id.edit);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override

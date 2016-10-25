@@ -169,7 +169,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
 
             }
         });
-        if (!TextUtils.isEmpty(momentAbstract.momentType) && momentAbstract.momentType.equals("PICTURE")) {
+        if (momentAbstract.isPictureMoment()) {
             final List<MomentPicture> momentPictures = momentEx.pictureUrls;
             if (!momentPictures.isEmpty()) {
                 MomentPicture momentPicture = momentPictures.get(0);
@@ -226,6 +226,9 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                     popupMenu.getMenu().removeItem(R.id.report);
                 } else {
                     popupMenu.getMenu().removeItem(R.id.delete);
+                    popupMenu.getMenu().removeItem(R.id.edit);
+                }
+                if (momentEx.moment.isPictureMoment()) {
                     popupMenu.getMenu().removeItem(R.id.edit);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

@@ -65,4 +65,8 @@ public class MomentAbstract implements Serializable{
     public String getRaceTime() {
         return momentTimingInfo.getRaceTime(momentType);
     }
+
+    public boolean isPictureMoment() {
+        return !TextUtils.isEmpty(momentType) && momentType.equals("PICTURE");
+    }
 }
