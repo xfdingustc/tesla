@@ -7,7 +7,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.ViewAnimator;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,10 +28,8 @@ import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

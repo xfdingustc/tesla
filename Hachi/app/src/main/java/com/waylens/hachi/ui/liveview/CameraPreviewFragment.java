@@ -25,6 +25,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.BtDevice;
@@ -103,6 +105,9 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
     @BindView(R.id.tvCameraStatus)
     TextView mTvCameraRecStatus;
 
+    @BindView(R.id.cardNotification)
+    ImageView mCardNotification;
+
     @BindView(R.id.tv_status_additional)
     TextView mTvStatusAdditional;
 
@@ -138,7 +143,6 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     @BindView(R.id.detail_obd)
     ImageView mDetailObd;
-
 
     @BindView(R.id.storageView)
     AnimationProgressBar mStorageView;
@@ -646,6 +650,16 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
     protected void init() {
         mHandler = new Handler();
+        mCardNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialDialog dialog = new MaterialDialog.Builder(CameraPreviewFragment.this.getActivity())
+                        .content(getString(R.string.low_card_space))
+                        .positiveText(R.string.ok)
+                        .build();
+                dialog.show();
+            }
+        });
 
     }
 
@@ -728,6 +742,15 @@ public class CameraPreviewFragment extends BaseFragment implements FragmentNavig
 
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
                     mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.used - spaceInfo.marked));
+                    Logger.t(TAG).d(spaceInfo.used - spaceInfo.marked);
+                    Logger.t(TAG).d(spaceInfo.used - spaceInfo.marked);
+                    if (spaceInfo.used - spaceInfo.marked < (long) 8 * 1024 * 1024 * 1024) {
+                        Logger.t(TAG).d("show notification");
+                        mCardNotification.setVisibility(View.VISIBLE);
+                    } else {
+                        Logger.t(TAG).d("hide notification");
+                        mCardNotification.setVisibility(View.INVISIBLE);
+                    }
                 }
             });
 
