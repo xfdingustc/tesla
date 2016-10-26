@@ -258,7 +258,15 @@ public class VehiclePickActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-                    ServerErrorHelper.showErrorMessage(mViewAnimator, e);
+                    Intent intent = getIntent();
+                    intent.putExtra(VEHICLE_MAKER, vehicleMaker);
+                    intent.putExtra(VEHICLE_MODEL, vehicleModel);
+                    intent.putExtra(VEHICLE_YEAR, vehicleYear);
+                    setResult(RESULT_OK, intent);
+                    Logger.t(TAG).d("set result");
+                    Logger.t(TAG).d(vehicleMaker + vehicleModel + vehicleYear);
+                    finish();
+                    //ServerErrorHelper.showErrorMessage(mViewAnimator, e);
                 }
             });
 

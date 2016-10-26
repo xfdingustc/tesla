@@ -57,8 +57,8 @@
                     android:paddingRight="8dp"
                     android:textColor="?attr/tagTextColor"
                     android:textSize="12sp"
-                    android:singleLine="true"
-                    android:maxLength="32"
+                    android:maxLines="1"
+                    android:maxEms="16"
                     android:ellipsize="end"
                     tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
 
