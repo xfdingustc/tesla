@@ -51,6 +51,11 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             videoItemViewHolder.momentTitle.setText(uploadable.getMomentTitle());
         }
+        if (uploadable.getLocalMoment() == null) {
+            videoItemViewHolder.imageMoment.setVisibility(View.VISIBLE);
+        } else {
+            videoItemViewHolder.imageMoment.setVisibility(View.INVISIBLE);
+        }
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(uploadable.getUploadProgress());
@@ -149,6 +154,9 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @BindView(R.id.btn_more)
         ImageButton btnMore;
+
+        @BindView(R.id.image_moment)
+        ImageView imageMoment;
 
         public UploadVideoItemViewHolder(View itemView) {
             super(itemView);

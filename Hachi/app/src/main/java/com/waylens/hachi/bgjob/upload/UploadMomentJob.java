@@ -59,6 +59,10 @@ public abstract class UploadMomentJob extends Job {
         return mState;
     }
 
+    public LocalMoment getLocalMoment() {
+        return mLocalMoment;
+    }
+
     public int getUploadProgress() {
         return mProgress;
     }
