@@ -1,52 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ViewAnimator xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_animator"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+<ViewAnimator android:id="@+id/view_animator"
+              xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
 
     <ProgressBar
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
         android:layout_margin="8dp"
-        android:indeterminateTint="@color/style_color_primary"/>
+        android:indeterminateTint="?attr/colorAccent"/>
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="72dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:text="@string/finish_100_race_data"
+        android:textColor="?attr/colorAccent"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:textAllCaps="true"
+        android:textSize="14sp"/>
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="53dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/icon_leaderboard_end">
 
-        </ImageView>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
-            android:layout_gravity="center"
-            android:gravity="bottom"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_marginBottom="6dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="@color/app_text_color_secondary"
-                android:textSize="14sp"
-                android:text="@string/finish_100_race_data"/>
-        </LinearLayout>
-
-    </LinearLayout>
 
 
 </ViewAnimator>
