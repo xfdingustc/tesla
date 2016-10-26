@@ -32,11 +32,11 @@
             app:dddividerColor="?attr/defaultBgColor"
             app:ddmaskColor="@color/transparent_mask"
             app:ddmenuBackgroundColor="?attr/defaultBgColor"
-            app:ddmenuSelectedIcon="@drawable/drop_down_unselected_icon"
+            app:ddmenuSelectedIcon="@drawable/ic_arrow_drop_down"
             app:ddmenuTextSize="14sp"
-            app:ddmenuUnselectedIcon="@drawable/drop_down_unselected_icon"
-            app:ddtextSelectedColor="@color/app_color_control_activated"
-            app:ddtextUnselectedColor="@color/app_color_control_activated"
+            app:ddmenuUnselectedIcon="@drawable/ic_arrow_drop_down"
+            app:ddtextSelectedColor="?attr/appTextColorPrimary"
+            app:ddtextUnselectedColor="?attr/appTextColorPrimary"
             app:ddunderlineColor="?attr/separateColor"
             />
 

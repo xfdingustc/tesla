@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -104,7 +105,7 @@ public class DropDownMenu extends LinearLayout {
         if (tabTexts.size() != popupViews.size()) {
             throw new IllegalArgumentException("params not match, tabTexts.size() should be equal popupViews.size()");
         }
-        addImageHeader(getResources().getDrawable(R.drawable.btn_leaderboard_auto));
+//        addImageHeader(getResources().getDrawable(R.drawable.btn_leaderboard_auto));
         for (int i = 0; i < tabTexts.size(); i++) {
             addTab(tabTexts, i);
         }
@@ -139,13 +140,15 @@ public class DropDownMenu extends LinearLayout {
         final TextView tab = new TextView(getContext());
         tab.setSingleLine();
         tab.setEllipsize(TextUtils.TruncateAt.END);
-        tab.setGravity(Gravity.CENTER);
+        tab.setGravity(Gravity.LEFT);
         tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, menuTextSize);
-        tab.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f));
+        LayoutParams layoutParams = new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+        layoutParams.gravity = Gravity.CENTER_VERTICAL;
+        tab.setLayoutParams(layoutParams);
         tab.setTextColor(textUnselectedColor);
         tab.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(menuUnselectedIcon), null);
         tab.setText(tabTexts.get(i));
-        tab.setPadding(dpTpPx(5), dpTpPx(12), dpTpPx(5), dpTpPx(12));
+        tab.setPadding(dpTpPx(8), dpTpPx(16), dpTpPx(8), dpTpPx(16));
         tab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
