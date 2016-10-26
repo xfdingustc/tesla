@@ -449,6 +449,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             } else {
                 uploadMenuItem.setVisible(false);
             }
+            MenuItem enhanceItem = mActionMode.getMenu().findItem(R.id.menu_to_enhance);
+            if (mClipSetType == Clip.TYPE_MARKED) {
+                enhanceItem.setVisible(true);
+            } else {
+                enhanceItem.setVisible(false);
+            }
+
 
 
         }
