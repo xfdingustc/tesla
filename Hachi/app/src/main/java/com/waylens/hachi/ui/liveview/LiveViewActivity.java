@@ -781,8 +781,11 @@ public class LiveViewActivity extends BaseActivity {
                     mTvSpaceLeft.setText(StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used) + " " + getString(R.string.ready_to_record));
 
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
-                    mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.used - spaceInfo.marked));
-                    if (spaceInfo.used - spaceInfo.marked < (long) 8 * 1024 * 1024 * 1024) {
+
+                    mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used));
+                    Logger.t(TAG).d(spaceInfo.total - spaceInfo.used);
+                    if (spaceInfo.total - spaceInfo.used < (long) 8 * 1024 * 1024 * 1024) {
+                        Logger.t(TAG).d("show notification");
                         mCardNotification.setVisibility(View.VISIBLE);
                     } else {
                         mCardNotification.setVisibility(View.INVISIBLE);
