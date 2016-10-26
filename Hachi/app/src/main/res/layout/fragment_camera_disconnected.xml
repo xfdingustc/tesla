@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/windowBackground"
+                android:background="?attr/defaultBgColor"
                 android:orientation="vertical">
 
     <ImageView
@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/camera_lost_connection"/>
+        android:src="@drawable/camera_lost_connection"
+        android:tint="?attr/appTextColorSecondary"/>
 
 
     <TextView
@@ -22,7 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="32dp"
         android:text="@string/no_signal"
-        android:textColor="@color/text_camera_info"/>
+        android:textColor="?attr/appTextColorSecondary"/>
 
 
 

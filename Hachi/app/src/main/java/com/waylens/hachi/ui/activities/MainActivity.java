@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.lapism.searchview.SearchView;
+import com.luseen.spacenavigation.SpaceItem;
+import com.luseen.spacenavigation.SpaceNavigationView;
+import com.luseen.spacenavigation.SpaceOnClickListener;
 import com.orhanobut.logger.Logger;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
@@ -25,6 +28,7 @@ import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
+import com.waylens.hachi.ui.liveview.LiveViewActivity;
 import com.waylens.hachi.ui.settings.AccountFragment;
 
 import java.util.HashMap;
@@ -40,11 +44,12 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 //    private ActionBarDrawerToggle mDrawerToggle;
 
-    public static final int TAB_TAG_VIDEO = 0;
-    public static final int TAB_TAG_LIVE_VIEW = 1;
-    public static final int TAB_TAG_MOMENTS = 2;
+
+    public static final int TAB_TAG_MOMENTS = 0;
+    public static final int TAB_TAG_LEADERBOARD = 1;
+    public static final int TAB_TAG_VIDEO = 2;
     public static final int TAB_TAG_ACCOUNT = 3;
-    public static final int TAB_TAG_LEADERBOARD = 4;
+
 
     public static final int REQUEST_CODE_SIGN_UP_FROM_MOMENTS = 100;
 
@@ -52,18 +57,18 @@ public class MainActivity extends BaseActivity {
     private Map<Integer, Integer> mTab2MenuId = new HashMap<>();
 
     private Fragment[] mFragmentList = new Fragment[]{
-        new ClipVideoFragment(),
-        new CameraPreviewFragment(),
         new CommunityFragment(),
-        new AccountFragment(),
         new PerformanceTestFragment(),
+        new ClipVideoFragment(),
+        new AccountFragment(),
+
     };
 
     private Fragment mCurrentFragment = null;
 
 
-    @BindView(R.id.bottomBar)
-    BottomBar mBottomBar;
+    @BindView(R.id.spaceNaviationView)
+    SpaceNavigationView spaceNavigationView;
 
 
     private boolean mIsRestored;
@@ -93,10 +98,10 @@ public class MainActivity extends BaseActivity {
         super.onConfigurationChanged(newConfig);
         if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
             hideSystemUI(true);
-            mBottomBar.setVisibility(View.GONE);
+//            mBottomBar.setVisibility(View.GONE);
         } else {
             hideSystemUI(false);
-            mBottomBar.setVisibility(View.VISIBLE);
+//            mBottomBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -107,7 +112,6 @@ public class MainActivity extends BaseActivity {
         mTab2MenuId.put(TAB_TAG_MOMENTS, R.id.moments);
         mTab2MenuId.put(TAB_TAG_ACCOUNT, R.id.setting);
         mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
-        mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.live_view);
         mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderboard);
 
 
@@ -115,39 +119,42 @@ public class MainActivity extends BaseActivity {
 
         RegistrationIntentService.launch(this);
 
+
+        switchFragment(TAB_TAG_MOMENTS);
+
         if (VdtCameraManager.getManager().isConnected()) {
-//            mBottomBar.selectTabWithId(R.id.live_view);
-            mBottomBar.setDefaultTab(R.id.live_view);
-//            initFragment(TAB_TAG_LIVE_VIEW);
-        } else {
-//            initFragment(TAB_TAG_MOMENTS);
-            mBottomBar.setDefaultTab(R.id.moments);
+            LiveViewActivity.launch(MainActivity.this);
         }
     }
 
 
     private void initViews() {
         setContentView(R.layout.activity_main);
-        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+
+        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.moments), R.drawable.moments_tab));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.leaderboard), R.drawable.ic_virtual_racing));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.video), R.drawable.tab_video_n));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.account), R.drawable.ic_person));
+//        spaceNavigationView.addSpaceItem(new SpaceItem("ACCOUNT", R.drawable.account));
+        spaceNavigationView.showIconOnly();
+        spaceNavigationView.shouldShowFullBadgeText(true);
+
+
+        spaceNavigationView.setCentreButtonIcon(R.drawable.tab_liveview_n);
+        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
-            public void onTabSelected(@IdRes int tabId) {
-                switch (tabId) {
-                    case R.id.moments:
-                        switchFragment(TAB_TAG_MOMENTS);
-                        break;
-                    case R.id.account:
-                        switchFragment(TAB_TAG_ACCOUNT);
-                        break;
-                    case R.id.video:
-                        switchFragment(TAB_TAG_VIDEO);
-                        break;
-                    case R.id.live_view:
-                        switchFragment(TAB_TAG_LIVE_VIEW);
-                        break;
-                    case R.id.leaderboard:
-                        switchFragment(TAB_TAG_LEADERBOARD);
-                        break;
-                }
+            public void onCentreButtonClick() {
+                LiveViewActivity.launch(MainActivity.this);
+            }
+
+            @Override
+            public void onItemClick(int itemIndex, String itemName) {
+                switchFragment(itemIndex);
+            }
+
+            @Override
+            public void onItemReselected(int itemIndex, String itemName) {
+
             }
         });
 
@@ -264,7 +271,7 @@ public class MainActivity extends BaseActivity {
         if (mReturnSnackBar != null && mReturnSnackBar.isShown()) {
             super.onBackPressed();
         } else {
-            mReturnSnackBar = Snackbar.make(mBottomBar, getText(R.string.backpressed_hint), Snackbar.LENGTH_LONG);
+            mReturnSnackBar = Snackbar.make(spaceNavigationView, getText(R.string.backpressed_hint), Snackbar.LENGTH_LONG);
             mReturnSnackBar.show();
         }
     }

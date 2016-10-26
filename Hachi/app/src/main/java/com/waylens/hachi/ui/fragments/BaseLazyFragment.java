@@ -76,11 +76,11 @@ public abstract class BaseLazyFragment extends BaseMVPFragment implements BaseVi
             throw new IllegalArgumentException("You must return a right target view for loading");
         }
 
-        if (toggle) {
-            mVaryViewHelpercontroller.showLoading(msg);
-        } else {
-            mVaryViewHelpercontroller.restore();
-        }
+//        if (toggle) {
+//            mVaryViewHelpercontroller.showLoading(msg);
+//        } else {
+//            mVaryViewHelpercontroller.restore();
+//        }
     }
 
 

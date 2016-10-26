@@ -207,6 +207,9 @@
             android:name=".ui.settings.AboutActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".ui.liveview.LiveViewActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".ui.settings.ShareSettingActivity"
             android:screenOrientation="portrait"/>

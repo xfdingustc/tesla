@@ -157,6 +157,7 @@ dependencies {
     compile 'com.xfdingustc:rxutils:0.1'
     compile 'com.roughike:bottom-bar:2.0.2'
     compile 'com.github.pavlospt:roundedletterview:1.2'
+    compile 'com.github.armcha:SpaceNavigationView:1.4.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
