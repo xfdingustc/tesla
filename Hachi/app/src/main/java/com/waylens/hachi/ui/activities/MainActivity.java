@@ -56,7 +56,7 @@ public class MainActivity extends BaseActivity {
         new CameraPreviewFragment(),
         new CommunityFragment(),
         new AccountFragment(),
-//        new PerformanceTestFragment(),
+        new PerformanceTestFragment(),
     };
 
     private Fragment mCurrentFragment = null;
@@ -108,7 +108,7 @@ public class MainActivity extends BaseActivity {
         mTab2MenuId.put(TAB_TAG_ACCOUNT, R.id.setting);
         mTab2MenuId.put(TAB_TAG_VIDEO, R.id.video);
         mTab2MenuId.put(TAB_TAG_LIVE_VIEW, R.id.live_view);
-//        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderboard);
+        mTab2MenuId.put(TAB_TAG_LEADERBOARD, R.id.leaderboard);
 
 
         initViews();
@@ -144,9 +144,9 @@ public class MainActivity extends BaseActivity {
                     case R.id.live_view:
                         switchFragment(TAB_TAG_LIVE_VIEW);
                         break;
-//                    case R.id.leaderboard:
-//                        switchFragment(TAB_TAG_LEADERBOARD);
-//                        break;
+                    case R.id.leaderboard:
+                        switchFragment(TAB_TAG_LEADERBOARD);
+                        break;
                 }
             }
         });

@@ -4,10 +4,10 @@
         id="@+id/moments"
         icon="@drawable/moments_tab"
         title="@string/moments" />
-    <!--<tab-->
-        <!--id="@+id/leaderboard"-->
-        <!--icon="@drawable/ic_virtual_racing"-->
-        <!--title="@string/leaderboard" />-->
+    <tab
+        id="@+id/leaderboard"
+        icon="@drawable/ic_virtual_racing"
+        title="@string/leaderboard" />
 
     <tab
         id="@+id/live_view"
