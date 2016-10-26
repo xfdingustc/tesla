@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 
 /**
  * Created by Xiaofei on 2016/5/23.

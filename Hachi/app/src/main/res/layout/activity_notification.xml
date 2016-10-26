@@ -6,30 +6,16 @@
 
     <include layout="@layout/toolbar_default"/>
 
-    <ViewAnimator
-        android:id="@+id/notification_view_animator"
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
-        <ProgressBar
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminateTint="@color/style_color_accent"
-            />
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_layout"
+        <com.waylens.hachi.ui.views.RecyclerViewExt
+            android:id="@+id/notification_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.waylens.hachi.ui.views.RecyclerViewExt
-                android:id="@+id/notification_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
-    </ViewAnimator>
+            android:layout_height="match_parent"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

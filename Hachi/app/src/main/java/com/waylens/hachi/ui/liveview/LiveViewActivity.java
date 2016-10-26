@@ -394,7 +394,18 @@ public class LiveViewActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
         setContentView(R.layout.activity_live_view);
+        mCardNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MaterialDialog dialog = new MaterialDialog.Builder(LiveViewActivity.this)
+                    .content(getString(R.string.low_card_space))
+                    .positiveText(R.string.ok)
+                    .build();
+                dialog.show();
+            }
+        });
         mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
         startPreview();
     }
@@ -646,16 +657,7 @@ public class LiveViewActivity extends BaseActivity {
 
     protected void init() {
         mHandler = new Handler();
-        mCardNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MaterialDialog dialog = new MaterialDialog.Builder(LiveViewActivity.this)
-                    .content(getString(R.string.low_card_space))
-                    .positiveText(R.string.ok)
-                    .build();
-                dialog.show();
-            }
-        });
+
 
     }
 
@@ -777,7 +779,7 @@ public class LiveViewActivity extends BaseActivity {
                 }, new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e(TAG, "LiveRawDataResponse ERROR", error);
+                    Logger.t(TAG).e("LiveRawDataResponse ERROR", error);
                 }
             });
 

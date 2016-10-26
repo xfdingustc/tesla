@@ -7,10 +7,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.view.WindowManager;
 
 import com.lapism.searchview.SearchView;
@@ -18,8 +16,6 @@ import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
 import com.orhanobut.logger.Logger;
-import com.roughike.bottombar.BottomBar;
-import com.roughike.bottombar.OnTabSelectListener;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -27,7 +23,6 @@ import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.waylens.hachi.ui.liveview.CameraPreviewFragment;
 import com.waylens.hachi.ui.liveview.LiveViewActivity;
 import com.waylens.hachi.ui.settings.AccountFragment;
 
@@ -182,12 +177,6 @@ public class MainActivity extends BaseActivity {
 
         Fragment fragment = mFragmentList[tag];
 
-
-        /*
-         * Here we have to go through this detach, replace, attach, and addToBackStack way,
-         * to solve the ChildFragmentManager/ViewPager bug of Android
-         * https://code.google.com/p/android/issues/detail?id=42601
-         */
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         boolean mUseHideAndShow = true;
 
@@ -197,11 +186,8 @@ public class MainActivity extends BaseActivity {
         } else {
             if (!fragment.isAdded()) {
                 transaction.hide(mCurrentFragment).add(R.id.fragment_content, fragment).commit();
-                stopLiveView();
             } else {
                 transaction.hide(mCurrentFragment).show(fragment).commit();
-                stopLiveView();
-                startLiveView(fragment);
             }
 
 
@@ -210,28 +196,13 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    /**
-     * The following 2 methods do something trick, because we use fragment hide/show,
-     * instead of replace/backStack.
-     */
-    private void stopLiveView() {
-        if (mCurrentFragment instanceof CameraPreviewFragment) {
-            ((CameraPreviewFragment) mCurrentFragment).stopPreview();
-        }
-    }
-
-    private void startLiveView(Fragment fragment) {
-        if (fragment instanceof CameraPreviewFragment) {
-            ((CameraPreviewFragment) fragment).startPreview();
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_CODE_SIGN_UP_FROM_MOMENTS:
                 if (resultCode == RESULT_OK && (mCurrentFragment instanceof CommunityFragment)) {
-                    Logger.t(TAG).e("test", "notifyDateChanged");
+                    Logger.t(TAG).e("notifyDateChanged");
                     ((CommunityFragment) mCurrentFragment).notifyDateChanged();
                 }
                 break;

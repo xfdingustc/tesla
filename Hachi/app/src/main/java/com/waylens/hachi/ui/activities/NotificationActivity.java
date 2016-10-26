@@ -50,9 +50,6 @@ public class NotificationActivity extends BaseActivity {
     public static final String TAG = NotificationActivity.class.getSimpleName();
     public static final int DEFAULT_COUNT = 20;
 
-    @BindView(R.id.notification_view_animator)
-    ViewAnimator mNotificationViewAnimator;
-
     @BindView(R.id.notification_list)
     RecyclerViewExt mRvNotificationList;
 
@@ -135,6 +132,9 @@ public class NotificationActivity extends BaseActivity {
     }
 
     private void loadNotificationsRx(final boolean isRefresh) {
+//        if (isRefresh) {
+//            mRefreshLayout.setRefreshing(true);
+//        }
         HachiApi hachiApi = HachiService.createHachiApiService();
         Observable<NotificationResponse> commentObservable = hachiApi.getCommentNotificationRx(mCommentCursor, DEFAULT_COUNT)
             .doOnNext(new Action1<NotificationResponse>() {
@@ -210,9 +210,7 @@ public class NotificationActivity extends BaseActivity {
                 public void onNext(NotificationResponse notificationResponse) {
                     mRefreshLayout.setRefreshing(false);
                     mAdapter.addNotifications(notificationResponse.notifications, isRefresh);
-                    if (mNotificationViewAnimator != null) {
-                        mNotificationViewAnimator.setDisplayedChild(1);
-                    }
+
                     mRvNotificationList.setIsLoadingMore(false);
                     if (mCommentCursor > 0 || mFollowCursor > 0 || mLikeCursor > 0) {
                         mRvNotificationList.setEnableLoadMore(true);
@@ -230,10 +228,8 @@ public class NotificationActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
+                    mRefreshLayout.setRefreshing(false);
                     ServerErrorHelper.showErrorMessage(mRvNotificationList, e);
-                    if (mNotificationViewAnimator != null) {
-                        mNotificationViewAnimator.setDisplayedChild(1);
-                    }
                 }
             });
 
