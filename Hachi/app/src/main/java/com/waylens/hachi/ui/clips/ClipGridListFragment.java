@@ -444,7 +444,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         if (mActionMode != null) {
             mActionMode.setTitle("" + mAdapter.getSelectedClipList().size());
             MenuItem uploadMenuItem = mActionMode.getMenu().findItem(R.id.menu_to_upload);
-            if (mAdapter.getSelectedClipList().size() == 1) {
+            if (mClipSetType == Clip.TYPE_MARKED && mAdapter.getSelectedClipList().size() == 1) {
                 uploadMenuItem.setVisible(true);
             } else {
                 uploadMenuItem.setVisible(false);
