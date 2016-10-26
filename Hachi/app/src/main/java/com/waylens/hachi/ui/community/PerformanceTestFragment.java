@@ -41,6 +41,7 @@ import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ThemeHelper;
+import com.waylens.hachi.utils.ViewUtils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import java.text.DecimalFormat;
@@ -366,6 +367,9 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     }
 
     private void loadLeaderBoard(int cursor, final boolean isRefresh) {
+        if (isRefresh) {
+            mRefreshLayout.setRefreshing(true);
+        }
         final RaceQueryBody raceQueryBody = new RaceQueryBody();
         raceQueryBody.mode = mLeaderBoardMode;
         if (mLeaderBoardMode == TEST_MODE_AUTO) {
@@ -424,6 +428,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
 
         if (isRefresh) {
+            ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + mDropDownMenu.getHeight());
             mAdapter.setMoments(raceQueryResponse.leaderboard, mRaceType, mLeaderBoardMode);
             if (raceQueryResponse.leaderboard.size() == 0) {
                 mNoDataLayout.setVisibility(View.VISIBLE);

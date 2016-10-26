@@ -63,10 +63,7 @@ import rx.schedulers.Schedulers;
 public class UserProfileActivity extends BaseActivity {
     private static final String TAG = UserProfileActivity.class.getSimpleName();
     private static final String EXTRA_USER = "user";
-//    private static final String EXTRA_USER_ID = "user_id";
-//    private static final String EXTRA_USER_AVATAR = "user_avatar";
 
-    //    private String mUserID;
 
     private ElasticDragDismissFrameLayout.SystemChromeFader chromeFader;
     private MomentsListAdapter mMomentRvAdapter;
