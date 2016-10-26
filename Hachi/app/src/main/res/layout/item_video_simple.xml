@@ -39,6 +39,8 @@
                 android:progressDrawable="@drawable/upload_progress_drawable"
                 tools:progress="50"/>
 
+
+
             <TextView
                 android:id="@+id/video_duration"
                 android:layout_width="wrap_content"
@@ -49,6 +51,16 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 tools:text="01:08"/>
+
+            <ImageView
+                android:id="@+id/image_moment"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="12dp"
+                android:alpha="0.8"
+                android:tint="@android:color/white"
+                android:src="@drawable/ic_landscape"/>
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

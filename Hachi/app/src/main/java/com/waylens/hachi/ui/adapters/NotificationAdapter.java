@@ -158,7 +158,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         if (notification.moment != null) {
-            Logger.t(TAG).d("moment: " + notification.moment.toString());
+//            Logger.t(TAG).d("moment: " + notification.moment.toString());
             holder.thumbnailContainer.setVisibility(View.VISIBLE);
             Glide.with(mContext)
                 .load(notification.moment.videoThumbnail)

@@ -15,11 +15,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.community.MomentActivity;
+import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,29 +53,57 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
-        final VideoItemViewHolder videoItemViewHolder = (VideoItemViewHolder) holder;
+        final VideoItemViewHolder viewHolder = (VideoItemViewHolder) holder;
         final MomentEx uploadedMoment = mUploadedMomentList.get(position);
-        videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
-        videoItemViewHolder.momentTitle.setText(uploadedMoment.moment.title);
-        videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
-        videoItemViewHolder.description.setText(PrettyTimeUtils.getTimeAgo(uploadedMoment.moment.uploadTime));
-        videoItemViewHolder.description.setVisibility(View.VISIBLE);
-        Glide.with(mActivity)
-            .load(uploadedMoment.moment.thumbnail)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .crossFade()
-            .into(videoItemViewHolder.videoCover);
+        viewHolder.uploadProgress.setVisibility(View.GONE);
+        viewHolder.momentTitle.setText(uploadedMoment.moment.title);
+        viewHolder.uploadStatus.setVisibility(View.GONE);
+        viewHolder.description.setText(PrettyTimeUtils.getTimeAgo(uploadedMoment.moment.uploadTime));
+        viewHolder.description.setVisibility(View.VISIBLE);
 
-        videoItemViewHolder.videoDuration.setText(DateUtils.formatElapsedTime(uploadedMoment.moment.duration / 1000l));
-        videoItemViewHolder.btnMore.setVisibility(View.GONE);
-        videoItemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MomentActivity.launch(mActivity, uploadedMoment.moment.id, uploadedMoment.moment.thumbnail, videoItemViewHolder.videoCover);
+        if (uploadedMoment.moment.isPictureMoment()) {
+            if (!uploadedMoment.pictureUrls.isEmpty()) {
+                final String cover = uploadedMoment.pictureUrls.get(0).getMomentPicturlUrl();
+                Glide.with(mActivity)
+                    .load(cover)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(viewHolder.videoCover);
+                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PhotoViewActivity.launch(mActivity, uploadedMoment, cover, position);
+                    }
+                });
+            } else {
+                viewHolder.itemView.setOnClickListener(null);
             }
-        });
+            viewHolder.videoDuration.setVisibility(View.GONE);
+            viewHolder.imageMoment.setVisibility(View.VISIBLE);
+
+
+        } else {
+            Glide.with(mActivity)
+                .load(uploadedMoment.moment.thumbnail)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .crossFade()
+                .into(viewHolder.videoCover);
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MomentActivity.launch(mActivity, uploadedMoment.moment.id, uploadedMoment.moment.thumbnail, viewHolder.videoCover);
+                }
+            });
+            viewHolder.videoDuration.setText(DateUtils.formatElapsedTime(uploadedMoment.moment.duration / 1000l));
+            viewHolder.imageMoment.setVisibility(View.GONE);
+            viewHolder.videoDuration.setVisibility(View.VISIBLE);
+        }
+
+
+        viewHolder.btnMore.setVisibility(View.GONE);
+
 
 
     }
@@ -109,6 +137,9 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @BindView(R.id.btn_more)
         ImageButton btnMore;
+
+        @BindView(R.id.image_moment)
+        ImageView imageMoment;
 
 
         public VideoItemViewHolder(View itemView) {

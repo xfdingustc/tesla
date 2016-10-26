@@ -2,6 +2,8 @@ package com.waylens.hachi.ui.entities;
 
 
 
+import android.text.TextUtils;
+
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import java.io.Serializable;
@@ -19,5 +21,15 @@ public class MomentPicture implements Serializable{
     @Override
     public String toString() {
         return ToStringUtils.getString(this);
+    }
+
+    public String getMomentPicturlUrl() {
+        if (!TextUtils.isEmpty(bigThumbnail)) {
+            return bigThumbnail;
+        } else if (!TextUtils.isEmpty(smallThumbnail)) {
+            return smallThumbnail;
+        } else {
+            return original;
+        }
     }
 }

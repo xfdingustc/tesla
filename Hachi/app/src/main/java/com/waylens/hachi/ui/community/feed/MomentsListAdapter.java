@@ -172,16 +172,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
         if (momentAbstract.isPictureMoment()) {
             final List<MomentPicture> momentPictures = momentEx.pictureUrls;
             if (!momentPictures.isEmpty()) {
-                MomentPicture momentPicture = momentPictures.get(0);
-                final String cover;
-                if (!TextUtils.isEmpty(momentPicture.bigThumbnail)) {
-                    cover = momentPicture.bigThumbnail;
-                } else if (!TextUtils.isEmpty(momentPicture.smallThumbnail)) {
-                    cover = momentPicture.smallThumbnail;
-                } else {
-                    cover = momentPicture.original;
-                }
-                Logger.t(TAG).d("picture: " + momentPictures.get(0).toString());
+                final String cover= momentPictures.get(0).getMomentPicturlUrl();
                 Glide.with(mContext)
                     .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
