@@ -1,5 +1,7 @@
 package com.waylens.hachi.rest.bean;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 /**
@@ -14,6 +16,10 @@ public class VehicleInfo implements Serializable {
 
     @Override
     public String toString() {
-        return vehicleMaker + " " + vehicleModel + " " + vehicleYear;
+        if (!TextUtils.isEmpty(vehicleModel)) {
+            return vehicleMaker + " " + vehicleModel + " " + vehicleYear;
+        } else {
+            return null;
+        }
     }
 }

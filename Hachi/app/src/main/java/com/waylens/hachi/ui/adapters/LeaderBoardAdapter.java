@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.LeaderBoardItem;
@@ -144,10 +146,8 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         holder.userAvatar.loadAvatar(owner);
         holder.userName.setText(owner.userName);
-        if (moment.momentVehicleInfo.vehicleMaker != null) {
-            holder.vehicleInfo.setText(moment.momentVehicleInfo.vehicleMaker + " " + moment.momentVehicleInfo.vehicleModel + " " + moment.momentVehicleInfo.vehicleYear);
-        } else {
-            holder.vehicleInfo.setText("");
+        if (moment.momentVehicleInfo.toString() != null) {
+            holder.vehicleInfo.setText(moment.momentVehicleInfo.toString());
         }
         double raceTime = 0.0;
         raceTime = getRaceTime(moment);
@@ -160,6 +160,12 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape));
         }
+
+        Glide.with(mContext)
+            .load(moment.thumbnail)
+            .crossFade()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(holder.momentThumbnail);
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -187,7 +193,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.leaderboardPlay);
+                MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.momentThumbnail);
             }
         });
 
@@ -263,10 +269,8 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @BindView(R.id.race_time)
         TextView raceTime;
 
-
-
-        @BindView(R.id.leaderboard_play)
-        ImageView leaderboardPlay;
+        @BindView(R.id.moment_thumbnail)
+        ImageView momentThumbnail;
 
         @BindView(R.id.user_rank)
         TextView userRank;

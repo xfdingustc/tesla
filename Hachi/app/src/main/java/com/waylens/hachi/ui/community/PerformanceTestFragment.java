@@ -22,20 +22,17 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.LeaderBoardItem;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
-import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.LeaderBoardAdapter;
 import com.waylens.hachi.ui.adapters.ListDropDownAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.UserDeprecated;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
@@ -53,8 +50,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
-import retrofit2.Call;
-import retrofit2.Callback;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -421,6 +416,10 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     private void onHandleRaceQuery(RaceQueryResponse raceQueryResponse, boolean isRefresh) {
         if (raceQueryResponse.leaderboard == null) {
             return;
+        }
+
+        for (LeaderBoardItem item : raceQueryResponse.leaderboard) {
+            Logger.t(TAG).d("moment thumbnail: " + item.moment.thumbnail);
         }
 
 
