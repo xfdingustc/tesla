@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:dddividerColor="?attr/defaultBgColor"
-            app:ddmaskColor="@color/transparent_mask"
+            app:ddmaskColor="?attr/defaultBgColor"
             app:ddmenuBackgroundColor="?attr/defaultBgColor"
             app:ddmenuSelectedIcon="@drawable/ic_arrow_drop_down"
             app:ddmenuTextSize="14sp"

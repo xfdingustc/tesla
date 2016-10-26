@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -33,7 +34,7 @@ public class ListDropDownAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public ListDropDownAdapter(Context context){
+    public ListDropDownAdapter(Context context) {
         this(context, new ArrayList<String>() {
         });
     }
@@ -101,11 +102,9 @@ public class ListDropDownAdapter extends BaseAdapter {
         viewHolder.mText.setText(list.get(position));
         if (checkItemPosition != -1) {
             if (checkItemPosition == position) {
-                viewHolder.mText.setTextColor(context.getResources().getColor(R.color.app_color_control_activated));
-                viewHolder.mText.setBackgroundResource(R.color.settings_item_bg_pressed);
+                viewHolder.icDone.setVisibility(View.VISIBLE);
             } else {
-                viewHolder.mText.setTextColor(context.getResources().getColor(R.color.app_color_control_activated));
-                viewHolder.mText.setBackgroundResource(R.color.settings_item_bg_normal);
+                viewHolder.icDone.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -113,6 +112,9 @@ public class ListDropDownAdapter extends BaseAdapter {
     static class ViewHolder {
         @BindView(R.id.text)
         TextView mText;
+
+        @BindView(R.id.ic_done)
+        ImageView icDone;
 
         ViewHolder(View view) {
             ButterKnife.bind(this, view);
