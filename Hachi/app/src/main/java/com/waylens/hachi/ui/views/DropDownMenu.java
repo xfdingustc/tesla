@@ -175,14 +175,9 @@ public class DropDownMenu extends LinearLayout {
     }
 
     public void setImageHeader(Drawable drawable) {
-        ((ImageView)tabMenuView.getChildAt(0)).setImageDrawable(drawable);
+//        ((ImageView)tabMenuView.getChildAt(0)).setImageDrawable(drawable);
     }
 
-    /**
-     *
-     *
-     *
-     */
     public void setTabText(String text) {
         if (current_tab_position != -1) {
             ((TextView) tabMenuView.getChildAt(current_tab_position)).setText(text);
@@ -191,7 +186,7 @@ public class DropDownMenu extends LinearLayout {
 
     public void setTabTextAt(String text, int pos) {
         if (pos >= 0 && 2 * pos + 1< tabMenuView.getChildCount()) {
-            ((TextView) tabMenuView.getChildAt(2 * pos + 1)).setText(text);
+            ((TextView) tabMenuView.getChildAt(2 * pos )).setText(text);
         }
     }
 
@@ -223,7 +218,7 @@ public class DropDownMenu extends LinearLayout {
 
     private void switchMenu(View target) {
         System.out.println(current_tab_position);
-        for (int i = 1; i < tabMenuView.getChildCount(); i = i + 2) {
+        for (int i = 0; i < tabMenuView.getChildCount(); i = i + 2) {
             if (target == tabMenuView.getChildAt(i)) {
                 if (current_tab_position == i) {
                     closeMenu();
