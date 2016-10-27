@@ -4,11 +4,13 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,10 +20,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
@@ -37,11 +41,18 @@ import android.widget.ViewSwitcher;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.birbit.android.jobqueue.JobManager;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
 import com.waylens.hachi.rest.HachiService;
@@ -66,8 +77,12 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.SendCommentButton;
+import com.waylens.hachi.utils.AnimUtils;
+import com.waylens.hachi.utils.ColorUtils;
+import com.waylens.hachi.utils.GlideUtils;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.TransitionHelper;
+import com.waylens.hachi.utils.VersionHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;
@@ -92,6 +107,7 @@ public class MomentActivity extends BaseActivity {
     private static final String TAG = MomentActivity.class.getSimpleName();
 
     private static final int DEFAULT_COUNT = 10;
+    private static final float SCRIM_ADJUSTMENT = 0.075f;
 
     public static final String EXTRA_THUMBNAIL = "videoThumbnail";
     public static final String EXTRA_MOMENT_ID = "momentId";
@@ -147,7 +163,7 @@ public class MomentActivity extends BaseActivity {
         intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
         intent.putExtra(EXTRA_REQUEST, request);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-                false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
+            false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
@@ -374,6 +390,8 @@ public class MomentActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_moment);
 
+        updateStatusBar();
+
         queryMomentInfo();
 
         mMomentPlayFragment = MomentPlayFragment.newInstance(mMomentId, mThumbnail);
@@ -385,6 +403,24 @@ public class MomentActivity extends BaseActivity {
 
 
 //
+    }
+
+    private void updateStatusBar() {
+        Glide.with(this)
+            .load(mThumbnail)
+            .asBitmap()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .priority(Priority.IMMEDIATE)
+            .into(new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(final Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                    calcStatusBarColor(resource);
+
+                }
+
+
+            });
+
     }
 
     private void addComment() {
@@ -724,7 +760,7 @@ public class MomentActivity extends BaseActivity {
     }
 
     private void loadComments(int cursor, final boolean isRefresh) {
-        Logger.t(TAG).d("loadcomment  " + mMomentInfo + " moment id: " + mMomentInfo.moment.id);
+//        Logger.t(TAG).d("loadcomment  " + mMomentInfo + " moment id: " + mMomentInfo.moment.id);
         if (mMomentInfo == null || mMomentInfo.moment.id == Moment.INVALID_MOMENT_ID) {
             Logger.t(TAG).d("null");
             return;
@@ -848,4 +884,57 @@ public class MomentActivity extends BaseActivity {
             return false;
         }
     }
+
+    private void calcStatusBarColor(final Bitmap resource) {
+        final int twentyFourDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics());
+        if (VersionHelper.isGreaterThanLollipop()) {
+            Palette.from(resource)
+                .maximumColorCount(3)
+                .clearFilters()
+                .setRegion(0, 0, resource.getWidth() - 1, twentyFourDip)
+                .generate(new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        boolean isDark;
+                        int lightness = ColorUtils.isDark(palette);
+                        if (lightness == ColorUtils.LIGHTNESS_UNKNOWN) {
+                            isDark = ColorUtils.isDark(resource, resource.getWidth() / 2, 0);
+                        } else {
+                            isDark = lightness == ColorUtils.IS_DARK;
+                        }
+
+                        int statusBarColor = getWindow().getStatusBarColor();
+                        final Palette.Swatch topColor = ColorUtils.getMostPopulousSwatch(palette);
+                        if (topColor != null &&
+                            (isDark || Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+                            statusBarColor = ColorUtils.scrimify(topColor.getRgb(),
+                                isDark, SCRIM_ADJUSTMENT);
+                            // set a light status bar on M+
+                            if (!isDark && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                ViewUtils.setLightStatusBar(imageView);
+                            }
+                        }
+                        if (statusBarColor != getWindow().getStatusBarColor()) {
+//                            imageView.setScrimColor(statusBarColor);
+                            ValueAnimator statusBarColorAnim = ValueAnimator.ofArgb(
+                                getWindow().getStatusBarColor(), statusBarColor);
+                            statusBarColorAnim.addUpdateListener(new ValueAnimator
+                                .AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator animation) {
+                                    getWindow().setStatusBarColor(
+                                        (int) animation.getAnimatedValue());
+                                }
+                            });
+                            statusBarColorAnim.setDuration(1000L);
+                            statusBarColorAnim.setInterpolator(
+                                AnimUtils.getFastOutSlowInInterpolator(MomentActivity.this));
+                            statusBarColorAnim.start();
+                        }
+                    }
+                });
+        }
+    }
+
+
 }

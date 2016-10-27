@@ -152,6 +152,7 @@ public class DropDownMenu extends LinearLayout {
         tab.setTextColor(textUnselectedColor);
         tab.setAllCaps(true);
         tab.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(menuUnselectedIcon), null);
+//        tab.setCompoundDrawables(null, null, getResources().getDrawable(menuUnselectedIcon), null);
         tab.setText(tabTexts.get(i));
         tab.setPadding(ViewUtils.dp2px(16), ViewUtils.dp2px(16), ViewUtils.dp2px(16), ViewUtils.dp2px(16));
         tab.setOnClickListener(new OnClickListener() {
