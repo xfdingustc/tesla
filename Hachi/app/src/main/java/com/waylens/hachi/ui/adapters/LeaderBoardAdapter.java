@@ -178,18 +178,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         });
-        holder.userName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!SessionManager.getInstance().isLoggedIn()) {
-                    AuthorizeActivity.launch((Activity) mContext);
-                    return;
-                }
-                UserProfileActivity.launch((Activity) mContext, owner, holder.userAvatar);
-
-            }
-        });
-
+        
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
