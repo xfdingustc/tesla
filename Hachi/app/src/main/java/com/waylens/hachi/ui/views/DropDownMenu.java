@@ -140,15 +140,15 @@ public class DropDownMenu extends LinearLayout {
         final TextView tab = new TextView(getContext());
         tab.setSingleLine();
         tab.setEllipsize(TextUtils.TruncateAt.END);
-        tab.setGravity(Gravity.LEFT);
+//        tab.setGravity(Gravity.LEFT);
         tab.setTextSize(TypedValue.COMPLEX_UNIT_PX, menuTextSize);
         LayoutParams layoutParams = new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
-        layoutParams.gravity = Gravity.CENTER_VERTICAL;
+        layoutParams.gravity = Gravity.CENTER;
         tab.setLayoutParams(layoutParams);
         tab.setTextColor(textUnselectedColor);
         tab.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(menuUnselectedIcon), null);
         tab.setText(tabTexts.get(i));
-        tab.setPadding(dpTpPx(8), dpTpPx(16), dpTpPx(8), dpTpPx(16));
+        tab.setPadding(dpTpPx(16), dpTpPx(16), dpTpPx(16), dpTpPx(16));
         tab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

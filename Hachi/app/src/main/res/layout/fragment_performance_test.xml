@@ -29,15 +29,15 @@
             android:id="@+id/dropDownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:dddividerColor="?attr/defaultBgColor"
-            app:ddmaskColor="?attr/defaultBgColor"
-            app:ddmenuBackgroundColor="?attr/defaultBgColor"
-            app:ddmenuSelectedIcon="@drawable/ic_arrow_drop_down"
+            app:dddividerColor="?attr/toolbarColor"
+            app:ddmaskColor="?attr/toolbarColor"
+            app:ddmenuBackgroundColor="?attr/toolbarColor"
+            app:ddmenuSelectedIcon="@drawable/ic_arrow_drop_up"
             app:ddmenuTextSize="14sp"
             app:ddmenuUnselectedIcon="@drawable/ic_arrow_drop_down"
             app:ddtextSelectedColor="?attr/appTextColorPrimary"
             app:ddtextUnselectedColor="?attr/appTextColorPrimary"
-            app:ddunderlineColor="?attr/separateColor"
+            app:ddunderlineColor="?attr/toolbarColor"
             />
 
     </LinearLayout>
