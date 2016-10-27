@@ -159,6 +159,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 popupMenu.show();
             }
         });
+        viewHolder.imageMoment.setVisibility(View.GONE);
     }
 
 
@@ -189,6 +190,9 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @BindView(R.id.btn_more)
         ImageButton btnMore;
+
+        @BindView(R.id.image_moment)
+        ImageView imageMoment;
 
         public DownloadVideoItemViewHolder(View itemView) {
             super(itemView);
