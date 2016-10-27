@@ -449,11 +449,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             return;
         }
 
-        for (LeaderBoardItem item : raceQueryResponse.leaderboard) {
-            Logger.t(TAG).d("moment thumbnail: " + item.moment.thumbnail);
-        }
-
-
         if (isRefresh) {
             ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + mDropDownMenu.getHeight());
             mAdapter.setMoments(raceQueryResponse.leaderboard, mRaceType, mLeaderBoardMode);

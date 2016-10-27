@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,7 +147,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 //        Logger.t(TAG).d("moment avatar: " + moment.owner.avatarUrl + " position: " + position);
         holder.userAvatar.loadAvatar(owner);
         holder.userName.setText(owner.userName);
-        if (moment.momentVehicleInfo.toString() != null) {
+        if (!TextUtils.isEmpty(moment.momentVehicleInfo.toString())) {
             holder.vehicleInfo.setText(moment.momentVehicleInfo.toString());
             holder.vehicleInfo.setVisibility(View.VISIBLE);
         } else {
