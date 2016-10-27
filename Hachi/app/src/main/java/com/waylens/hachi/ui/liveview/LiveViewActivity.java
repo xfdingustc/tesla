@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,13 +82,14 @@ public class LiveViewActivity extends BaseActivity {
     private Handler mHandler;
     private Timer mTimer;
 
-    private UpdateRecordTimeTask mRecordTimeTask;
+    private UpdateRecordTimeTask mUpdateCameraStatusTimeTask;
     private UpdateStorageInfoTimeTask mUpdateStorageInfoTimerTask;
 
     private VdtCameraManager mVdtCameraManager = VdtCameraManager.getManager();
     private EventBus mEventBus = EventBus.getDefault();
 
     private Subscription mCameraStateChangeEventSubscription;
+    private Subscription mUpdateCameraStatusEventSubscription;
 
     private int mFabStartSrc;
 
@@ -359,11 +359,6 @@ public class LiveViewActivity extends BaseActivity {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventUpdateCameraStatus(UpdateCameraStatusEvent event) {
-        updateCameraState();
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventVdbReadyChanged(VdbReadyInfo event) {
@@ -418,7 +413,7 @@ public class LiveViewActivity extends BaseActivity {
             }
         });
         mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
-        startPreview();
+
     }
 
 
@@ -512,15 +507,7 @@ public class LiveViewActivity extends BaseActivity {
             mEventBus.register(this);
         }
 
-        Logger.t(TAG).d("register");
-        mCameraStateChangeEventSubscription = RxBus.getDefault().toObserverable(CameraStateChangeEvent.class)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<CameraStateChangeEvent>() {
-                @Override
-                public void onNext(CameraStateChangeEvent cameraStateChangeEvent) {
-                    onHandleCameraStateChangeEvent(cameraStateChangeEvent);
-                }
-            });
+        registerRxBusEvent();
 
 
         setupToolbar();
@@ -549,10 +536,39 @@ public class LiveViewActivity extends BaseActivity {
     public void onStop() {
         super.onStop();
         stopPreview();
+        unregisterRxBusEvent();
         mEventBus.unregister(this);
+
+    }
+
+    private void registerRxBusEvent() {
+        mCameraStateChangeEventSubscription = RxBus.getDefault().toObserverable(CameraStateChangeEvent.class)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<CameraStateChangeEvent>() {
+                @Override
+                public void onNext(CameraStateChangeEvent cameraStateChangeEvent) {
+                    onHandleCameraStateChangeEvent(cameraStateChangeEvent);
+                }
+            });
+
+        mUpdateCameraStatusEventSubscription = RxBus.getDefault().toObserverable(UpdateCameraStatusEvent.class)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<UpdateCameraStatusEvent>() {
+                @Override
+                public void onNext(UpdateCameraStatusEvent updateCameraStatusEvent) {
+                    updateCameraState();
+                }
+            });
+    }
+
+
+    private void unregisterRxBusEvent() {
         if (!mCameraStateChangeEventSubscription.isUnsubscribed()) {
             mCameraStateChangeEventSubscription.unsubscribe();
-            Logger.t(TAG).d("unregister");
+        }
+
+        if (!mUpdateCameraStatusEventSubscription.isUnsubscribed()) {
+            mUpdateCameraStatusEventSubscription.unsubscribe();
         }
     }
 
@@ -625,16 +641,24 @@ public class LiveViewActivity extends BaseActivity {
 
     public void startPreview() {
         initCameraPreview();
-        mTimer = new Timer();
-        mRecordTimeTask = new UpdateRecordTimeTask();
-        mUpdateStorageInfoTimerTask = new UpdateStorageInfoTimeTask();
-        mTimer.schedule(mRecordTimeTask, 1000, 1000);
-        mTimer.schedule(mUpdateStorageInfoTimerTask, 1000, 10000);
+
+        Logger.t(TAG).d("start preview");
+        if (mTimer == null) {
+            mTimer = new Timer();
+            mUpdateCameraStatusTimeTask = new UpdateRecordTimeTask();
+            mUpdateStorageInfoTimerTask = new UpdateStorageInfoTimeTask();
+            mTimer.schedule(mUpdateCameraStatusTimeTask, 1000, 1000);
+            mTimer.schedule(mUpdateStorageInfoTimerTask, 1000, 10000);
+        } else {
+            Logger.t(TAG).d("already has timer");
+        }
     }
 
     public void stopPreview() {
         if (mTimer != null) {
+            Logger.t(TAG).d("close timer");
             mTimer.cancel();
+            mTimer = null;
         }
 
         stopCameraPreview();
@@ -758,13 +782,9 @@ public class LiveViewActivity extends BaseActivity {
 
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
                     mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.used - spaceInfo.marked));
-                    Logger.t(TAG).d(spaceInfo.used - spaceInfo.marked);
-                    Logger.t(TAG).d(spaceInfo.used - spaceInfo.marked);
                     if (spaceInfo.used - spaceInfo.marked < (long) 8 * 1024 * 1024 * 1024) {
-                        Logger.t(TAG).d("show notification");
                         mCardNotification.setVisibility(View.VISIBLE);
                     } else {
-                        Logger.t(TAG).d("hide notification");
                         mCardNotification.setVisibility(View.INVISIBLE);
                     }
                 }
@@ -792,7 +812,7 @@ public class LiveViewActivity extends BaseActivity {
                 VdbResponse.Listener<Integer>() {
                     @Override
                     public void onResponse(Integer response) {
-                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
+//                        Logger.t(TAG).d("LiveRawDataResponse: " + response);
                     }
                 }, new VdbResponse.ErrorListener() {
                 @Override
@@ -1026,7 +1046,7 @@ public class LiveViewActivity extends BaseActivity {
             VdtCamera vdtCamera = VdtCameraManager.getManager().getCurrentCamera();
             if (vdtCamera != null) {
                 vdtCamera.getRecordTime();
-                EventBus.getDefault().post(new UpdateCameraStatusEvent());
+                RxBus.getDefault().post(new UpdateCameraStatusEvent());
             }
         }
     }

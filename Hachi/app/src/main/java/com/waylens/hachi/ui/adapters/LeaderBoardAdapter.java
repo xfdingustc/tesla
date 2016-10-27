@@ -148,6 +148,9 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.userName.setText(owner.userName);
         if (moment.momentVehicleInfo.toString() != null) {
             holder.vehicleInfo.setText(moment.momentVehicleInfo.toString());
+            holder.vehicleInfo.setVisibility(View.VISIBLE);
+        } else {
+            holder.vehicleInfo.setVisibility(View.GONE);
         }
         double raceTime = 0.0;
         raceTime = getRaceTime(moment);
@@ -155,7 +158,6 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.raceTime.setText(String.format(mContext.getString(R.string.race_time), formatter.format(raceTime)));
         holder.userRank.setText(String.valueOf(mRankings.get(position)));
         if (mRankings.get(position) <= 3 && position < mMoments.size()) {
-            Logger.t(TAG).d("position:" + position);
             holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape_top));
         } else {
             holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape));

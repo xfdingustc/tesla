@@ -40,7 +40,6 @@ public class FirmwareUpgradeHelper {
             final Firmware firmware = firmwares.get(i);
             if (!TextUtils.isEmpty(firmware.name)
                 && firmware.name.equals(VdtCameraManager.getManager().getCurrentCamera().getHardwareName())) {
-                Logger.t(TAG).d("Found our hardware");
                 FirmwareVersion versionFromServer = new FirmwareVersion(firmware.version);
                 FirmwareVersion versionInCamera = new FirmwareVersion(vdtCamera.getApiVersion());
                 if (versionFromServer.isGreaterThan(versionInCamera)) {
