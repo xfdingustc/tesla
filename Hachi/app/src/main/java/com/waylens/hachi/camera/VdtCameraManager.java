@@ -48,21 +48,22 @@ public class VdtCameraManager {
 
     public synchronized void connectCamera(final VdtCamera.ServiceInfo serviceInfo, final String from) {
 
-        ConnectivityManager mConnectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build();
-            mConnectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onAvailable(Network network) {
-                    connectCameraImpl(serviceInfo, from);
-                }
-            });
-        } else {
-            connectCameraImpl(serviceInfo, from);
-        }
+        connectCameraImpl(serviceInfo, from);
+//        ConnectivityManager mConnectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            final NetworkRequest networkRequest = new NetworkRequest.Builder()
+//                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+//                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+//                .build();
+//            mConnectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback() {
+//                @Override
+//                public void onAvailable(Network network) {
+//
+//                }
+//            });
+//        } else {
+//            connectCameraImpl(serviceInfo, from);
+//        }
 
 
 //        vdtCamera.startClient();
