@@ -40,6 +40,13 @@
             app:ddunderlineColor="?attr/toolbarColor"
             />
 
+        <View
+            android:id="@+id/clipMask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="#cc1D1F23"/>
+
     </LinearLayout>
 
     <FrameLayout

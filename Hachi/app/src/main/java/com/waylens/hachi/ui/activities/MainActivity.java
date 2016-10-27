@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.lapism.searchview.SearchView;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 
 /**
@@ -64,6 +66,8 @@ public class MainActivity extends BaseActivity {
 
     @BindView(R.id.spaceNaviationView)
     SpaceNavigationView spaceNavigationView;
+
+
 
 
     private boolean mIsRestored;
@@ -117,9 +121,9 @@ public class MainActivity extends BaseActivity {
 
         switchFragment(TAB_TAG_MOMENTS);
 
-        if (VdtCameraManager.getManager().isConnected()) {
-            LiveViewActivity.launch(MainActivity.this);
-        }
+//        if (VdtCameraManager.getManager().isConnected()) {
+//            LiveViewActivity.launch(MainActivity.this);
+//        }
     }
 
 

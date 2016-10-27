@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -110,7 +111,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
-    private String headers[] = {"mode", "type", "model"};
+    private String headers[] = {"mode", "type", "All"};
 
     private ListDropDownAdapter modeAdapter;
 
@@ -162,6 +163,14 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     @BindView(R.id.layout_no_data)
     LinearLayout mNoDataLayout;
 
+    @BindView(R.id.clipMask)
+    View clickMask;
+
+    @OnClick(R.id.clipMask)
+    public void onClickMaskClicked() {
+        mDropDownMenu.closeMenu();
+    }
+
 
     public static PerformanceTestFragment newInstance(int tag) {
 
@@ -204,10 +213,24 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
 
+        setupLeaderBoardFilter();
+
+
+        if (ThemeHelper.isDarkTheme()) {
+            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
+        }
+        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        mMakerModelList = new ArrayList<>();
+        return view;
+    }
+
+    private void setupLeaderBoardFilter() {
         final ListView modeView = new ListView(getActivity());
         modeView.setDividerHeight(0);
         modeAdapter = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.test_mode)));
         modeView.setAdapter(modeAdapter);
+
 
         final ListView typeView = new ListView(getActivity());
         typeView.setDividerHeight(0);
@@ -231,6 +254,17 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
         mDropDownMenu.setDropDownMenu(Arrays.asList(headers), popupViews, contentView);
         mDropDownMenu.setTabTextAt((String) modeAdapter.getItem(1), 0);
+        mDropDownMenu.setOnMenuOpenClicked(new DropDownMenu.OnMenuOpenListener() {
+            @Override
+            public void onMenuOpen() {
+                clickMask.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onMenuClosed() {
+                clickMask.setVisibility(View.GONE);
+            }
+        });
         modeAdapter.setCheckItem(1);
 
         modeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -350,13 +384,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 onRefresh();
             }
         });
-        if (ThemeHelper.isDarkTheme()) {
-            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
-        }
-        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
-            android.R.color.holo_orange_light, android.R.color.holo_red_light);
-        mMakerModelList = new ArrayList<>();
-        return view;
     }
 
     @Override

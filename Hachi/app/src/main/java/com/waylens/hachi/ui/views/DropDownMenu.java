@@ -8,13 +8,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -24,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.utils.ViewUtils;
 
 import java.util.List;
 
@@ -54,6 +52,8 @@ public class DropDownMenu extends LinearLayout {
     private int menuSelectedIcon;
 
     private int menuUnselectedIcon;
+
+    private OnMenuOpenListener mMenuOpenListener;
 
 
     public DropDownMenu(Context context) {
@@ -91,7 +91,7 @@ public class DropDownMenu extends LinearLayout {
         addView(tabMenuView, 0);
 
         View underLine = new View(getContext());
-        underLine.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dpTpPx(1.0f)));
+        underLine.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewUtils.dp2px(1)));
         underLine.setBackgroundColor(underlineColor);
         addView(underLine, 1);
 
@@ -136,6 +136,10 @@ public class DropDownMenu extends LinearLayout {
 
     }
 
+    public void setOnMenuOpenClicked(OnMenuOpenListener listener) {
+        mMenuOpenListener = listener;
+    }
+
     private void addTab(@NonNull List<String> tabTexts, int i) {
         final TextView tab = new TextView(getContext());
         tab.setSingleLine();
@@ -148,7 +152,7 @@ public class DropDownMenu extends LinearLayout {
         tab.setTextColor(textUnselectedColor);
         tab.setCompoundDrawablesWithIntrinsicBounds(null, null, getResources().getDrawable(menuUnselectedIcon), null);
         tab.setText(tabTexts.get(i));
-        tab.setPadding(dpTpPx(16), dpTpPx(16), dpTpPx(16), dpTpPx(16));
+        tab.setPadding(ViewUtils.dp2px(16), ViewUtils.dp2px(16), ViewUtils.dp2px(16), ViewUtils.dp2px(16));
         tab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +162,7 @@ public class DropDownMenu extends LinearLayout {
         tabMenuView.addView(tab);
         if (i < tabTexts.size() - 1) {
             View view = new View(getContext());
-            view.setLayoutParams(new LayoutParams(dpTpPx(0.5f), ViewGroup.LayoutParams.MATCH_PARENT));
+            view.setLayoutParams(new LayoutParams(ViewUtils.dp2px(1), ViewGroup.LayoutParams.MATCH_PARENT));
             view.setBackgroundColor(dividerColor);
             tabMenuView.addView(view);
         }
@@ -167,7 +171,7 @@ public class DropDownMenu extends LinearLayout {
     private void addImageHeader(Drawable image) {
         final ImageView imageView = new ImageView(getContext());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        lp.setMarginStart(dpTpPx(8));
+        lp.setMarginStart(ViewUtils.dp2px(8));
         lp.gravity = Gravity.CENTER;
         imageView.setLayoutParams(lp);
         imageView.setImageDrawable(image);
@@ -185,8 +189,8 @@ public class DropDownMenu extends LinearLayout {
     }
 
     public void setTabTextAt(String text, int pos) {
-        if (pos >= 0 && 2 * pos + 1< tabMenuView.getChildCount()) {
-            ((TextView) tabMenuView.getChildAt(2 * pos )).setText(text);
+        if (pos >= 0 && 2 * pos + 1 < tabMenuView.getChildCount()) {
+            ((TextView) tabMenuView.getChildAt(2 * pos)).setText(text);
         }
     }
 
@@ -201,12 +205,15 @@ public class DropDownMenu extends LinearLayout {
         if (current_tab_position != -1) {
             ((TextView) tabMenuView.getChildAt(current_tab_position)).setTextColor(textUnselectedColor);
             ((TextView) tabMenuView.getChildAt(current_tab_position)).setCompoundDrawablesWithIntrinsicBounds(null, null,
-                    getResources().getDrawable(menuUnselectedIcon), null);
+                getResources().getDrawable(menuUnselectedIcon), null);
             popupMenuViews.setVisibility(View.GONE);
             popupMenuViews.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_menu_out));
             maskView.setVisibility(GONE);
             maskView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.dd_mask_out));
             current_tab_position = -1;
+            if (mMenuOpenListener != null) {
+                mMenuOpenListener.onMenuClosed();
+            }
         }
 
     }
@@ -235,19 +242,24 @@ public class DropDownMenu extends LinearLayout {
                     current_tab_position = i;
                     ((TextView) tabMenuView.getChildAt(i)).setTextColor(textSelectedColor);
                     ((TextView) tabMenuView.getChildAt(i)).setCompoundDrawablesWithIntrinsicBounds(null, null,
-                            getResources().getDrawable(menuSelectedIcon), null);
+                        getResources().getDrawable(menuSelectedIcon), null);
+                    if (mMenuOpenListener != null) {
+                        mMenuOpenListener.onMenuOpen();
+                    }
                 }
             } else {
                 ((TextView) tabMenuView.getChildAt(i)).setTextColor(textUnselectedColor);
                 ((TextView) tabMenuView.getChildAt(i)).setCompoundDrawablesWithIntrinsicBounds(null, null,
-                        getResources().getDrawable(menuUnselectedIcon), null);
+                    getResources().getDrawable(menuUnselectedIcon), null);
                 popupMenuViews.getChildAt(i / 2).setVisibility(View.GONE);
             }
         }
     }
 
-    public int dpTpPx(float value) {
-        DisplayMetrics dm = getResources().getDisplayMetrics();
-        return (int) (TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value, dm) + 0.5);
+    public interface OnMenuOpenListener {
+        void onMenuOpen();
+        void onMenuClosed();
     }
+
+
 }
