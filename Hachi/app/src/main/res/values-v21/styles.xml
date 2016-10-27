@@ -116,5 +116,15 @@
 
     </style>
 
+    <style name="DarkTheme.LiveView">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
+    <style name="LightTheme.LiveView">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
     <dimen name="spacing_micro">4dp</dimen>
 </resources>

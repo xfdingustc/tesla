@@ -52,6 +52,7 @@ import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.GaugeView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
+import com.waylens.hachi.utils.ThemeHelper;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -392,9 +393,19 @@ public class LiveViewActivity extends BaseActivity {
 
 
     @Override
+    protected boolean needOverrideTheme() {
+        return true;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+        if (ThemeHelper.isDarkTheme()) {
+            setTheme(R.style.DarkTheme_LiveView);
+        } else {
+            setTheme(R.style.LightTheme_LiveView);
+        }
         setContentView(R.layout.activity_live_view);
         mCardNotification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -462,6 +473,13 @@ public class LiveViewActivity extends BaseActivity {
                         break;
                 }
                 return false;
+            }
+        });
+        getToolbar().setNavigationIcon(R.drawable.ic_close);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

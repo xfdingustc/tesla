@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/user_avatar"
         android:layout_alignEnd="@id/user_avatar"
+        android:layout_marginRight="-8dp"
+        android:layout_marginBottom="-8dp"
         android:layout_gravity="end|bottom"
         android:background="@drawable/chip_shape"
         android:gravity="center"
