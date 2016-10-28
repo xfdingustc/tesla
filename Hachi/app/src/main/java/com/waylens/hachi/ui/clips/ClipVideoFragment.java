@@ -42,6 +42,7 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
 
     @Override
     public void initViews(List<BaseFragment> fragments, List<Integer> pageTitleList) {
+        setupToolbar();
         mVideoAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
         for (int i = 0; i < fragments.size(); i++) {
             mVideoAdapter.addFragment(fragments.get(i), getString(pageTitleList.get(i)));
@@ -88,5 +89,12 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
     @Override
     public boolean onInterceptBackPressed() {
         return false;
+    }
+
+
+    @Override
+    public void setupToolbar() {
+        super.setupToolbar();
+        getToolbar().setTitle(R.string.video);
     }
 }
