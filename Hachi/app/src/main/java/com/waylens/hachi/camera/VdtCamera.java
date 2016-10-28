@@ -1040,7 +1040,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private void ack_Cam_get_State_result(String p1, String p2) {
         int state = Integer.parseInt(p1);
-        boolean is_still = p2.length() > 0 ? Integer.parseInt(p2) != 0 : false;
+        boolean is_still = p2.length() > 0 && Integer.parseInt(p2) != 0;
         if (mRecordState != state) {
             mRxBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_REC, VdtCamera.this, null));
             mRecordState = state;

@@ -109,12 +109,8 @@ class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
 
                 VdtMessage message = (VdtMessage) o;
 //                Logger.t(TAG).d("isResponse: " + message.toString());
-                if (message.domain == CMD_DOMAIN_CAM && message.messageType == CMD_CAM_IS_API_SUPPORTED) {
-//                    Logger.t(TAG).d("receive heart beart response");
-                    return true;
-                } else {
-                    return false;
-                }
+                //                    Logger.t(TAG).d("receive heart beart response");
+                return message.domain == CMD_DOMAIN_CAM && message.messageType == CMD_CAM_IS_API_SUPPORTED;
             }
 
             @Override
@@ -167,7 +163,7 @@ class VdtCameraCommunicationBus implements VdtCameraCmdConsts {
         } catch (Exception e) {
             Log.d(TAG, "connection error " + e.getMessage());
             mConnectionListener.onConnectionFailed();
-            boolean retry = mConnectRetryCount++ >= 3 ? false : true;
+            boolean retry = mConnectRetryCount++ < 3;
 
             connectError(false);
         }

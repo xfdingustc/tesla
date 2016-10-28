@@ -151,7 +151,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         }*/
                         int searchIndex = -1;
                         long searchResult = -1;
-                        if ((retClip.typeRace & retClip.MASK_RACE) == retClip.TYPE_RACE_CD3T || (retClip.typeRace & retClip.MASK_RACE) == retClip.TYPE_RACE_CD6T) {
+                        if ((retClip.typeRace & Clip.MASK_RACE) == Clip.TYPE_RACE_CD3T || (retClip.typeRace & Clip.MASK_RACE) == Clip.TYPE_RACE_CD6T) {
                             searchIndex = 0;
                         } else {
                             searchIndex = 1;

@@ -277,7 +277,7 @@ public class Clip implements Parcelable, Serializable {
 
     // inherit
     public String getVdbId() {
-        return (String) cid.extra;
+        return cid.extra;
     }
 
     public String toString() {
@@ -388,11 +388,7 @@ public class Clip implements Parcelable, Serializable {
         mStartTimeMs = in.readLong();
         mDurationMs = in.readInt();
         clipSize = in.readLong();
-        if (in.readByte() == 1) {
-            bDeleting = true;
-        } else {
-            bDeleting = false;
-        }
+        bDeleting = in.readByte() == 1;
         editInfo = new EditInfo();
     }
 

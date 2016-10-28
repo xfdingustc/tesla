@@ -51,11 +51,8 @@ public class MomentAbstract implements Serializable{
     }
 
     public boolean isRacingMoment() {
-        if (!TextUtils.isEmpty(momentType) && momentType.startsWith("RACING")) {
-            return true;
-        }
+        return !TextUtils.isEmpty(momentType) && momentType.startsWith("RACING");
 
-        return false;
     }
 
     public String getRaceType() {

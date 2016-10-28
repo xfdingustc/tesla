@@ -278,7 +278,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 modeAdapter.setCheckItem(position);
-                Logger.t(TAG).d((String) modeAdapter.getItem(position));
+                Logger.t(TAG).d(modeAdapter.getItem(position));
                 mDropDownMenu.setTabText((String) modeAdapter.getItem(position));
                 mDropDownMenu.closeMenu();
                 int mode = -1;

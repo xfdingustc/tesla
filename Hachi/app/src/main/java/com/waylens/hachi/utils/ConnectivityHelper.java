@@ -72,10 +72,7 @@ public class ConnectivityHelper {
     public static boolean isConnected2VdtCamera() {
         WifiManager wifiManager = (WifiManager) Hachi.getContext().getSystemService(WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        if (wifiInfo != null && wifiInfo.getSSID().contains("C9J")) {
-            return true;
-        }
-        return false;
+        return wifiInfo != null && wifiInfo.getSSID().contains("C9J");
     }
 
 

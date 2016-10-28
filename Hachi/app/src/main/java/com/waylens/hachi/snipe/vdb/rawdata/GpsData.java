@@ -102,9 +102,7 @@ public class GpsData implements Serializable {
             return true;
         if (lng < 108 && (lng + lat < 107))
             return true;
-        if (lat < 26.8 && lat < 97)// India
-            return true;
-        return false;
+        return lat < 26.8 && lat < 97;
     }
 
     public static double transformLat(double x, double y) {

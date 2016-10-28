@@ -83,11 +83,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mIsRestored = true;
-        } else {
-            mIsRestored = false;
-        }
+        mIsRestored = savedInstanceState != null;
         init();
     }
 

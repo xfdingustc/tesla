@@ -149,11 +149,7 @@ public class SessionManager {
     }
 
     public boolean isLoggedIn() {
-        if (getUserName() == null || getUserId() == null || getToken() == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(getUserName() == null || getUserId() == null || getToken() == null);
     }
 
     public void setGender(String gender) {
@@ -318,19 +314,12 @@ public class SessionManager {
 
     public boolean isCurrentUser(String userName) {
         String currentUserName = getUserName();
-        if (userName.equals(currentUserName)) {
-            return true;
-        }
+        return userName.equals(currentUserName);
 
-        return false;
     }
 
     public boolean isCurrentUserId(String userId) {
-        if (!TextUtils.isEmpty(userId) && userId.equals(getUserId())) {
-            return true;
-        } else {
-            return false;
-        }
+        return !TextUtils.isEmpty(userId) && userId.equals(getUserId());
     }
 
 

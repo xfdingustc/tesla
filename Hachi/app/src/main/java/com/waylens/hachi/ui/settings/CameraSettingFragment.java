@@ -305,7 +305,7 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
 
-        boolean isOverlayShown = (mVdtCamera.getOverlayState() == 0) ? false : true;
+        boolean isOverlayShown = mVdtCamera.getOverlayState() != 0;
         mTimestamp.setChecked(isOverlayShown);
         mTimestamp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override

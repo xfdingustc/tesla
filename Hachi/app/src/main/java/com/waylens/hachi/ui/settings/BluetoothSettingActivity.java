@@ -253,7 +253,7 @@ public class BluetoothSettingActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_bt_setting);
         setupToolbar();
-        mBtSwitch.setChecked(mVdtCamera.getBtState() == VdtCamera.BT_STATE_ENABLED ? true : false);
+        mBtSwitch.setChecked(mVdtCamera.getBtState() == VdtCamera.BT_STATE_ENABLED);
         updateBtContent();
 
         refreshBtDevices();

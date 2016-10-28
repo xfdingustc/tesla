@@ -828,10 +828,7 @@ public class MomentActivity extends BaseActivity {
         if (!checkUserLoggedIn()) {
             return false;
         }
-        if (!checkUserVerified()) {
-            return false;
-        }
-        return true;
+        return checkUserVerified();
     }
 
     private boolean checkUserLoggedIn() {

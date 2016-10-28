@@ -191,7 +191,7 @@ public class GaugeView extends FrameLayout {
     }
 
     public boolean isGaugeShown() {
-        return mWebView.getVisibility() == View.VISIBLE ? true : false;
+        return mWebView.getVisibility() == View.VISIBLE;
     }
 
 

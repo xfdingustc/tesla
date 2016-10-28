@@ -61,11 +61,7 @@ public class OvertureActivity extends BaseActivity {
             PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
             newVersionCode = pi.versionCode;
 
-            if (newVersionCode > oldVersionCode) {
-                return true;
-            } else {
-                return false;
-            }
+            return newVersionCode > oldVersionCode;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

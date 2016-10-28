@@ -264,7 +264,7 @@ public class LiveViewActivity extends BaseActivity {
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClick() {
-        boolean visibility = mGaugeView.getVisibility() == View.VISIBLE ? false : true;
+        boolean visibility = mGaugeView.getVisibility() != View.VISIBLE;
         showOverlay(visibility);
     }
 

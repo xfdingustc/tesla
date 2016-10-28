@@ -334,11 +334,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     public boolean needSignin() {
-        if (mFeedTag == FEED_TAG_NEW_FEED) {
-            return true;
-        } else {
-            return false;
-        }
+        return mFeedTag == FEED_TAG_NEW_FEED;
     }
 
 

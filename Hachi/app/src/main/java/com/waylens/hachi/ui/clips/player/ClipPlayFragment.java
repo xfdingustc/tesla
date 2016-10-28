@@ -160,7 +160,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @OnClick(R.id.btnShowOverlay)
     public void onBtnShowOverlayClicked() {
-        boolean isGaugeVisible = mWvGauge.getVisibility() == View.VISIBLE ? false : true;
+        boolean isGaugeVisible = mWvGauge.getVisibility() != View.VISIBLE;
         if (isGaugeVisible) {
             mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
         } else {

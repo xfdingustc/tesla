@@ -127,7 +127,7 @@ public class RangeBar extends View {
 
     private int mDefaultHeight = 150;
 
-    private int mTickCount = (int) ((mTickEnd - mTickStart)) + 1;
+    private int mTickCount = (mTickEnd - mTickStart) + 1;
 
     private PinView mLeftThumb;
 
@@ -358,8 +358,8 @@ public class RangeBar extends View {
         mRightThumb.setXValue(getPinValue(mRightIndex));
 
         // Set the thumb indices.
-        final int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb) + (int) mTickStart;
-        final int newRightIndex = mBar.getNearestTickIndex(mRightThumb) + (int) mTickStart;
+        final int newLeftIndex = mBar.getNearestTickIndex(mLeftThumb) + mTickStart;
+        final int newRightIndex = mBar.getNearestTickIndex(mRightThumb) + mTickStart;
 
         // Call the listener.
         if (newLeftIndex != mLeftIndex || newRightIndex != mRightIndex) {
@@ -495,7 +495,7 @@ public class RangeBar extends View {
         mTickEnd = tickEnd;
         mLeftIndex = leftValue;
         mRightIndex = rightValue;
-        mTickCount = (int) ((mTickEnd - mTickStart)) + 1;
+        mTickCount = (mTickEnd - mTickStart) + 1;
         createBar();
         createPins();
         invalidate();
@@ -1286,22 +1286,22 @@ public class RangeBar extends View {
      */
     public interface OnRangeBarChangeListener {
 
-        public void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex,
-                                          int rightPinIndex, String leftPinValue, String rightPinValue);
+        void onRangeChangeListener(RangeBar rangeBar, int leftPinIndex,
+                                   int rightPinIndex, String leftPinValue, String rightPinValue);
     }
 
     public interface PinTextFormatter {
 
-        public String getText(String value);
+        String getText(String value);
     }
 
     /**
      * @author robmunro
      *         A callback that allows getting pin text exernally
      */
-    public static interface OnRangeBarTextListener {
+    public interface OnRangeBarTextListener {
 
-        public String getPinValue(RangeBar rangeBar, int tickIndex);
+        String getPinValue(RangeBar rangeBar, int tickIndex);
     }
 
     /**

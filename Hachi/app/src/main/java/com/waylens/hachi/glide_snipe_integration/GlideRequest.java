@@ -19,7 +19,6 @@ public class GlideRequest extends VdbRequest<InputStream> {
     private static final String TAG = GlideRequest.class.getSimpleName();
 
     private final ClipPos mClipPos;
-;
     private final VdbRequestFuture<InputStream> mFuture;
 
     public GlideRequest(ClipPos clipPos, VdbRequestFuture<InputStream> future) {
