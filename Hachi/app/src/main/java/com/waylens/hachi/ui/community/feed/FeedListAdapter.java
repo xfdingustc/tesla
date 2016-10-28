@@ -42,14 +42,12 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.PlaceHolderHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -133,6 +131,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                 Glide.with(mContext)
                     .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
                     .crossFade()
                     .into(holder.videoCover);
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +150,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
             Glide.with(mContext)
                 .load(moment.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
                 .crossFade()
                 .into(holder.videoCover);
             holder.videoDuration.setVisibility(View.VISIBLE);
@@ -329,7 +329,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(moment.momentType) && !moment.momentType.equals("PICTURE")) {
                     MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover,
-                            MomentActivity.REQUEST_COMMENT);
+                        MomentActivity.REQUEST_COMMENT);
                 }
             }
         });
