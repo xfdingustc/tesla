@@ -155,6 +155,9 @@ public interface HachiApi {
     @POST("/api/users/signin")
     Call<AuthorizeResponse> signin(@Body SignInPostBody signInPostBody);
 
+    @POST("/api/users/signin")
+    Observable<AuthorizeResponse> signinRx(@Body SignInPostBody signInPostBody);
+
 
     @POST("/api/users/signup")
     Observable<AuthorizeResponse> signUpRx(@Body SignUpPostBody signUpnPostBody);

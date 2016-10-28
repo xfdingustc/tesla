@@ -12,9 +12,6 @@
     tools:paddingRight="16dp">
 
 
-
-
-
     <com.waylens.hachi.ui.views.CompoundEditView
         android:id="@+id/sign_in_email"
         android:layout_width="match_parent"
@@ -29,9 +26,9 @@
         android:id="@+id/sign_in_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         cev:cevHint="@string/password"
         cev:cevInvalidFormatMessage="@string/password_error"
         cev:cevType="password"
@@ -45,17 +42,16 @@
         android:layout_marginTop="48dp">
 
 
-
         <Button
             android:id="@+id/btn_sign_in"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login"
             android:layout_marginLeft="16dp"
-            android:textSize="14sp"
             android:layout_marginRight="16dp"
             android:backgroundTint="?attr/actionButtonColor"
+            android:text="@string/login"
             android:textColor="@android:color/white"
+            android:textSize="14sp"
             />
 
         <ProgressBar
@@ -72,9 +68,6 @@
         android:layout_gravity="center_horizontal"
         android:background="?attr/selectableItemBackground"
         tools:text="Forgot password?Find it back"/>
-
-
-
 
 
 </LinearLayout>

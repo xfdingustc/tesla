@@ -481,7 +481,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         }
         if (rank > 0 && bestRankIndex >= 0) {
-            mMyTestLayout.setVisibility(View.VISIBLE);
+//            mMyTestLayout.setVisibility(View.VISIBLE);
             initMyTestView(raceQueryResponse.userRankings.get(bestRankIndex));
             String maker = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleMaker;
             String model = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleModel;

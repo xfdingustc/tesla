@@ -2,6 +2,8 @@ package com.waylens.hachi.snipe;
 
 
 
+import com.orhanobut.logger.Logger;
+
 import java.io.IOException;
 
 /**
@@ -28,6 +30,7 @@ public class BasicVdbSocket implements VdbSocket {
 
     @Override
     public VdbAcknowledge retrieveAcknowledge() throws IOException {
+//        Logger.t(TAG).d("retrieve acknowledge");
         return new VdbAcknowledge(0, mConnection);
     }
 }

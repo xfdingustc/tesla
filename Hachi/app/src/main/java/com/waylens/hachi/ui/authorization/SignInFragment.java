@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.RequestQueue;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
@@ -29,13 +27,11 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.VolleyUtil;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -43,8 +39,11 @@ import rx.schedulers.Schedulers;
 public class SignInFragment extends BaseFragment {
     private static final String TAG = SignInFragment.class.getSimpleName();
 
-    private static final String TAG_REQUEST_SIGN_IN = "SignInFragment.request.sign.in";
 
+    private PasswordTransformationMethod mTransformationMethod;
+
+    String mEmail;
+    String mPassword;
 
     @BindView(R.id.button_animator)
     ViewAnimator mButtonAnimator;
@@ -67,13 +66,6 @@ public class SignInFragment extends BaseFragment {
         performSignIn();
     }
 
-
-    RequestQueue mVolleyRequestQueue;
-
-    PasswordTransformationMethod mTransformationMethod;
-
-    String mEmail;
-    String mPassword;
 
     @Override
     protected String getRequestTag() {
@@ -116,7 +108,7 @@ public class SignInFragment extends BaseFragment {
         mForgotPasswordView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    void onForgotPassword() {
+    private void onForgotPassword() {
         Fragment fragment;
         if (PreferenceUtils.getBoolean(PreferenceUtils.KEY_RESET_EMAIL_SENT, false)) {
             getActivity().setTitle(R.string.change_password);
@@ -129,55 +121,49 @@ public class SignInFragment extends BaseFragment {
     }
 
 
-
-
     void initViews() {
         mRootView.requestFocus();
     }
 
 
-
     void performSignIn() {
         mEmail = mTvSignInEmail.getText().toString();
         mPassword = mTvPassword.getText().toString();
-        HachiApi hachiApi = HachiService.createHachiApiService();
         SignInPostBody signInPostBody = new SignInPostBody(mEmail, mPassword);
-        Call<AuthorizeResponse> signInResponseCall = hachiApi.signin(signInPostBody);
-        signInResponseCall.enqueue(new Callback<AuthorizeResponse>() {
-            @Override
-            public void onResponse(Call<AuthorizeResponse> call, retrofit2.Response<AuthorizeResponse> response) {
-                if (response.code() == 200) {
-                    onSignInSuccessful(response.body());
-                } else if (response.code() == 401) {
-                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .content(R.string.incorrect_email_or_password)
-                        .positiveText(R.string.ok)
-                        .negativeText(R.string.cancel)
-                        .show();
-                    mButtonAnimator.setDisplayedChild(1);
-                } else {
-                    onSignInFailed(new Throwable("Sign in failed"));
-                    mButtonAnimator.setDisplayedChild(1);
-                }
-            }
+        HachiService.createHachiApiService().signinRx(signInPostBody)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
+                @Override
+                public void onNext(AuthorizeResponse authorizeResponse) {
+//                    if (response.code() == 200) {
+//                        onSignInSuccessful(response.body());
+//                    } else if (response.code() == 401) {
+//                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+//                            .content(R.string.incorrect_email_or_password)
+//                            .positiveText(R.string.ok)
+//                            .negativeText(R.string.cancel)
+//                            .show();
+//                        mButtonAnimator.setDisplayedChild(1);
+//                    } else {
+//                        onSignInFailed(new Throwable("Sign in failed"));
+//                        mButtonAnimator.setDisplayedChild(1);
+//                    }
 
-            @Override
-            public void onFailure(Call<AuthorizeResponse> call, Throwable t) {
-                onSignInFailed(t);
-//                Logger.d(t.getMessage());
-            }
-        });
+                    onSignInSuccessful(authorizeResponse);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    onSignInFailed(e);
+                }
+            });
 
     }
 
-    void onSignInFailed(Throwable error) {
-        mButtonAnimator.setDisplayedChild(1);
-        //showMessage(ServerMessage.parseServerError(error).msgResID);
-        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-            .content(R.string.failed_to_sign_in)
-            .positiveText(R.string.ok)
-            .negativeText(R.string.cancel)
-            .show();
+    private void onSignInFailed(Throwable error) {
+        mButtonAnimator.setDisplayedChild(0);
+        ServerErrorHelper.showErrorMessage(mRootView, error);
     }
 
     private void onSignInSuccessful(AuthorizeResponse response) {
