@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-
+             android:background="?attr/defaultBgColor"
     >
 
     <LinearLayout
@@ -62,15 +62,18 @@
                     android:text="@string/obd"
                     android:textColor="?attr/appTextColorPrimary"
                     android:textSize="16sp"/>
+
                 <RelativeLayout
                     android:id="@+id/obd_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/obd_name"
                             android:layout_width="wrap_content"
@@ -89,13 +92,14 @@
                             android:textColor="?attr/appTextColorSecondary"
                             android:textSize="14sp"/>
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/obd_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="16dp"
                         android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp"
                         android:text="@string/na"
                         android:textColor="?attr/appTextColorSecondary"
                         android:textSize="15sp"/>
@@ -123,15 +127,18 @@
                     android:text="@string/remote_ctrl"
                     android:textColor="?attr/appTextColorPrimary"
                     android:textSize="16sp"/>
+
                 <RelativeLayout
                     android:id="@+id/rc_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/remote_ctrl_name"
                             android:layout_width="wrap_content"
@@ -150,13 +157,14 @@
                             android:textColor="?attr/appTextColorSecondary"
                             android:textSize="14sp"/>
                     </LinearLayout>
+
                     <TextView
                         android:id="@+id/remote_ctrl_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="16dp"
                         android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp"
                         android:text="@string/na"
                         android:textColor="?attr/appTextColorSecondary"
                         android:textSize="15sp"/>
@@ -182,9 +190,10 @@
 
                 <LinearLayout
                     android:id="@+id/obd_scan_result"
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
                     <TextView
                         style="@style/HachiTextViewSubHeader"
                         android:layout_width="wrap_content"
@@ -204,9 +213,10 @@
 
                 <LinearLayout
                     android:id="@+id/rc_scan_result"
-                    android:layout_height="wrap_content"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <TextView
                         style="@style/HachiTextViewSubHeader"
                         android:layout_width="wrap_content"

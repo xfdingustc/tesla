@@ -3,6 +3,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:background="?attr/defaultBgColor"
               android:orientation="vertical">
 
     <include layout="@layout/toolbar_default"/>
@@ -19,8 +20,7 @@
             android:layout_height="63dp"
             android:layout_marginRight="16dp"
             android:transitionName="@string/moment_cover"
-            tools:scaleType="centerCrop"
-            tools:src="@drawable/walkthrough1"/>
+            tools:scaleType="centerCrop"/>
 
 
         <android.support.design.widget.TextInputLayout

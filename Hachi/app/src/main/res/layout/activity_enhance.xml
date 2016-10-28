@@ -3,8 +3,8 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="vertical"
-    android:background="@color/windowBackground">
+              android:background="@color/windowBackground"
+              android:orientation="vertical">
 
     <include layout="@layout/toolbar_default"/>
 
@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:orientation="vertical">
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
