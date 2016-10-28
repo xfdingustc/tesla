@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FixArImageView">
+        <attr name="fariv_xratio" format="dimension" />
+        <attr name="fariv_yratio" format="dimension" />
+    </declare-styleable>
+</resources>

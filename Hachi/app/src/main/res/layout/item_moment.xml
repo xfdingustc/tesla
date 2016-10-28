@@ -5,70 +5,73 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="?attr/defaultBgColor"
-
                 app:cardCornerRadius="2dp">
 
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:id="@+id/video_fragment_container"
+
+    <com.waylens.hachi.ui.views.FixArImageView
+        android:id="@+id/video_cover"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
         android:background="@drawable/stroke_rect"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp">
+        android:scaleType="centerCrop"
+        app:fariv_xratio="16dp"
+        app:fariv_yratio="9dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/video_cover"
+        android:layout_alignLeft="@id/video_cover"
+        android:layout_margin="8dp"
+        android:alpha="0.8"
+        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/video_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@null"
-            android:scaleType="centerCrop"/>
+        <FrameLayout
+            android:id="@+id/car_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/race_info_bg">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/chip_icon"
+                android:padding="4dp"
+                android:src="@drawable/ic_directions_car"/>
+
+            <TextView
+                android:id="@+id/car_model"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:ellipsize="end"
+                android:maxEms="16"
+                android:maxLines="1"
+                android:paddingLeft="32dp"
+                android:paddingRight="8dp"
+                android:textColor="?attr/tagTextColor"
+                android:textSize="12sp"
+                tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/video_cover"
             android:layout_gravity="bottom"
+            android:layout_toRightOf="@id/car_info"
             android:orientation="horizontal">
 
-            <FrameLayout
-                android:id="@+id/car_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left|bottom"
-                android:layout_margin="8dp"
-                android:alpha="0.8"
-                android:background="@drawable/race_info_bg">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/chip_icon"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_directions_car"/>
-
-                <TextView
-                    android:id="@+id/car_model"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="32dp"
-                    android:paddingRight="8dp"
-                    android:textColor="?attr/tagTextColor"
-                    android:textSize="12sp"
-                    android:maxLines="1"
-                    android:maxEms="16"
-                    android:ellipsize="end"
-                    tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
-
-            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/racing_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
+                android:layout_marginLeft="8dp"
                 android:alpha="0.8"
                 android:background="@drawable/race_info_bg">
 
@@ -98,39 +101,42 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/video_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="8dp"
-            android:background="@drawable/round_rectangle_background"
-            android:textColor="@color/white87"
-            android:textSize="12sp"
-            tools:text="01:08"/>
-
-        <ImageView
-            android:id="@+id/image_moment"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="12dp"
-            android:alpha="0.8"
-            android:tint="@android:color/white"
-            android:src="@drawable/ic_landscape"/>
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+    </LinearLayout>
 
 
+    <TextView
+        android:id="@+id/video_duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/video_cover"
+        android:layout_alignRight="@id/video_cover"
+        android:layout_margin="8dp"
+        android:background="@drawable/round_rectangle_background"
+        android:textColor="@color/white87"
+        android:textSize="12sp"
+        tools:text="01:08"/>
+
+    <ImageView
+        android:id="@+id/image_moment"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@id/video_cover"
+        android:layout_alignRight="@id/video_cover"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="12dp"
+        android:alpha="0.8"
+        android:src="@drawable/ic_landscape"
+        android:tint="@android:color/white"/>
 
 
     <LinearLayout
         android:id="@+id/title_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/video_cover"
         android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:layout_below="@+id/video_fragment_container"
-        android:layout_alignParentStart="true">
+        android:paddingBottom="16dp">
 
         <com.waylens.hachi.ui.views.AvatarView
             android:id="@+id/avatar_view"
@@ -176,8 +182,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/video_fragment_container"
-            android:paddingLeft="8dp"
             android:layout_marginRight="16dp"
+            android:paddingLeft="8dp"
             android:src="@drawable/ic_more"/>
     </LinearLayout>
 
@@ -186,5 +192,6 @@
         android:layout_height="1dp"
         android:layout_below="@id/title_info"
         android:background="?attr/separateColor"/>
+
 
 </RelativeLayout>
