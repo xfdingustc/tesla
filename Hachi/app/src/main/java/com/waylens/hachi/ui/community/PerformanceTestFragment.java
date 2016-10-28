@@ -222,6 +222,13 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mMakerModelList = new ArrayList<>();
+
+        mRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + mDropDownMenu.getHeight());
+            }
+        });
         return view;
     }
 
@@ -450,7 +457,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         }
 
         if (isRefresh) {
-            ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + mDropDownMenu.getHeight());
+
             mAdapter.setMoments(raceQueryResponse.leaderboard, mRaceType, mLeaderBoardMode);
             if (raceQueryResponse.leaderboard.size() == 0) {
                 mNoDataLayout.setVisibility(View.VISIBLE);

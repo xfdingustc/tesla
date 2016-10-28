@@ -30,6 +30,7 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.PlaceHolderHelper;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -168,6 +169,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             .load(moment.thumbnail)
             .crossFade()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
             .into(holder.momentThumbnail);
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
