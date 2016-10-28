@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.entities.moment;
 
 import android.text.TextUtils;
 
+import com.waylens.hachi.rest.bean.MomentSimple;
 import com.waylens.hachi.rest.bean.MomentTimingInfo;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
@@ -65,5 +66,13 @@ public class MomentAbstract implements Serializable{
 
     public boolean isPictureMoment() {
         return !TextUtils.isEmpty(momentType) && momentType.equals("PICTURE");
+    }
+
+
+    public MomentAbstract(MomentSimple simple) {
+        this.id = simple.momentID;
+        this.videoUrl = simple.videoThumbnail;
+        this.momentType = simple.momentType;
+
     }
 }

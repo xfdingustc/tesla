@@ -132,9 +132,6 @@ public class NotificationActivity extends BaseActivity {
     }
 
     private void loadNotificationsRx(final boolean isRefresh) {
-//        if (isRefresh) {
-//            mRefreshLayout.setRefreshing(true);
-//        }
         HachiApi hachiApi = HachiService.createHachiApiService();
         Observable<NotificationResponse> commentObservable = hachiApi.getCommentNotificationRx(mCommentCursor, DEFAULT_COUNT)
             .doOnNext(new Action1<NotificationResponse>() {

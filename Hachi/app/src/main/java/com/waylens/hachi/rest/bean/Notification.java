@@ -36,18 +36,22 @@ public class Notification {
         return 0;
     }
 
-    public String getUserAvatarUrl() {
+    public User getUser() {
         switch (notificationType) {
             case NOTIFICATION_TYPE_COMMENT:
-                return comment.author.avatarUrl;
+                return comment.author;
             case NOTIFICATION_TYPE_FOLLOW:
-                return follow.user.avatarUrl;
+                return follow.user;
             case NOTIFICATION_TYPE_LIKE:
-                return like.user.avatarUrl;
+                return like.user;
             case NOTIFICATION_TYPE_SHARE:
-                return SessionManager.getInstance().getAvatarUrl();
+                return SessionManager.getInstance().getUser();
         }
         return null;
+    }
+
+    public String getUserAvatarUrl() {
+        return getUser().avatarUrl;
     }
 
     public String getDescription() {
@@ -72,16 +76,6 @@ public class Notification {
     }
 
     public String getUserName() {
-        switch (notificationType) {
-            case NOTIFICATION_TYPE_COMMENT:
-                return comment.author.userName;
-            case NOTIFICATION_TYPE_LIKE:
-                return like.user.userName;
-            case NOTIFICATION_TYPE_FOLLOW:
-                return follow.user.userName;
-            case NOTIFICATION_TYPE_SHARE:
-                return SessionManager.getInstance().getUserName();
-        }
-        return null;
+        return getUser().userName;
     }
 }

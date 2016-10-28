@@ -13,6 +13,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
@@ -73,6 +74,14 @@ public class SessionManager {
             mSharedManager.reloadLoginInfo();
         }
         return mSharedManager;
+    }
+
+    public User getUser() {
+        User user = new User();
+        user.userID = getUserId();
+        user.userName = getUserName();
+        user.avatarUrl = getAvatarUrl();
+        return user;
     }
 
 
