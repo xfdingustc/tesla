@@ -22,7 +22,7 @@
         <item name="momentPlaceHolderColor">#e5e5e5</item>
         <item name="overtureBgColor">@color/material_deep_orange_500</item>
         <item name="overtureLogoTint">@android:color/white</item>
-        <item name="cardViewBgColor">@android:color/transparent</item>
+        <item name="cardViewBgColor">@null</item>
         <item name="tagBgColor">@color/white87</item>
         <item name="tagTextColor">@color/black87</item>
         <item name="foregroundActiveColor">@android:color/white</item>

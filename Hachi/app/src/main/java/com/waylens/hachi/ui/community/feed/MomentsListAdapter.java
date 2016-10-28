@@ -35,6 +35,7 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.PlaceHolderHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -176,6 +177,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                 Glide.with(mContext)
                     .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
                     .crossFade()
                     .into(holder.videoCover);
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +197,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
             Glide.with(mContext)
                 .load(momentAbstract.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
                 .crossFade()
                 .into(holder.videoCover);
             holder.videoCover.setOnClickListener(new View.OnClickListener() {

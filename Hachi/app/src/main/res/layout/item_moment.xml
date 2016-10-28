@@ -15,7 +15,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
-        android:background="@drawable/stroke_rect"
         android:scaleType="centerCrop"
         app:fariv_xratio="16dp"
         app:fariv_yratio="9dp"/>
