@@ -15,22 +15,23 @@ import butterknife.BindView;
 /**
  * Created by Xiaofei on 2016/6/29.
  */
-public class WaylensAgreementActivity extends BaseActivity {
+public class WebViewActivity extends BaseActivity {
 
     public static final int PAGE_LICENSE = 0;
     public static final int PAGE_PRIVACY = 1;
     public static final int PAGE_TERMS_OF_USE = 2;
+    public static final int PAGE_SUPPORT = 3;
 
 
     private int requestCode;
 
     public static void launch(Activity activity) {
-        Intent intent = new Intent(activity, WaylensAgreementActivity.class);
+        Intent intent = new Intent(activity, WebViewActivity.class);
         activity.startActivity(intent);
     }
 
     public static void launch(Activity activity, int requestCode) {
-        Intent intent = new Intent(activity, WaylensAgreementActivity.class);
+        Intent intent = new Intent(activity, WebViewActivity.class);
         intent.putExtra("code", requestCode);
         activity.startActivity(intent);
     }
@@ -54,7 +55,8 @@ public class WaylensAgreementActivity extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_waylens_agreement);
+        setContentView(R.layout.activity_webview);
+        mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient());
         switch (requestCode) {
             case PAGE_LICENSE:
@@ -65,6 +67,9 @@ public class WaylensAgreementActivity extends BaseActivity {
                 break;
             case PAGE_TERMS_OF_USE:
                 mWebView.loadUrl("file:///android_asset/terms/terms.html");
+                break;
+            case PAGE_SUPPORT:
+                mWebView.loadUrl("file:///android_asset/guide/index.html");
                 break;
         }
         setupToolbar();
@@ -91,6 +96,9 @@ public class WaylensAgreementActivity extends BaseActivity {
                 break;
             case PAGE_TERMS_OF_USE:
                 getToolbar().setTitle(R.string.terms_of_use);
+                break;
+            case PAGE_SUPPORT:
+                getToolbar().setTitle(R.string.support);
                 break;
         }
     }

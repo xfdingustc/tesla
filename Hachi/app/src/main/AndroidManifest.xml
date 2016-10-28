@@ -107,7 +107,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.activities.WaylensAgreementActivity"
+            android:name=".ui.activities.WebViewActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.manualsetup.StartupActivity"

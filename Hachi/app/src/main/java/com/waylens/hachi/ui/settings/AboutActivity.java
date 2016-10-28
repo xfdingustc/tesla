@@ -1,16 +1,14 @@
 package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.activities.WaylensAgreementActivity;
+import com.waylens.hachi.ui.activities.WebViewActivity;
 
 import butterknife.OnClick;
 
@@ -23,24 +21,29 @@ public class AboutActivity extends BaseActivity{
 
     @OnClick(R.id.terms_of_use)
     public void onTermsOfUseClicked() {
-        WaylensAgreementActivity.launch(this, WaylensAgreementActivity.PAGE_TERMS_OF_USE);
+        WebViewActivity.launch(this, WebViewActivity.PAGE_TERMS_OF_USE);
     }
 
     @OnClick(R.id.license_agreement)
     public void onLicenseAgreementClicked() {
-        WaylensAgreementActivity.launch(this, WaylensAgreementActivity.PAGE_LICENSE);
+        WebViewActivity.launch(this, WebViewActivity.PAGE_LICENSE);
 
     }
 
     @OnClick(R.id.privacy_policy)
     public void onPrivacyPolicyClicked() {
-        WaylensAgreementActivity.launch(this, WaylensAgreementActivity.PAGE_PRIVACY);
+        WebViewActivity.launch(this, WebViewActivity.PAGE_PRIVACY);
 
     }
 
     @OnClick(R.id.version)
     public void onVersionClicked() {
         VersionCheckActivity.launch(this);
+    }
+
+    @OnClick(R.id.support)
+    public void onSupportClicked() {
+        WebViewActivity.launch(this, WebViewActivity.PAGE_SUPPORT);
     }
 
     @OnClick(R.id.feed_back)

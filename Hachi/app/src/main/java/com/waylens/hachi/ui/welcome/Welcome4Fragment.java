@@ -3,7 +3,6 @@ package com.waylens.hachi.ui.welcome;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
@@ -21,7 +20,7 @@ import android.widget.TextView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
-import com.waylens.hachi.ui.activities.WaylensAgreementActivity;
+import com.waylens.hachi.ui.activities.WebViewActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
@@ -83,7 +82,7 @@ public class Welcome4Fragment extends BaseFragment {
             .setSpan(new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    WaylensAgreementActivity.launch(getActivity());
+                    WebViewActivity.launch(getActivity());
                 }
             }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssb.append(" " + getString(R.string.agree_line3));
