@@ -203,11 +203,11 @@ public class UserProfileActivity extends BaseActivity {
 
 
     private void initViews() {
-        if (ThemeHelper.isDarkTheme()) {
-            setTheme(R.style.DarkTheme_UserProfile);
-        } else {
-            setTheme(R.style.LightTheme_UserProfile);
-        }
+//        if (ThemeHelper.isDarkTheme()) {
+//            setTheme(R.style.DarkTheme_UserProfile);
+//        } else {
+//            setTheme(R.style.LightTheme_UserProfile);
+//        }
         setContentView(R.layout.activity_user_profile);
 
         userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);

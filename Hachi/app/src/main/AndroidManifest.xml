@@ -36,7 +36,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_app"
         android:label="@string/app_name"
-        android:theme="@style/DarkTheme">
+        android:theme="@style/LightTheme">
 
         <!--<uses-library android:name="com.transee.com.waylens.hachi.library.vdb" android:required="true"/>-->
         <meta-data
@@ -79,6 +79,7 @@
 
         <activity
             android:name=".ui.activities.UserProfileActivity"
+            android:theme="@style/LightTheme.UserProfile"
             android:screenOrientation="portrait"/>
         <!--<item name="android:windowEnterTransition">@transition/dribbble_player_enter</item>-->
         <!--<item name="android:windowReturnTransition">@transition/dribbble_player_return</item>-->
