@@ -18,11 +18,15 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.rest.bean.Firmware;
+import com.waylens.hachi.service.download.DownloadAPI;
+import com.waylens.hachi.service.download.DownloadProgressListener;
 import com.waylens.hachi.service.download.DownloadServiceRx;
+import com.waylens.hachi.service.download.Downloadable;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
+import com.waylens.hachi.utils.StringUtils;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 
@@ -137,8 +141,51 @@ public class FirmwareUpdateActivity extends BaseActivity {
     private void doDownloadFirmware() {
 //        InetDownloadService.start(this, mFirmware.getUrl());
         Logger.t(TAG).d(mFirmware.url);
-        DownloadServiceRx.start(this, mFirmware.url, DownloadHelper.getFirmwareDownloadPath());
+//        DownloadServiceRx.start(this, mFirmware.url, DownloadHelper.getFirmwareDownloadPath());
         mTvBottomText.setText(R.string.download_firmware);
+        DownloadProgressListener listener = new DownloadProgressListener() {
+            @Override
+            public void update(long bytesRead, long contentLength, boolean done) {
+                Downloadable downloadable = new Downloadable();
+                downloadable.setTotalFileSize(contentLength);
+                downloadable.setCurrentFileSize(bytesRead);
+                final int progress  = (int) ((bytesRead * 100) / contentLength);
+                downloadable.setProgress(progress);
+//                sendNotification(downloadable);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mProgressBar.setProgress(progress);
+                    }
+                });
+
+            }
+        };
+
+        final File outputFile = new File(DownloadHelper.getFirmwareDownloadPath());
+        Logger.t(TAG).d("output file: " + outputFile);
+        String baseUrl = StringUtils.getHostName(mFirmware.url);
+
+        new DownloadAPI(baseUrl, listener)
+            .downloadFile(mFirmware.url, outputFile, new Subscriber() {
+                @Override
+                public void onCompleted() {
+//                    downloadCompleted();
+                    startFirmwareMd5Check(outputFile);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+//                    downloadError();
+                    Logger.t(TAG).d("Download error: " + e.getMessage());
+                }
+
+                @Override
+                public void onNext(Object o) {
+
+                }
+            });
     }
 
 

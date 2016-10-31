@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -69,6 +70,8 @@ public class DownloadAPI {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(subscriber);
     }
+
+
 
 
     public InputStream downloadFileSync(@NonNull String url) throws IOException {

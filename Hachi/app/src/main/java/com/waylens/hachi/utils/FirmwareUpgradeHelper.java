@@ -86,7 +86,8 @@ public class FirmwareUpgradeHelper {
                 return true;
             }
 
-            return this.mBuild > firmwareVersion.mBuild;
+//            return this.mBuild > firmwareVersion.mBuild;
+            return true;
 
         }
     }
