@@ -203,12 +203,12 @@ public class UserProfileActivity extends BaseActivity {
 
 
     private void initViews() {
-//        if (ThemeHelper.isDarkTheme()) {
-//            setTheme(R.style.DarkTheme_UserProfile);
-//        } else {
-//            setTheme(R.style.LightTheme_UserProfile);
-//        }
         setContentView(R.layout.activity_user_profile);
+
+        // set immersive mode
+        draggableFrame.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
 
         userAvatar.loadAvatar(mUser.avatarUrl, mUser.userName);
 //        userAvatar.setTitleSize(ViewUtils.dp2px(72));
@@ -410,6 +410,7 @@ public class UserProfileActivity extends BaseActivity {
         if (isRefresh) {
             mMomentRvAdapter.setMoments(momentListResponse.moments);
             ViewUtils.setPaddingTop(mRvUserMomentList, userDescription.getHeight());
+            mRvUserMomentList.setVisibility(View.VISIBLE);
         } else {
             mMomentRvAdapter.addMoments(momentListResponse.moments);
         }

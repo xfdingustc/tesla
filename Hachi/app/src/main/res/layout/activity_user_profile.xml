@@ -143,7 +143,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:elevation="@dimen/z_card"
-        tools:visibility="gone"
+        android:visibility="gone"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"/>
 
