@@ -41,7 +41,7 @@ public class AboutActivity extends BaseActivity{
         VersionCheckActivity.launch(this);
     }
 
-    @OnClick(R.id.support)
+    @OnClick(R.id.quick_start)
     public void onSupportClicked() {
         WebViewActivity.launch(this, WebViewActivity.PAGE_SUPPORT);
     }

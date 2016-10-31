@@ -25,6 +25,9 @@ public class ConnectivityHelper {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void setPreferredNetwork(int desirednetworkType) {
+        if (!VersionHelper.isGreaterThanLollipop()) {
+            return;
+        }
 
         final ConnectivityManager connectivityManager = (ConnectivityManager) Hachi.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 

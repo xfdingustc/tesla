@@ -98,7 +98,7 @@ public class WebViewActivity extends BaseActivity {
                 getToolbar().setTitle(R.string.terms_of_use);
                 break;
             case PAGE_SUPPORT:
-                getToolbar().setTitle(R.string.support);
+                getToolbar().setTitle(R.string.quick_start);
                 break;
         }
     }
