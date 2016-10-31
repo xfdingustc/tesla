@@ -64,7 +64,7 @@
     <color name="settings_item_bg_normal">#FF222428</color>
     <color name="settings_item_bg_pressed">#FF17191C</color>
     <color name="settings_line_separator">#FF35373B</color>
-
+    <color name="scrim">#99323232</color>
     <!-- TO BE REMOVED END -->
 
 </resources>

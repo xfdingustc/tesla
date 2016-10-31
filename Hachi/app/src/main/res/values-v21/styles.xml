@@ -94,7 +94,19 @@
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
 
-    <style name="DarkTheme.UserProfile">
+
+    <style name="LightTheme.Translucent">
+        <item name="android:windowBackground">@color/scrim</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+
+    <style name="LightTheme.Translucent.UserProfile">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
@@ -105,26 +117,12 @@
 
     </style>
 
-    <style name="LightTheme.UserProfile">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementEnterTransition">@transition/hachi_user_profile_shared_enter</item>
-        <item name="android:windowEnterTransition">@transition/hachi_user_profile_enter</item>
-        <item name="android:windowReturnTransition">@transition/hachi_user_profile_return</item>
-        <item name="android:windowTransitionBackgroundFadeDuration">200</item>
 
-    </style>
-
-    <style name="DarkTheme.LiveView">
+    <style name="LightTheme.Translucent.LiveView">
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
 
-    <style name="LightTheme.LiveView">
-        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
-        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
-    </style>
 
-    <dimen name="spacing_micro">4dp</dimen>
+
 </resources>

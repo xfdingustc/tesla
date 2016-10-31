@@ -396,11 +396,11 @@ public class LiveViewActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        if (ThemeHelper.isDarkTheme()) {
-            setTheme(R.style.DarkTheme_LiveView);
-        } else {
-            setTheme(R.style.LightTheme_LiveView);
-        }
+//        if (ThemeHelper.isDarkTheme()) {
+//            setTheme(R.style.DarkTheme_LiveView);
+//        } else {
+//            setTheme(R.style.LightTheme_LiveView);
+//        }
         setContentView(R.layout.activity_live_view);
         mCardNotification.setOnClickListener(new View.OnClickListener() {
             @Override
