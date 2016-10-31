@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:id="@+id/root_view"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/spacing_xlarge"
+        android:background="@drawable/dialog_background"
+        android:elevation="@dimen/z_fab"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_large"
+        android:paddingTop="@dimen/spacing_xlarge"
+        android:transitionName="@string/transition_hachi_login">
+
+        <com.waylens.hachi.view.BaselineGridTextView
+            android:id="@+id/login_message"
+            style="@style/Widget.Hachi.DialogText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/spacing_normal"
+            android:gravity="center"
+            android:text="@string/need_login"/>
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/spacing_micro"
+            android:drawablePadding="@dimen/spacing_micro"
+            android:padding="@dimen/padding_normal"
+            android:text="@string/login_to"
+            android:textAppearance="@style/TextAppearance.DarkButton"
+            />
+
+        <TextView
+            android:id="@+id/login_failed_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/login_failed"
+            android:textColor="@color/error"
+            android:visibility="gone"/>
+
+        <!--<include layout="@layout/loading" />-->
+
+    </LinearLayout>
+
+</FrameLayout>

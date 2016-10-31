@@ -105,6 +105,12 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
+    <style name="LightTheme.Translucent.Login">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:colorButtonNormal">@color/hachi_button</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+    </style>
+
 
     <style name="LightTheme.Translucent.UserProfile">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -126,6 +132,16 @@
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
 
+    <style name="TextAppearance.DarkButton" parent="@android:style/TextAppearance.Material.Widget.Button">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TextAppearance.DialogContent" parent="@android:style/TextAppearance.Material.Subhead">
+        <item name="android:textColor">@color/text_secondary_dark</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.01</item>
+    </style>
 
 
+    <color name="text_secondary_dark">#8a000000</color>
 </resources>

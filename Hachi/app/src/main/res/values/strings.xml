@@ -521,4 +521,7 @@
     <string name="low_card_space">Your highlights are occupying too much space on the SD card, and the space left for loop-recording is less than 8GB. This makes your card more prone to failure. Please back up highlights of your interests and free up space by removing them.</string>
     <string name="support">Support</string>
     <string name="quick_start">Quick start</string>
+    <string name="need_login">First you\'ll need to</string>
+    <string name="login_to">Log in to Waylens</string>
+    <string name="login_failed">Login failed</string>
 </resources>

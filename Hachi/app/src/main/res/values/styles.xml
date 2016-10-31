@@ -62,6 +62,8 @@
         <item name="avatarPlaceHolderColor">@color/material_grey_600</item>
     </style>
 
+
+
     <style name="Styled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">?attr/toolbarColor</item>
     </style>
@@ -90,8 +92,18 @@
         <item name="colorAccent">@android:color/white</item>
     </style>
 
+
+
+
     <style name="Widget.AppCompat.Button.Hachi" parent="Widget.AppCompat.Button">
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="Widget.Hachi" parent="android:Widget"/>
+
+    <style name="Widget.Hachi.DialogText">
+        <item name="android:textAppearance">@style/TextAppearance.DialogContent</item>
+        <item name="lineHeightHint">20sp</item>
     </style>
 
     <style name="HachiTextView" parent="TextAppearance.AppCompat">

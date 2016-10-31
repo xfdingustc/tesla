@@ -26,6 +26,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
@@ -163,7 +164,9 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
             @Override
             public void onClick(View v) {
                 if (!SessionManager.getInstance().isLoggedIn()) {
-                    AuthorizeActivity.launch((Activity) mContext);
+//                    AuthorizeActivity.launch((Activity) mContext);
+//                    return;
+                    LoginActivity.launch((Activity)mContext, holder.avatarView);
                     return;
                 }
                 UserProfileActivity.launch((Activity) mContext, momentEx.owner, holder.avatarView);

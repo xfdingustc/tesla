@@ -252,6 +252,12 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.authorization.LoginActivity"
+            android:launchMode="singleTop"
+            android:noHistory="true"
+            android:theme="@style/LightTheme.Translucent.Login"/>
+
+        <activity
             android:name=".ui.clips.music.MusicListSelectActivity"
             android:screenOrientation="portrait"/>
 
