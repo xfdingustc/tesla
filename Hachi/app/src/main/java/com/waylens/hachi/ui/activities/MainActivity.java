@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_main);
 
-        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.moments), R.drawable.moments_tab));
+        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.moments), R.drawable.ic_wheel));
         spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.leaderboard), R.drawable.ic_virtual_racing));
         spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.video), R.drawable.tab_video_n));
         spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.account), R.drawable.ic_person));

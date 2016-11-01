@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.net.SocketException;
 
 import rx.Subscriber;
 
@@ -49,18 +48,13 @@ public class FirmwareWriter {
                 mSubscribe.onNext(dataSend);
             }
 
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
             socket.close();
+
         } catch (IOException e) {
             e.printStackTrace();
+            mSubscribe.onError(e);
         }
+
 
     }
 

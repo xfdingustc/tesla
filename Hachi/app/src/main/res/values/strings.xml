@@ -524,4 +524,6 @@
     <string name="need_login">First you\'ll need to</string>
     <string name="login_to">Log in to Waylens</string>
     <string name="login_failed">Login failed</string>
+    <string name="camera_will_disconnected">Camera will be disconnected, continue?</string>
+    <string name="download_firmware_error">Download firmware failed</string>
 </resources>
