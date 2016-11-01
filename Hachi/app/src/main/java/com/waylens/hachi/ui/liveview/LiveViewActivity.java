@@ -776,12 +776,11 @@ public class LiveViewActivity extends BaseActivity {
                     mStorageView.getProgressDrawable().clearColorFilter();
                     mStorageView.setMax((int) (spaceInfo.total / (1024 * 1024)));
                     mStorageView.setProgress((int) (spaceInfo.marked / (1024 * 1024)));
-                    mStorageView.setSecondaryProgress((int) (spaceInfo.used / (1024 * 1024)));
+                    mStorageView.setSecondaryProgress((int) (spaceInfo.total / (1024 * 1024)));
 
                     mTvSpaceLeft.setText(StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used) + " " + getString(R.string.ready_to_record));
 
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
-
                     mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.total - spaceInfo.used));
                     Logger.t(TAG).d(spaceInfo.total - spaceInfo.used);
                     if (spaceInfo.total - spaceInfo.used < (long) 8 * 1024 * 1024 * 1024) {
