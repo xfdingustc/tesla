@@ -10,7 +10,7 @@
         tools:visible="false"/>
     <item
         android:id="@+id/menu_to_enhance"
-        android:icon="@drawable/btn_edit_action_video"
+        android:icon="@drawable/ic_enhance"
         android:title="@string/enhance"
         app:showAsAction="always"
         tools:visible="false"/>

@@ -136,6 +136,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @BindView(R.id.playProgress)
     TextView mTvProgress;
 
+    @BindView(R.id.duration)
+    TextView mDuration;
+
     @BindView(R.id.multiSegIndicator)
     MultiSegSeekbar mMultiSegSeekbar;
 
@@ -162,9 +165,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnShowOverlayClicked() {
         boolean isGaugeVisible = mWvGauge.getVisibility() != View.VISIBLE;
         if (isGaugeVisible) {
-            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
+            mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_s);
         } else {
-            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
+            mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_n);
         }
         //mGaugeView.showGauge(mIsGaugeVisible);
         mWvGauge.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);
@@ -221,14 +224,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mControlPanel.setLayoutParams(params);
-            mControlPanel.setBackgroundColor(Color.argb(0x7f, 0, 0, 0));
+//            mControlPanel.setBackgroundColor(Color.argb(0x7f, 0, 0, 0));
 
         } else {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.BELOW, mFragmentView.getId());
             mControlPanel.setLayoutParams(params);
             mBtnFullscreen.setImageResource(R.drawable.ic_fullscreen);
-            mControlPanel.setBackgroundResource(0);
+//            mControlPanel.setBackgroundResource(0);
         }
         ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
     }
@@ -693,7 +696,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             });
 
 
-
         Observable loadAudioPlayerObservable = Observable.just("")
             .doOnNext(new Action1<String>() {
                 @Override
@@ -712,7 +714,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                     }
                 }
             });
-
 
 
         Observable.zip(rawDataLoadObservable, urlObservable, loadAudioPlayerObservable, new Func3() {
@@ -801,8 +802,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     private void updateProgressTextView(long currentPosition, long duration) {
-        String timeText = DateUtils.formatElapsedTime(currentPosition / 1000) + "/" + DateUtils.formatElapsedTime(duration / 1000);
-        mTvProgress.setText(timeText);
+        mTvProgress.setText(DateUtils.formatElapsedTime(currentPosition / 1000));
+        mDuration.setText(DateUtils.formatElapsedTime(duration / 1000));
     }
 
     private boolean isFullScreen() {

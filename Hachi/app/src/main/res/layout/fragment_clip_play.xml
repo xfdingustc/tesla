@@ -4,8 +4,7 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/defaultBgColor">
+                android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/fragment_view"
@@ -48,7 +47,8 @@
                 android:id="@+id/gaugeView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                tools:visibility="gone"/>
 
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
@@ -61,70 +61,71 @@
         android:id="@+id/control_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fragment_view"
-        android:background="@color/windowBackground"
-        android:orientation="vertical">
+        android:background="@color/video_control_panel_bg"
+        android:orientation="horizontal"
+        android:layout_below="@id/fragment_view">
 
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            style="@style/SelectableRippleButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_play_arrow"/>
+
+
+        <TextView
+            android:id="@+id/playProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0:00"
+            android:textSize="12sp"
+            android:textColor="@color/app_text_color_secondary"/>
 
         <com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar
             android:id="@+id/multiSegIndicator"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_margin="8dp"
-            android:background="@color/windowBackground"
+            android:layout_gravity="center_vertical"
             app:barHeight="4dp"
             app:circleColor="@color/app_text_color_primary"
             app:circleSize="4dp"
             app:progressColor="@color/style_color_accent"/>
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/btnPlayPause"
-                style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_play_arrow"/>
-
-            <FrameLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/playProgress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="0:00/0:00"
-                    android:textColor="@color/app_text_color_primary"/>
-
-            </FrameLayout>
-
-            <ImageButton
-                android:id="@+id/btnShowOverlay"
-                style="@style/SelectableRippleButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_margin="8dp"
-                android:tint="@android:color/white"
-                android:src="@drawable/btn_gauge_overlay"/>
+            android:layout_gravity="center"
+            android:text="0:32"
+            android:textSize="12sp"
+            android:textColor="@color/app_text_color_secondary"/>
 
 
-            <ImageButton
-                android:id="@+id/btnFullscreen"
-                style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_fullscreen"/>
+        <ImageButton
+            android:id="@+id/btnShowOverlay"
+            style="@style/SelectableRippleButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:paddingRight="8dp"
+            android:padding="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/btn_gauge_overlay"
+            android:tint="@android:color/white"/>
 
-        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnFullscreen"
+            style="@style/SelectableRippleButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_fullscreen"/>
+
     </LinearLayout>
 
 

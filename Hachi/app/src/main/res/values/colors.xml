@@ -41,6 +41,8 @@
 
     <color name="toolbar_color">#212121</color>
 
+    <color name="video_control_panel_bg">#232221</color>
+
     <color name="white87">#DDDDDD</color>
     <color name="black87">#212121</color>
 

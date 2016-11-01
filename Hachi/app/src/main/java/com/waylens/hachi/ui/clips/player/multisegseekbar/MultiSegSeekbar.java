@@ -228,6 +228,9 @@ public class MultiSegSeekbar extends View {
             oldThumbXOffset = mThumb.getX() - marginLeft;
         }
 
+        if (getClipSet() == null) {
+            return;
+        }
 
         mBar = new Bar(context, marginLeft, yPos, barLength, mBarHeight, mBarColor, mDividerWidth,
             mActiveColor, mInactiveColor, mProgressColor, mIsMulti, getClipSet().getClipList());

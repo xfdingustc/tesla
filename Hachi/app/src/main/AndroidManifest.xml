@@ -166,7 +166,8 @@
         <activity
             android:name=".ui.clips.preview.PreviewActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/LightTheme.Translucent.Preview"/>
 
 
         <activity

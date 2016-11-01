@@ -876,9 +876,9 @@ public class LiveViewActivity extends BaseActivity {
 
     private void showOverlay(boolean isGaugeVisible) {
         if (isGaugeVisible) {
-            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
+            mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_s);
         } else {
-            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
+            mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_n);
         }
         //mGaugeView.showGauge(mIsGaugeVisible);
         mGaugeView.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);

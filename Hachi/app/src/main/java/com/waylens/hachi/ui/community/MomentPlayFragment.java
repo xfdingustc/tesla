@@ -207,9 +207,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     public void onBtnShowOverlayClicked() {
         boolean isGaugeVisible = mGaugeView.getVisibility() != View.VISIBLE;
         if (isGaugeVisible) {
-            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_s);
+            mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_s);
         } else {
-            mBtnShowOverlay.setImageResource(R.drawable.btn_gauge_overlay_n);
+            mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_n);
         }
         //mGaugeView.showGauge(mIsGaugeVisible);
         mGaugeView.setVisibility(isGaugeVisible ? View.VISIBLE : View.INVISIBLE);
