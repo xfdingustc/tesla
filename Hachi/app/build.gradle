@@ -161,6 +161,7 @@ dependencies {
     compile 'com.github.pavlospt:roundedletterview:1.2'
     compile 'com.github.armcha:SpaceNavigationView:1.4.1'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

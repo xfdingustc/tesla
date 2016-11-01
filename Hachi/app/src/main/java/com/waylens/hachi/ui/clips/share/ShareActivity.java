@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -241,6 +242,7 @@ public class ShareActivity extends ClipPlayActivity {
         timingPoints = (ArrayList<Long>) getIntent().getSerializableExtra("timingPoints");
         mRaceType = getIntent().getIntExtra("raceType", -1);
         init();
+        getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override

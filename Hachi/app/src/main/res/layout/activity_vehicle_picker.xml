@@ -8,7 +8,7 @@
               android:orientation="vertical">
 
 
-   <include layout="@layout/toolbar_default"/>
+    <include layout="@layout/toolbar_default"/>
 
 
     <ViewAnimator
@@ -22,10 +22,21 @@
             android:layout_gravity="center"
             android:indeterminateTint="@color/style_color_accent"/>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_content_list"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent">
+            <com.l4digital.fastscroll.FastScrollRecyclerView
+                android:id="@+id/rv_content_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:bubbleColor="@color/style_color_accent"
+                app:bubbleTextColor="@android:color/white"
+                app:handleColor="@color/style_color_accent"
+                app:hideScrollbar="false"/>
+
+        </FrameLayout>
+
+
     </ViewAnimator>
 
 

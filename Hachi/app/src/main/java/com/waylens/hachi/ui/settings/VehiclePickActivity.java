@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ViewAnimator;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.l4digital.fastscroll.FastScrollRecyclerView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
@@ -81,7 +82,7 @@ public class VehiclePickActivity extends BaseActivity {
     ViewAnimator mViewAnimator;
 
     @BindView(R.id.rv_content_list)
-    RecyclerView mRvContentList;
+    FastScrollRecyclerView mRvContentList;
 
 //    @BindView(R.id.search_view)
 //    MaterialSearchView mSearchView;

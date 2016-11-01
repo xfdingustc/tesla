@@ -7,13 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.l4digital.fastscroll.FastScroller;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.settings.CountryActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -22,7 +24,7 @@ import butterknife.ButterKnife;
 /**
  * Created by lshw on 16/7/27.
  */
-public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder>implements Filterable {
+public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable, FastScroller.SectionIndexer {
 
     private final List<T> mList;
     private List<T> mListFiltered;
@@ -33,6 +35,14 @@ public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<Recycl
         mList = list;
         mListFiltered = list;
         mOnListItemClickListener = listener;
+        Collections.sort(mList, new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                String leftName = getName(o1).toUpperCase();
+                String rightName = getName(o2).toUpperCase();
+                return leftName.compareTo(rightName);
+            }
+        });
     }
 
     public T getItem(int index) {
@@ -70,6 +80,11 @@ public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<Recycl
         return mListFiltered == null ? 0 : mListFiltered.size();
     }
 
+
+    @Override
+    public String getSectionText(int position) {
+        return String.valueOf(getName(mListFiltered.get(position)).charAt(0));
+    }
 
     public class SimpleStringViewHolder extends RecyclerView.ViewHolder {
 
@@ -129,5 +144,5 @@ public abstract class SimpleCommonAdapter<T> extends RecyclerView.Adapter<Recycl
 
     }
 
-    public abstract String getName(T t) ;
+    public abstract String getName(T t);
 }

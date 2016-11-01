@@ -179,7 +179,8 @@
 
         <activity
             android:name=".ui.clips.share.ShareActivity"
-            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"/>
 
         <activity
