@@ -189,9 +189,9 @@ public class ShareActivity extends ClipPlayActivity {
         } else {
             mIsFacebookShareChecked = !mIsFacebookShareChecked;
             if (mIsFacebookShareChecked) {
-                mBtnFaceBook.setImageResource(R.drawable.btn_platform_facebook_s);
+                mBtnFaceBook.setImageResource(R.drawable.ic_facebook_enable);
             } else {
-                mBtnFaceBook.setImageResource(R.drawable.btn_platform_facebook_n);
+                mBtnFaceBook.setImageResource(R.drawable.ic_facebook_disable);
             }
         }
     }
@@ -203,9 +203,9 @@ public class ShareActivity extends ClipPlayActivity {
         } else {
             mIsYoutubeShareChecked = !mIsYoutubeShareChecked;
             if (mIsYoutubeShareChecked) {
-                mBtnYoutube.setImageResource(R.drawable.btn_platform_youtube_s);
+                mBtnYoutube.setImageResource(R.drawable.ic_youtube_enable);
             } else {
-                mBtnYoutube.setImageResource(R.drawable.btn_platform_youtube_n);
+                mBtnYoutube.setImageResource(R.drawable.ic_facebook_disable);
             }
         }
     }
@@ -473,8 +473,6 @@ public class ShareActivity extends ClipPlayActivity {
     public void setupToolbar() {
         super.setupToolbar();
         getToolbar().setTitle(R.string.share);
-
-        getToolbar().setTitleTextColor(getResources().getColor(R.color.app_text_color_primary));
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

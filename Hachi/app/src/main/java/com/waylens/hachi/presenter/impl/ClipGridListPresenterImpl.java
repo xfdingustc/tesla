@@ -23,11 +23,11 @@ public class ClipGridListPresenterImpl implements ClipGridListPresenter, BaseSin
     private final ClipGridListView mGridListView;
     private final ClipGridListInteractor mClipGridListInteractor;
 
-    public ClipGridListPresenterImpl(Context context, String requestTag, int clipSetType, int flag,
+    public ClipGridListPresenterImpl(Context context, int clipSetType, int flag,
                                      int attr, ClipGridListView gridListView) {
         this.mContext = context;
         this.mGridListView = gridListView;
-        this.mClipGridListInteractor = new ClipGridListInteractorImpl(requestTag, clipSetType, flag, attr, this);
+        this.mClipGridListInteractor = new ClipGridListInteractorImpl(clipSetType, flag, attr, this);
     }
 
 

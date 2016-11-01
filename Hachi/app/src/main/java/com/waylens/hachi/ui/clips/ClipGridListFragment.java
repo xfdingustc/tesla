@@ -183,7 +183,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
             attr = Clip.CLIP_ATTR_MANUALLY;
         }
-        mPresenter = new ClipGridListPresenterImpl(getActivity(), getRequestTag(), mClipSetType, flag, attr, this);
+        mPresenter = new ClipGridListPresenterImpl(getActivity(), mClipSetType, flag, attr, this);
         mLoadingHandler = new LoadingHandler(this);
         initViews();
     }

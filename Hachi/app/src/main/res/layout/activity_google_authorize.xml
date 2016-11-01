@@ -18,7 +18,8 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="16dp"
         android:layout_toLeftOf="@id/connectIndicator"
-        android:src="@drawable/waylens_logo2"/>
+        android:tint="@color/style_color_accent"
+        android:src="@drawable/new_logo"/>
 
 
     <ImageView
@@ -28,6 +29,6 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_toRightOf="@id/connectIndicator"
-        android:src="@drawable/btn_platform_youtube"/>
+        android:src="@drawable/ic_youtube_enable"/>
 
 </RelativeLayout>

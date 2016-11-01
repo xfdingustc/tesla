@@ -249,28 +249,28 @@
 
             <ImageView
                 android:id="@+id/btn_facebook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="32dp"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_platform_facebook"
+                android:src="@drawable/ic_facebook_disable"
                 />
 
             <ImageView
                 android:id="@+id/btn_youtube"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="32dp"
                 android:background="?attr/selectableItemBackground"
                 android:contentDescription="@null"
-                android:src="@drawable/btn_platform_youtube"
+                android:src="@drawable/ic_youtube_disable"
                 />
 
 
