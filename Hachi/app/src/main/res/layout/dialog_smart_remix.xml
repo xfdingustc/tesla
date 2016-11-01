@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="15s"
+        android:textColor="#000"/>
+
+    <TextView
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:text="60s"
+        android:textColor="#000"/>
+
+    <SeekBar
+        android:layout_centerHorizontal="true"
+        android:id="@+id/length_seekbar"
+        android:max="45"
+        android:layout_below="@id/text_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="16dp"
+        android:progressTint="@color/style_color_accent"
+        android:thumbTint="@color/style_color_accent"
+        android:progress="5"/>
+
+    <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/length_seekbar"
+        android:id="@+id/tv_smart_remix"
+        style="@style/HachiTextViewSubHeader"
+        android:layout_marginBottom="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Create 20s Remix"
+        android:textColor="@color/style_color_accent" />
+
+</RelativeLayout>

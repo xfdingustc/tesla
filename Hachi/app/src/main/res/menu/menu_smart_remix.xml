@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/smart_remix"
+    <item android:id="@+id/menu_to_remix"
           android:icon="@drawable/navbar_remix"
           android:title="@string/download"
           app:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_selete_all"
+        android:title="@string/select_all"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_deselete_all"
+        android:title="@string/deselect_all"
+        app:showAsAction="never"/>
 </menu>

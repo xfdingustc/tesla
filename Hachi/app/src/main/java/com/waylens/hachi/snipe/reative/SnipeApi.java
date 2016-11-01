@@ -2,6 +2,7 @@ package com.waylens.hachi.snipe.reative;
 
 import android.os.Bundle;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
@@ -11,6 +12,7 @@ import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.snipe.toolbox.RawDataBufRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
@@ -59,6 +61,22 @@ class SnipeApi {
         try {
             return requestFuture.get();
         } catch (InterruptedException | ExecutionException e) {
+            return null;
+        }
+    }
+    public static byte[] getRawDataBuf(Clip clip, int dataType, long startTime, int duration) {
+        Bundle params = new Bundle();
+        params.putInt(RawDataBufRequest.PARAM_DATA_TYPE, dataType);
+        params.putLong(RawDataBufRequest.PARAM_CLIP_TIME, startTime);
+        params.putInt(RawDataBufRequest.PARAM_CLIP_LENGTH, duration);
+
+        VdbRequestFuture<byte[]> requestFuture = VdbRequestFuture.newFuture();
+        RawDataBufRequest request = new RawDataBufRequest(clip.cid, params, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+        try {
+            byte[] buffer = requestFuture.get();
+            return buffer;
+        } catch (Exception e) {
             return null;
         }
     }

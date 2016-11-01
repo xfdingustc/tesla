@@ -413,6 +413,7 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void configEnhanceView() {
 //        mClipsEditView.setClipIndex(mPlaylistEditor.getPlaylistId());
+        Logger.t(TAG).d("List size :" + getClipSet().getClipList().size());
         mClipsEditView.setPlayListEditor(mPlaylistEditor);
         mClipsEditView.setOnClipEditListener(new ClipsEditView.OnClipEditListener() {
             @Override

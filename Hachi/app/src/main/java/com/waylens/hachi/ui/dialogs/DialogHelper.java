@@ -128,6 +128,16 @@ public class DialogHelper {
             .show();
     }
 
+    public static MaterialDialog showLeaveSmartRemixConfirmDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener) {
+        return new MaterialDialog.Builder(context)
+                .title("Leave smart remix")
+                .content(R.string.discard_enhance_confirm)
+                .positiveText(R.string.ok)
+                .negativeText(R.string.cancel)
+                .onPositive(positiveListener)
+                .show();
+    }
+
     public static MaterialDialog showUploadCacheConfirmDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener,
                                                               MaterialDialog.SingleButtonCallback negativeListener) {
         return new MaterialDialog.Builder(context)

@@ -70,6 +70,10 @@ public class VdbAcknowledge {
         mMsgIndex = 32;
     }
 
+    public int getMsgIndex() {
+        return mMsgIndex;
+    }
+
     public int getRetCode() {
         return mCmdRetCode;
     }

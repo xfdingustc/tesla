@@ -526,4 +526,5 @@
     <string name="login_failed">Login failed</string>
     <string name="camera_will_disconnected">Camera will be disconnected, continue?</string>
     <string name="download_firmware_error">Download firmware failed</string>
+    <string name="smart_remix_length">Create %1$ds Remix</string>
 </resources>

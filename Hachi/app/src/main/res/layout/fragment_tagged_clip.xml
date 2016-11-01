@@ -2,6 +2,8 @@
 <RelativeLayout android:id="@+id/rootViewAnimator"
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                xmlns:fab="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/defaultBgColor"
@@ -24,5 +26,70 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fab_smart_remix"
+        android:visibility="invisible"
+        style="@style/MenuButtonsStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="40dp"
+        android:src="@drawable/btn_enhance_remix"
+        fab:fab_label="@string/take_picture"/>
+
+    <RelativeLayout
+        android:id="@+id/layout_smart_remix"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        android:layout_alignParentBottom="true"
+        android:background="#efff"
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="15s"
+            android:textColor="#000"/>
+
+        <TextView
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:text="60s"
+            android:textColor="#000"/>
+
+        <SeekBar
+            android:layout_centerHorizontal="true"
+            android:id="@+id/length_seekbar"
+            android:layout_above="@+id/tv_smart_remix"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="16dp"
+            android:progressTint="@color/style_color_accent"
+            android:thumbTint="@color/style_color_accent"
+            tools:progress="50"/>
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/tv_smart_remix"
+            style="@style/HachiTextViewSubHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:text="Create 20s Remix"
+            android:textColor="@color/style_color_accent"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -118,7 +118,7 @@ public class ClipsEditView extends LinearLayout {
         setClipIndex(mPlayListEditor.getPlaylistId());
         List<Clip> clipList = getClipSet().getClipList();
         for (Clip clip : clipList) {
-            Logger.t(TAG).d(clip.editInfo.toString());
+            //Logger.t(TAG).d(clip.editInfo.toString());
         }
     }
 

@@ -15,9 +15,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.clans.fab.FloatingActionButton;
+import com.googlecode.javacv.cpp.avformat;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
@@ -40,19 +44,17 @@ import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.view.ClipGridListView;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/2/18.
@@ -71,9 +73,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private boolean mIsMultipleMode;
 
+    private boolean mIsRemixMode;
+
     private boolean mIsAddMore;
 
     private boolean mIsToShare;
+
+    private int mRemixLength = 20;
 
     private LoadingHandler mLoadingHandler;
 
@@ -83,12 +89,21 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private ClipGridListPresenter mPresenter = null;
 
+    private SeekBar mLengthSeekbar;
+
+    private TextView mTvSmartRemix;
 
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
+
+    @BindView(R.id.fab_smart_remix)
+    FloatingActionButton mFabSmartRemix;
+
+    @BindView(R.id.layout_smart_remix)
+    RelativeLayout mSmartRemixLayout;
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -128,7 +143,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
     }
 
-
     public static ClipGridListFragment newInstance(int clipSetType) {
         return newInstance(clipSetType, false, false, false);
     }
@@ -163,11 +177,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             mIsAddMore = args.getBoolean(ARG_IS_ADD_MORE, false);
             mIsToShare = args.getBoolean(ARG_IS_TO_SHARE, false);
         }
-
         if (mIsAddMore) {
             setHasOptionsMenu(true);
         }
-
     }
 
 
@@ -182,6 +194,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         } else {
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
             attr = Clip.CLIP_ATTR_MANUALLY;
+        }
+
+        if (mClipSetType == Clip.TYPE_MARKED) {
+            showSmartRemixActionButton(true);
+        } else {
+            showSmartRemixActionButton(false);
         }
         mPresenter = new ClipGridListPresenterImpl(getActivity(), mClipSetType, flag, attr, this);
         mLoadingHandler = new LoadingHandler(this);
@@ -209,7 +227,26 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     @Override
-    public void showLoading(String msg) {
+    public void showLoading(String msg) { }
+
+    private void showSmartRemixActionButton(boolean show) {
+        mFabSmartRemix.setVisibility(show?View.VISIBLE:View.INVISIBLE);
+        mFabSmartRemix.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mIsRemixMode = true;
+                mFabSmartRemix.setVisibility(View.INVISIBLE);
+                //mSmartRemixLayout.setVisibility(View.VISIBLE);
+                if (mActionMode == null) {
+                    mActionMode = getActivity().startActionMode(mRemixCallback);
+                    updateActionMode();
+                }
+                mAdapter.toggleSelectAll(true);
+            }
+        });
+    }
+
+    private void showLoadingProgress() {
         mRefreshLayout.setRefreshing(true);
     }
 
@@ -224,8 +261,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
-
-
         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
         mAdapter.setClipSetGroup(helper.getClipSetGroup());
 
@@ -291,8 +326,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             public void onClipLongClicked(Clip clip) {
                 mIsMultipleMode = true;
                 mAdapter.setMultiSelectedMode(true);
-
-
                 mRefreshLayout.setEnabled(false);
                 if (mActionMode == null) {
                     mActionMode = getActivity().startActionMode(mCABCallback);
@@ -369,6 +402,61 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
+    private ActionMode.Callback mRemixCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_smart_remix, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.menu_to_remix:
+                    showRemixDialog();
+                    //mode.finish();
+                    break;
+                case R.id.menu_selete_all:
+                    mAdapter.toggleSelectAll(true);
+                    break;
+                case R.id.menu_deselete_all:
+                    mAdapter.toggleSelectAll(false);
+                    mode.finish();
+                    break;
+                default:
+                    break;
+            }
+            return true;
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            if (mIsAddMore) {
+                getActivity().finish();
+            } else if (mIsMultipleMode) {
+                mIsMultipleMode = false;
+                mAdapter.setMultiSelectedMode(false);
+            }
+            if (mIsRemixMode) {
+                mFabSmartRemix.setVisibility(View.VISIBLE);
+                mIsRemixMode = false;
+                mAdapter.toggleSelectAll(false);
+            }
+            mRefreshLayout.setEnabled(true);
+        }
+    };
+
+
+
     private ActionMode.Callback mCABCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -379,6 +467,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            mFabSmartRemix.setVisibility(View.INVISIBLE);
             if (mIsAddMore) {
                 MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
                 if (menuItem != null) {
@@ -389,8 +478,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     menuItem.setVisible(false);
                 }
             }
-
-
             return true;
         }
 
@@ -414,6 +501,10 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                         }
                     });
                     break;
+                case R.id.menu_to_remix:
+                    toRemix();
+                    mode.finish();
+                    break;
                 case R.id.menu_selete_all:
                     mAdapter.toggleSelectAll(true);
                     break;
@@ -424,8 +515,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 default:
                     break;
             }
-
-
             return true;
 
         }
@@ -439,6 +528,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mIsMultipleMode = false;
                 mAdapter.setMultiSelectedMode(false);
             }
+            mFabSmartRemix.setVisibility(View.VISIBLE);
             mRefreshLayout.setEnabled(true);
 
         }
@@ -448,21 +538,23 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private void updateActionMode() {
         if (mActionMode != null) {
             mActionMode.setTitle("" + mAdapter.getSelectedClipList().size());
-            MenuItem uploadMenuItem = mActionMode.getMenu().findItem(R.id.menu_to_upload);
-            if (mClipSetType == Clip.TYPE_MARKED && mAdapter.getSelectedClipList().size() == 1) {
-                uploadMenuItem.setVisible(true);
+            if (mIsRemixMode) {
+                MenuItem remixMenuItem = mActionMode.getMenu().findItem(R.id.menu_to_remix);
+                remixMenuItem.setVisible(true);
             } else {
-                uploadMenuItem.setVisible(false);
+                MenuItem uploadMenuItem = mActionMode.getMenu().findItem(R.id.menu_to_upload);
+                if (mClipSetType == Clip.TYPE_MARKED && mAdapter.getSelectedClipList().size() == 1) {
+                    uploadMenuItem.setVisible(true);
+                } else {
+                    uploadMenuItem.setVisible(false);
+                }
+                MenuItem enhanceItem = mActionMode.getMenu().findItem(R.id.menu_to_enhance);
+                if (mClipSetType == Clip.TYPE_MARKED) {
+                    enhanceItem.setVisible(true);
+                } else {
+                    enhanceItem.setVisible(false);
+                }
             }
-            MenuItem enhanceItem = mActionMode.getMenu().findItem(R.id.menu_to_enhance);
-            if (mClipSetType == Clip.TYPE_MARKED) {
-                enhanceItem.setVisible(true);
-            } else {
-                enhanceItem.setVisible(false);
-            }
-
-
-
         }
     }
 
@@ -473,7 +565,77 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             mAdapter.setMultiSelectedMode(false);
             return true;
         }
+        if (mIsRemixMode) {
+            mIsRemixMode = false;
+            mSmartRemixLayout.setVisibility(View.INVISIBLE);
+            mFabSmartRemix.setVisibility(View.VISIBLE);
+            return true;
+        }
         return false;
+    }
+
+    private void showRemixDialog() {
+        final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                .customView(R.layout.dialog_smart_remix, true)
+                .show();
+
+        mLengthSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.length_seekbar);
+        mTvSmartRemix = (TextView) dialog.getCustomView().findViewById(R.id.tv_smart_remix);
+        mLengthSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                mRemixLength = 15 + seekBar.getProgress();
+                mTvSmartRemix.setText(String.format(getString(R.string.smart_remix_length), mRemixLength));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mTvSmartRemix.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toRemix();
+                dialog.dismiss();
+            }
+        });
+    }
+
+    private void toRemix() {
+        Logger.t(TAG).d("isAddMore: " + mIsAddMore + " isToShare: " + mIsToShare);
+        ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+
+        mRefreshLayout.setRefreshing(true);
+        Logger.t(TAG).d("selected list size: " + selectedList.size());
+
+        final int playlistId = 0x100;
+        PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+
+        playListEditor.buildRx(selectedList)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+                        mRefreshLayout.setRefreshing(false);
+                        RemixActivity.launch(getActivity(), playlistId, mRemixLength);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Void aVoid) {
+
+                    }
+                });
     }
 
 
@@ -482,8 +644,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         mLoadingHandler.sendMessageDelayed(mLoadingHandler.obtainMessage(LoadingHandler.SHOW_LOADING), 1000);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
-
-
         playListEditor.buildRx(clip)
             .subscribe(new Subscriber<Void>() {
                 @Override
@@ -543,14 +703,11 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     });
                     snackbar.show();
                 }
-
                 @Override
                 public void onNext(Void aVoid) {
 
                 }
             });
-
-
     }
 
 
@@ -651,10 +808,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 case SHOW_LOADING:
                     fragment.showLoading(null);
                     break;
-
             }
         }
     }
-
-
 }

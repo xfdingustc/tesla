@@ -158,6 +158,9 @@
         <activity
             android:name=".ui.clips.ClipChooserActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.clips.RemixActivity"
+            android:screenOrientation="portrait"/>
 
 
         <activity

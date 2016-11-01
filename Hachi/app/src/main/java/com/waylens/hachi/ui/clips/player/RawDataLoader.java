@@ -2,11 +2,14 @@ package com.waylens.hachi.ui.clips.player;
 
 import android.os.Bundle;
 
+import com.google.android.exoplayer.C;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
+import com.waylens.hachi.snipe.toolbox.RawDataBufRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSegment;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -90,6 +93,7 @@ public class RawDataLoader {
             });
     }
 
+
     public Observable loadRawDataRx(final int duration) {
         return Observable.from(getClipSet().getClipList())
             .concatMap(new Func1<Clip, Observable<RawDataBlockAll>>() {
@@ -104,6 +108,32 @@ public class RawDataLoader {
                     mRawDataBlockList.add(rawDataBlockAll);
                 }
             });
+    }
+
+    public Observable loadRawDataRx(final long start, final int duration) {
+        return Observable.from(getClipSet().getClipList())
+                .concatMap(new Func1<Clip, Observable<RawDataBlockAll>>() {
+                    @Override
+                    public Observable<RawDataBlockAll> call(Clip clip) {
+                        return getRawDataBlockAllRx(clip, start, duration);
+                    }
+                });
+    }
+
+    private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip, long start, int duration) {
+        Observable<RawDataBlock> obdObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_OBD, start, duration);
+        Observable<RawDataBlock> gpsObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_GPS, start, duration);
+        Observable<RawDataBlock> iioObservalbe = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_IIO, start, duration);
+        return Observable.zip(obdObservable, gpsObservable, iioObservalbe, new Func3<RawDataBlock, RawDataBlock, RawDataBlock, RawDataBlockAll>() {
+            @Override
+            public RawDataBlockAll call(RawDataBlock obd, RawDataBlock gps, RawDataBlock iio) {
+                RawDataBlockAll rawDataBlockAll = new RawDataBlockAll();
+                rawDataBlockAll.obdDataBlock = obd;
+                rawDataBlockAll.gpsDataBlock = gps;
+                rawDataBlockAll.iioDataBlock = iio;
+                return rawDataBlockAll;
+            }
+        });
     }
 
     private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip, int duration) {
@@ -127,6 +157,47 @@ public class RawDataLoader {
         return getRawDataBlockAllRx(clip, clip.getDurationMs());
     }
 
+    public Observable<RawDataBufAll> getRawDataBufAllRx(final Clip clip, long start, int duration) {
+        Observable<byte[]> odbObservable = SnipeApiRx.getRawDataBufRx(clip, RawDataItem.DATA_TYPE_OBD, start, duration);
+        Observable<byte[]> gpsObservable = SnipeApiRx.getRawDataBufRx(clip, RawDataItem.DATA_TYPE_GPS, start, duration);
+        Observable<byte[]> iioObservable = SnipeApiRx.getRawDataBufRx(clip, RawDataItem.DATA_TYPE_IIO, start, duration);
+        return Observable.zip(odbObservable, gpsObservable, iioObservable, new Func3<byte[], byte[], byte[], RawDataBufAll>() {
+            @Override
+            public RawDataBufAll call(byte[] obd, byte[] gps, byte[] iio) {
+                RawDataBufAll rawDataBufAll = new RawDataBufAll();
+                rawDataBufAll.obdDataBuf = obd;
+                rawDataBufAll.gpsDataBuf = gps;
+                rawDataBufAll.iioDataBuf = iio;
+                return rawDataBufAll;
+            }
+        });
+    }
+
+    public RawDataBufAll loadRawDataBuf(final Clip clip, long start, int duration) {
+        RawDataBufAll rawDataBufAll = new RawDataBufAll();
+        rawDataBufAll.obdDataBuf = getRawDataBuf(clip, RawDataItem.DATA_TYPE_OBD, start, duration);
+        rawDataBufAll.gpsDataBuf = getRawDataBuf(clip, RawDataItem.DATA_TYPE_GPS, start, duration);
+        rawDataBufAll.iioDataBuf = getRawDataBuf(clip, RawDataItem.DATA_TYPE_IIO, start, duration);
+        return rawDataBufAll;
+    }
+
+    public static byte[] getRawDataBuf(Clip clip, int dataType, long startTime, int duration) {
+        Bundle params = new Bundle();
+        params.putInt(RawDataBufRequest.PARAM_DATA_TYPE, dataType);
+        params.putLong(RawDataBufRequest.PARAM_CLIP_TIME, startTime);
+        params.putInt(RawDataBufRequest.PARAM_CLIP_LENGTH, duration);
+
+        VdbRequestFuture<byte[]> requestFuture = VdbRequestFuture.newFuture();
+        RawDataBufRequest request = new RawDataBufRequest(clip.cid, params, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+        try {
+            byte[] buffer = requestFuture.get();
+            return buffer;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     public RawDataBlock loadRawData(Clip clip, int dataType) {
         ClipSegment clipSegment = new ClipSegment(clip);
@@ -146,7 +217,6 @@ public class RawDataLoader {
             return null;
         }
     }
-
 
 
     public List<RawDataItem> getRawDataItemList(ClipSetPos clipSetPos) {
@@ -223,9 +293,16 @@ public class RawDataLoader {
     }
 
 
-    private class RawDataBlockAll {
-        private RawDataBlock obdDataBlock = null;
-        private RawDataBlock gpsDataBlock = null;
-        private RawDataBlock iioDataBlock = null;
+    public class RawDataBlockAll {
+        public RawDataBlock obdDataBlock = null;
+        public RawDataBlock gpsDataBlock = null;
+        public RawDataBlock iioDataBlock = null;
     }
+
+    public class RawDataBufAll {
+        public byte[] obdDataBuf = null;
+        public byte[] gpsDataBuf = null;
+        public byte[] iioDataBuf = null;
+    }
+
 }

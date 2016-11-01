@@ -10,7 +10,7 @@ bugtags {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    buildToolsVersion "24.0.0"
 
 
     defaultConfig {
@@ -32,6 +32,12 @@ android {
 //            设置支持的SO库架构
 //            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
 //        }
+        externalNativeBuild {
+            cmake {
+                abiFilters 'armeabi'
+                cppFlags ""
+            }
+        }
 }
 
     dexOptions {
@@ -60,6 +66,15 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+        debug {
+            jniDebuggable true
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
         }
     }
 

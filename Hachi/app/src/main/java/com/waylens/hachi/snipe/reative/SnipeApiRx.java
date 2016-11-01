@@ -86,6 +86,14 @@ public class SnipeApiRx {
             }
         });
     }
+    public static Observable<byte[]> getRawDataBufRx(final Clip clip, final int dataType, final long startTime, final int duration) {
+        return Observable.defer(new Func0<Observable<byte[]>>() {
+            @Override
+            public Observable<byte[]> call() {
+                return Observable.just(SnipeApi.getRawDataBuf(clip, dataType, startTime, duration));
+            }
+        });
+    }
 
     public static Observable<PlaylistPlaybackUrl> getPlaylistPlaybackUrl(final int playlistId, final int startTime) {
         return Observable.defer(new Func0<Observable<PlaylistPlaybackUrl>>() {
