@@ -208,15 +208,23 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
     }
 
-    private void showLoadingProgress() {
+    @Override
+    public void showLoading(String msg) {
         mRefreshLayout.setRefreshing(true);
     }
 
     @Override
+    public void hideLoading() {
+        mRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
     public void refreshClipiSet(ClipSet clipSet) {
+        Logger.t(TAG).d("Get clip set");
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
+
 
         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
         mAdapter.setClipSetGroup(helper.getClipSetGroup());
@@ -250,9 +258,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     private void initViews() {
-        if (ThemeHelper.isDarkTheme()) {
-            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
-        }
+
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -320,7 +326,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRefreshLayout.setRefreshing(true);
         if (mRefreshLayout != null) {
             mRefreshLayout.postDelayed(new Runnable() {
                 @Override
@@ -644,7 +649,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             }
             switch (msg.what) {
                 case SHOW_LOADING:
-                    fragment.showLoadingProgress();
+                    fragment.showLoading(null);
                     break;
 
             }

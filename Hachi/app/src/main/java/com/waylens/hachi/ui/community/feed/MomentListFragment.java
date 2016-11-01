@@ -162,7 +162,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         } else {
             if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
                 mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
-                Logger.t(TAG).d("show loading progress");
+//                Logger.t(TAG).d("show loading progress");
                 onRefresh();
             }
         }

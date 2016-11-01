@@ -7,12 +7,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ViewAnimator;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.bean.User;
@@ -30,9 +28,8 @@ import butterknife.ButterKnife;
 public class AvatarView extends FrameLayout {
     private CircleTransform mCircleTransform;
 
-   @BindView(R.id.user_avatar_iv)
+    @BindView(R.id.user_avatar_iv)
     ImageView userAvatar;
-
 
 
     public AvatarView(Context context) {
@@ -72,7 +69,7 @@ public class AvatarView extends FrameLayout {
                 .placeholder(placeHolderDrawable)
                 .crossFade()
                 .into(userAvatar);
-        } else if (!TextUtils.isEmpty(userName)){
+        } else if (!TextUtils.isEmpty(userName)) {
             TextDrawable drawable = TextDrawable.builder()
                 .beginConfig()
                 .bold()
@@ -92,5 +89,5 @@ public class AvatarView extends FrameLayout {
         userAvatar.setImageResource(resource);
     }
 
-  
+
 }

@@ -111,6 +111,12 @@
         <item name="android:colorControlHighlight">@color/ripple_light</item>
     </style>
 
+
+    <style name="LightTheme.Translucent.Overture">
+        <item name="android:statusBarColor">@color/style_color_accent</item>
+        <item name="android:navigationBarColor">@color/immersive_bars</item>
+    </style>
+
     <style name="LightTheme.Translucent.Preview">
 
     </style>

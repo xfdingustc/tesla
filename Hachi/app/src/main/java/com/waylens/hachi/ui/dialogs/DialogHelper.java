@@ -41,7 +41,6 @@ public class DialogHelper {
     public static MaterialDialog showReportUserDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener) {
         return new MaterialDialog.Builder(context)
             .title(R.string.report)
-            .titleColorRes(R.color.style_color_accent)
             .iconRes(R.drawable.ic_report)
             .items(R.array.report_reason)
             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
@@ -59,7 +58,6 @@ public class DialogHelper {
     public static void showReportMomentDialog(final Context context, final long momentId) {
         new MaterialDialog.Builder(context)
             .title(R.string.report)
-            .titleColorRes(R.color.style_color_accent)
             .items(R.array.report_reason)
             .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
@@ -101,12 +99,10 @@ public class DialogHelper {
                                                                   MaterialDialog.SingleButtonCallback positiveListener) {
         return new MaterialDialog.Builder(context)
             .title(R.string.delete_highlight)
-            .titleColorRes(R.color.style_color_accent)
             .content(R.string.delete_bookmark_confirm)
             .negativeText(R.string.cancel)
             .positiveText(R.string.ok)
             .onPositive(positiveListener)
-            .theme(Theme.DARK)
             .show();
     }
 
@@ -114,7 +110,6 @@ public class DialogHelper {
     public static MaterialDialog showDeleteFileConfirmDialog(Context context, File file, MaterialDialog.SingleButtonCallback positiveListener) {
         return new MaterialDialog.Builder(context)
             .title(R.string.delete_file)
-            .titleColorRes(R.color.style_color_accent)
             .content(context.getString(R.string.delete_file_confirm, file.getName()))
             .positiveText(R.string.delete)
             .negativeText(R.string.cancel)
@@ -126,7 +121,6 @@ public class DialogHelper {
     public static MaterialDialog showLeaveEnhanceConfirmDialog(Context context, MaterialDialog.SingleButtonCallback positiveListener) {
         return new MaterialDialog.Builder(context)
             .title(R.string.enhance_leave)
-            .titleColorRes(R.color.style_color_accent)
             .content(R.string.discard_enhance_confirm)
             .positiveText(R.string.ok)
             .negativeText(R.string.cancel)
@@ -138,7 +132,6 @@ public class DialogHelper {
                                                               MaterialDialog.SingleButtonCallback negativeListener) {
         return new MaterialDialog.Builder(context)
             .title(R.string.upload_moment)
-            .titleColorRes(R.color.style_color_accent)
             .content(R.string.upload_in_ap)
             .positiveText(R.string.understand)
             .negativeText(R.string.cancel)

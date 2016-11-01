@@ -4,13 +4,13 @@
       xmlns:tools="http://schemas.android.com/tools">
     <item
         android:id="@+id/menu_to_upload"
-        android:icon="@drawable/btn_edit_action_share"
+        android:icon="@drawable/ic_cloud_upload_black_24dp"
         android:title="@string/upload"
         app:showAsAction="always"
         tools:visible="false"/>
     <item
         android:id="@+id/menu_to_enhance"
-        android:icon="@drawable/ic_enhance"
+        android:icon="@drawable/ic_enhance_black"
         android:title="@string/enhance"
         app:showAsAction="always"
         tools:visible="false"/>

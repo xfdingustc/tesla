@@ -36,7 +36,6 @@ public class OvertureActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_overture);
-        hideStatusBar();
         if (mNeedDelay) {
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {

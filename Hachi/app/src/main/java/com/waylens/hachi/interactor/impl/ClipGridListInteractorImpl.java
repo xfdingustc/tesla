@@ -35,7 +35,6 @@ import rx.schedulers.Schedulers;
  */
 public class ClipGridListInteractorImpl implements ClipGridListInteractor {
     private static final String TAG = ClipGridListInteractorImpl.class.getSimpleName();
-    private final String mRequestTag;
     private final int mClipSetType;
     private final int mFlag;
     private final int mAttr;
@@ -43,9 +42,8 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
     private BaseSingleLoadedListener<ClipSet> mLoadListener;
 
-    public ClipGridListInteractorImpl(String requestTag, int clipSetType, int flag, int attr,
+    public ClipGridListInteractorImpl(int clipSetType, int flag, int attr,
                                       BaseSingleLoadedListener<ClipSet> loadedListener) {
-        this.mRequestTag = requestTag;
         this.mClipSetType = clipSetType;
         this.mFlag = flag;
         this.mAttr = attr;
@@ -54,6 +52,7 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
     @Override
     public void getClipSet() {
+        Logger.t(TAG).d("get clip set:");
         SnipeApiRx.getClipSetRx(mClipSetType, mFlag, mAttr)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -70,6 +69,7 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
                 @Override
                 public void onNext(ClipSet clipSet) {
+                    Logger.t(TAG).d("Got clip set");
                     mLoadListener.onSuccess(clipSet);
                 }
             });

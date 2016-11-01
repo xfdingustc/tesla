@@ -69,6 +69,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/style_color_accent"
+            android:textColor="@android:color/white"
             android:visibility="gone"
             tools:visibility="visible"
             android:text="@string/retry"/>
