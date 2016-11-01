@@ -130,6 +130,7 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.user_vehicle_info)
     TextView mTvUserVehicleInfo;
 
+
     @BindView(R.id.info_separator)
     View mInfoSeparator;
 
@@ -423,6 +424,7 @@ public class ShareActivity extends ClipPlayActivity {
                 setupParallex();
             }
         });
+
 
         SessionManager sessionManager = SessionManager.getInstance();
 
