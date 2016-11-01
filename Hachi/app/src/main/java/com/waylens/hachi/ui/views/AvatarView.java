@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ViewAnimator;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.pavlospt.roundedletterview.RoundedLetterView;
@@ -29,14 +30,10 @@ import butterknife.ButterKnife;
 public class AvatarView extends FrameLayout {
     private CircleTransform mCircleTransform;
 
-    @BindView(R.id.avatar_va)
-    ViewAnimator vaAvatar;
-
-    @BindView(R.id.user_avatar_iv)
+   @BindView(R.id.user_avatar_iv)
     ImageView userAvatar;
 
-    @BindView(R.id.rlv_name_view)
-    RoundedLetterView rlvNameView;
+
 
     public AvatarView(Context context) {
         this(context, null);
@@ -75,13 +72,18 @@ public class AvatarView extends FrameLayout {
                 .placeholder(placeHolderDrawable)
                 .crossFade()
                 .into(userAvatar);
-            vaAvatar.setDisplayedChild(0);
         } else if (!TextUtils.isEmpty(userName)){
-            vaAvatar.setDisplayedChild(1);
-            rlvNameView.setBackgroundColor(getContext().getResources().getColor(AvatarHelper.getAvatarBackgroundColor(userName)));
-            rlvNameView.setTitleText(userName.substring(0, 1).toUpperCase());
+            TextDrawable drawable = TextDrawable.builder()
+                .beginConfig()
+                .bold()
+                .endConfig()
+                .buildRound(userName.substring(0, 1).toUpperCase(), getContext().getResources().getColor(AvatarHelper.getAvatarBackgroundColor(userName)));
+
+
+            userAvatar.setImageDrawable(drawable);
+
         } else {
-            vaAvatar.setDisplayedChild(0);
+
             setImageResource(R.drawable.ic_account_circle);
         }
     }
@@ -90,7 +92,5 @@ public class AvatarView extends FrameLayout {
         userAvatar.setImageResource(resource);
     }
 
-    public void setTitleSize(float titleSize) {
-        rlvNameView.setTitleSize(titleSize);
-    }
+  
 }

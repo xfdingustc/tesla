@@ -99,6 +99,9 @@ repositories {
     maven {
         url "https://jitpack.io"
     }
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
 }
 
 
@@ -157,6 +160,7 @@ dependencies {
     compile 'com.roughike:bottom-bar:2.0.2'
     compile 'com.github.pavlospt:roundedletterview:1.2'
     compile 'com.github.armcha:SpaceNavigationView:1.4.1'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
