@@ -31,15 +31,7 @@
         android:transitionName="@string/trans_avatar"/>
 
 
-    <com.waylens.hachi.ui.views.RecyclerViewExt
-        android:id="@+id/rvUserMomentList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:elevation="@dimen/z_card"
-        android:visibility="gone"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical"/>
+
 
     <LinearLayout
         android:id="@+id/user_description"
@@ -147,5 +139,15 @@
 
 
     </LinearLayout>
+
+    <com.waylens.hachi.ui.views.RecyclerViewExt
+        android:id="@+id/rvUserMomentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:elevation="@dimen/z_card"
+        android:visibility="gone"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"/>
 
 </com.waylens.hachi.view.ElasticDragDismissFrameLayout>
