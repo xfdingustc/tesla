@@ -54,7 +54,7 @@ public class GaugeView extends FrameLayout {
     private List<PendingActionItem> mPendingActions = new ArrayList<>();
 
 
-    private int iioPressure;
+
 
     public GaugeView(Context context) {
         super(context);
@@ -302,93 +302,7 @@ public class GaugeView extends FrameLayout {
     }
 
     public void updateRawDateItem(List<RawDataItem> itemList) {
-        JSONObject state = new JSONObject();
-        String data = null;
-        RawDataItem item = null;
-        long pts = 0;
-        try {
-            for (int i = 0; i < itemList.size(); i++) {
-                item = itemList.get(i);
-                switch (item.getType()) {
-                    case RawDataItem.DATA_TYPE_IIO:
-/*                    if (!mIsIioGaugeShow) {
-                        mIsIioGaugeShow = true;
-                        showIioGauge(mIsIioGaugeShow);
-                    }*/
-                        //Logger.t(TAG).d("IIO data");
-                        IioData iioData = (IioData) item.data;
-                        state.put("roll", iioData.euler_roll);
-                        state.put("pitch", iioData.euler_pitch);
-                        state.put("gforceBA", iioData.accX);
-                        state.put("gforceLR", iioData.accZ);
-                        iioPressure = iioData.pressure;
-                        pts = item.getPtsMs();
-                        break;
-                    case RawDataItem.DATA_TYPE_GPS:
-/*                    if (!mIsGpsGaugeShow) {
-                        mIsGpsGaugeShow = true;
-                        showIioGauge(mIsGpsGaugeShow);
-                    }*/
-                        //Logger.t(TAG).d("GPS data");
-                        GpsData gpsData = (GpsData) item.data;
-                        state.put("lng", gpsData.coord.lng);
-                        state.put("lat", gpsData.coord.lat);
-                        state.put("gpsSpeed", gpsData.speed);
-                        break;
-                    case RawDataItem.DATA_TYPE_OBD:
-/*                  if (!mIsOdbGaugeShow) {
-                        mIsOdbGaugeShow = true;
-                        showOdbGauge(mIsOdbGaugeShow);
-                    }*/
-                        //Logger.t(TAG).d("OBD data");
-                        ObdData obdData = (ObdData) item.data;
-                        state.put("rpm", obdData.rpm);
-                        state.put("obdSpeed", obdData.speed);
-                        state.put("throttle", obdData.throttle);
-                        //state.put("mph", obdData.speed); deprecated in new version of svg
-                        if (!obdData.isIMP) {
-                            state.put("psi", obdData.psi);
-                        } else {
-                            state.put("psi", obdData.psi - iioPressure / 3386000);
-                        }
-//                    Logger.t(TAG).d(Double.toString(obdData.psi));
-                        break;
-                    case RawDataItem.DATA_TYPE_WEATHER:
-                        //Logger.t(TAG).d("Weather data");
-                        WeatherData weatherData = (WeatherData) item.data;
-                        JSONObject ambient = new JSONObject();
-                        ambient.put("tmpF", weatherData.tempF);
-                        ambient.put("windSpeedMiles", weatherData.windSpeedMiles);
-                        ambient.put("pressure", weatherData.pressure);
-                        ambient.put("humidity", weatherData.humidity);
-                        ambient.put("weatherCode", weatherData.weatherCode);
-                        state.put("ambient", ambient);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (pts == 0) {
-                pts = System.currentTimeMillis();
-            }
-            String date = mDateFormat.format(pts);
-            data = "numericMonthDate('" + date + "')";
-            //Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
-        } catch (JSONException e) {
-            Logger.t(TAG).e("", e);
-        }
-
-        StringBuffer sb = new StringBuffer(state.toString());
-        sb.insert(state.toString().length() - 1, ",time:" + data);
-
-
-        String callJS1 = "javascript:setRawData(" + sb.toString() + ")";
-//        Logger.t(TAG).d(callJS1);
-//        String callJS2 = "javascript:setRawData(" + "{time:" + data + "})";
-//        Logger.t(TAG).d("callJS: " + callJS1);
-        mWebView.loadUrl(callJS1);
-//        mWebView.loadUrl(callJS2);
-        //mWebView.loadUrl("javascript:update()");
+        mWebView.loadUrl(GaugeJsHelper.jsUpdateRawData(itemList));
     }
 
 
