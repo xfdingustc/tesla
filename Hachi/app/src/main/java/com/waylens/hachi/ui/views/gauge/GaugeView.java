@@ -36,6 +36,8 @@ import java.util.Map;
 public class GaugeView extends FrameLayout {
     private static final String TAG = GaugeView.class.getSimpleName();
 
+    private static final int PENDING_ACTION_INIT_GAUGE = 0x1001;
+    private static final int PENDING_ACTION_ROTATE = 0x1002;
 
     public static final int MODE_CAMERA = 0;
 
@@ -49,6 +51,8 @@ public class GaugeView extends FrameLayout {
 
     private boolean mIsLoadingFinish = false;
 
+    private List<PendingActionItem> mPendingActions = new ArrayList<>();
+
 
     private int iioPressure;
 
@@ -61,30 +65,6 @@ public class GaugeView extends FrameLayout {
     public GaugeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
-    }
-
-    public void setGaugeMode(int gaugeMode) {
-        switch (gaugeMode) {
-            case MODE_CAMERA:
-                mGaugeMode = gaugeMode;
-                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss"/*, Locale.getDefault()*/);
-                break;
-            case MODE_MOMENT:
-                mGaugeMode = gaugeMode;
-                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
-                break;
-            default:
-                break;
-        }
-        if (mGaugeMode != MODE_MOMENT) {
-            mWebView.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageFinished(WebView view, String url) {
-                    initGaugeView();
-                    super.onPageFinished(view, url);
-                }
-            });
-        }
     }
 
 
@@ -102,8 +82,40 @@ public class GaugeView extends FrameLayout {
             @Override
             public void onPageFinished(WebView view, String url) {
                 mIsLoadingFinish = true;
+                for (PendingActionItem item : mPendingActions) {
+                    switch (item.type) {
+                        case PENDING_ACTION_INIT_GAUGE:
+                            initGaugeView();
+                            break;
+                        case PENDING_ACTION_ROTATE:
+                            setRotate((Boolean)item.param);
+                            break;
+                    }
+                }
             }
         });
+    }
+
+    public void setGaugeMode(int gaugeMode) {
+        switch (gaugeMode) {
+            case MODE_CAMERA:
+                mGaugeMode = gaugeMode;
+                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss"/*, Locale.getDefault()*/);
+                break;
+            case MODE_MOMENT:
+                mGaugeMode = gaugeMode;
+                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
+                break;
+            default:
+                break;
+        }
+        if (mGaugeMode != MODE_MOMENT) {
+            if (mIsLoadingFinish) {
+                initGaugeView();
+            } else {
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE, null));
+            }
+        }
     }
 
 
@@ -168,8 +180,12 @@ public class GaugeView extends FrameLayout {
     }
 
     public void setRotate(boolean ifRoate) {
-        mWebView.loadUrl(GaugeJsHelper.jsSetRotate(ifRoate));
-        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+        if (mIsLoadingFinish) {
+            mWebView.loadUrl(GaugeJsHelper.jsSetRotate(ifRoate));
+            mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+        } else {
+            mPendingActions.add(new PendingActionItem(PENDING_ACTION_ROTATE, ifRoate));
+        }
     }
 
 
@@ -206,7 +222,6 @@ public class GaugeView extends FrameLayout {
     }
 
     public void updateGaugeSetting(GaugeInfoItem item) {
-//        Logger.t(TAG).d("call api: " + jsApi);
         mWebView.loadUrl(GaugeJsHelper.jsUpdateGaugeSetting(item));
     }
 
@@ -459,5 +474,15 @@ public class GaugeView extends FrameLayout {
         String callJS = "javascript:setState(" + state.toString() + ")";
         mWebView.loadUrl(callJS);
         mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+    }
+
+    private class PendingActionItem {
+        int type;
+        Object param;
+
+        PendingActionItem(int type, Object param) {
+            this.type = type;
+            this.param = param;
+        }
     }
 }
