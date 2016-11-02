@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views;
+package com.waylens.hachi.ui.views.gauge;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -35,6 +35,7 @@ import java.util.Map;
  */
 public class GaugeView extends FrameLayout {
     private static final String TAG = GaugeView.class.getSimpleName();
+
 
     public static final int MODE_CAMERA = 0;
 
@@ -85,6 +86,7 @@ public class GaugeView extends FrameLayout {
             });
         }
     }
+
 
     private void init(Context context) {
         if (isInEditMode()) {
@@ -154,8 +156,7 @@ public class GaugeView extends FrameLayout {
     }
 
     public void initDefaultGauge() {
-        String jsApi = "javascript:initDefaultGauge()";
-        mWebView.loadUrl(jsApi);
+        mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
     }
 
     public void setVisibility(boolean show) {
@@ -164,6 +165,11 @@ public class GaugeView extends FrameLayout {
         } else {
             mWebView.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void setRotate(boolean ifRoate) {
+        mWebView.loadUrl(GaugeJsHelper.jsSetRotate(ifRoate));
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
 
@@ -196,32 +202,12 @@ public class GaugeView extends FrameLayout {
 
 
     private void changeGaugeTheme(String theme) {
-        Logger.t(TAG).d("set gauge theme as: " + theme);
-        if (theme.equals("")) {
-            theme = "default";
-        }
-        mWebView.loadUrl("javascript:setTheme('" + theme + "')");
+        mWebView.loadUrl(GaugeJsHelper.jsSetTheme(theme));
     }
 
     public void updateGaugeSetting(GaugeInfoItem item) {
-        String jsApi = "javascript:setGauge('" + item.title + "',";
-
-        if (!item.isEnabled) {
-            jsApi += "'')";
-
-        } else {
-            if (item.getOption().equals("large")) {
-                jsApi += "'L')";
-            } else if (item.getOption().equals("middle")) {
-                jsApi += "'M')";
-            } else if (item.getOption().equals("small")) {
-                jsApi += "'S')";
-            }
-
-        }
-
 //        Logger.t(TAG).d("call api: " + jsApi);
-        mWebView.loadUrl(jsApi);
+        mWebView.loadUrl(GaugeJsHelper.jsUpdateGaugeSetting(item));
     }
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
@@ -263,7 +249,7 @@ public class GaugeView extends FrameLayout {
                 }
             }
         }
-        mWebView.loadUrl("javascript:update()");
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
         if (overlaySetting.get("CountDown") != null) {
             String jsApi = "javascript:setGauge('CountDown','S')";
             Logger.t(TAG).d(jsApi);
@@ -434,7 +420,7 @@ public class GaugeView extends FrameLayout {
         }
         String callJS = "javascript:setState(" + state.toString() + ")";
         mWebView.loadUrl(callJS);
-        mWebView.loadUrl("javascript:update");
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
     public void showOdbGauge(boolean show) {
@@ -454,7 +440,7 @@ public class GaugeView extends FrameLayout {
         }
         String callJS = "javascript:setState(" + state.toString() + ")";
         mWebView.loadUrl(callJS);
-        mWebView.loadUrl("javascript:update");
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
     public void showIioGauge(boolean show) {
@@ -472,6 +458,6 @@ public class GaugeView extends FrameLayout {
         }
         String callJS = "javascript:setState(" + state.toString() + ")";
         mWebView.loadUrl(callJS);
-        mWebView.loadUrl("javascript:update");
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 }

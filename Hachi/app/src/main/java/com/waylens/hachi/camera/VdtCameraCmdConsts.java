@@ -153,6 +153,8 @@ public interface VdtCameraCmdConsts {
 
     int CMD_REC_SET_OVERLAY = 1023;
     int CMD_REC_GET_OVERLAY_STATE = 1024;
+    int CMD_REC_GET_ROTATE_MODE = 1025;
+    int CMD_REC_SET_ROTATE_MODE = 1026;
 
     int CMD_REC_MARK_LIVE_VIDEO = 1027;
     int CMD_REC_SET_MARK_TIME = 1028;

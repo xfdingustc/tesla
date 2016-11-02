@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.clips.player;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,7 +47,7 @@ import com.waylens.hachi.snipe.vdb.urls.VdbUrl;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.ui.views.gauge.GaugeView;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;

@@ -46,7 +46,7 @@ import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.ui.views.gauge.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
 

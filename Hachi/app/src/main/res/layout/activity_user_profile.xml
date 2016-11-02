@@ -17,6 +17,7 @@
         android:layout_height="match_parent"
         android:background="?attr/defaultBgColor"
         android:elevation="@dimen/z_card"
+        tools:visibility="gone"
         android:transitionName="@string/transition_background"/>
 
     <com.waylens.hachi.ui.views.AvatarView
@@ -24,11 +25,21 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="32dp"
         android:elevation="@dimen/z_card"
         android:transitionName="@string/trans_avatar"/>
 
+
+    <com.waylens.hachi.ui.views.RecyclerViewExt
+        android:id="@+id/rvUserMomentList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:elevation="@dimen/z_card"
+        android:visibility="gone"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"/>
 
     <LinearLayout
         android:id="@+id/user_description"
@@ -136,15 +147,5 @@
 
 
     </LinearLayout>
-
-    <com.waylens.hachi.ui.views.RecyclerViewExt
-        android:id="@+id/rvUserMomentList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:elevation="@dimen/z_card"
-        android:visibility="gone"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical"/>
 
 </com.waylens.hachi.view.ElasticDragDismissFrameLayout>

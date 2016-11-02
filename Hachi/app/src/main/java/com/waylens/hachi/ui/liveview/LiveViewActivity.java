@@ -48,10 +48,9 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
-import com.waylens.hachi.ui.views.GaugeView;
+import com.waylens.hachi.ui.views.gauge.GaugeView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
-import com.waylens.hachi.utils.ThemeHelper;
 import com.xfdingustc.mjpegview.library.MjpegView;
 import com.xfdingustc.rxutils.library.RxBus;
 import com.xfdingustc.rxutils.library.SimpleSubscribe;
@@ -354,6 +353,10 @@ public class LiveViewActivity extends BaseActivity {
             case CameraStateChangeEvent.CAMEAR_STATE_MICROPHONE_STATUS_CHANGED:
                 updateMicControlButton();
                 break;
+            case CameraStateChangeEvent.CAMEAR_STATE_REC_ROTATE:
+                boolean ifRoate = (Boolean)event.getExtra();
+                mGaugeView.setRotate(ifRoate);
+                break;
         }
 
     }
@@ -527,7 +530,8 @@ public class LiveViewActivity extends BaseActivity {
                 }
             });
 
-        mGaugeView.initGaugeView();
+//        mGaugeView.initGaugeView();
+        mGaugeView.setRotate(mVdtCamera.getIfRotated());
 
     }
 

@@ -197,6 +197,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private int mWifiMode = WIFI_MODE_UNKNOWN;
     public int mNumWifiAP = 0;
 
+    private boolean mIfRotate = false;
+
 
     private int mBtState = BT_STATE_UNKNOWN;
     private BtDevice mObdDevice = new BtDevice(BtDevice.BT_DEVICE_TYPE_OBD);
@@ -225,6 +227,8 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private WeakReference<OnRawDataUpdateListener> mOnRawDataUpdateListener;
+
+
 
     public static class ServiceInfo {
         public String ssid;
@@ -322,7 +326,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             name = "No name";
         }
         if (!mCameraName.equals(name)) {
-            Log.d(TAG, "setCameraName: " + name);
+            Logger.t(TAG).d("setCameraName: " + name);
             mCameraName = name;
 
             mRxBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMERA_STATE_INFO, this));
@@ -418,6 +422,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
     }
 
+    public boolean getIfRotated() {
+        return mIfRotate;
+    }
 
     public void setMicEnabled(boolean enabled) {
         int micState = enabled ? STATE_MIC_ON : STATE_MIC_OFF;
@@ -445,7 +452,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (volume > 10) {
             volume = 10;
         }
-        Log.d(TAG, "speakerState:" + speakerState);
+        Logger.t(TAG).d("speakerState:" + speakerState);
         mCommunicationBus.sendCommand(CMD_SET_SPEAKER_STATUS, speakerState, volume);
     }
 
@@ -455,7 +462,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setDisplayBrightness(int brightness) {
-        Log.d(TAG, "display brightness:" + brightness);
+        Logger.t(TAG).d("display brightness:" + brightness);
         mCommunicationBus.sendCommand(CMD_SET_DISPLAY_BRIGHTNESS, brightness);
     }
 
@@ -485,19 +492,19 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void setAutoPowerOffDelay(String autoPowerOffDelay) {
-        Log.d(TAG, autoPowerOffDelay);
+        Logger.t(TAG).d(autoPowerOffDelay);
         mCommunicationBus.sendCommand(CMD_SET_AUTO_POWER_OFF_DELAY, autoPowerOffDelay);
         mAutoPowerOffDelay = autoPowerOffDelay;
     }
 
     public String getScreenSaverStyle() {
-        Log.d(TAG, String.format("getScreenSaverStyle" + mScreenSaverStyle));
+        Logger.t(TAG).d(String.format("getScreenSaverStyle" + mScreenSaverStyle));
         mCommunicationBus.sendCommand(CMD_GET_SCREEN_SAVER_STYLE);
         return mScreenSaverStyle;
     }
 
     public void setScreenSaverStyle(String screenSaverStyle) {
-        Log.d(TAG, screenSaverStyle);
+        Logger.t(TAG).d(screenSaverStyle);
         mCommunicationBus.sendCommand(CMD_SET_SCREEN_SAVER_STYLE, screenSaverStyle);
     }
 
@@ -562,7 +569,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public int getVideoResolution() {
         mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
-        Log.d(TAG, "get video quality index: " + mVideoResolutionIndex);
+        Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
             case VIDEO_RESOLUTION_1080P60:
@@ -580,7 +587,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public String getVideoResolutionStr() {
         mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
-        Log.d(TAG, "" + mVideoResolutionIndex);
+        Logger.t(TAG).d("video resolution index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
                 return "1080p30";
@@ -601,7 +608,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public int getVideoFramerate() {
         mCommunicationBus.sendCommand(CMD_REC_GET_RESOLUTION);
-        Log.d(TAG, "get video quality index: " + mVideoResolutionIndex);
+        Logger.t(TAG).d("get video quality index: " + mVideoResolutionIndex);
         switch (mVideoResolutionIndex) {
             case VIDEO_RESOLUTION_1080P30:
             case VIDEO_RESOLUTION_4KP30:
@@ -684,7 +691,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }, new VdbResponse.ErrorListener() {
             @Override
             public void onErrorResponse(SnipeError error) {
-                Log.d(TAG, "RawDataMsgHandler ERROR", error);
+                Logger.t(TAG).d("RawDataMsgHandler ERROR", error);
             }
         });
         mVdbRequestQueue.registerMessageHandler(rawDataMsgHandler);
@@ -699,7 +706,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.d(TAG, "ClipInfoMsgHandler ERROR", error);
+                    Logger.t(TAG).d("ClipInfoMsgHandler ERROR", error);
                 }
             });
         mVdbRequestQueue.registerMessageHandler(clipInfoMsgHandler);
@@ -709,13 +716,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 @Override
                 public void onResponse(ClipActionInfo response) {
                     mEventBus.post(new MarkLiveMsgEvent(VdtCamera.this, response));
-                    Log.d(TAG, response.toString());
+                    Logger.t(TAG).d(response.toString());
                 }
             },
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.d(TAG, "MarkLiveMsgHandler ERROR", error);
+                    Logger.t(TAG).d("MarkLiveMsgHandler ERROR", error);
                 }
             });
         mVdbRequestQueue.registerMessageHandler(markLiveMsgHandler);
@@ -725,13 +732,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 @Override
                 public void onResponse(Object response) {
                     mEventBus.post(new VdbReadyInfo(true));
-                    Log.d(TAG, "handling vdbReadyMsg");
+                    Logger.t(TAG).d("handling vdbReadyMsg");
                 }
             },
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e(TAG, "VdbReadyMsgHandler ERROR" + error);
+                    Logger.t(TAG).d("VdbReadyMsgHandler ERROR" + error);
                 }
             });
         mVdbRequestQueue.registerMessageHandler(vdbReadyMsgHandler);
@@ -741,13 +748,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 @Override
                 public void onResponse(Object response) {
                     mEventBus.post(new VdbReadyInfo(false));
-                    Log.d(TAG, "handling vdbUnmountedMsg");
+                    Logger.t(TAG).d("handling vdbUnmountedMsg");
                 }
             },
             new VdbResponse.ErrorListener() {
                 @Override
                 public void onErrorResponse(SnipeError error) {
-                    Log.e(TAG, "VdbReadyMsgHandler ERROR");
+                    Logger.t(TAG).d("VdbReadyMsgHandler ERROR");
                 }
             });
         mVdbRequestQueue.registerMessageHandler(vdbUnmountedMsgHandler);
@@ -755,12 +762,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void registerRawDataItemMsgHandler() {
-        Log.d(TAG, "registerRawDataItemMsgHandler");
+        Logger.t(TAG).d("registerRawDataItemMsgHandler");
 
     }
 
     public void unregisterRawDataItemMagHandler() {
-        Log.d(TAG, "unregisterRawDataItemMagHandler");
+        Logger.t(TAG).d("unregisterRawDataItemMagHandler");
         if (mVdbRequestQueue != null) {
             mVdbRequestQueue.unregisterMessageHandler(VdbCommand.Factory.MSG_RawData);
         }
@@ -804,6 +811,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         mCommunicationBus.sendCommand(CMD_GET_AUTO_POWER_OFF_DELAY);
         mCommunicationBus.sendCommand(CMD_GET_SCREEN_SAVER_STYLE);
         mCommunicationBus.sendCommand(CMD_CAM_BT_IS_ENABLED);
+        mCommunicationBus.sendCommand(CMD_REC_GET_ROTATE_MODE);
         mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_REMOTE_CTR);
         mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, BtDevice.BT_DEVICE_TYPE_OBD);
         syncTimezone();
@@ -813,7 +821,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     public void setBtEnable(boolean enable) {
         mCommunicationBus.sendCommand(CMD_CAM_BT_ENABLE, enable ? 1 : 0);
-        Log.d(TAG, "sent CMD_CAM_BT_ENABLE");
+        Logger.t(TAG).d("sent CMD_CAM_BT_ENABLE");
     }
 
     public void scanBluetoothDevices() {
@@ -826,13 +834,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     public void doBtUnbind(int type, String mac) {
-        Log.d(TAG, "cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
+        Logger.t(TAG).d("cmd_CAM_BT_doUnBind, type=" + type + ", mac=" + mac);
         mCommunicationBus.sendCommand(CMD_CAM_BT_DO_UNBIND, Integer.toString(type), mac);
 
     }
 
     public void doBind(int type, String mac) {
-        Log.d(TAG, "cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
+        Logger.t(TAG).d("cmd_CAM_BT_doBind, type=" + type + ", mac=" + mac);
         mCommunicationBus.sendCommand(CMD_CAM_BT_DO_BIND, Integer.toString(type), mac);
     }
 
@@ -1012,7 +1020,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    private void ack_Cam_getApiVersion(String p1) {
+    private void handleAckCamGetApiVersion(String p1) {
         mApiVersionStr = p1;
         int main = 0, sub = 0;
         String build = "";
@@ -1033,12 +1041,12 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    private void ack_Cam_get_Name_result(String p1, String p2) {
+    private void handleAckCamGetNameResult(String p1, String p2) {
         setCameraName(p1);
     }
 
 
-    private void ack_Cam_get_State_result(String p1, String p2) {
+    private void handleAckCamGetStateResult(String p1, String p2) {
         int state = Integer.parseInt(p1);
         boolean is_still = p2.length() > 0 && Integer.parseInt(p2) != 0;
         if (mRecordState != state) {
@@ -1048,7 +1056,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    private void ack_Cam_get_time_result(String p1, String p2) {
+    private void handleAckCamGetTimeResult(String p1, String p2) {
         int duration = Integer.parseInt(p1);
 
         if (mRecordTime != duration) {
@@ -1060,11 +1068,11 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    private void ack_Cam_msg_Storage_infor(String p1, String p2) {
+    private void handleAckCamStorageInfo(String p1, String p2) {
         mStorageState = Integer.parseInt(p1);
     }
 
-    private void ack_Cam_msg_StorageSpace_infor(String p1, String p2) {
+    private void handleAckCamStorageSpaceInfo(String p1, String p2) {
         long totalSpace = p1.length() > 0 ? Long.parseLong(p1) : 0;
         long freeSpace = p2.length() > 0 ? Long.parseLong(p2) : 0;
 
@@ -1073,15 +1081,15 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    private void ack_Cam_msg_Battery_infor(String p1, String p2) {
-//        Logger.t(TAG).d("ack_Cam_msg_Battery_infor: " + p1 + " p2: " + p2);
+    private void handleAckCamBatteryInfo(String p1, String p2) {
+//        Logger.t(TAG).d("handleAckCamBatteryInfo: " + p1 + " p2: " + p2);
         int vol = Integer.parseInt(p2);
         mBatteryVol = vol;
     }
 
-    private void ack_Cam_msg_power_infor(String p1, String p2) {
+    private void handleCamPowerInfo(String p1, String p2) {
         if (p1.length() == 0 || p2.length() == 0) {
-            Log.d(TAG, "bad power info, schedule update");
+            Logger.t(TAG).d("bad power info, schedule update");
 
         } else {
             int batteryState = STATE_BATTERY_UNKNOWN;
@@ -1101,13 +1109,13 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
 
-    private void ack_Cam_msg_GPS_infor(String p1, String p2) {
+    private void handleAckCamGpsInfo(String p1, String p2) {
         int state = Integer.parseInt(p1);
 
     }
 
     private void ack_Cam_msg_Mic_infor(String p1, String p2) {
-        Log.d(TAG, "get mic state: p1: " + p1 + " p2: " + p2);
+        Logger.t(TAG).d("get mic state: p1: " + p1 + " p2: " + p2);
         int state = Integer.parseInt(p1);
         int vol = Integer.parseInt(p2);
         mMicState = state;
@@ -1160,7 +1168,6 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private void ack_CAM_BT_getDEVStatus(String p1, String p2) {
         int i_p1 = Integer.parseInt(p1);
-        Log.d(TAG, "i_p1: " + p1);
         int devType = i_p1 >> 8;
         int devState = i_p1 & 0xff;
         String mac = "";
@@ -1195,7 +1202,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             numDevs = 0;
         }
         mScannedBtDeviceNumber = numDevs;
-        Log.d(TAG, "find devices: " + mScannedBtDeviceNumber);
+        Logger.t(TAG).d("find devices: " + mScannedBtDeviceNumber);
         mScannedBtDeviceList.clear();
         for (int i = 0; i < numDevs; i++) {
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_INFOR, i);
@@ -1213,7 +1220,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             type = BtDevice.BT_DEVICE_TYPE_OTHER;
         }
 
-        Log.d(TAG, "type: " + type + " mac: " + mac + " name: " + name);
+        Logger.t(TAG).d("type: " + type + " mac: " + mac + " name: " + name);
         BtDevice device = new BtDevice(type);
         device.setDevState(BtDevice.BT_DEVICE_STATE_UNKNOWN, mac, name);
 
@@ -1227,7 +1234,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
     private void ack_CAM_BT_doScan(String p1) {
         int ret = Integer.parseInt(p1);
-        Log.d(TAG, "ret: " + ret);
+        Logger.t(TAG).d("ret: " + ret);
         if (ret == 0) {
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_HOST_NUM);
         }
@@ -1242,7 +1249,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
             }
         }
-        Log.d(TAG, "ack_CAM_BT_doBind" + "type:" + type + ", result:" + result);
+        Logger.t(TAG).d("ack_CAM_BT_doBind" + "type:" + type + ", result:" + result);
         mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_BIND_FINISHED));
     }
 
@@ -1252,7 +1259,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (type == BtDevice.BT_DEVICE_TYPE_REMOTE_CTR || type == BtDevice.BT_DEVICE_TYPE_OBD) {
             mCommunicationBus.sendCommand(CMD_CAM_BT_GET_DEV_STATUS, type);
         }
-        Log.d(TAG, "ack_CAM_BT_doUnBind" + "type:" + type);
+        Logger.t(TAG).d("ack_CAM_BT_doUnBind" + "type:" + type);
         mEventBus.post(new BluetoothEvent(BluetoothEvent.BT_DEVICE_UNBIND_FINISHED));
     }
 
@@ -1316,7 +1323,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void ack_Rec_setOverlayState(String p1, String p2) {
-        Log.d(TAG, String.format("cmd_setOverlayState: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("cmd_setOverlayState: p1: %s, p2: %s", p1, p2));
         int flags = Integer.parseInt(p1);
         //mOverlayFlags = 2 & flags;
     }
@@ -1334,24 +1341,24 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void ack_Rec_SetMarkTime(String p1, String p2) {
-        Log.d(TAG, String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2));
         try {
             mMarkBeforeTime = Integer.parseInt(p1);
             mMarkAfterTime = Integer.parseInt(p2);
         } catch (Exception e) {
-            Log.d(TAG, String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("ack_Rec_SetMarkTime: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
     private void ack_CAM_getSpeakerStatus(String p1, String p2) {
-        Log.d(TAG, String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
         try {
             int speakerState = Integer.parseInt(p1);
             int speakerVol = Integer.parseInt(p2);
             mSpeakerState = speakerState;
             mSpeakerVol = speakerVol;
         } catch (Exception e) {
-            Log.e(TAG, String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
+            Logger.t(TAG).d(String.format("ack_CAM_getSpeakerStatus: p1: %s, p2: %s", p1, p2));
         }
     }
 
@@ -1359,17 +1366,17 @@ public class VdtCamera implements VdtCameraCmdConsts {
         try {
             mDisplayBrightness = Integer.parseInt(p1);
         } catch (Exception e) {
-            Log.d(TAG, String.format("cmd_set_display_brightness: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("cmd_set_display_brightness: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
 
     private void ack_getDisplayBrightness(String p1, String p2) {
-        Log.d(TAG, String.format("ack_get_display_brightness: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("ack_get_display_brightness: p1: %s, p2: %s", p1, p2));
         try {
             mDisplayBrightness = Integer.parseInt(p1);
         } catch (Exception e) {
-            Log.d(TAG, String.format("ack_get_display_brightness: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("ack_get_display_brightness: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
@@ -1377,43 +1384,43 @@ public class VdtCamera implements VdtCameraCmdConsts {
         try {
             mAutoOffTime = p1;
         } catch (Exception e) {
-            Log.d(TAG, String.format("cmd_set_display_auto_off_time: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("cmd_set_display_auto_off_time: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
 
     private void ack_getDisplayAutoOffTime(String p1, String p2) {
-        Log.d(TAG, String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2));
+        Logger.t(TAG).d(String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2));
         try {
             mAutoOffTime = p1;
         } catch (Exception e) {
-            Log.d(TAG, String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2), e);
         }
     }
 
     private void ack_setAutoPowerOffDelay(String p1, String p2) {
-        Log.d(TAG, String.format("%s, %s", p1, p2));
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
         try {
             mAutoPowerOffDelay = p1;
         } catch (Exception e) {
-            Log.d(TAG, String.format("%s, %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
         }
     }
 
     private void ack_getAutoPowerOffDelay(String p1, String p2) {
-        Log.d(TAG, String.format("%s, %s", p1, p2));
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
         try {
             mAutoPowerOffDelay = p1;
         } catch (Exception e) {
-            Log.d(TAG, String.format("%s, %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
         }
     }
 
     private void ack_setScreenSaverStyle(String p1, String p2) {
-        Log.d(TAG, String.format("%s, %s", p1, p2));
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
         try {
         } catch (Exception e) {
-            Log.d(TAG, String.format("%s, %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
         }
     }
 
@@ -1433,11 +1440,11 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void ack_getScreenSaverStyle(String p1, String p2) {
-        Log.d(TAG, String.format("%s, %s", p1, p2));
+        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
         try {
             mScreenSaverStyle = p1;
         } catch (Exception e) {
-            Log.d(TAG, String.format("%s, %s", p1, p2), e);
+            Logger.t(TAG).d(String.format("%s, %s", p1, p2), e);
         }
     }
 
@@ -1445,31 +1452,31 @@ public class VdtCamera implements VdtCameraCmdConsts {
     private void handleCameraMessage(int cmd, String p1, String p2) {
         switch (cmd) {
             case CMD_CAM_GET_API_VERSION:
-                ack_Cam_getApiVersion(p1);
+                handleAckCamGetApiVersion(p1);
                 break;
             case CMD_CAM_GET_NAME_RESULT:
-                ack_Cam_get_Name_result(p1, p2);
+                handleAckCamGetNameResult(p1, p2);
                 break;
             case CMD_CAM_GET_STATE_RESULT:
-                ack_Cam_get_State_result(p1, p2);
+                handleAckCamGetStateResult(p1, p2);
                 break;
             case CMD_CAM_GET_TIME_RESULT:
-                ack_Cam_get_time_result(p1, p2);
+                handleAckCamGetTimeResult(p1, p2);
                 break;
             case CMD_CAM_MSG_STORAGE_INFOR:
-                ack_Cam_msg_Storage_infor(p1, p2);
+                handleAckCamStorageInfo(p1, p2);
                 break;
             case CMD_CAM_MSG_STORAGE_SPACE_INFOR:
-                ack_Cam_msg_StorageSpace_infor(p1, p2);
+                handleAckCamStorageSpaceInfo(p1, p2);
                 break;
             case CMD_CAM_MSG_BATTERY_INFOR:
-                ack_Cam_msg_Battery_infor(p1, p2);
+                handleAckCamBatteryInfo(p1, p2);
                 break;
             case CMD_CAM_MSG_POWER_INFOR:
-                ack_Cam_msg_power_infor(p1, p2);
+                handleCamPowerInfo(p1, p2);
                 break;
             case CMD_CAM_MSG_GPS_INFOR:
-                ack_Cam_msg_GPS_infor(p1, p2);
+                handleAckCamGpsInfo(p1, p2);
                 break;
             case CMD_CAM_MSG_MIC_INFOR:
                 ack_Cam_msg_Mic_infor(p1, p2);
@@ -1594,6 +1601,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
             case CMD_NETWORK_GET_DEVICETIME:
                 ack_getDeviceTime(p1, p2);
                 break;
+            case CMD_REC_GET_ROTATE_MODE:
+                handleAckRecGetRotateMode(p1, p2);
+                break;
             default:
                 //Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
@@ -1601,19 +1611,29 @@ public class VdtCamera implements VdtCameraCmdConsts {
         }
     }
 
+    private void handleAckRecGetRotateMode(String p1, String p2) {
+        Logger.t(TAG).d("handleAckRecGetRotateMode p1=" + p1 + ", p2=" + p2);
+        if (p2.equals("normal")) {
+            mIfRotate = false;
+        } else {
+            mIfRotate = true;
+        }
+        mRxBus.post(new CameraStateChangeEvent(CameraStateChangeEvent.CAMEAR_STATE_REC_ROTATE, this, mIfRotate));
+    }
+
     private void handleNewFwVersion(String p1, String p2) {
-        Log.d(TAG, "p1: " + p1 + " p2: " + p2);
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
         if (mOnNewFwVersionListerner != null) {
             mOnNewFwVersionListerner.onNewVersion(Integer.valueOf(p1));
         }
     }
 
     private void handleOnNetworkConnectHost(String p1, String p2) {
-        Log.d(TAG, "p1: " + p1 + " p2: " + p2);
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
     }
 
     private void handleNetworkConnectHost(String p1, String p2) {
-        Log.d(TAG, "p1: " + p1 + " p2: " + p2);
+        Logger.t(TAG).d("p1: " + p1 + " p2: " + p2);
 
         mEventBus.post(new NetworkEvent(NetworkEvent.NETWORK_EVENT_WHAT_CONNECTED, Integer.parseInt(p1)));
     }

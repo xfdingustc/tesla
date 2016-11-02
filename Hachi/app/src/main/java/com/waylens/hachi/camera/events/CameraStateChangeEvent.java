@@ -17,6 +17,7 @@ public class CameraStateChangeEvent {
     public static final int CAMERA_STATE_REC_ERROR = 3;
     public static final int CAMERA_STATE_BT_DEVICE_STATUS_CHANGED = 4;
     public static final int CAMEAR_STATE_MICROPHONE_STATUS_CHANGED = 5;
+    public static final int CAMEAR_STATE_REC_ROTATE = 6;
 
 
     public CameraStateChangeEvent(int what, VdtCamera camera) {
