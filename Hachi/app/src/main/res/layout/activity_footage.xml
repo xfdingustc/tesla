@@ -21,8 +21,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/app_text_color_secondary"/>
+            android:layout_height="1dp"
+            android:background="@color/settings_line_separator"/>
 
         <ImageButton
             android:id="@+id/btnAddBookmark"
@@ -35,17 +35,18 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/app_text_color_secondary"/>
+            android:layout_height="1dp"
+            android:background="@color/settings_line_separator"/>
 
         <TextView
             android:id="@+id/tvClipPosTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="8dp"
-            android:textColor="?attr/appTextColorSecondary"
-            android:textSize="12sp"/>
+            android:layout_margin="16dp"
+            android:textColor="@color/app_text_color_primary"
+            tools:text="2016, 11.01.08 10:54"
+            android:textSize="14sp"/>
 
         <FrameLayout
             android:layout_width="match_parent"

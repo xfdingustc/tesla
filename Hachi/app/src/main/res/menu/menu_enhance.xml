@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_to_share"
-        android:icon="@drawable/btn_edit_action_share"
+        android:icon="@drawable/ic_cloud_upload"
         android:title="@string/share"
         app:showAsAction="always"/>
 
     <item android:id="@+id/menu_to_download"
-          android:icon="@drawable/btn_edit_action_download"
+          android:icon="@drawable/ic_file_download"
           android:title="@string/download"
           app:showAsAction="always"/>
 </menu>

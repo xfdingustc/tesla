@@ -16,7 +16,7 @@
         tools:visible="false"/>
     <item
         android:id="@+id/menu_to_delete"
-        android:icon="@drawable/btn_edit_action_delete"
+        android:icon="@drawable/ic_delete_black"
         android:title="@string/delete"
         app:showAsAction="always"/>
 
