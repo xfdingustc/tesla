@@ -15,12 +15,13 @@ import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.SocialProvider;
-import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
+import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +29,8 @@ import org.json.JSONObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2015/8/6.
@@ -418,6 +421,7 @@ public class SessionManager {
     public void logout() {
         mLoginType = LOGIN_TYPE_USERNAME_PASSWORD;
         PreferenceUtils.remove(PreferenceUtils.USER_ID);
+        PreferenceUtils.remove(PreferenceUtils.EMAIL);
         PreferenceUtils.remove(PreferenceUtils.AVATAR_URL);
         PreferenceUtils.remove(PreferenceUtils.AVATAR_URL_THUMBNAIL);
         PreferenceUtils.remove(PreferenceUtils.LOGIN_TYPE);
@@ -434,22 +438,20 @@ public class SessionManager {
             LoginManager.getInstance().logOut();
         }
 
-        HachiApi hachiApi = HachiService.createHachiApiService();
-        hachiApi.deviceLogout().enqueue(new Callback<SimpleBoolResponse>() {
-            @Override
-            public void onResponse(Call<SimpleBoolResponse> call, Response<SimpleBoolResponse> response) {
-                if (response.isSuccessful()) {
-                    Logger.t(TAG).d("device logout " + response.body().result);
-                    PreferenceUtils.remove(PreferenceUtils.TOKEN);
-                    PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
-                }
-            }
 
-            @Override
-            public void onFailure(Call<SimpleBoolResponse> call, Throwable t) {
-                Logger.t(TAG).d("device layout failed");
-            }
-        });
+        HachiService.createHachiApiService().deviceLogoutRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
+                @Override
+                public void onNext(SimpleBoolResponse simpleBoolResponse) {
+                    if (simpleBoolResponse.result) {
+                        Logger.t(TAG).d("device logout " + simpleBoolResponse.result);
+                        PreferenceUtils.remove(PreferenceUtils.TOKEN);
+                        PreferenceUtils.remove(PreferenceUtils.SEND_GCM_TOKEN_SERVER);
+                    }
+                }
+            });
 
 
     }

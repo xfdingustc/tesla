@@ -23,6 +23,7 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
+import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
@@ -126,7 +127,7 @@ public class SignInFragment extends BaseFragment {
     }
 
 
-    void performSignIn() {
+    private void performSignIn() {
         mEmail = mTvSignInEmail.getText().toString();
         mPassword = mTvPassword.getText().toString();
         SignInPostBody signInPostBody = new SignInPostBody(mEmail, mPassword);
@@ -136,20 +137,6 @@ public class SignInFragment extends BaseFragment {
             .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
                 @Override
                 public void onNext(AuthorizeResponse authorizeResponse) {
-//                    if (response.code() == 200) {
-//                        onSignInSuccessful(response.body());
-//                    } else if (response.code() == 401) {
-//                        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-//                            .content(R.string.incorrect_email_or_password)
-//                            .positiveText(R.string.ok)
-//                            .negativeText(R.string.cancel)
-//                            .show();
-//                        mButtonAnimator.setDisplayedChild(1);
-//                    } else {
-//                        onSignInFailed(new Throwable("Sign in failed"));
-//                        mButtonAnimator.setDisplayedChild(1);
-//                    }
-
                     onSignInSuccessful(authorizeResponse);
                 }
 
@@ -183,8 +170,22 @@ public class SignInFragment extends BaseFragment {
                 @Override
                 public void onNext(AuthorizeResponse signInResponse) {
                     SessionManager.getInstance().saveLoginInfo(signInResponse);
-                    getActivity().setResult(Activity.RESULT_OK);
                     RegistrationIntentService.launch(getActivity());
+                    fetchUserInfo();
+
+                }
+            });
+    }
+
+    private void fetchUserInfo() {
+        HachiService.createHachiApiService().getUserInfoRx(SessionManager.getInstance().getUserId())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<UserInfo>() {
+                @Override
+                public void onNext(UserInfo userInfo) {
+                    SessionManager.getInstance().saveUserProfile(userInfo);
+                    getActivity().setResult(Activity.RESULT_OK);
                     getActivity().finish();
                 }
             });

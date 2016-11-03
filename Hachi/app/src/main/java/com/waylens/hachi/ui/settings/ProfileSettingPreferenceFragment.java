@@ -27,6 +27,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Vehicle;
@@ -37,6 +38,7 @@ import com.waylens.hachi.rest.body.VehicleListResponse;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
+import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
@@ -86,7 +88,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     private EditText newPasswordInput;
 
     private SessionManager mSessionManager = SessionManager.getInstance();
-    private RequestQueue mRequestQueue;
+
 
     private HachiApi mHachi = HachiService.createHachiApiService();
 
@@ -96,10 +98,16 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_account_setting);
-        mRequestQueue = Volley.newRequestQueue(getActivity());
-        mRequestQueue.start();
         initPreferences();
-
+        HachiService.createHachiApiService().getUserInfoRx(SessionManager.getInstance().getUserId())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<UserInfo>() {
+                @Override
+                public void onNext(UserInfo userInfo) {
+                    SessionManager.getInstance().saveUserProfile(userInfo);
+                }
+            });
     }
 
 
@@ -123,17 +131,11 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mRequestQueue.cancelAll(TAG);
-    }
 
     @Override
     public void onResume() {
         super.onResume();
         updateVehicle();
-
     }
 
     private void initPreferences() {

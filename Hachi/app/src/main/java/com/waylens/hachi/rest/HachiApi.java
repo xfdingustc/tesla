@@ -203,12 +203,14 @@ public interface HachiApi {
     @GET("/api/devices/logout")
     Call<SimpleBoolResponse> deviceLogout();
 
+    @GET("/api/devices/logout")
+    Observable<SimpleBoolResponse> deviceLogoutRx();
+
     @POST("/api/moments/update/{momentId}")
     Call<SimpleBoolResponse> updateMoment(@Path("momentId") long momentId,
                                           @Body MomentUpdateBody momentUpdatebody);
 
-    @GET("/api/musics/categories")
-    Call<MusicCategoryResponse> getMusicCategories();
+
 
     @GET("/api/musics/categories")
     Observable<MusicCategoryResponse> getMusicCategoriesRx();
@@ -219,11 +221,7 @@ public interface HachiApi {
     @GET("/api/vehicle")
     Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
 
-    @GET("/api/moments/race")
-    Call<RaceQueryResponse> queryRace(@Query("mode") int mode, @Query("start") int start,
-                                      @Query("end") int end, @Query("upper") Long upper,
-                                      @Query("lower") Long lower, @Query("maker") String maker,
-                                      @Query("model") String model, @Query("count") int count);
+
 
     @GET("/api/moments/race")
     Observable<RaceQueryResponse> queryRaceRx(@Query("mode") int mode, @Query("start") int start,
