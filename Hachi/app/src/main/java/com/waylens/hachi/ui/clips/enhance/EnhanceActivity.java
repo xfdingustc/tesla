@@ -17,10 +17,10 @@ import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
@@ -349,7 +349,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     @Override
                     public void onClick(View view) {
                         mDownloadInfo = response.main;
-                        doDownloadStream(mDownloadInfo);
+                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
                         ExportedVideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
@@ -359,7 +359,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     @Override
                     public void onClick(View view) {
                         mDownloadInfo = response.sub;
-                        doDownloadStream(mDownloadInfo);
+                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
                         ExportedVideoActivity.launch(EnhanceActivity.this);
                         mDownloadBottomSheetDialog.dismiss();
                     }
@@ -384,11 +384,6 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     }
 
-    private void doDownloadStream(ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
-        JobManager jobManager = BgJobManager.getManager();
-        DownloadJob job = new DownloadJob(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], downloadInfo);
-        jobManager.addJobInBackground(job);
-    }
 
     private void toShare() {
         if (!SessionManager.getInstance().isLoggedIn()) {

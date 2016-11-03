@@ -2,8 +2,9 @@ package com.waylens.hachi.bgjob;
 
 import android.support.design.widget.Snackbar;
 
-import com.birbit.android.jobqueue.JobManager;
+
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.bgjob.download.DownloadJob;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
@@ -13,11 +14,14 @@ import com.waylens.hachi.bgjob.social.RepostJob;
 import com.waylens.hachi.bgjob.timelapse.TimeLapseJob;
 import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.PictureUploadJob;
+import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
 import com.waylens.hachi.bgjob.upload.UploadCachedMomentJob;
+import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 
@@ -25,6 +29,13 @@ import com.waylens.hachi.ui.entities.LocalMoment;
  * Created by Xiaofei on 2016/7/22.
  */
 public class BgJobHelper {
+
+    public static void uploadAvatar(String avatarUrl) {
+        UploadAvatarJob uploadAvatarJob = new UploadAvatarJob(avatarUrl);
+        JobManager jobManager = BgJobManager.getManager();
+        jobManager.addJobInBackground(uploadAvatarJob);
+    }
+
 
     public static void deleteMoment(long momentId) {
         JobManager jobManager = BgJobManager.getManager();
@@ -107,6 +118,12 @@ public class BgJobHelper {
     public static void deleteComment(Comment comment) {
         JobManager jobManager = BgJobManager.getManager();
         DeleteCommentJob job = new DeleteCommentJob(comment.commentID);
+        jobManager.addJobInBackground(job);
+    }
+
+    public static void downloadStream(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
+        JobManager jobManager = BgJobManager.getManager();
+        DownloadJob job = new DownloadJob(clip, streamInfo, downloadInfo);
         jobManager.addJobInBackground(job);
     }
 }

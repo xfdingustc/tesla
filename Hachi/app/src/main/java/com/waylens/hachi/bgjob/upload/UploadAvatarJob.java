@@ -2,11 +2,12 @@ package com.waylens.hachi.bgjob.upload;
 
 import android.support.annotation.Nullable;
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
-import com.birbit.android.jobqueue.RetryConstraint;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.Params;
+import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.service.upload.UploadAPI;

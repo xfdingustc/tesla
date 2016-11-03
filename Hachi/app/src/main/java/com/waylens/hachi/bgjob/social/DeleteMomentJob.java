@@ -3,10 +3,11 @@ package com.waylens.hachi.bgjob.social;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
-import com.birbit.android.jobqueue.RetryConstraint;
+
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.Params;
+import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;

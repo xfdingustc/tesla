@@ -2,10 +2,11 @@ package com.waylens.hachi.bgjob.social;
 
 import android.support.annotation.Nullable;
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
-import com.birbit.android.jobqueue.RetryConstraint;
+
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.Params;
+import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.FollowPostBody;
@@ -16,7 +17,7 @@ import retrofit2.Call;
 /**
  * Created by Xiaofei on 2016/6/12.
  */
-public class FollowJob extends Job{
+public class FollowJob extends Job {
     private static final String TAG = FollowJob.class.getSimpleName();
     private final String mUserId;
     private final boolean mAddFollow;

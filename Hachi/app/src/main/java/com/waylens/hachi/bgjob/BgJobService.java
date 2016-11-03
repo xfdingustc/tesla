@@ -2,8 +2,9 @@ package com.waylens.hachi.bgjob;
 
 import android.support.annotation.NonNull;
 
-import com.birbit.android.jobqueue.JobManager;
-import com.birbit.android.jobqueue.scheduling.FrameworkJobSchedulerService;
+import com.waylens.hachi.jobqueue.JobManager;
+import com.waylens.hachi.jobqueue.scheduling.FrameworkJobSchedulerService;
+
 
 /**
  * Created by Xiaofei on 2016/4/28.

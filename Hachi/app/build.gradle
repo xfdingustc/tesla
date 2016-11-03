@@ -128,7 +128,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'javax.jmdns:jmdns:3.4.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.birbit:android-priority-jobqueue:2.0.0'
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.xfdingustc.mdplaypausebutton:button:0.1.2@aar'

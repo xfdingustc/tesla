@@ -1,8 +1,9 @@
 package com.waylens.hachi.bgjob.upload.localjob;
 
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.persistentQueue.sqlite.SqliteJobQueue;
+
+
+import com.waylens.hachi.jobqueue.Job;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

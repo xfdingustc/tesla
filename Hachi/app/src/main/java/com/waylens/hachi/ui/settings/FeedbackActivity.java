@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -12,12 +11,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
-import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.ReportJob;
+import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
@@ -26,7 +25,6 @@ import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -36,7 +34,7 @@ import rx.schedulers.Schedulers;
  * Created by laina on 16/9/26.
  */
 
-public class FeedbackActivity extends BaseActivity{
+public class FeedbackActivity extends BaseActivity {
     public static final String TAG = FeedbackActivity.class.getSimpleName();
 
     @BindView(R.id.feedback_content)
@@ -113,18 +111,18 @@ public class FeedbackActivity extends BaseActivity{
                     subscriber.onNext(stringBuffer);
                 }
             }).subscribeOn(Schedulers.io())
-            .observeOn(Schedulers.io())
-            .subscribe(new Action1<StringBuffer>() {
-                @Override
-                public void call(StringBuffer stringBuffer) {
-                    if (stringBuffer!=null) {
-                        Logger.t(TAG).d(stringBuffer.toString());
-                        reportFeedbackBody.log = stringBuffer.toString();
+                .observeOn(Schedulers.io())
+                .subscribe(new Action1<StringBuffer>() {
+                    @Override
+                    public void call(StringBuffer stringBuffer) {
+                        if (stringBuffer != null) {
+                            Logger.t(TAG).d(stringBuffer.toString());
+                            reportFeedbackBody.log = stringBuffer.toString();
+                        }
+                        ReportJob job = new ReportJob(reportFeedbackBody, ReportJob.REPORT_TYPE_FEEDBACK);
+                        jobManager.addJobInBackground(job);
                     }
-                    ReportJob job = new ReportJob(reportFeedbackBody, ReportJob.REPORT_TYPE_FEEDBACK);
-                    jobManager.addJobInBackground(job);
-                }
-            });
+                });
         }
     }
 

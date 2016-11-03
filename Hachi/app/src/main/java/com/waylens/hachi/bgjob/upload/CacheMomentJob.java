@@ -4,8 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.birbit.android.jobqueue.Params;
-import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.BgJobHelper;
@@ -13,6 +11,8 @@ import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
 
 import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.jobqueue.Params;
+import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.snipe.VdbCommand;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;

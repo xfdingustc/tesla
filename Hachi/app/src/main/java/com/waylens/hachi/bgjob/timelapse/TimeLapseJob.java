@@ -7,9 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
-import com.birbit.android.jobqueue.RetryConstraint;
+
 import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.waylens.hachi.app.DownloadManager;
@@ -17,6 +15,9 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.Params;
+import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.service.remux.RemuxHelper;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;

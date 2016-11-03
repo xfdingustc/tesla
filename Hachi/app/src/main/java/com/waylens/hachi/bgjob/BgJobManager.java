@@ -3,10 +3,11 @@ package com.waylens.hachi.bgjob;
 import android.content.Context;
 import android.os.Build;
 
-import com.birbit.android.jobqueue.JobManager;
-import com.birbit.android.jobqueue.config.Configuration;
-import com.birbit.android.jobqueue.log.CustomLogger;
-import com.birbit.android.jobqueue.scheduling.FrameworkJobSchedulerService;
+import com.waylens.hachi.jobqueue.JobManager;
+import com.waylens.hachi.jobqueue.config.Configuration;
+import com.waylens.hachi.jobqueue.log.CustomLogger;
+import com.waylens.hachi.jobqueue.scheduling.FrameworkJobSchedulerService;
+
 
 /**
  * Created by Xiaofei on 2016/4/28.

@@ -3,14 +3,14 @@ package com.waylens.hachi.bgjob.download;
 import android.media.MediaScannerConnection;
 import android.support.annotation.Nullable;
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
-import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.Params;
+import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.service.remux.RemuxHelper;
 import com.waylens.hachi.service.remux.RemuxerParams;
 import com.waylens.hachi.snipe.vdb.Clip;

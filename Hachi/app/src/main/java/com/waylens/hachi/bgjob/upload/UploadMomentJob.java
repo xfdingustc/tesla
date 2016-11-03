@@ -2,11 +2,12 @@ package com.waylens.hachi.bgjob.upload;
 
 import android.content.Context;
 
-import com.birbit.android.jobqueue.Job;
-import com.birbit.android.jobqueue.Params;
+
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 import org.greenrobot.eventbus.EventBus;

@@ -16,12 +16,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.birbit.android.jobqueue.JobManager;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
+import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.views.ClipImageView;
 import com.waylens.hachi.utils.ImageUtils;
@@ -151,7 +153,7 @@ public class AvatarActivity extends BaseActivity {
                 switch (item.getItemId()) {
                     case R.id.confirm:
                         saveCroppedImage();
-                        uploadAvatar();
+                        BgJobHelper.uploadAvatar(mCroppedImagePath);
                         finish();
                         break;
                 }
@@ -189,13 +191,13 @@ public class AvatarActivity extends BaseActivity {
 
     }
 
-    private void uploadAvatar() {
-        UploadAvatarJob uploadAvatarJob = new UploadAvatarJob(mCroppedImagePath);
-        JobManager jobManager = BgJobManager.getManager();
-        jobManager.addJobInBackground(uploadAvatarJob);
-
-
-    }
+//    private void uploadAvatar() {
+//        UploadAvatarJob uploadAvatarJob = new UploadAvatarJob(mCroppedImagePath);
+//        JobManager jobManager = BgJobManager.getManager();
+//        jobManager.addJobInBackground(uploadAvatarJob);
+//
+//
+//    }
 
     public class ExtractThumbTask extends AsyncTask<Object, Void, String> {
         String srcImgPath = null, dstImgPath = null;
