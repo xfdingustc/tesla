@@ -20,14 +20,8 @@ import android.widget.EditText;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Vehicle;
@@ -43,9 +37,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.json.JSONObject;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

@@ -79,7 +79,7 @@ import com.waylens.hachi.utils.ColorUtils;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.utils.VersionHelper;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

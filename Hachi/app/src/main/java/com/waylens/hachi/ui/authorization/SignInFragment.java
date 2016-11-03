@@ -29,7 +29,8 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import butterknife.BindView;
 import butterknife.OnClick;

@@ -20,37 +20,78 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.DownloadManager;
-import com.waylens.hachi.bgjob.download.Exportable;
+import com.waylens.hachi.bgjob.download.ExportableJob;
 import com.waylens.hachi.bgjob.download.DownloadHelper;
+import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
 import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/8/15.
  */
-public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements DownloadManager.OnDownloadJobStateChangeListener {
+public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = DownloadItemAdapter.class.getSimpleName();
     private final Activity mActivity;
 
     private DownloadManager mDownloadManager = DownloadManager.getManager();
 
+    private Subscription mExportSubscription;
+
     private File[] mDownloadedFileList;
 
     public DownloadItemAdapter(Activity activity) {
         this.mActivity = activity;
-        mDownloadManager.addListener(this);
         mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+        mExportSubscription = RxBus.getDefault().toObserverable(DownloadEvent.class)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<DownloadEvent>() {
+                @Override
+                public void onNext(DownloadEvent downloadEvent) {
+                    handleExportEvent(downloadEvent);
+                }
+            });
     }
+
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        Logger.t(TAG).d("detached from recycler view");
+        if (!mExportSubscription.isUnsubscribed()) {
+            mExportSubscription.unsubscribe();
+        }
+    }
+
+    private void handleExportEvent(DownloadEvent downloadEvent) {
+        switch (downloadEvent.getWhat()) {
+            case DownloadEvent.DOWNLOAD_WHAT_JOB_ADDED:
+                notifyDataSetChanged();
+                break;
+            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
+                notifyItemChanged(downloadEvent.getIndex());
+                break;
+            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
+                mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+                notifyDataSetChanged();
+                break;
+        }
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -69,25 +110,10 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     }
 
-    @Override
-    public void onDownloadJobStateChanged(Exportable job, int index) {
-        notifyItemChanged(index);
-    }
-
-    @Override
-    public void onDownloadJobAdded() {
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void onDownloadJobRemoved() {
-        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
-        notifyDataSetChanged();
-    }
 
     private void onBindDownloadingViewHolder(RecyclerView.ViewHolder holder, int position) {
         DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
-        Exportable job = DownloadManager.getManager().getDownloadJob(position);
+        ExportableJob job = DownloadManager.getManager().getDownloadJob(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(job.getExportProgress());
         Glide.with(mActivity)

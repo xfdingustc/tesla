@@ -16,7 +16,8 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
-import com.xfdingustc.rxutils.library.RxBus;
+import com.waylens.hachi.utils.rxjava.RxBus;
+
 
 import java.io.File;
 import java.text.SimpleDateFormat;

@@ -25,7 +25,8 @@ import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.ClipActionInfo;
 import com.waylens.hachi.snipe.vdb.VdbReadyInfo;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
-import com.xfdingustc.rxutils.library.RxBus;
+import com.waylens.hachi.utils.rxjava.RxBus;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -1185,7 +1186,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
             name = "";
         }
 
-        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
+//        Logger.t(TAG).d("bt devide type: " + devType + " dev_state " + devState + " mac: " + mac + " name " + name);
         if (BtDevice.BT_DEVICE_TYPE_OBD == devType) {
             mObdDevice.setDevState(devState, mac, name);
         } else if (BtDevice.BT_DEVICE_TYPE_REMOTE_CTR == devType) {

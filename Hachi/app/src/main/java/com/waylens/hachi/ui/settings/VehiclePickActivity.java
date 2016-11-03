@@ -6,16 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ViewAnimator;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+
 import com.l4digital.fastscroll.FastScrollRecyclerView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
@@ -27,13 +23,8 @@ import com.waylens.hachi.rest.response.ModelYearResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCommonAdapter;
-import com.waylens.hachi.utils.ServerErrorHelper;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -59,8 +50,6 @@ public class VehiclePickActivity extends BaseActivity {
     private String vehicleMaker;
     private String vehicleModel;
     private int vehicleYear;
-
-
 
 
     private SimpleCommonAdapter<Maker> mMakerAdapter;
@@ -272,7 +261,6 @@ public class VehiclePickActivity extends BaseActivity {
             });
 
     }
-
 
 
     public class MakerAdapter extends SimpleCommonAdapter<Maker> {

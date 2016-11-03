@@ -7,21 +7,14 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.MomentSummaryResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -48,7 +48,8 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.utils.StringUtils;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -206,19 +207,15 @@ public class EnhanceActivity extends ClipPlayActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        Logger.t(TAG).d("register");
         mEventBus.register(mPlaylistEditor);
         mEventBus.register(mClipsEditView);
-//        mEventBus.register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Logger.t(TAG).d("unregister");
         mEventBus.unregister(mPlaylistEditor);
         mEventBus.unregister(mClipsEditView);
-//        mEventBus.unregister(this);
     }
 
 

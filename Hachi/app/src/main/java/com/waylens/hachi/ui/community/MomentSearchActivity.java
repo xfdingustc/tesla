@@ -13,25 +13,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.lapism.searchview.SearchAdapter;
 import com.lapism.searchview.SearchHistoryTable;
 import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.myvideo.MomentItemAdapter;
-import com.waylens.hachi.ui.entities.Moment;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -178,9 +169,7 @@ public class MomentSearchActivity extends BaseActivity {
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-//        getToolbar().setTitle(R.string.search_hint);
         getToolbar().inflateMenu(R.menu.menu_search);
-//        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 

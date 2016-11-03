@@ -26,8 +26,8 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.events.BluetoothEvent;
 import com.waylens.hachi.camera.events.CameraStateChangeEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.xfdingustc.rxutils.library.RxBus;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
 import org.greenrobot.eventbus.EventBus;

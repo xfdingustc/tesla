@@ -3,18 +3,15 @@ package com.waylens.hachi.app;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
-import com.waylens.hachi.bgjob.download.Exportable;
+import com.waylens.hachi.bgjob.download.ExportableJob;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.jobqueue.Job;
-import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.jobqueue.callback.JobManagerCallback;
+import com.waylens.hachi.utils.rxjava.RxBus;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +19,9 @@ import java.util.List;
  * Created by Xiaofei on 2016/8/16.
  */
 public class DownloadManager {
-    private EventBus mEventBus = EventBus.getDefault();
-    private List<Exportable> mDownloadJobList;
-    private List<WeakReference<OnDownloadJobStateChangeListener>> mListenerList;
+    private static final String TAG = DownloadManager.class.getSimpleName();
+    private List<ExportableJob> mDownloadJobList;
+    private RxBus mRxBus = RxBus.getDefault();
 
     private static DownloadManager mSharedManager = null;
 
@@ -40,26 +37,18 @@ public class DownloadManager {
         return mSharedManager;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDownloadEvent(DownloadEvent event) {
-        switch (event.getWhat()) {
-            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
-                notifyUploadStateChanged(event.getJob());
-                break;
-            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
-                removeJob(event.getJob());
-                break;
-        }
-    }
+
 
     private DownloadManager() {
         mDownloadJobList = new ArrayList<>();
-        mListenerList = new ArrayList<>();
         BgJobManager.getManager().addCallback(new JobManagerCallback() {
             @Override
             public void onJobAdded(@NonNull Job job) {
-                if (job instanceof Exportable) {
-                    addJob((Exportable)job);
+                if (job instanceof ExportableJob) {
+                    ExportableJob exportableJob = (ExportableJob)job;
+                    addJob(exportableJob);
+
+
                 }
             }
 
@@ -70,86 +59,59 @@ public class DownloadManager {
 
             @Override
             public void onJobCancelled(@NonNull Job job, boolean byCancelRequest, @Nullable Throwable throwable) {
-                if (job instanceof Exportable) {
-                    removeJob((Exportable)job);
+                if (job instanceof ExportableJob) {
+                    removeJob((ExportableJob)job);
                 }
             }
 
             @Override
             public void onDone(@NonNull Job job) {
-                if (job instanceof Exportable) {
-                    removeJob((Exportable)job);
+                Logger.t(TAG).d("on job done");
+                if (job instanceof  ExportableJob) {
+                    removeJob((ExportableJob)job);
                 }
+
             }
 
             @Override
             public void onAfterJobRun(@NonNull Job job, int resultCode) {
-
+                Logger.t(TAG).d("onAfterJobRun");
             }
         });
-        mEventBus.register(this);
     }
 
-    public void addListener(OnDownloadJobStateChangeListener listener) {
-        mListenerList.add(new WeakReference<>(listener));
-    }
 
-    public void addJob(Exportable job) {
+
+    public void addJob(ExportableJob job) {
         mDownloadJobList.add(job);
-        for (int i = 0; i < mListenerList.size(); i++) {
-            WeakReference<OnDownloadJobStateChangeListener> oneListenr = mListenerList.get(i);
-            if (oneListenr != null) {
-                OnDownloadJobStateChangeListener listener = oneListenr.get();
-                if (listener != null) {
-                    listener.onDownloadJobAdded();
+        mRxBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_JOB_ADDED, job));
+        job.setOnProgressChangedListener(new ExportableJob.OnProgressChangedListener() {
+            @Override
+            public void OnProgressChanged(ExportableJob job) {
+                for (int i = 0; i < mDownloadJobList.size(); i++) {
+                    ExportableJob oneJob = mDownloadJobList.get(i);
+                    if (oneJob.getId().equals(job.getId())) {
+                        
+                        mRxBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, job, i));
+                    }
                 }
             }
-        }
+        });
     }
 
-    public void removeJob(Exportable job) {
+    public void removeJob(ExportableJob job) {
         mDownloadJobList.remove(job);
-        for (int i = 0; i < mListenerList.size(); i++) {
-            WeakReference<OnDownloadJobStateChangeListener> oneListenr = mListenerList.get(i);
-            if (oneListenr != null) {
-                OnDownloadJobStateChangeListener listener = oneListenr.get();
-                if (listener != null) {
-                    listener.onDownloadJobRemoved();
-                }
-            }
-        }
+        Logger.t(TAG).d("remove job");
+        mRxBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, job));
     }
 
     public int getCount() {
         return mDownloadJobList.size();
     }
 
-    public Exportable getDownloadJob(int index) {
+    public ExportableJob getDownloadJob(int index) {
         return mDownloadJobList.get(index);
     }
 
-    public void notifyUploadStateChanged(Exportable job) {
-        for (int i = 0; i < mDownloadJobList.size(); i++) {
-            Exportable oneJob = mDownloadJobList.get(i);
-            if (oneJob.getJobId() == job.getJobId()) {
-                for (int j = 0; j < mListenerList.size(); j++) {
-                    WeakReference<OnDownloadJobStateChangeListener> oneListenr = mListenerList.get(j);
-                    if (oneListenr != null) {
-                        OnDownloadJobStateChangeListener listener = oneListenr.get();
-                        if (listener != null) {
-                            listener.onDownloadJobStateChanged(job, i);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    public interface OnDownloadJobStateChangeListener {
-        void onDownloadJobStateChanged(Exportable job, int index);
-
-        void onDownloadJobAdded();
-
-        void onDownloadJobRemoved();
-    }
 }

@@ -8,8 +8,9 @@ import android.view.View;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.xfdingustc.rxutils.library.RxBus;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;

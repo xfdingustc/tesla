@@ -28,7 +28,8 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.helpers.DownloadHelper;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.VolleyUtil;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;

@@ -16,23 +16,17 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.avatar.AvatarActivity;
 import com.waylens.hachi.utils.CircleTransform;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.xfdingustc.rxutils.library.RxBus;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import java.io.IOException;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import retrofit2.Call;
-import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

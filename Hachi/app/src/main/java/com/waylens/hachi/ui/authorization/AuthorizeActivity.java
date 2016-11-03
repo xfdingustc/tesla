@@ -30,7 +30,8 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.ConnectivityHelper;
 import com.waylens.hachi.utils.ServerMessage;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import org.json.JSONObject;
 

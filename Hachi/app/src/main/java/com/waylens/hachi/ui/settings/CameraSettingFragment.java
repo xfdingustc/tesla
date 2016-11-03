@@ -20,17 +20,13 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.preference.seekbarpreference.SeekBarPreference;
-import com.waylens.hachi.rest.HachiApi;
-import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import java.util.List;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -143,7 +139,6 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
     }
-
 
 
     private void initConnectivityPreference() {
@@ -425,7 +420,6 @@ public class CameraSettingFragment extends PreferenceFragment {
             }
         });
     }
-
 
 
 }

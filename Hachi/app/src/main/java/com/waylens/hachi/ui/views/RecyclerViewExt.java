@@ -7,7 +7,8 @@ import android.util.AttributeSet;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
-import com.xfdingustc.rxutils.library.RxBus;
+import com.waylens.hachi.utils.rxjava.RxBus;
+
 
 /**
  * Created by Richard on 9/2/15.

@@ -21,7 +21,6 @@ import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
@@ -44,11 +43,10 @@ import com.waylens.hachi.ui.recyclerview.SlideInItemAnimator;
 import com.waylens.hachi.ui.settings.ProfileSettingActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
-import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.ElasticDragDismissFrameLayout;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -261,7 +259,6 @@ public class UserProfileActivity extends BaseActivity {
         HachiApi hachiApi = HachiService.createHachiApiService();
 
 
-
         Observable<FollowInfo> followInfoObservable = hachiApi.getFollowInfoRx(mUser.userID)
             .subscribeOn(Schedulers.newThread());
 
@@ -287,7 +284,6 @@ public class UserProfileActivity extends BaseActivity {
                     loadUserMoment(mCurrentCursor, true);
                 }
             });
-
 
 
     }

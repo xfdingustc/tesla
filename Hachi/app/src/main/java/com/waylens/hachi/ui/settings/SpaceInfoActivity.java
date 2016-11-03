@@ -8,16 +8,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
-import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.StringUtils;
-import com.waylens.hachi.utils.Utils;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -84,8 +79,8 @@ public class SpaceInfoActivity extends BaseActivity {
                     mStorageProgressBar.setMax(100);
                     long marked = (spaceInfo.marked * 100) / spaceInfo.total;
                     long buffered = (spaceInfo.used * 100) / spaceInfo.total;
-                    mStorageProgressBar.setProgress((int)marked);
-                    mStorageProgressBar.setSecondaryProgress((int)buffered);
+                    mStorageProgressBar.setProgress((int) marked);
+                    mStorageProgressBar.setSecondaryProgress((int) buffered);
                     mStorageNumber.setText(StringUtils.getSpaceNumber(spaceInfo.used));
                     mStorageUnit.setText(StringUtils.getSpaceUnit(spaceInfo.used));
                 }

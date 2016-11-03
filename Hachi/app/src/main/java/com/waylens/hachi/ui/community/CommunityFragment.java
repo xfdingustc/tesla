@@ -36,8 +36,9 @@ import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
-import com.xfdingustc.rxutils.library.RxBus;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import java.util.ArrayList;
 import java.util.List;

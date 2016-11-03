@@ -25,7 +25,8 @@ import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import java.io.File;
 import java.io.IOException;

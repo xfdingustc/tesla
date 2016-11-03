@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiService;
-import com.waylens.hachi.rest.bean.LeaderBoardItem;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
 import com.waylens.hachi.rest.bean.VehicleInfo;
@@ -42,7 +41,7 @@ import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.ViewUtils;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

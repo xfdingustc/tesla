@@ -9,11 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ViewSwitcher;
 
-import com.android.volley.Response;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.City;
@@ -22,11 +18,8 @@ import com.waylens.hachi.rest.response.CityList;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCityAdapter;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -107,8 +100,6 @@ public class CityActivity extends BaseActivity {
             }
         });
         getToolbar().setTitle(mName);
-//        getToolbar().inflateMenu(R.menu.menu_search);
-//        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
 
 
@@ -144,23 +135,9 @@ public class CityActivity extends BaseActivity {
 
 
     private void changeUserCity(City city) {
-//        AuthorizedJsonRequest request = new AuthorizedJsonRequest.Builder()
-//            .url(Constants.API_USER_PROFILE)
-//            .postBody("cityID", city.id)
-//            .listner(new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                    Logger.t(TAG).json(response.toString());
-//                    finish();
-//                }
-//            })
-//
-//            .build();
-//        mRequestQueue.add(request);
-
         HachiApi hachiApi = HachiService.createHachiApiService();
         UserProfileBody userProfileBody = new UserProfileBody();
-        userProfileBody.cityID = (int)city.id;
+        userProfileBody.cityID = (int) city.id;
         hachiApi.changeProfileRx(userProfileBody)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

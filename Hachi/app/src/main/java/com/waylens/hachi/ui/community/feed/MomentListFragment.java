@@ -1,9 +1,7 @@
 package com.waylens.hachi.ui.community.feed;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -11,12 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ViewAnimator;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
@@ -26,23 +20,15 @@ import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.event.MomentModifyEvent;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.ThemeHelper;
-import com.waylens.hachi.utils.VolleyUtil;
-import com.xfdingustc.rxutils.library.RxBus;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -98,8 +84,6 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
 
-
-
     public static MomentListFragment newInstance(int tag) {
         Bundle args = new Bundle();
         args.putInt(FEED_TAG, tag);
@@ -127,13 +111,13 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     private void initEventHandler() {
         mSubscription = RxBus.getDefault().toObserverable(MomentModifyEvent.class)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleSubscribe<MomentModifyEvent>() {
-                    @Override
-                    public void onNext(MomentModifyEvent momentModifyEvent) {
-                        handleMomentModifyEvent(momentModifyEvent);
-                    }
-                });
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<MomentModifyEvent>() {
+                @Override
+                public void onNext(MomentModifyEvent momentModifyEvent) {
+                    handleMomentModifyEvent(momentModifyEvent);
+                }
+            });
     }
 
 

@@ -3,33 +3,20 @@ package com.waylens.hachi.ui.settings.myvideo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ViewAnimator;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.entities.Moment;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONObject;
-
-import java.util.List;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -42,7 +29,6 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
     private static final String TAG = MyMomentActivity.class.getSimpleName();
 
     private MomentItemAdapter mVideoItemAdapter;
-
 
 
     private static final int VIEW_ANIMATOR_LOADING_PROGRESS = 0;
@@ -60,8 +46,6 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
 
     @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
-
-
 
 
     @Override

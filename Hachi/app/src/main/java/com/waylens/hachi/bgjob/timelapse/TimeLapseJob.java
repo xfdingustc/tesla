@@ -12,7 +12,7 @@ import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.download.Exportable;
+import com.waylens.hachi.bgjob.download.ExportableJob;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.jobqueue.Job;
@@ -35,7 +35,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Created by Xiaofei on 2016/8/10.
  */
-public class TimeLapseJob extends Job implements Exportable {
+public class TimeLapseJob extends ExportableJob {
     private static final String TAG = TimeLapseJob.class.getSimpleName();
     private final Clip mClip;
     private final int mSpeed;
@@ -44,14 +44,6 @@ public class TimeLapseJob extends Job implements Exportable {
     private VdbRequestQueue mVdbRequestQueue;
 
     private FFmpegFrameRecorder recorder;
-
-    private EventBus mEventBus = EventBus.getDefault();
-
-    private String mOutputFile;
-
-    private DownloadManager mDownloadManager = DownloadManager.getManager();
-
-    private int mExportProgress;
 
 
     private BlockingQueue<VdbImage> mVdbImageBitmapQueue = new LinkedBlockingQueue<>();
@@ -72,15 +64,7 @@ public class TimeLapseJob extends Job implements Exportable {
         encodeClipThumbnails();
     }
 
-    @Override
-    public String getJobId() {
-        return getId();
-    }
 
-    @Override
-    public int getExportProgress() {
-        return mExportProgress;
-    }
 
     @Override
     public String getOutputFile() {
@@ -96,7 +80,7 @@ public class TimeLapseJob extends Job implements Exportable {
 
         mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
 
-        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
+//        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
         new GetVdbImageThread().start();
 
         mOutputFile = RemuxHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
@@ -112,7 +96,7 @@ public class TimeLapseJob extends Job implements Exportable {
                 recorder = new FFmpegFrameRecorder(mOutputFile, vdbImage.thumbnail.getWidth(), vdbImage.thumbnail.getHeight());
 
                 recorder.setFormat("mp4");
-                recorder.setFrameRate(mSpeed);// 录像帧率
+                recorder.setFrameRate(mSpeed);
                 recorder.start();
             }
 
@@ -130,17 +114,14 @@ public class TimeLapseJob extends Job implements Exportable {
             Log.d(TAG, "encode one frame encode time: " + vdbImage.pts + " startTime: " + mClip.getStartTimeMs() + " endTime: " + mClip.getEndTimeMs());
 
             int progress = (int) (((vdbImage.pts - mClip.getStartTimeMs()) * 100) / mClip.getDurationMs());
-            if (mExportProgress != progress) {
-                mExportProgress = progress;
-                mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, this));
-            }
+            notifyProgressChanged(progress);
 
 
         }
 
 
         MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{mOutputFile.toString()}, null, null);
-        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
+
 
         recorder.stop();
     }

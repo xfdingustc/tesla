@@ -15,7 +15,8 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.ui.adapters.UserListRvAdapter;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 
 import butterknife.BindView;
 import rx.Subscriber;

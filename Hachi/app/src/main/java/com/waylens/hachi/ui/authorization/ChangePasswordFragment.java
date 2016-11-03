@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.android.volley.RequestQueue;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.ResetPwdBody;
@@ -21,8 +20,7 @@ import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.CompoundEditView;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.waylens.hachi.utils.VolleyUtil;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -97,7 +95,6 @@ public class ChangePasswordFragment extends BaseFragment {
             .replace(R.id.fragment_content, new ForgotPasswordFragment())
             .commit();
     }
-
 
 
     @OnClick(R.id.btn_change_password)

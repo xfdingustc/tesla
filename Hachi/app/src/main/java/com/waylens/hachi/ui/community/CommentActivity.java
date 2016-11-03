@@ -1,4 +1,5 @@
 package com.waylens.hachi.ui.community;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -31,14 +33,14 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
-import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 import java.util.Timer;
 import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import retrofit2.Call;
@@ -53,7 +55,7 @@ import rx.schedulers.Schedulers;
  * Created by laina on 16/10/21.
  */
 
-public class CommentActivity extends BaseActivity{
+public class CommentActivity extends BaseActivity {
     public static String TAG = CommentActivity.class.getSimpleName();
     public static String EXTRA_MOMENT_ID = "extra.moment.id";
 
@@ -130,56 +132,56 @@ public class CommentActivity extends BaseActivity{
 
     private void queryMomentInfo() {
         HachiService.createHachiApiService().getMomentInfo(mMomentId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(new Action1<Response<MomentInfo>>() {
-                    @Override
-                    public void call(retrofit2.Response<MomentInfo> response) {
-                        Logger.t(TAG).d("do on next");
-                        if (response.isSuccessful()) {
-                            MomentInfo momentInfo = response.body();
-                            Logger.t(TAG).d("Moment Play Activity!");
-                        } else {
-                            Logger.t(TAG).d("code:" + response.code());
-                            Logger.t(TAG).d("body:" + response.body());
-                            Logger.t(TAG).d("error body:" + response.errorBody());
-                            TimerTask timerTask = new TimerTask() {
-                                @Override
-                                public void run() {
-                                    finish();
-                                }
-                            };
-                            Timer timer = new Timer();
-                            timer.schedule(timerTask, 2 * 1000);
-                        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnNext(new Action1<Response<MomentInfo>>() {
+                @Override
+                public void call(retrofit2.Response<MomentInfo> response) {
+                    Logger.t(TAG).d("do on next");
+                    if (response.isSuccessful()) {
+                        MomentInfo momentInfo = response.body();
+                        Logger.t(TAG).d("Moment Play Activity!");
+                    } else {
+                        Logger.t(TAG).d("code:" + response.code());
+                        Logger.t(TAG).d("body:" + response.body());
+                        Logger.t(TAG).d("error body:" + response.errorBody());
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(timerTask, 2 * 1000);
                     }
-                })
-                .subscribe(new rx.Observer<retrofit2.Response<MomentInfo>>() {
-                    @Override
-                    public void onCompleted() {
+                }
+            })
+            .subscribe(new rx.Observer<retrofit2.Response<MomentInfo>>() {
+                @Override
+                public void onCompleted() {
 
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Logger.t(TAG).d(e.getMessage());
+
+                }
+
+                @Override
+                public void onNext(retrofit2.Response<MomentInfo> response) {
+                    if (response.isSuccessful()) {
+                        Logger.t(TAG).d("code:" + response.code());
+                        Logger.t(TAG).d("body:" + response.body());
+                        MomentInfo momentInfo = response.body();
+                        mMomentInfo = momentInfo;
+                    } else {
+                        Logger.t(TAG).d("code:" + response.code());
+                        Logger.t(TAG).d("body:" + response.body());
+                        Logger.t(TAG).d("error body:" + response.errorBody());
                     }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Logger.t(TAG).d(e.getMessage());
-
-                    }
-
-                    @Override
-                    public void onNext(retrofit2.Response<MomentInfo> response) {
-                        if (response.isSuccessful()) {
-                            Logger.t(TAG).d("code:" + response.code());
-                            Logger.t(TAG).d("body:" + response.body());
-                            MomentInfo momentInfo = response.body();
-                            mMomentInfo = momentInfo;
-                        } else {
-                            Logger.t(TAG).d("code:" + response.code());
-                            Logger.t(TAG).d("body:" + response.body());
-                            Logger.t(TAG).d("error body:" + response.errorBody());
-                        }
-                    }
-                });
+                }
+            });
     }
 
     private void showMomentInfo() {
@@ -242,20 +244,20 @@ public class CommentActivity extends BaseActivity{
             return;
         }
         HachiService.createHachiApiService().getCommentsRx(mMomentId, cursor, DEFAULT_COUNT)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleSubscribe<CommentListResponse>() {
-                    @Override
-                    public void onNext(CommentListResponse commentListResponse) {
-                        Logger.t(TAG).d("got response");
-                        onLoadCommentsSuccessful(commentListResponse, isRefresh);
-                    }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<CommentListResponse>() {
+                @Override
+                public void onNext(CommentListResponse commentListResponse) {
+                    Logger.t(TAG).d("got response");
+                    onLoadCommentsSuccessful(commentListResponse, isRefresh);
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        ServerErrorHelper.showErrorMessage(mCommentList, e);
-                    }
-                });
+                @Override
+                public void onError(Throwable e) {
+                    ServerErrorHelper.showErrorMessage(mCommentList, e);
+                }
+            });
     }
 
     private void onLoadCommentsSuccessful(CommentListResponse response, boolean isRefresh) {
@@ -353,18 +355,19 @@ public class CommentActivity extends BaseActivity{
         }
 
         HachiService.createHachiApiService().publishCommentRx(publishCommentBody)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleSubscribe<PublishCommentResponse>() {
-                    @Override
-                    public void onNext(PublishCommentResponse publishCommentResponse) {
-                        mAdapter.updateCommentID(position, publishCommentBody.momentID);
-                    }
-                    @Override
-                    public void onError(Throwable e) {
-                        Snackbar.make(mCommentList, e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                    }
-                });
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<PublishCommentResponse>() {
+                @Override
+                public void onNext(PublishCommentResponse publishCommentResponse) {
+                    mAdapter.updateCommentID(position, publishCommentBody.momentID);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Snackbar.make(mCommentList, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+            });
     }
 
     private boolean validateComment() {
@@ -399,16 +402,16 @@ public class CommentActivity extends BaseActivity{
                 }
             });
             MaterialDialog dialog = new MaterialDialog.Builder(this)
-                    .content(R.string.verify_email_address)
-                    .positiveText(R.string.verify)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            VerifyEmailActivity.launch(CommentActivity.this);
-                        }
-                    })
-                    .show();
+                .content(R.string.verify_email_address)
+                .positiveText(R.string.verify)
+                .negativeText(R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        VerifyEmailActivity.launch(CommentActivity.this);
+                    }
+                })
+                .show();
             return false;
         }
     }

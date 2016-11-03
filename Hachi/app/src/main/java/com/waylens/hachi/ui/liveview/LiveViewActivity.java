@@ -51,9 +51,10 @@ import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.ui.views.gauge.GaugeView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.xfdingustc.mjpegview.library.MjpegView;
-import com.xfdingustc.rxutils.library.RxBus;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
+
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -531,7 +532,7 @@ public class LiveViewActivity extends BaseActivity {
             });
 
 //        mGaugeView.initGaugeView();
-        mGaugeView.setRotate(mVdtCamera.getIfRotated());
+
 
     }
 
@@ -716,6 +717,7 @@ public class LiveViewActivity extends BaseActivity {
         updateCameraState();
         updateSpaceInfo();
         mTvStatusAdditional.setVisibility(View.GONE);
+        mGaugeView.setRotate(mVdtCamera.getIfRotated());
     }
 
     private void initCameraPreview() {

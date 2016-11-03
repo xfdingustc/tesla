@@ -2,11 +2,9 @@ package com.waylens.hachi.ui.community;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
 import android.view.Gravity;
@@ -19,8 +17,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,10 +31,9 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.event.MomentModifyEvent;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
-import com.xfdingustc.rxutils.library.RxBus;
+import com.waylens.hachi.utils.rxjava.RxBus;
 
 import butterknife.BindView;
 import uk.co.senab.photoview.PhotoView;
@@ -111,7 +106,7 @@ public class PhotoViewActivity extends BaseActivity {
         super.init();
         Intent intent = getIntent();
         mPhotoUrl = intent.getStringExtra(EXTRA_PHOTO_URL);
-        mMomentEx = (MomentEx)intent.getSerializableExtra(EXTRA_MOMENT);
+        mMomentEx = (MomentEx) intent.getSerializableExtra(EXTRA_MOMENT);
         mIndex = intent.getIntExtra(EXTRA_MOMENT_INDEX, -1);
         initView();
         setStatusBarColor(Color.BLACK);
@@ -250,7 +245,7 @@ public class PhotoViewActivity extends BaseActivity {
                     mAction_bar.setVisibility(isViewShowing ? View.INVISIBLE : View.VISIBLE);
                     mTvTitle.setVisibility(isViewShowing ? View.INVISIBLE : View.VISIBLE);
                 }
-                isViewShowing=!isViewShowing;
+                isViewShowing = !isViewShowing;
             }
 
             @Override

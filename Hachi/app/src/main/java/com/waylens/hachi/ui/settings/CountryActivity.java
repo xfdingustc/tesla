@@ -9,25 +9,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ViewSwitcher;
 
-import com.android.volley.Response;
-
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.AuthorizedJsonRequest;
-import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Country;
 import com.waylens.hachi.rest.response.CountryListResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.SimpleCountryAdapter;
-import com.xfdingustc.rxutils.library.SimpleSubscribe;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -56,12 +45,11 @@ public class CountryActivity extends BaseActivity {
 //    MaterialSearchView mSearchView;
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        
+
 //        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
 //            @Override
 //            public boolean onQueryTextSubmit(String query) {
@@ -83,7 +71,6 @@ public class CountryActivity extends BaseActivity {
     }
 
 
-
     private void initViews() {
         setContentView(R.layout.activity_country);
         mRvCountryList.setLayoutManager(new LinearLayoutManager(this));
@@ -102,10 +89,7 @@ public class CountryActivity extends BaseActivity {
                 finish();
             }
         });
-//        getToolbar().inflateMenu(R.menu.menu_search);
-//        mSearchView.setMenuItem(getToolbar().getMenu().findItem(R.id.action_search));
     }
-
 
 
     private void getCountryList() {
@@ -127,7 +111,7 @@ public class CountryActivity extends BaseActivity {
             public void onItemClicked(int position) {
                 Logger.t(TAG).d("on item clicked: " + position);
                 Country country = mAdapter.getCountry(position);
-                if(country != null) {
+                if (country != null) {
                     CityActivity.launch(CountryActivity.this, country.code, country.name);
                     finish();
                 }

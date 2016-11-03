@@ -40,7 +40,7 @@ public class DownloadHelper {
             public boolean accept(File file, String s) {
                 DownloadManager manager = DownloadManager.getManager();
                 for (int i = 0; i < manager.getCount(); i++) {
-                    Exportable exportable = manager.getDownloadJob(i);
+                    ExportableJob exportable = manager.getDownloadJob(i);
                     if (!TextUtils.isEmpty(exportable.getOutputFile()) &&exportable.getOutputFile().endsWith(s)) {
                         return false;
                     }

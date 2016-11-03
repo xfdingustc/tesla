@@ -7,8 +7,6 @@ import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.download.event.DownloadEvent;
-import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.service.remux.RemuxHelper;
@@ -17,22 +15,18 @@ import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 
-
-import org.greenrobot.eventbus.EventBus;
-
 /**
  * Created by Xiaofei on 2016/5/4.
  */
-public class DownloadJob extends Job implements Exportable {
+public class DownloadJob extends ExportableJob {
     private static final String TAG = DownloadJob.class.getSimpleName();
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
     private Clip mClip;
     private Clip.StreamInfo mStreamInfo;
 
-    private EventBus mEventBus = EventBus.getDefault();
+
     private String mDownloadFilePath;
 
-    private int mDownloadProgress;
 
     private DownloadManager mDownloadManager = DownloadManager.getManager();
 
@@ -49,9 +43,10 @@ public class DownloadJob extends Job implements Exportable {
     }
 
     @Override
-    public void onRun() throws Throwable {
+    public synchronized void onRun() throws Throwable {
         try {
             downloadVideo();
+            wait();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -98,6 +93,7 @@ public class DownloadJob extends Job implements Exportable {
 
         startDownloadVideo(params);
 
+
     }
 
     private void startDownloadVideo(RemuxerParams params) {
@@ -136,7 +132,7 @@ public class DownloadJob extends Job implements Exportable {
             Logger.t(TAG).e("Output File is null");
         } else {
             //item.outputFile = outputFile;
-            mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
+//            mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
             remuxer.run(params, outputFile);
             mDownloadFilePath = outputFile;
 
@@ -144,28 +140,21 @@ public class DownloadJob extends Job implements Exportable {
         }
     }
 
-    private void handleRemuxerError(int arg1, int arg2) {
-
+    private synchronized void handleRemuxerError(int arg1, int arg2) {
+        notifyAll();
     }
 
     private void handleRemuxerProgress(int progress) {
-//        broadcastDownloadProgress(progress);
-        mDownloadProgress = progress;
-        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, this));
-//        Logger.t(TAG).d("download progress: " + progress);
+
+        notifyProgressChanged(progress);
     }
 
 
-    private void handleRemuxerFinished() {
+    private synchronized void handleRemuxerFinished() {
         MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
             mDownloadFilePath.toString()}, null, null);
         Logger.t(TAG).d("download finished " + mDownloadFilePath);
-    }
-
-
-    @Override
-    public String getJobId() {
-        return getId();
+        notifyAll();
     }
 
     @Override
