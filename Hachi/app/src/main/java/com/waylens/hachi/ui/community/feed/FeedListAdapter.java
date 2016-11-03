@@ -131,7 +131,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                 Glide.with(mContext)
                     .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
+                    .placeholder(R.drawable.stroke_rect)
                     .crossFade()
                     .into(holder.videoCover);
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
@@ -150,7 +150,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
             Glide.with(mContext)
                 .load(moment.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
+                .placeholder(R.drawable.stroke_rect)
                 .crossFade()
                 .into(holder.videoCover);
             holder.videoDuration.setVisibility(View.VISIBLE);

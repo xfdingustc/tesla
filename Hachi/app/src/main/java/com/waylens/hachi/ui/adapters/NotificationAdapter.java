@@ -164,7 +164,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Glide.with(mContext)
                 .load(notification.moment.getMomentThumbnail())
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
+                .placeholder(R.drawable.stroke_rect)
                 .crossFade()
                 .into(holder.momentThumbnail);
             if (notification.moment.isPictureMoment()) {

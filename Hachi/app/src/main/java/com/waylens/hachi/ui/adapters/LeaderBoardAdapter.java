@@ -169,7 +169,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             .load(moment.thumbnail)
             .crossFade()
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
+            .placeholder(R.drawable.stroke_rect)
             .into(holder.momentThumbnail);
 
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {

@@ -180,7 +180,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                 Glide.with(mContext)
                     .load(cover)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
+                    .placeholder(R.drawable.stroke_rect)
                     .crossFade()
                     .into(holder.videoCover);
                 holder.videoCover.setOnClickListener(new View.OnClickListener() {
@@ -200,7 +200,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
             Glide.with(mContext)
                 .load(momentAbstract.thumbnail)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(PlaceHolderHelper.getMomentThumbnailPlaceHolder())
+                .placeholder(R.drawable.stroke_rect)
                 .crossFade()
                 .into(holder.videoCover);
             holder.videoCover.setOnClickListener(new View.OnClickListener() {

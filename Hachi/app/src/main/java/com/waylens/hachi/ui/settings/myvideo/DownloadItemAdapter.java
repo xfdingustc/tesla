@@ -102,6 +102,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         videoItemViewHolder.videoDuration.setVisibility(View.GONE);
         videoItemViewHolder.btnMore.setVisibility(View.GONE);
         videoItemViewHolder.description.setText(mActivity.getString(R.string.exported, String.valueOf(job.getExportProgress())));
+        videoItemViewHolder.imageMoment.setVisibility(View.GONE);
     }
 
     private void onBindDownloadedViewHolder(RecyclerView.ViewHolder holder, final int position) {

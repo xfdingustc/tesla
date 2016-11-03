@@ -9,6 +9,7 @@
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/app_text_color_primary"
         android:text="@string/tap"/>
 
     <ImageView
@@ -25,5 +26,6 @@
         style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/app_text_color_primary"
         android:text="@string/add_clip_hint2"/>
 </LinearLayout>
