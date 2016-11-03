@@ -46,7 +46,6 @@ public class DownloadJob extends Job implements Exportable {
 
     @Override
     public void onAdded() {
-        mDownloadManager.addJob(this);
     }
 
     @Override
@@ -158,9 +157,6 @@ public class DownloadJob extends Job implements Exportable {
 
 
     private void handleRemuxerFinished() {
-        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, this));
-
-//        mDownloadManager.removeJob(this);
         MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
             mDownloadFilePath.toString()}, null, null);
         Logger.t(TAG).d("download finished " + mDownloadFilePath);

@@ -13,16 +13,13 @@
     </android.support.v4.view.ViewPager>
 
 
-    <TextView
+    <ImageView
         android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="16dp"
-        android:background="@drawable/skip_background"
-        android:text="@string/skip"
-        android:textAllCaps="true"
-        android:textColor="@color/app_text_color_primary_light"/>
+        android:src="@drawable/ic_skin"/>
 
     <com.waylens.hachi.view.InkPageIndicator
         android:id="@+id/indicator"
@@ -35,7 +32,6 @@
         app:dotDiameter="8dp"
         app:dotGap="8dp"
         app:pageIndicatorColor="@color/material_grey_300"/>
-
 
 
 </FrameLayout>

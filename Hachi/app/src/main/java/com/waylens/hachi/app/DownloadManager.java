@@ -1,7 +1,14 @@
 package com.waylens.hachi.app;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.download.Exportable;
 import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.jobqueue.Job;
+import com.waylens.hachi.jobqueue.JobManager;
+import com.waylens.hachi.jobqueue.callback.JobManagerCallback;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,6 +55,38 @@ public class DownloadManager {
     private DownloadManager() {
         mDownloadJobList = new ArrayList<>();
         mListenerList = new ArrayList<>();
+        BgJobManager.getManager().addCallback(new JobManagerCallback() {
+            @Override
+            public void onJobAdded(@NonNull Job job) {
+                if (job instanceof Exportable) {
+                    addJob((Exportable)job);
+                }
+            }
+
+            @Override
+            public void onJobRun(@NonNull Job job, int resultCode) {
+
+            }
+
+            @Override
+            public void onJobCancelled(@NonNull Job job, boolean byCancelRequest, @Nullable Throwable throwable) {
+                if (job instanceof Exportable) {
+                    removeJob((Exportable)job);
+                }
+            }
+
+            @Override
+            public void onDone(@NonNull Job job) {
+                if (job instanceof Exportable) {
+                    removeJob((Exportable)job);
+                }
+            }
+
+            @Override
+            public void onAfterJobRun(@NonNull Job job, int resultCode) {
+
+            }
+        });
         mEventBus.register(this);
     }
 

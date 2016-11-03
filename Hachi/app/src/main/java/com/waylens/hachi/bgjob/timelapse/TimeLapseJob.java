@@ -65,7 +65,6 @@ public class TimeLapseJob extends Job implements Exportable {
 
     @Override
     public void onAdded() {
-        mDownloadManager.addJob(this);
     }
 
     @Override
