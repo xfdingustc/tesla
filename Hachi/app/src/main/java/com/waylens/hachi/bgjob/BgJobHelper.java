@@ -1,17 +1,14 @@
 package com.waylens.hachi.bgjob;
 
-import android.support.design.widget.Snackbar;
 
-
-import com.orhanobut.logger.Logger;
-import com.waylens.hachi.bgjob.download.DownloadJob;
+import com.waylens.hachi.bgjob.export.download.DownloadJob;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
-import com.waylens.hachi.bgjob.timelapse.TimeLapseJob;
+import com.waylens.hachi.bgjob.export.timelapse.TimeLapseJob;
 import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.PictureUploadJob;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;

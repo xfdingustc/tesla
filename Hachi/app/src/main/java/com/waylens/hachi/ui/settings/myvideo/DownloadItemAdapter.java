@@ -22,19 +22,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.DownloadManager;
-import com.waylens.hachi.bgjob.download.ExportableJob;
-import com.waylens.hachi.bgjob.download.DownloadHelper;
-import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.bgjob.export.ExportManager;
+import com.waylens.hachi.bgjob.export.ExportableJob;
+import com.waylens.hachi.bgjob.export.ExportHelper;
+import com.waylens.hachi.bgjob.export.event.ExportEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
-import com.waylens.hachi.utils.rxjava.RxBus;
-import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -42,8 +39,6 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/8/15.
@@ -52,21 +47,21 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final String TAG = DownloadItemAdapter.class.getSimpleName();
     private final Activity mActivity;
 
-    private DownloadManager mDownloadManager = DownloadManager.getManager();
+    private ExportManager mDownloadManager = ExportManager.getManager();
 
     private File[] mDownloadedFileList;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onHandleExportJobEvent(DownloadEvent event) {
+    public void onHandleExportJobEvent(ExportEvent event) {
         switch (event.getWhat()) {
-            case DownloadEvent.DOWNLOAD_WHAT_JOB_ADDED:
+            case ExportEvent.EXPORT_WHAT_JOB_ADDED:
                 notifyDataSetChanged();
                 break;
-            case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
+            case ExportEvent.EXPORT_WHAT_PROGRESS:
                 notifyItemChanged(event.getIndex());
                 break;
-            case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
-                mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+            case ExportEvent.EXPORT_WHAT_FINISHED:
+                mDownloadedFileList = ExportHelper.getExportedFileList();
                 notifyDataSetChanged();
                 break;
         }
@@ -75,7 +70,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public DownloadItemAdapter(Activity activity) {
         this.mActivity = activity;
-        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+        mDownloadedFileList = ExportHelper.getExportedFileList();
     }
 
 
@@ -108,7 +103,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void onBindDownloadingViewHolder(RecyclerView.ViewHolder holder, int position) {
         DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
-        ExportableJob job = DownloadManager.getManager().getDownloadJob(position);
+        ExportableJob job = ExportManager.getManager().getDownloadJob(position);
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(job.getExportProgress());
         Glide.with(mActivity)
@@ -168,7 +163,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         oneDownloadedFile.delete();
-                                        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+                                        mDownloadedFileList = ExportHelper.getExportedFileList();
                                         notifyDataSetChanged();
                                     }
                                 });

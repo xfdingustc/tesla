@@ -1,16 +1,16 @@
-package com.waylens.hachi.bgjob.download;
+package com.waylens.hachi.bgjob.export.download;
 
 import android.media.MediaScannerConnection;
 import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
-import com.waylens.hachi.app.DownloadManager;
+import com.waylens.hachi.bgjob.export.ExportHelper;
+import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.app.Hachi;
+import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.service.remux.RemuxHelper;
-import com.waylens.hachi.service.remux.RemuxerParams;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
@@ -28,7 +28,7 @@ public class DownloadJob extends ExportableJob {
     private String mDownloadFilePath;
 
 
-    private DownloadManager mDownloadManager = DownloadManager.getManager();
+    private ExportManager mDownloadManager = ExportManager.getManager();
 
 
     public DownloadJob(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
@@ -124,7 +124,7 @@ public class DownloadJob extends ExportableJob {
 
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
-        String outputFile = RemuxHelper.genDownloadFileName(clipDate, clipTimeMs);
+        String outputFile = ExportHelper.genDownloadFileName(clipDate, clipTimeMs);
 
 
         Logger.t(TAG).d("outputFile: " + outputFile);
@@ -132,7 +132,7 @@ public class DownloadJob extends ExportableJob {
             Logger.t(TAG).e("Output File is null");
         } else {
             //item.outputFile = outputFile;
-//            mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
+//            mEventBus.post(new DownloadEvent(DownloadEvent.EXPORT_WHAT_START));
             remuxer.run(params, outputFile);
             mDownloadFilePath = outputFile;
 

@@ -1,4 +1,4 @@
-package com.waylens.hachi.bgjob.timelapse;
+package com.waylens.hachi.bgjob.export.timelapse;
 
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
@@ -7,26 +7,19 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.ImageView;
 
-
 import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
-import com.waylens.hachi.app.DownloadManager;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.download.ExportableJob;
-import com.waylens.hachi.bgjob.download.event.DownloadEvent;
+import com.waylens.hachi.bgjob.export.ExportHelper;
+import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.camera.VdtCameraManager;
-import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.service.remux.RemuxHelper;
 import com.waylens.hachi.snipe.VdbRequestFuture;
 import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
-
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -65,7 +58,6 @@ public class TimeLapseJob extends ExportableJob {
     }
 
 
-
     @Override
     public String getOutputFile() {
         return mOutputFile;
@@ -80,10 +72,10 @@ public class TimeLapseJob extends ExportableJob {
 
         mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
 
-//        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_START));
+//        mEventBus.post(new DownloadEvent(DownloadEvent.EXPORT_WHAT_START));
         new GetVdbImageThread().start();
 
-        mOutputFile = RemuxHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
+        mOutputFile = ExportHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
 
 
         while (true) {
