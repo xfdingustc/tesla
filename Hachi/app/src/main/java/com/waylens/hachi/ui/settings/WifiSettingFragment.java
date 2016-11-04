@@ -7,10 +7,7 @@ import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -25,7 +22,6 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -37,10 +33,7 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
-import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.fragments.Refreshable;
-import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.camera.entities.NetworkItemBean;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.camera.events.NetworkEvent;
@@ -48,19 +41,16 @@ import com.waylens.hachi.camera.events.NetworkEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-import android.net.Network;
 
 /**
  * Created by Xiaofei on 2016/5/23.
@@ -207,7 +197,12 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
 
     private void initViews() {
         mWifiList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mNetworkItemAdapter = new NetworkItemAdapter(getActivity());
+        mNetworkItemAdapter = new NetworkItemAdapter(getActivity(), new NetworkItemAdapter.OnNetworkItemClickedListener() {
+            @Override
+            public void onItemClicked(NetworkItemBean itemBean) {
+                onNetworkItemClicked(itemBean);
+            }
+        });
         mWifiList.setAdapter(mNetworkItemAdapter);
         mOnScanHostListener = new VdtCamera.OnScanHostListener() {
             @Override
@@ -353,110 +348,110 @@ public class WifiSettingFragment extends BaseFragment implements WifiAutoConnect
     }
 
 
-    public class NetworkItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-        private final Context mContext;
-
-        private List<NetworkItemBean> mNetworkList;
-
-        public NetworkItemAdapter(Context context) {
-            this.mContext = context;
-        }
-
-
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater inflater = LayoutInflater.from(mContext);
-            View view = inflater.inflate(R.layout.item_network, parent, false);
-            return new NetworkItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-            NetworkItemBean networkItem = mNetworkList.get(position);
-            NetworkItemViewHolder viewHolder = (NetworkItemViewHolder) holder;
-//            Logger.t(TAG).d("set ssid: " + networkItem.ssid);
-            viewHolder.tvSsid.setText(networkItem.ssid);
-            if (networkItem.flags != null && !networkItem.flags.isEmpty()) {
-                viewHolder.ivWifiCipher.setVisibility(View.VISIBLE);
-            } else {
-                viewHolder.ivWifiCipher.setVisibility(View.INVISIBLE);
-            }
-
-            switch (networkItem.status) {
-                case NetworkItemBean.CONNECT_STATUS_NONE:
-                    viewHolder.wifiStatus.setVisibility(View.GONE);
-                    break;
-                case NetworkItemBean.CONNECT_STATUS_SAVED:
-                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
-                    viewHolder.wifiStatus.setText(R.string.saved);
-                    break;
-                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION:
-                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
-                    viewHolder.wifiStatus.setText(R.string.authenticating);
-                    break;
-                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM:
-                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
-                    viewHolder.wifiStatus.setText(R.string.authentication_problem);
-                    break;
-            }
-
-            if (networkItem.signalLevel >= -30) {
-                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
-            } else if (networkItem.signalLevel >= -60) {
-                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_2);
-            } else if (networkItem.signalLevel >= -90) {
-                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_3);
-            } else {
-                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_4);
-            }
-        }
-
-
-        @Override
-        public int getItemCount() {
-            int size = mNetworkList == null ? 0 : mNetworkList.size();
-            return size;
-        }
-
-        public void setNetworkList(List<NetworkItemBean> networkList) {
-            mNetworkList = networkList;
-            notifyDataSetChanged();
-        }
-
-        public class NetworkItemViewHolder extends RecyclerView.ViewHolder {
-
-            @BindView(R.id.wifiContainer)
-            LinearLayout mContainer;
-
-            @BindView(R.id.tvSsid)
-            TextView tvSsid;
-
-            @BindView(R.id.ivWifiCipher)
-            ImageView ivWifiCipher;
-
-            @BindView(R.id.ivWifiSignal)
-            ImageView ivWifiSignal;
-
-            @BindView(R.id.wifi_status)
-            TextView wifiStatus;
-
-            public NetworkItemViewHolder(View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
-
-                mContainer.setTag(WifiSettingFragment.NetworkItemAdapter.NetworkItemViewHolder.this);
-                mContainer.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        NetworkItemViewHolder viewHolder = (NetworkItemViewHolder) v.getTag();
-                        NetworkItemBean itemBean = mNetworkList.get(viewHolder.getPosition());
-                        onNetworkItemClicked(itemBean);
-                    }
-                });
-            }
-        }
-    }
+//    public class NetworkItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+//
+//        private final Context mContext;
+//
+//        private List<NetworkItemBean> mNetworkList;
+//
+//        public NetworkItemAdapter(Context context) {
+//            this.mContext = context;
+//        }
+//
+//
+//        @Override
+//        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//            LayoutInflater inflater = LayoutInflater.from(mContext);
+//            View view = inflater.inflate(R.layout.item_network, parent, false);
+//            return new NetworkItemViewHolder(view);
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+//            NetworkItemBean networkItem = mNetworkList.get(position);
+//            NetworkItemViewHolder viewHolder = (NetworkItemViewHolder) holder;
+////            Logger.t(TAG).d("set ssid: " + networkItem.ssid);
+//            viewHolder.tvSsid.setText(networkItem.ssid);
+//            if (networkItem.flags != null && !networkItem.flags.isEmpty()) {
+//                viewHolder.ivWifiCipher.setVisibility(View.VISIBLE);
+//            } else {
+//                viewHolder.ivWifiCipher.setVisibility(View.INVISIBLE);
+//            }
+//
+//            switch (networkItem.status) {
+//                case NetworkItemBean.CONNECT_STATUS_NONE:
+//                    viewHolder.wifiStatus.setVisibility(View.GONE);
+//                    break;
+//                case NetworkItemBean.CONNECT_STATUS_SAVED:
+//                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+//                    viewHolder.wifiStatus.setText(R.string.saved);
+//                    break;
+//                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION:
+//                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+//                    viewHolder.wifiStatus.setText(R.string.authenticating);
+//                    break;
+//                case NetworkItemBean.CONNECT_STATUS_AUTHENTICATION_PROBLEM:
+//                    viewHolder.wifiStatus.setVisibility(View.VISIBLE);
+//                    viewHolder.wifiStatus.setText(R.string.authentication_problem);
+//                    break;
+//            }
+//
+//            if (networkItem.signalLevel >= -30) {
+//                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_1);
+//            } else if (networkItem.signalLevel >= -60) {
+//                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_2);
+//            } else if (networkItem.signalLevel >= -90) {
+//                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_3);
+//            } else {
+//                viewHolder.ivWifiSignal.setImageResource(R.drawable.settings_signal_4);
+//            }
+//        }
+//
+//
+//        @Override
+//        public int getItemCount() {
+//            int size = mNetworkList == null ? 0 : mNetworkList.size();
+//            return size;
+//        }
+//
+//        public void setNetworkList(List<NetworkItemBean> networkList) {
+//            mNetworkList = networkList;
+//            notifyDataSetChanged();
+//        }
+//
+//        public class NetworkItemViewHolder extends RecyclerView.ViewHolder {
+//
+//            @BindView(R.id.wifiContainer)
+//            LinearLayout mContainer;
+//
+//            @BindView(R.id.tvSsid)
+//            TextView tvSsid;
+//
+//            @BindView(R.id.ivWifiCipher)
+//            ImageView ivWifiCipher;
+//
+//            @BindView(R.id.ivWifiSignal)
+//            ImageView ivWifiSignal;
+//
+//            @BindView(R.id.wifi_status)
+//            TextView wifiStatus;
+//
+//            public NetworkItemViewHolder(View itemView) {
+//                super(itemView);
+//                ButterKnife.bind(this, itemView);
+//
+//                mContainer.setTag(WifiSettingFragment.NetworkItemAdapter.NetworkItemViewHolder.this);
+//                mContainer.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        NetworkItemViewHolder viewHolder = (NetworkItemViewHolder) v.getTag();
+//                        NetworkItemBean itemBean = mNetworkList.get(viewHolder.getPosition());
+//                        onItemClicked(itemBean);
+//                    }
+//                });
+//            }
+//        }
+//    }
 
     private void onNetworkItemClicked(final NetworkItemBean itemBean) {
         if(mSelectedNetworkItem !=null && mSelectedNetworkItem.status == NetworkItemBean.CONNECT_STATUS_AUTHENTICATION) {

@@ -17,6 +17,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/ivWifiSignal"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_signal_wifi_4_bar_lock"
+            android:tint="@color/material_teal_700"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -24,7 +32,6 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
             android:paddingTop="16dp">
 
             <TextView
@@ -39,7 +46,6 @@
                 android:id="@+id/wifi_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:textColor="?attr/appTextColorSecondary"
                 android:textSize="14sp"
                 android:visibility="gone"
@@ -48,22 +54,9 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/ivWifiSignal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="16dp"
-            android:src="@drawable/settings_signal_1"/>
 
 
-        <ImageView
-            android:id="@+id/ivWifiCipher"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="16dp"
-            android:src="@drawable/wifi_lock"/>
+
 
 
     </LinearLayout>

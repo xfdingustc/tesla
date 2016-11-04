@@ -29,8 +29,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
+            android:text="@string/start_up_text_line1"
             android:textSize="14sp"
-            android:text="@string/start_up_text_line1"/>
+            android:textStyle="italic"/>
 
 
         <TextView
@@ -39,7 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:text="@string/start_up_text_option1"/>
+            android:text="@string/start_up_text_option1"
+            android:textStyle="bold"/>
 
 
         <ImageView
@@ -53,20 +55,21 @@
 
         <TextView
             android:id="@+id/text3"
-            android:textSize="14sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/btnGetStarted"
             android:layout_marginBottom="32dp"
-            android:text="@string/start_up_text_line2"/>
+            android:text="@string/start_up_text_line2"
+            android:textSize="14sp"
+            android:textStyle="italic"/>
 
         <Button
             android:id="@+id/btnGetStarted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textColor="@android:color/white"
-            android:text="@string/scan_qr_code"/>
+            android:text="@string/scan_qr_code"
+            android:textColor="@android:color/white"/>
 
 
         <LinearLayout
@@ -78,9 +81,9 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="?attr/separateColor"
-                android:layout_gravity="center_vertical"
                 />
 
             <TextView
@@ -95,9 +98,9 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="?attr/separateColor"
-                android:layout_gravity="center_vertical"
                 />
         </LinearLayout>
 
@@ -110,14 +113,16 @@
             android:layout_marginBottom="32dp"
             android:layout_marginTop="32dp"
             android:text="@string/manually_select_wifi_network"
-            android:textColor="?attr/appTextColorPrimary"/>
+            android:textColor="?attr/appTextColorPrimary"
+            android:textStyle="bold"/>
 
         <TextView
-            android:textSize="14sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:text="@string/start_up_text_line3"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="14sp"
+            android:textStyle="italic"/>
 
 
     </LinearLayout>
