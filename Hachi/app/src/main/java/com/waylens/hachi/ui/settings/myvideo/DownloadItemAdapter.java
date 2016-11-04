@@ -34,6 +34,10 @@ import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 
 import butterknife.BindView;
@@ -50,40 +54,16 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private DownloadManager mDownloadManager = DownloadManager.getManager();
 
-    private Subscription mExportSubscription;
-
     private File[] mDownloadedFileList;
 
-    public DownloadItemAdapter(Activity activity) {
-        this.mActivity = activity;
-        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
-        mExportSubscription = RxBus.getDefault().toObserverable(DownloadEvent.class)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<DownloadEvent>() {
-                @Override
-                public void onNext(DownloadEvent downloadEvent) {
-                    handleExportEvent(downloadEvent);
-                }
-            });
-    }
-
-
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-        Logger.t(TAG).d("detached from recycler view");
-        if (!mExportSubscription.isUnsubscribed()) {
-            mExportSubscription.unsubscribe();
-        }
-    }
-
-    private void handleExportEvent(DownloadEvent downloadEvent) {
-        switch (downloadEvent.getWhat()) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onHandleExportJobEvent(DownloadEvent event) {
+        switch (event.getWhat()) {
             case DownloadEvent.DOWNLOAD_WHAT_JOB_ADDED:
                 notifyDataSetChanged();
                 break;
             case DownloadEvent.DOWNLOAD_WHAT_PROGRESS:
-                notifyItemChanged(downloadEvent.getIndex());
+                notifyItemChanged(event.getIndex());
                 break;
             case DownloadEvent.DOWNLOAD_WHAT_FINISHED:
                 mDownloadedFileList = DownloadHelper.getDownloadedFileList();
@@ -91,6 +71,21 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 break;
         }
     }
+
+
+    public DownloadItemAdapter(Activity activity) {
+        this.mActivity = activity;
+        mDownloadedFileList = DownloadHelper.getDownloadedFileList();
+    }
+
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        Logger.t(TAG).d("detached from recycler view");
+    }
+
+
 
 
     @Override

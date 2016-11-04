@@ -12,6 +12,8 @@ import com.waylens.hachi.jobqueue.callback.JobManagerCallback;
 import com.waylens.hachi.utils.rxjava.RxBus;
 
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,8 @@ import java.util.List;
 public class DownloadManager {
     private static final String TAG = DownloadManager.class.getSimpleName();
     private List<ExportableJob> mDownloadJobList;
-    private RxBus mRxBus = RxBus.getDefault();
+//    private RxBus mRxBus = RxBus.getDefault();
+    private EventBus mEventBus = EventBus.getDefault();
 
     private static DownloadManager mSharedManager = null;
 
@@ -84,15 +87,14 @@ public class DownloadManager {
 
     public void addJob(ExportableJob job) {
         mDownloadJobList.add(job);
-        mRxBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_JOB_ADDED, job));
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_JOB_ADDED, job));
         job.setOnProgressChangedListener(new ExportableJob.OnProgressChangedListener() {
             @Override
             public void OnProgressChanged(ExportableJob job) {
                 for (int i = 0; i < mDownloadJobList.size(); i++) {
                     ExportableJob oneJob = mDownloadJobList.get(i);
                     if (oneJob.getId().equals(job.getId())) {
-                        
-                        mRxBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, job, i));
+                        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_PROGRESS, job, i));
                     }
                 }
             }
@@ -102,7 +104,7 @@ public class DownloadManager {
     public void removeJob(ExportableJob job) {
         mDownloadJobList.remove(job);
         Logger.t(TAG).d("remove job");
-        mRxBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, job));
+        mEventBus.post(new DownloadEvent(DownloadEvent.DOWNLOAD_WHAT_FINISHED, job));
     }
 
     public int getCount() {

@@ -12,6 +12,8 @@ import android.widget.ViewSwitcher;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 
 /**
@@ -44,6 +46,18 @@ public class ExportedVideoActivity extends BaseActivity {
     protected void init() {
         super.init();
         initViews();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(mDownloadItemAdapter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(mDownloadItemAdapter);
     }
 
     private void initViews() {
