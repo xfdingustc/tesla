@@ -26,24 +26,20 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_smart_remix"
-        android:visibility="invisible"
-        style="@style/MenuButtonsStyle"
+        style="@style/RemixMenuButtonsStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="40dp"
-        android:src="@drawable/btn_enhance_remix"
-        fab:fab_label="@string/take_picture"/>
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/ic_smart_remix" />
 
     <RelativeLayout
         android:id="@+id/layout_smart_remix"
         android:visibility="invisible"
-        tools:visibility="visible"
         android:layout_alignParentBottom="true"
         android:background="#efff"
         android:layout_width="match_parent"
@@ -89,7 +85,6 @@
             android:text="Create 20s Remix"
             android:textColor="@color/style_color_accent"
             android:layout_alignParentBottom="true" />
-
     </RelativeLayout>
 
 </RelativeLayout>

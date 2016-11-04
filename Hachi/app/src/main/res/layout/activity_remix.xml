@@ -38,6 +38,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            android:background="@drawable/remix_close_n"/>
+            android:background="@drawable/btn_cancel_remix"/>
     </LinearLayout>
 </FrameLayout>

@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -51,7 +52,7 @@ public class RemixActivity extends BaseActivity{
     private RawDataLoader mRawDataLoader;
     private ArrayList<AvrproSegmentInfo> mFilterResult;
     private ArrayList<Clip> mOriginClipList;
-    private Observable<Boolean> mRemixObservable;
+    private Subscription mRemixSubscription;
     private int mRemixLength = 20;
 
     public static void launch(Activity activity, int playlistId, int remixLength) {
@@ -71,9 +72,14 @@ public class RemixActivity extends BaseActivity{
 
     @OnClick(R.id.btn_cancel_remix)
     public void onBtnCancelClicked() {
-        if (mRemixObservable != null) {
-            finish();
-        }
+        Logger.t(TAG).d("on clicked");
+        DialogHelper.showLeaveSmartRemixConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                mRemixSubscription.unsubscribe();
+                RemixActivity.this.finish();
+            }
+        });
     }
 
 
@@ -100,6 +106,7 @@ public class RemixActivity extends BaseActivity{
         DialogHelper.showLeaveSmartRemixConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                mRemixSubscription.unsubscribe();
                 RemixActivity.this.finish();
             }
         });
@@ -113,7 +120,7 @@ public class RemixActivity extends BaseActivity{
         if (mAvrproFilter == null) {
             mAvrproFilter = new AvrproFilter(AvrproFilter.SMART_RANDOMCUTTING, this.getExternalCacheDir(), mRemixLength * 1000);
         }
-        mRemixObservable = Observable.create(new Observable.OnSubscribe<Integer>() {
+        mRemixSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 mRawDataLoader = new RawDataLoader(mPlaylistId, mVdbRequestQueue);
@@ -166,8 +173,7 @@ public class RemixActivity extends BaseActivity{
                         }
                         return isDataParsed;
                     }
-                });
-        mRemixObservable.subscribe(new Subscriber<Boolean>() {
+                }).subscribe(new Subscriber<Boolean>() {
             @Override
             public void onCompleted() {
                 Logger.t(TAG).d("got raw data");
@@ -259,12 +265,6 @@ public class RemixActivity extends BaseActivity{
     private void initViews() {
         setContentView(R.layout.activity_remix);
         mRemixProgressBar.setMax(100);
-        mBtnCancelRemix.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //cancel remix
-            }
-        });
     }
 
     public ClipSet getClipSet() {

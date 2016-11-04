@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -20,8 +21,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.github.clans.fab.FloatingActionButton;
-import com.googlecode.javacv.cpp.avformat;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
@@ -195,12 +194,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
             attr = Clip.CLIP_ATTR_MANUALLY;
         }
-
-        if (mClipSetType == Clip.TYPE_MARKED) {
-            showSmartRemixActionButton(true);
-        } else {
-            showSmartRemixActionButton(false);
-        }
+        showSmartRemixActionButton(true);
         mPresenter = new ClipGridListPresenterImpl(getActivity(), mClipSetType, flag, attr, this);
         mLoadingHandler = new LoadingHandler(this);
         initViews();
