@@ -28,7 +28,7 @@ set_target_properties(lib_sqlite PROPERTIES IMPORTED_LOCATION
 set_target_properties(avrpro-lib
                       PROPERTIES
                       LIBRARY_OUTPUT_DIRECTORY
-                      "${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi-v7a")
+                      "${CMAKE_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}")
 
 
 # Specifies a path to native header files.

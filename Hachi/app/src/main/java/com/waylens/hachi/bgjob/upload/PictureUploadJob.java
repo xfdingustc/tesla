@@ -26,6 +26,7 @@ import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
+import com.waylens.hachi.utils.PictureUtils;
 import com.waylens.hachi.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -87,6 +88,7 @@ public class PictureUploadJob extends UploadMomentJob {
             File jpeg = new File(cacheDir, StringUtils.getFileName(mPictureUrl) + ".jpg");
 
             FileOutputStream out = new FileOutputStream(jpeg);
+            //Bitmap originBitmap = PictureUtils.extractPicture(mPictureUrl);
             Bitmap originBitmap = BitmapFactory.decodeFile(mPictureUrl);
             if (originBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
                 out.flush();

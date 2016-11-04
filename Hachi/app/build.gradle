@@ -32,12 +32,13 @@ android {
 //            设置支持的SO库架构
 //            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
 //        }
-        externalNativeBuild {
+/*        externalNativeBuild {
             cmake {
-                abiFilters 'armeabi'
+                abiFilters 'armeabi', 'armeabi-v7a'
                 cppFlags ""
             }
         }
+        */
 }
 
     dexOptions {
@@ -71,12 +72,13 @@ android {
             jniDebuggable true
         }
     }
-
+/*
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
     }
+    */
 
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
