@@ -22,14 +22,14 @@
             android:layout_marginTop="16dp"
             android:text="@string/skip"
             android:textAllCaps="true"
-            android:textColor="@color/app_text_color_primary"/>
+            android:textColor="?attr/appTextColorSecondary"/>
 
 
         <TextView
-            style="@style/HachiTextViewBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
+            android:textSize="14sp"
             android:text="@string/start_up_text_line1"/>
 
 
@@ -53,7 +53,7 @@
 
         <TextView
             android:id="@+id/text3"
-            style="@style/HachiTextViewBody"
+            android:textSize="14sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/btnGetStarted"
@@ -62,7 +62,6 @@
 
         <Button
             android:id="@+id/btnGetStarted"
-            android:backgroundTint="?attr/actionButtonColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -114,7 +113,7 @@
             android:textColor="?attr/appTextColorPrimary"/>
 
         <TextView
-            style="@style/HachiTextViewBody"
+            android:textSize="14sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/start_up_text_line3"

@@ -350,7 +350,7 @@
     <string name="repost_success">Moment has been successfully repost to </string>
     <string name="repost_failed">Repost failed</string>
     <string name="start_up_text_line1">"Establishing a connection between your phone and Waylens camera is very straightforward - simply have you phone join the camera's built-in Wi-Fi hotspot through System Settings"</string>
-    <string name="start_up_text_option1">"Option 1(Recommanded): Start by Scanning the QR Code"</string>
+    <string name="start_up_text_option1">"Option 1(Recommanded): Start by scanning the QR code"</string>
     <string name="start_up_text_line2">"We recommend using the QR code, especially for the first-time setup, because it saves you from manual inputs."</string>
     <string name="scan_qr_code">Scan the QR code</string>
     <string name="start_up_text_line3">"You will manually select the camera's hotspot and type in the password through system settings"</string>

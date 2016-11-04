@@ -8,7 +8,7 @@
     android:background="?attr/defaultBgColor"
     android:orientation="vertical"
     android:paddingBottom="?attr/actionBarSize"
-    tools:visibility="gone">
+    >
 
 
     <RelativeLayout

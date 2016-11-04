@@ -80,7 +80,7 @@ public class StartupActivity extends BaseActivity {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
             .content(R.string.skip_confirm)
             .positiveText(R.string.leave)
-            .negativeText(android.R.string.cancel)
+            .negativeText(R.string.cancel)
             .callback(new MaterialDialog.ButtonCallback() {
                 @Override
                 public void onPositive(MaterialDialog dialog) {

@@ -113,6 +113,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.manualsetup.StartupActivity"
+            android:theme="@style/LightTheme.Translucent.Startup"
             android:screenOrientation="portrait"/>
 
         <activity

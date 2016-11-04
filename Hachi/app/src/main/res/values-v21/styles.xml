@@ -122,6 +122,14 @@
     </style>
 
 
+    <style name="LightTheme.Translucent.Startup">
+        <item name="android:statusBarColor">@color/light_immersive_bars</item>
+        <item name="android:navigationBarColor">@color/immersive_bars</item>
+        <item name="android:colorButtonNormal">@color/hachi_button</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+    </style>
+
+
 
 
     <style name="LightTheme.Translucent.UserProfile">
