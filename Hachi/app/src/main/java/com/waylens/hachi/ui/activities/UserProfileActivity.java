@@ -250,10 +250,6 @@ public class UserProfileActivity extends BaseActivity {
 //        setExitSharedElementCallback();
     }
 
-    @Override
-    protected boolean needOverrideTheme() {
-        return true;
-    }
 
     private void fetchUserProfile() {
         HachiApi hachiApi = HachiService.createHachiApiService();

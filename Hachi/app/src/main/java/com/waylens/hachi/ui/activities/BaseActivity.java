@@ -79,13 +79,6 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-//        if (!needOverrideTheme()) {
-//            if (ThemeHelper.isDarkTheme()) {
-//                setTheme(R.style.DarkTheme);
-//            } else {
-//                setTheme(R.style.LightTheme);
-//            }
-//        }
         super.setContentView(layoutResID);
 
         ButterKnife.bind(this);
@@ -132,23 +125,13 @@ public class BaseActivity extends AppCompatActivity {
         return mToolbar;
     }
 
-    @Nullable
-    public AppBarLayout getAppBarLayout() {
-        return mAppBarLayout;
-    }
 
 
     protected void initCamera() {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
-//        Logger.t("EnhancementActivity").d("get current camera: " + mVdtCamera);
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
-
         }
-    }
-
-    protected boolean needOverrideTheme() {
-        return false;
     }
 
 

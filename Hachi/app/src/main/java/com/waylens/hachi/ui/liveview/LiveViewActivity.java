@@ -215,6 +215,9 @@ public class LiveViewActivity extends BaseActivity {
     @BindView(R.id.obd_ctrl_status)
     TextView mObdStatus;
 
+    @BindView(R.id.shutter_panel)
+    LinearLayout shutterPanel;
+
 
     @OnClick(R.id.pull)
     public void onPullClicked() {
@@ -392,19 +395,10 @@ public class LiveViewActivity extends BaseActivity {
 
 
     @Override
-    protected boolean needOverrideTheme() {
-        return true;
-    }
-
-    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-//        if (ThemeHelper.isDarkTheme()) {
-//            setTheme(R.style.DarkTheme_LiveView);
-//        } else {
-//            setTheme(R.style.LightTheme_LiveView);
-//        }
+
         setContentView(R.layout.activity_live_view);
         mCardNotification.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -530,10 +524,6 @@ public class LiveViewActivity extends BaseActivity {
                     }
                 }
             });
-
-//        mGaugeView.initGaugeView();
-
-
     }
 
 
@@ -543,6 +533,44 @@ public class LiveViewActivity extends BaseActivity {
         stopPreview();
         unregisterRxBusEvent();
         mEventBus.unregister(this);
+
+    }
+
+    protected void init() {
+        mHandler = new Handler();
+    }
+
+    private void initViews() {
+        updateMicControlButton();
+        // Start record red dot indicator animation
+        AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
+        animationDrawable.start();
+        handleOnCameraConnected();
+        updateCameraState();
+        updateSpaceInfo();
+        mTvStatusAdditional.setVisibility(View.GONE);
+        mGaugeView.setRotate(mVdtCamera.getIfRotated());
+    }
+
+    private void initCameraPreview() {
+        if (mVdtCamera != null) {
+            InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
+            if (serverAddr == null) {
+                mVdtCamera = null;
+                return;
+            }
+
+            Logger.t(TAG).d("start preview view");
+            mVdtCamera.startPreview();
+            mLiveView.startStream(serverAddr);
+            mVdtCamera.getRecordRecMode();
+            mVdtCamera.getRecordTime();
+            mVdtCamera.getAudioMicState();
+            mVdtCamera.getSetup();
+            updateCameraState();
+            updateBtDeviceState();
+            openLiveViewData();
+        }
 
     }
 
@@ -603,6 +631,10 @@ public class LiveViewActivity extends BaseActivity {
             //Logger.t(TAG).d("mControlPanel height: " + mControlPanel.getLayoutParams().height);
 
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit);
+
+            RelativeLayout.LayoutParams shutterParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            shutterParam.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            shutterPanel.setLayoutParams(shutterParam);
         } else {
             mBtnBookmark.setImageResource(R.drawable.camera_control_bookmark);
             mFabStopSrc = R.drawable.camera_control_stop;
@@ -624,6 +656,10 @@ public class LiveViewActivity extends BaseActivity {
             mControlPanel.setLayoutParams(params3);
 
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen);
+
+            RelativeLayout.LayoutParams shutterParam = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            shutterParam.addRule(RelativeLayout.BELOW, mControlPanel.getId());
+            shutterPanel.setLayoutParams(shutterParam);
         }
         updateFloatActionButton();
         setImmersiveMode(isFullScreen());
@@ -702,45 +738,7 @@ public class LiveViewActivity extends BaseActivity {
 
     }
 
-    protected void init() {
-        mHandler = new Handler();
 
-
-    }
-
-    private void initViews() {
-        updateMicControlButton();
-        // Start record red dot indicator animation
-        AnimationDrawable animationDrawable = (AnimationDrawable) mRecordDot.getBackground();
-        animationDrawable.start();
-        handleOnCameraConnected();
-        updateCameraState();
-        updateSpaceInfo();
-        mTvStatusAdditional.setVisibility(View.GONE);
-        mGaugeView.setRotate(mVdtCamera.getIfRotated());
-    }
-
-    private void initCameraPreview() {
-        if (mVdtCamera != null) {
-            InetSocketAddress serverAddr = mVdtCamera.getPreviewAddress();
-            if (serverAddr == null) {
-                mVdtCamera = null;
-                return;
-            }
-
-            Logger.t(TAG).d("start preview view");
-            mVdtCamera.startPreview();
-            mLiveView.startStream(serverAddr);
-            mVdtCamera.getRecordRecMode();
-            mVdtCamera.getRecordTime();
-            mVdtCamera.getAudioMicState();
-            mVdtCamera.getSetup();
-            updateCameraState();
-            updateBtDeviceState();
-            openLiveViewData();
-        }
-
-    }
 
     private void stopCameraPreview() {
         if (mLiveView != null) {

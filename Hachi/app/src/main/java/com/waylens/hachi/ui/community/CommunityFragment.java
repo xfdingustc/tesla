@@ -39,7 +39,6 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -169,7 +168,6 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         mSearchView.setVoice(true);
         mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
         mSearchView.setShadowColor(ContextCompat.getColor(getActivity(), R.color.search_shadow_layout));
-        mSearchView.setTheme(SearchView.THEME_DARK, true);
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

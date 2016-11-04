@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/windowBackground"
               android:orientation="vertical">
 
-    <include layout="@layout/toolbar_with_spinner"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:elevation="@dimen/default_elevation"
+        app:layout_scrollFlags="scroll"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></Spinner>
+    </android.support.v7.widget.Toolbar>
 
 
     <RelativeLayout
@@ -24,13 +37,10 @@
             android:clipChildren="false">
 
 
-
             <com.xfdingustc.mjpegview.library.MjpegView
                 android:id="@+id/camera_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-
-
 
 
             <FrameLayout
@@ -58,8 +68,6 @@
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 
-
-
         <RelativeLayout android:id="@+id/controlPanel"
                         xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="match_parent"
@@ -71,26 +79,22 @@
             <ImageButton
                 android:id="@+id/btnMicControl"
                 style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
-                android:tint="@color/app_text_color_primary"
-                android:src="@drawable/ic_mic"/>
+                android:padding="12dp"
+                android:src="@drawable/ic_mic"
+                android:tint="@color/app_text_color_primary"/>
 
 
             <ImageButton
                 android:id="@+id/btnFullscreen"
                 style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
+                android:padding="12dp"
                 android:src="@drawable/ic_fullscreen"
                 android:tint="@color/app_text_color_primary"/>
 
@@ -98,39 +102,76 @@
             <ImageButton
                 android:id="@+id/btnShowOverlay"
                 style="@style/SelectableRippleButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="8dp"
                 android:layout_toLeftOf="@id/btnFullscreen"
+                android:padding="12dp"
                 android:src="@drawable/ic_btn_gauge_overlay_n"/>
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/shutter_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/controlPanel"
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/fabStartStop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="8dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/camera_control_start"/>
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
-        <ImageButton
-            android:id="@+id/btnBookmark"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="8dp"
-            android:layout_toRightOf="@id/fabStartStop"
-            android:background="@android:color/transparent"
-            android:scaleType="fitCenter"
-            android:src="@drawable/camera_control_bookmark"
-            android:visibility="gone"
-            tools:visibility="visible"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+
+                <ImageButton
+                    android:id="@+id/fabStartStop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/camera_control_start"/>
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+
+                <ImageButton
+                    android:id="@+id/btnBookmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@id/fabStartStop"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/camera_control_bookmark"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+            </FrameLayout>
+
+
+
+
+
+
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:id="@+id/detail_info_panel"
@@ -301,8 +342,8 @@
                 android:layout_gravity="center_horizontal"
                 android:padding="8dp"
                 android:rotation="180"
-                android:tint="@color/app_text_color_primary"
-                android:src="@drawable/ic_expand_more"/>
+                android:src="@drawable/ic_expand_more"
+                android:tint="@color/app_text_color_primary"/>
 
 
         </LinearLayout>
