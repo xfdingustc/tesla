@@ -18,12 +18,13 @@ add_library( # Specifies the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/source/base/avrpro_malloc.cpp
+             src/main/cpp/source/base/sqlite3.c
              src/main/cpp/source/filters/avrpro_filter_if.cpp
              src/main/cpp/source/filters/avrpro_filter_manager.cpp
              src/main/cpp/source/filters/avrprofilter.cpp)
-add_library(lib_sqlite SHARED IMPORTED)
-set_target_properties(lib_sqlite PROPERTIES IMPORTED_LOCATION
-    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/libsqlite.so)
+#add_library(lib_sqlite SHARED IMPORTED)
+#set_target_properties(lib_sqlite PROPERTIES IMPORTED_LOCATION
+#    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/libsqlite.so)
 
 set_target_properties(avrpro-lib
                       PROPERTIES
@@ -40,6 +41,5 @@ include_directories(
 target_link_libraries(
                        avrpro-lib
                        android
-                       lib_sqlite
                        log
                     )
