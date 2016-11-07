@@ -15,11 +15,12 @@
         android:layout_gravity="center_vertical"
         android:orientation="vertical">
         <TextView
+            android:id="@+id/tv_remix_status"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/album_list_feeditem_nor"
             android:gravity="center"
-            android:text="Collecting splendid clips\nfrom your Waylens camera..."/>
+            android:text="@string/remixing_text"/>
 
         <ProgressBar
             android:id="@+id/remix_progress_bar"

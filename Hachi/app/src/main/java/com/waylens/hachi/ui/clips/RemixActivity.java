@@ -12,10 +12,13 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.snipe.remix.AvrproClipInfo;
 import com.waylens.hachi.snipe.remix.AvrproFilter;
 import com.waylens.hachi.snipe.remix.AvrproSegmentInfo;
@@ -55,6 +58,8 @@ public class RemixActivity extends BaseActivity{
     private Subscription mRemixSubscription;
     private int mRemixLength = 20;
 
+    private long RawDataUnitDuration = 5 * 60 * 1000;
+
     public static void launch(Activity activity, int playlistId, int remixLength) {
         Intent intent = new Intent(activity, RemixActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
@@ -68,6 +73,9 @@ public class RemixActivity extends BaseActivity{
 
     @BindView(R.id.btn_cancel_remix)
     ImageButton mBtnCancelRemix;
+
+    @BindView(R.id.tv_remix_status)
+    TextView mRemixStatus;
 
 
     @OnClick(R.id.btn_cancel_remix)
@@ -150,36 +158,45 @@ public class RemixActivity extends BaseActivity{
                     @Override
                     public Boolean call(Clip clip) {
                         Logger.t(TAG).d("clip info:" + clip.getDurationMs());
-                        RawDataLoader.RawDataBufAll rawData = mRawDataLoader.loadRawDataBuf(clip, clip.getStartTimeMs(), clip.getDurationMs());
-                        Logger.t(TAG).d("start time:" + clip.getStartTimeMs());
-                        Logger.t(TAG).d("high:" + (int)(clip.getStartTimeMs()>>32) + "low:" + (int)(clip.getStartTimeMs()&0xffffffff));
-                        AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type, (int)(clip.getStartTimeMs()&0xffffffff), (int)(clip.getStartTimeMs()>>32), clip.getDurationMs());
-                        boolean isDataParsed = mAvrproFilter.native_avrpro_smart_filter_is_data_parsed(0, clipInfo, 0, clip.getDurationMs());
-                        Logger.t(TAG).d("is data parsed:" + isDataParsed);
-                        if (!isDataParsed) {
-                            Logger.t(TAG).d("got raw data");
-                            if (rawData.gpsDataBuf != null) {
-                                int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.gpsDataBuf, rawData.gpsDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                                Logger.t(TAG).d("reed ret = " + ret);
-                            }
-                            if (rawData.iioDataBuf != null) {
-                                int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.iioDataBuf, rawData.iioDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                                Logger.t(TAG).d("reed ret = " + ret);
-                            }
-                            if (rawData.obdDataBuf != null) {
-                                int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.obdDataBuf, rawData.obdDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                                Logger.t(TAG).d("reed ret = " + ret);
+                        boolean isDataParsed = false;
+                        long startTime = clip.getStartTimeMs();
+                        long endTime = clip.getStartTimeMs() + clip.getDurationMs();
+                        for (long start = startTime; start < endTime; start += RawDataUnitDuration) {
+                            long duration = Math.min(RawDataUnitDuration, endTime - start);
+                            RawDataLoader.RawDataBufAll rawData = mRawDataLoader.loadRawDataBuf(clip, start, (int)duration);
+                            Logger.t(TAG).d("start time:" + start);
+                            Logger.t(TAG).d("high:" + (int) (start >> 32) + "low:" + (int) (start & 0xffffffff));
+                            AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type, (int) (start & 0xffffffff), (int) (start >> 32), (int)duration);
+                            isDataParsed = mAvrproFilter.native_avrpro_smart_filter_is_data_parsed(0, clipInfo, (int)(start - startTime), (int)duration);
+                            Logger.t(TAG).d("is data parsed:" + isDataParsed);
+                            if (!isDataParsed) {
+                                Logger.t(TAG).d("got raw data");
+                                if (rawData.gpsDataBuf != null) {
+                                    int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.gpsDataBuf, rawData.gpsDataBuf.length, AvrproFilter.DEVICE_ANDROID);
+                                    Logger.t(TAG).d("reed ret = " + ret);
+                                }
+                                if (rawData.iioDataBuf != null) {
+                                    int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.iioDataBuf, rawData.iioDataBuf.length, AvrproFilter.DEVICE_ANDROID);
+                                    Logger.t(TAG).d("reed ret = " + ret);
+                                }
+                                if (rawData.obdDataBuf != null) {
+                                    int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.obdDataBuf, rawData.obdDataBuf.length, AvrproFilter.DEVICE_ANDROID);
+                                    Logger.t(TAG).d("reed ret = " + ret);
+                                }
                             }
                         }
                         return isDataParsed;
                     }
-                }).subscribe(new Subscriber<Boolean>() {
+                }).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
             @Override
             public void onCompleted() {
                 Logger.t(TAG).d("got raw data");
                 mFilterResult = new ArrayList<>();
                 AvrproSegmentInfo segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, true);
-                mFilterResult.add(segmentInfo);
+                if (segmentInfo != null) {
+                    mFilterResult.add(segmentInfo);
+                }
                 Logger.t(TAG).d("read results:" + ToStringUtils.getString(segmentInfo));
                 while( (segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, false)) != null) {
                     mFilterResult.add(segmentInfo);
@@ -204,6 +221,11 @@ public class RemixActivity extends BaseActivity{
 
     private void toEnhance() {
         List<Clip> newClipList = new ArrayList<>();
+        if (mFilterResult.size() == 0) {
+            mRemixStatus.setText(getString(R.string.remix_failed));
+            mRemixProgressBar.setProgress(0);
+            return;
+        }
         for (AvrproSegmentInfo segmentInfo : mFilterResult) {
             Clip clip = getClipByClipInfo(segmentInfo.parent_clip);
             if (clip != null) {

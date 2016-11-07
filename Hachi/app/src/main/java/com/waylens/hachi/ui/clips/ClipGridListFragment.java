@@ -243,6 +243,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     mAdapter.toggleSelectAll(true);
                 }
             });
+            mAdapter.setMultiSelectedMode(true);
+            mAdapter.toggleSelectAll(true);
         }
     }
 
@@ -447,6 +449,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mAdapter.setMultiSelectedMode(false);
             }
             if (mIsRemixMode) {
+                mAdapter.setMultiSelectedMode(false);
                 mFabSmartRemix.setVisibility(View.VISIBLE);
                 mIsRemixMode = false;
                 mAdapter.toggleSelectAll(false);
@@ -566,6 +569,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
         if (mIsRemixMode) {
             mIsRemixMode = false;
+            mAdapter.setMultiSelectedMode(false);
             mSmartRemixLayout.setVisibility(View.INVISIBLE);
             mFabSmartRemix.setVisibility(View.VISIBLE);
             return true;
@@ -574,6 +578,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     private void showRemixDialog() {
+        if (mAdapter.getSelectedClipList().size() <= 0) {
+            return;
+        }
         final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
             .customView(R.layout.dialog_smart_remix, true)
             .show();
