@@ -35,7 +35,7 @@ public class GaugeJsHelper {
     }
 
     public static String jsSetTheme(String theme) {
-        if (theme.equals("")) {
+        if (theme.equals("") || theme.equals("elegant")) {
             theme = "default";
         }
         return "javascript:setTheme('" + theme + "')";
@@ -60,7 +60,7 @@ public class GaugeJsHelper {
         return jsApi;
     }
 
-    public static String jsUpdateRawData(List<RawDataItem> itemList) {
+    public static String jsUpdateRawData(List<RawDataItem> itemList, int gaugeMode) {
         JSONObject state = new JSONObject();
         String data = null;
         RawDataItem item = null;
@@ -127,21 +127,22 @@ public class GaugeJsHelper {
                         break;
                 }
             }
-            if (pts == 0) {
+            if (pts == 0 && gaugeMode == GaugeView.MODE_CAMERA) {
                 pts = System.currentTimeMillis();
             }
-            DateFormat mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
-            String date = mDateFormat.format(pts);
-            data = "numericMonthDate('" + date + "')";
+            if (pts != 0) {
+                DateFormat mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
+                String date = mDateFormat.format(pts);
+                data = "numericMonthDate('" + date + "')";
+            }
             //Logger.t(TAG).d("pts: " + item.getPtsMs() + " date: " + data);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
         StringBuffer sb = new StringBuffer(state.toString());
-        sb.insert(state.toString().length() - 1, ",time:" + data);
-
-
+        if (data != null) {
+            sb.insert(state.toString().length() - 1, ",time:" + data);
+        }
         return "javascript:setRawData(" + sb.toString() + ")";
     }
 }

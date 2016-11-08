@@ -454,7 +454,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
-        mWvGauge.setGaugeMode(GaugeView.MODE_CAMERA);
+        mWvGauge.setGaugeMode(GaugeView.MODE_MOMENT);
         mHandler = new ControlPanelHandler(this);
         initViews();
         return view;

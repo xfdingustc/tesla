@@ -544,7 +544,7 @@ public class MomentActivity extends BaseActivity {
                     Logger.t(TAG).d("do on next");
                     if (response.isSuccessful()) {
                         MomentInfo momentInfo = response.body();
-                        mMomentPlayFragment.doGaugeSetting(momentInfo, null);
+                        //mMomentPlayFragment.doGaugeSetting(momentInfo, null);
                         Logger.t(TAG).d("Moment Play Activity!");
                         updateFollowInfo(momentInfo.owner.userID);
                     } else {

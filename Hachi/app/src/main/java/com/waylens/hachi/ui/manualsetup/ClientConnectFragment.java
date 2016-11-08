@@ -271,7 +271,9 @@ public class ClientConnectFragment extends BaseFragment implements WifiAutoConne
 
     private void refreshWifiList() {
         Logger.t(TAG).d("start scan host: ");
-        mVdtCamera.scanHost(mOnScanHostListener);
+        if (mVdtCamera != null) {
+            mVdtCamera.scanHost(mOnScanHostListener);
+        }
     }
 
     private void onNetworkItemClicked(final NetworkItemBean itemBean) {

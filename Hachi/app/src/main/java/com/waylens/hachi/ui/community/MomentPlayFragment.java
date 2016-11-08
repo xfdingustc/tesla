@@ -614,8 +614,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
-
-//                      Logger.t(TAG).d(momentBasicInfo.momentType);
+                    Logger.t(TAG).d(momentBasicInfo.momentType);
 
                     Logger.t(TAG).d("1");
                     ArrayList<Long> arrayList = null;
@@ -659,34 +658,6 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
                 }
             });
-
-
-/*        mHachi.getMomentPlayInfo(mMomentId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<MomentPlayInfo>() {
-                @Override
-                public void onCompleted() {
-
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(MomentPlayInfo momentPlayInfo) {
-                    Logger.t(TAG).d("Get moment play info");
-//                    loadRawData(momentPlayInfo.rawDataUrl.get(0).url);
-                    mMomentPlayInfo = momentPlayInfo;
-
-                    calcRawDataTimeInfo();
-
-                    loadRawData(0);
-                }
-            });*/
-
 
         mProgressLoading.setVisibility(View.VISIBLE);
     }

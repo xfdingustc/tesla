@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.views.gauge;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.util.Pools;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,11 +14,7 @@ import android.widget.FrameLayout;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
-import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
-import com.waylens.hachi.snipe.vdb.rawdata.IioData;
-import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -38,6 +35,8 @@ public class GaugeView extends FrameLayout {
 
     private static final int PENDING_ACTION_INIT_GAUGE = 0x1001;
     private static final int PENDING_ACTION_ROTATE = 0x1002;
+    private static final int PENDING_ACTION_MOMENT_SETTING = 0x1003;
+    private static final int PENDING_ACTION_TIME_POINT = 0x1004;
 
     public static final int MODE_CAMERA = 0;
 
@@ -49,18 +48,16 @@ public class GaugeView extends FrameLayout {
 
     private DateFormat mDateFormat;
 
-    private boolean mIsLoadingFinish = false;
+    private final Object mLock = new Object();
+
+    boolean mIsLoadingFinish = false;
 
     private List<PendingActionItem> mPendingActions = new ArrayList<>();
-
-
-
 
     public GaugeView(Context context) {
         super(context);
         init(context);
     }
-
 
     public GaugeView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -73,7 +70,7 @@ public class GaugeView extends FrameLayout {
             return;
         }
         mWebView = new WebView(context);
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(mWebView, params);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setBackgroundColor(Color.TRANSPARENT);
@@ -81,15 +78,32 @@ public class GaugeView extends FrameLayout {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                mIsLoadingFinish = true;
-                for (PendingActionItem item : mPendingActions) {
-                    switch (item.type) {
-                        case PENDING_ACTION_INIT_GAUGE:
-                            initGaugeView();
-                            break;
-                        case PENDING_ACTION_ROTATE:
-                            setRotate((Boolean)item.param);
-                            break;
+                synchronized (mLock) {
+                    mIsLoadingFinish = true;
+                    for (PendingActionItem item : mPendingActions) {
+                        switch (item.type) {
+                            case PENDING_ACTION_INIT_GAUGE:
+                                initGaugeView();
+                                break;
+                            case PENDING_ACTION_ROTATE:
+                                setRotate((Boolean) item.param1);
+                                break;
+                            case PENDING_ACTION_MOMENT_SETTING:
+                                doGaugeSetting((Map<String, String>) item.param1);
+                                ArrayList<Long> timePoints = (ArrayList) item.param2;
+                                if (timePoints != null && timePoints.size() == 6) {
+                                    setRaceTimingPoints(timePoints);
+                                }
+                                break;
+                            case PENDING_ACTION_TIME_POINT:
+                                ArrayList<Long> timePoint = (ArrayList) item.param1;
+                                if (timePoint != null && timePoint.size() == 6) {
+                                    setRaceTimingPoints(timePoint);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -110,10 +124,12 @@ public class GaugeView extends FrameLayout {
                 break;
         }
         if (mGaugeMode != MODE_MOMENT) {
-            if (mIsLoadingFinish) {
-                initGaugeView();
-            } else {
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE, null));
+            synchronized (mLock) {
+                if (mIsLoadingFinish) {
+                    initGaugeView();
+                } else {
+                    mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE, null));
+                }
             }
         }
     }
@@ -145,17 +161,8 @@ public class GaugeView extends FrameLayout {
     }
 
     public void setDefaultViewAndTimePoints(final ArrayList<Long> timepoints) {
-        Logger.t(TAG).d("loading finish");
-        initGaugeView();
-        if (timepoints != null) {
-            String jsApi = "javascript:setGauge('CountDown','S')";
-            Logger.t(TAG).d(jsApi);
-            mWebView.loadUrl(jsApi);
-        }
-        setRaceTimingPoints(timepoints);
-        mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
+        synchronized (mLock) {
+            if (mIsLoadingFinish) {
                 initGaugeView();
                 if (timepoints != null) {
                     String jsApi = "javascript:setGauge('CountDown','S')";
@@ -163,8 +170,11 @@ public class GaugeView extends FrameLayout {
                     mWebView.loadUrl(jsApi);
                 }
                 setRaceTimingPoints(timepoints);
+            } else {
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE, null));
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_TIME_POINT, timepoints));
             }
-        });
+        }
     }
 
     public void initDefaultGauge() {
@@ -180,11 +190,13 @@ public class GaugeView extends FrameLayout {
     }
 
     public void setRotate(boolean ifRoate) {
-        if (mIsLoadingFinish) {
-            mWebView.loadUrl(GaugeJsHelper.jsSetRotate(ifRoate));
-            mWebView.loadUrl(GaugeJsHelper.jsUpdate());
-        } else {
-            mPendingActions.add(new PendingActionItem(PENDING_ACTION_ROTATE, ifRoate));
+        synchronized (mLock) {
+            if (mIsLoadingFinish) {
+                mWebView.loadUrl(GaugeJsHelper.jsSetRotate(ifRoate));
+                mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+            } else {
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_ROTATE, ifRoate));
+            }
         }
     }
 
@@ -226,22 +238,16 @@ public class GaugeView extends FrameLayout {
     }
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
-        if (mIsLoadingFinish) {
-            Logger.t(TAG).d("loading finish");
-            doGaugeSetting(overlaySetting);
-            if (timePoints != null && timePoints.size() == 6) {
-                setRaceTimingPoints(timePoints);
-            }
-        } else {
-            mWebView.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageFinished(WebView view, String url) {
-                    doGaugeSetting(overlaySetting);
-                    if (timePoints != null && timePoints.size() == 6) {
-                        setRaceTimingPoints(timePoints);
-                    }
+        synchronized (mLock) {
+            if (mIsLoadingFinish) {
+                Logger.t(TAG).d("loading finish");
+                doGaugeSetting(overlaySetting);
+                if (timePoints != null && timePoints.size() == 6) {
+                    setRaceTimingPoints(timePoints);
                 }
-            });
+            } else {
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_MOMENT_SETTING, overlaySetting, timePoints));
+            }
         }
     }
 
@@ -302,7 +308,7 @@ public class GaugeView extends FrameLayout {
     }
 
     public void updateRawDateItem(List<RawDataItem> itemList) {
-        mWebView.loadUrl(GaugeJsHelper.jsUpdateRawData(itemList));
+        mWebView.loadUrl(GaugeJsHelper.jsUpdateRawData(itemList, mGaugeMode));
     }
 
 
@@ -316,87 +322,20 @@ public class GaugeView extends FrameLayout {
         return false;
     }
 
-
-    public void showTimeDateGauge(boolean show) {
-        JSONObject state = new JSONObject();
-        try {
-            if (show) {
-                state.put("showTimeDate", "M");
-            } else {
-                state.put("showTimeDate", "");
-            }
-        } catch (JSONException e) {
-            Logger.t(TAG).e("showTimeDate", e);
-        }
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        mWebView.loadUrl(callJS);
-        mWebView.loadUrl("javascript:update");
-    }
-
-
-    public void showGpsGauge(boolean show) {
-        JSONObject state = new JSONObject();
-        try {
-            if (show) {
-                state.put("showGps", "M");
-                state.put("showAmbient", "M");
-            } else {
-                state.put("showGps", "");
-                state.put("showAmbient", "");
-            }
-        } catch (JSONException e) {
-            Logger.t(TAG).e("showGpsGauge", e);
-        }
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        mWebView.loadUrl(callJS);
-        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
-    }
-
-    public void showOdbGauge(boolean show) {
-        JSONObject state = new JSONObject();
-        try {
-            if (show) {
-                state.put("showSpeedThrottle", "M");
-                state.put("showRpm", "M");
-                state.put("showPsi", "M");
-            } else {
-                state.put("showSpeedThrottle", "");
-                state.put("showRpm", "");
-                state.put("showPsi", "");
-            }
-        } catch (JSONException e) {
-            Logger.t(TAG).e("showOdbGauge", e);
-        }
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        mWebView.loadUrl(callJS);
-        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
-    }
-
-    public void showIioGauge(boolean show) {
-        JSONObject state = new JSONObject();
-        try {
-            if (show) {
-                state.put("showGforce", "M");
-                state.put("showRollPitch", "M");
-            } else {
-                state.put("showGforce", "");
-                state.put("showRollPitch", "");
-            }
-        } catch (JSONException e) {
-            Logger.t(TAG).e("showIioGauge", e);
-        }
-        String callJS = "javascript:setState(" + state.toString() + ")";
-        mWebView.loadUrl(callJS);
-        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
-    }
-
     private class PendingActionItem {
         int type;
-        Object param;
+        Object param1;
+        Object param2;
 
-        PendingActionItem(int type, Object param) {
+        PendingActionItem(int type, Object param1) {
             this.type = type;
-            this.param = param;
+            this.param1 = param1;
+        }
+
+        PendingActionItem(int type, Object param1, Object param2) {
+            this.type = type;
+            this.param1 = param1;
+            this.param2 = param2;
         }
     }
 }
