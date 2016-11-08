@@ -84,6 +84,9 @@ public class PhotoViewActivity extends BaseActivity {
     @BindView(R.id.btn_comment)
     ImageButton mBtnComment;
 
+    @BindView(R.id.bottom_layout)
+    LinearLayout mBottomLayout;
+
     public static void launch(Activity activity, MomentEx momentEx, String url, int index) {
         Intent intent = new Intent(activity, PhotoViewActivity.class);
         intent.putExtra(EXTRA_MOMENT, momentEx);
@@ -224,14 +227,11 @@ public class PhotoViewActivity extends BaseActivity {
             alphaAnimation = new AlphaAnimation(1, 0);
         } else {
             alphaAnimation = new AlphaAnimation(0, 1);
-            mAction_bar.setVisibility(View.VISIBLE);
-            mTvTitle.setVisibility(View.VISIBLE);
+            mBottomLayout.setVisibility(View.VISIBLE);
         }
         animationSet.addAnimation(alphaAnimation);
         animationSet.setDuration(200);
-
-        mAction_bar.startAnimation(animationSet);
-        mTvTitle.startAnimation(animationSet);
+        mBottomLayout.startAnimation(animationSet);
 
         animationSet.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -242,8 +242,7 @@ public class PhotoViewActivity extends BaseActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (isViewShowing) {
-                    mAction_bar.setVisibility(isViewShowing ? View.INVISIBLE : View.VISIBLE);
-                    mTvTitle.setVisibility(isViewShowing ? View.INVISIBLE : View.VISIBLE);
+                    mBottomLayout.setVisibility(isViewShowing ? View.INVISIBLE : View.VISIBLE);
                 }
                 isViewShowing = !isViewShowing;
             }

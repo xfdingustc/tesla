@@ -32,6 +32,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.community.CommentActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
@@ -330,6 +331,8 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                 if (!TextUtils.isEmpty(moment.momentType) && !moment.momentType.equals("PICTURE")) {
                     MomentActivity.launch((BaseActivity) mContext, moment.id, moment.thumbnail, holder.videoCover,
                         MomentActivity.REQUEST_COMMENT);
+                } else if (moment.momentType.equals("PICTURE")) {
+                    CommentActivity.launch((BaseActivity) mContext, moment.id);
                 }
             }
         });

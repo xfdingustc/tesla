@@ -30,76 +30,77 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"/>
 
-    <TextView
-        android:id="@+id/tv_title"
-        style="@style/HachiTextViewSubHeader"
+    <LinearLayout
+        android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/ll_action_bar"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:ellipsize="end"
-        android:maxLines="3"
-        tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
-        />
-
-
-    <LinearLayout
-        android:id="@+id/ll_action_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="150dp"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/btn_like"
-            style="@style/SelectableRippleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/ic_favorite_border"/>
-
+        android:background="#7f000000"
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_title"
+            style="@style/HachiTextViewSubHeader"
+            android:textColor="@color/app_text_color_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            tools:text="Night video test! Figured out my no sound issue. Camera kept reverting my changes to unmute"
+            />
+
+
+        <LinearLayout
+            android:id="@+id/ll_action_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_like_counter"
-            android:layout_gravity="center_vertical"
-            tools:text="999"/>
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="center_horizontal">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            <ImageButton
+                android:id="@+id/btn_like"
+                style="@style/SelectableRippleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_favorite_border"/>
 
-        <ImageButton
-            android:id="@+id/btn_comment"
-            style="@style/SelectableRippleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/social_comment"/>
 
-        <TextView
-            android:id="@+id/tv_comment_counter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            tools:text="777"/>
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/app_text_color_primary"
+                android:id="@+id/tv_like_counter"
+                android:layout_gravity="center_vertical"
+                tools:text="999"/>
+
+            <View
+                android:layout_width="16dp"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/btn_comment"
+                style="@style/SelectableRippleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/social_comment"/>
+
+            <TextView
+                android:id="@+id/tv_comment_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/app_text_color_primary"
+                tools:text="777"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

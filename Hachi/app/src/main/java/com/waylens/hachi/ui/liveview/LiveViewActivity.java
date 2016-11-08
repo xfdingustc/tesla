@@ -781,7 +781,6 @@ public class LiveViewActivity extends BaseActivity {
                     mStorageView.setMax((int) (spaceInfo.total / (1024 * 1024)));
                     mStorageView.setProgress((int) (spaceInfo.marked / (1024 * 1024)));
                     mStorageView.setSecondaryProgress((int) (spaceInfo.total / (1024 * 1024)));
-
                     mTvSpaceLeft.setText(StringUtils.getSpaceString(spaceInfo.getLoopedSpace()) + " " + getString(R.string.ready_to_record));
 
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));

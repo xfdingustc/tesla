@@ -94,7 +94,7 @@ public class CommentActivity extends BaseActivity {
         Intent intent = new Intent(activity, CommentActivity.class);
         intent.putExtra(EXTRA_MOMENT_ID, momentID);
         activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.activity_open, R.anim.activity_close);
+        activity.overridePendingTransition(R.anim.activity_open, android.R.anim.fade_out);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class CommentActivity extends BaseActivity {
     @Override
     public void finish() {
         super.finish();
-        this.overridePendingTransition(R.anim.activity_open, R.anim.activity_close);
+        this.overridePendingTransition(android.R.anim.fade_in, R.anim.activity_close);
     }
 
     @Override

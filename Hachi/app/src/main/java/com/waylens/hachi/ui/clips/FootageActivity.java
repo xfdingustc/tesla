@@ -226,93 +226,10 @@ public class FootageActivity extends ClipPlayActivity {
                     case R.id.time_lapse:
                         showTimeLapseBottomSheet();
                         break;
-
-                    case R.id.smart_remix:
-                        doSmartRemix();
-                        break;
                 }
                 return true;
             }
         });
-    }
-
-    private void doSmartRemix() {
-        if (mAvrproFilter == null) {
-            mAvrproFilter = new AvrproFilter(AvrproFilter.SMART_ACCELERATION, this.getExternalCacheDir(), 100);
-        }
-        Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                mRawDataLoader = new RawDataLoader(mPlaylistId, mVdbRequestQueue);
-                int ret = mAvrproFilter.init();
-                if (ret == 0) {
-                    Logger.t(TAG).d("init successfully!");
-                } else {
-                    Logger.t(TAG).d("init failed!");
-                }
-                subscriber.onNext(ret);
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
-        .flatMap(new Func1<Integer, Observable<Clip>>() {
-              @Override
-              public Observable<Clip> call(Integer integer) {
-                  List<Clip> clips = mRawDataLoader.getClipSet().getClipList();
-                  for(Clip clip : clips) {
-                      Logger.t(TAG).d("clip info:" + clip.getDurationMs());
-                  }
-                  return Observable.from(clips);
-              }
-          })
-        .map(new Func1<Clip, Boolean>() {
-            @Override
-            public Boolean call(Clip clip) {
-                Logger.t(TAG).d("clip info:" + clip.getDurationMs());
-                RawDataLoader.RawDataBufAll rawData = mRawDataLoader.loadRawDataBuf(clip, clip.getStartTimeMs(), clip.getDurationMs());
-                Logger.t(TAG).d("start time:" + clip.getStartTimeMs());
-                Logger.t(TAG).d("high:" + (int)(clip.getStartTimeMs()>>32) + "low:" + (int)(clip.getStartTimeMs()&0xffffffff));
-                AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type, (int)(clip.getStartTimeMs()>>32), (int)(clip.getStartTimeMs()&0xffffffff), clip.getDurationMs());
-                boolean isDataParsed = mAvrproFilter.native_avrpro_smart_filter_is_data_parsed(0, clipInfo, 0, clip.getDurationMs());
-                Logger.t(TAG).d("is data parsed:" + isDataParsed);
-                if (!isDataParsed) {
-                    Logger.t(TAG).d("got raw data");
-                    if (rawData.gpsDataBuf != null) {
-                        int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.gpsDataBuf, rawData.gpsDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                        Logger.t(TAG).d("reed ret = " + ret);
-                    }
-                    if (rawData.iioDataBuf != null) {
-                        int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.iioDataBuf, rawData.iioDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                        Logger.t(TAG).d("reed ret = " + ret);
-                    }
-                    if (rawData.obdDataBuf != null) {
-                        int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.obdDataBuf, rawData.obdDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                        Logger.t(TAG).d("reed ret = " + ret);
-                    }
-                }
-                return isDataParsed;
-            }
-        }).subscribe(new Subscriber<Boolean>() {
-            @Override
-            public void onCompleted() {
-                Logger.t(TAG).d("got raw data");
-                AvrproSegmentInfo segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, true);
-                Logger.t(TAG).d("read results:" + segmentInfo);
-                while( (segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, true)) != null) {
-                    Logger.t(TAG).d(ToStringUtils.getString(segmentInfo));
-                }
-                mAvrproFilter.native_avrpro_smart_filter_deint(0);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-            }
-
-            @Override
-            public void onNext(Boolean b) {
-
-            }
-        });
-
     }
 
 
