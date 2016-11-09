@@ -28,7 +28,6 @@ public class DownloadJob extends ExportableJob {
     private String mDownloadFilePath;
 
 
-    private ExportManager mDownloadManager = ExportManager.getManager();
 
 
     public DownloadJob(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {

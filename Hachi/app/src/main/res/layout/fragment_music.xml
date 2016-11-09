@@ -16,10 +16,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_height="match_parent">
 
         <com.waylens.hachi.ui.views.RecyclerViewExt
             android:id="@+id/music_list_view"
