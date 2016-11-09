@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -44,9 +45,11 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.view.ClipGridListView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -221,23 +224,26 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     @Override
-    public void showLoading(String msg) { }
+    public void showLoading(String msg) {
+    }
 
     private void showSmartRemixActionButton(boolean show) {
-        mFabSmartRemix.setVisibility(show?View.VISIBLE:View.INVISIBLE);
-        mFabSmartRemix.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mIsRemixMode = true;
-                mFabSmartRemix.setVisibility(View.INVISIBLE);
-                //mSmartRemixLayout.setVisibility(View.VISIBLE);
-                if (mActionMode == null) {
-                    mActionMode = getActivity().startActionMode(mRemixCallback);
-                    updateActionMode();
+        if (false) {
+            mFabSmartRemix.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+            mFabSmartRemix.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mIsRemixMode = true;
+                    mFabSmartRemix.setVisibility(View.INVISIBLE);
+                    //mSmartRemixLayout.setVisibility(View.VISIBLE);
+                    if (mActionMode == null) {
+                        mActionMode = getActivity().startActionMode(mRemixCallback);
+                        updateActionMode();
+                    }
+                    mAdapter.toggleSelectAll(true);
                 }
-                mAdapter.toggleSelectAll(true);
-            }
-        });
+            });
+        }
     }
 
     private void showLoadingProgress() {
@@ -450,7 +456,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     };
 
 
-
     private ActionMode.Callback mCABCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -570,8 +575,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private void showRemixDialog() {
         final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .customView(R.layout.dialog_smart_remix, true)
-                .show();
+            .customView(R.layout.dialog_smart_remix, true)
+            .show();
 
         mLengthSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.length_seekbar);
         mTvSmartRemix = (TextView) dialog.getCustomView().findViewById(R.id.tv_smart_remix);
@@ -612,24 +617,24 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
 
         playListEditor.buildRx(selectedList)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Void>() {
-                    @Override
-                    public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
-                        RemixActivity.launch(getActivity(), playlistId, mRemixLength);
-                    }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Void>() {
+                @Override
+                public void onCompleted() {
+                    mRefreshLayout.setRefreshing(false);
+                    RemixActivity.launch(getActivity(), playlistId, mRemixLength);
+                }
 
-                    @Override
-                    public void onError(Throwable e) {
+                @Override
+                public void onError(Throwable e) {
 
-                    }
+                }
 
-                    @Override
-                    public void onNext(Void aVoid) {
+                @Override
+                public void onNext(Void aVoid) {
 
-                    }
-                });
+                }
+            });
     }
 
 
@@ -697,6 +702,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     });
                     snackbar.show();
                 }
+
                 @Override
                 public void onNext(Void aVoid) {
 

@@ -114,7 +114,7 @@ public class ChooseWifiActivity extends BaseActivity {
             mPasswordDialog = new MaterialDialog.Builder(this)
                 .title(itemBean.ssid)
                 .customView(R.layout.dialog_network_password, true)
-                .positiveText(R.string.join)
+                .positiveText(R.string.connect)
                 .callback(new MaterialDialog.ButtonCallback() {
                     @Override
                     public void onPositive(MaterialDialog dialog) {
