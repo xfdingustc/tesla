@@ -24,13 +24,12 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.bgjob.export.ExportableJob;
-import com.waylens.hachi.bgjob.export.ExportHelper;
 import com.waylens.hachi.bgjob.export.event.ExportEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
+import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.PrettyTimeUtils;
-
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -61,7 +60,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 notifyItemChanged(event.getIndex());
                 break;
             case ExportEvent.EXPORT_WHAT_FINISHED:
-                mDownloadedFileList = ExportHelper.getExportedFileList();
+                mDownloadedFileList = FileUtils.getExportedFileList();
                 notifyDataSetChanged();
                 break;
         }
@@ -70,7 +69,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public DownloadItemAdapter(Activity activity) {
         this.mActivity = activity;
-        mDownloadedFileList = ExportHelper.getExportedFileList();
+        mDownloadedFileList = FileUtils.getExportedFileList();
     }
 
 
@@ -79,8 +78,6 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         super.onDetachedFromRecyclerView(recyclerView);
         Logger.t(TAG).d("detached from recycler view");
     }
-
-
 
 
     @Override
@@ -163,7 +160,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         oneDownloadedFile.delete();
-                                        mDownloadedFileList = ExportHelper.getExportedFileList();
+                                        mDownloadedFileList = FileUtils.getExportedFileList();
                                         notifyDataSetChanged();
                                     }
                                 });

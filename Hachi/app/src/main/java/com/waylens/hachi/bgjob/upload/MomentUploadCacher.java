@@ -3,7 +3,6 @@ package com.waylens.hachi.bgjob.upload;
 import android.net.Uri;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.bgjob.export.ExportHelper;
 import com.waylens.hachi.service.download.DownloadAPI;
 import com.waylens.hachi.service.download.DownloadProgressListener;
 import com.waylens.hachi.service.download.Downloadable;
@@ -51,7 +50,8 @@ public class MomentUploadCacher {
 
             }
         };
-        String file = ExportHelper.getMomentCachePath() + StringUtils.getFileName(segment.uploadURL.url);
+
+        String file = FileUtils.genMomentCacheFileName(StringUtils.getFileName(segment.uploadURL.url));
         File outputFile = new File(file);
         Logger.t(TAG).d("output file: " + outputFile);
         String baseUrl = StringUtils.getHostName(segment.uploadURL.url);

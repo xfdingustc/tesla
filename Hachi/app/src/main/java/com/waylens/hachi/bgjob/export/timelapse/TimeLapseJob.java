@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.googlecode.javacv.FFmpegFrameRecorder;
 import com.googlecode.javacv.cpp.opencv_core;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.export.ExportHelper;
 import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.jobqueue.Params;
@@ -20,6 +19,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.toolbox.VdbImageRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
+import com.waylens.hachi.utils.FileUtils;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -75,7 +75,7 @@ public class TimeLapseJob extends ExportableJob {
 //        mEventBus.post(new DownloadEvent(DownloadEvent.EXPORT_WHAT_START));
         new GetVdbImageThread().start();
 
-        mOutputFile = ExportHelper.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
+        mOutputFile = FileUtils.genDownloadFileName((int) mClip.getClipDate(), mClip.getStartTimeMs());
 
 
         while (true) {

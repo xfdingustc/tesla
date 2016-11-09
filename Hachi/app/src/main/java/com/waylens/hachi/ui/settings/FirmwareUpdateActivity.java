@@ -14,7 +14,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.export.ExportHelper;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.service.download.DownloadAPI;
@@ -22,6 +21,7 @@ import com.waylens.hachi.service.download.DownloadProgressListener;
 import com.waylens.hachi.service.download.Downloadable;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
@@ -146,7 +146,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
             }
         };
 
-        mDownloadFirmware = new File(ExportHelper.getFirmwareDownloadPath());
+        mDownloadFirmware = new File(FileUtils.getFirmwareDownloadPath());
         Logger.t(TAG).d("output file: " + mDownloadFirmware);
         String baseUrl = StringUtils.getHostName(mFirmware.url);
 

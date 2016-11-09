@@ -5,8 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
 import com.transee.vdb.HttpRemuxer;
-import com.waylens.hachi.bgjob.export.ExportHelper;
-import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.jobqueue.Params;
@@ -14,6 +12,7 @@ import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
+import com.waylens.hachi.utils.FileUtils;
 
 /**
  * Created by Xiaofei on 2016/5/4.
@@ -123,7 +122,7 @@ public class DownloadJob extends ExportableJob {
 
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
-        String outputFile = ExportHelper.genDownloadFileName(clipDate, clipTimeMs);
+        String outputFile = FileUtils.genDownloadFileName(clipDate, clipTimeMs);
 
 
         Logger.t(TAG).d("outputFile: " + outputFile);
