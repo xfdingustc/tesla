@@ -11,6 +11,10 @@ public class SpaceInfo {
     public long used;
     public long marked;
 
+    public long getLoopedSpace() {
+        return total - marked;
+    }
+
     @Override
     public String toString() {
         return ToStringUtils.getString(this);
