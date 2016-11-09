@@ -240,11 +240,10 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                         mActionMode = getActivity().startActionMode(mRemixCallback);
                         updateActionMode();
                     }
+                    mAdapter.setMultiSelectedMode(true);
                     mAdapter.toggleSelectAll(true);
                 }
             });
-            mAdapter.setMultiSelectedMode(true);
-            mAdapter.toggleSelectAll(true);
         }
     }
 
