@@ -101,8 +101,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @BindView(R.id.fab_smart_remix)
-    FloatingActionButton mFabSmartRemix;
+//    @BindView(R.id.fab_smart_remix)
+//    FloatingActionButton mFabSmartRemix;
 
     @BindView(R.id.layout_smart_remix)
     RelativeLayout mSmartRemixLayout;
@@ -229,21 +229,21 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private void showSmartRemixActionButton(boolean show) {
         if (false) {
-            mFabSmartRemix.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-            mFabSmartRemix.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mIsRemixMode = true;
-                    mFabSmartRemix.setVisibility(View.INVISIBLE);
-                    //mSmartRemixLayout.setVisibility(View.VISIBLE);
-                    if (mActionMode == null) {
-                        mActionMode = getActivity().startActionMode(mRemixCallback);
-                        updateActionMode();
-                    }
-                    mAdapter.setMultiSelectedMode(true);
-                    mAdapter.toggleSelectAll(true);
-                }
-            });
+//            mFabSmartRemix.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+//            mFabSmartRemix.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    mIsRemixMode = true;
+//                    mFabSmartRemix.setVisibility(View.INVISIBLE);
+//                    //mSmartRemixLayout.setVisibility(View.VISIBLE);
+//                    if (mActionMode == null) {
+//                        mActionMode = getActivity().startActionMode(mRemixCallback);
+//                        updateActionMode();
+//                    }
+//                    mAdapter.setMultiSelectedMode(true);
+//                    mAdapter.toggleSelectAll(true);
+//                }
+//            });
         }
     }
 
@@ -447,12 +447,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mIsMultipleMode = false;
                 mAdapter.setMultiSelectedMode(false);
             }
-            if (mIsRemixMode) {
-                mAdapter.setMultiSelectedMode(false);
-                mFabSmartRemix.setVisibility(View.VISIBLE);
-                mIsRemixMode = false;
-                mAdapter.toggleSelectAll(false);
-            }
+//            if (mIsRemixMode) {
+//                mAdapter.setMultiSelectedMode(false);
+//                mFabSmartRemix.setVisibility(View.VISIBLE);
+//                mIsRemixMode = false;
+//                mAdapter.toggleSelectAll(false);
+//            }
             mRefreshLayout.setEnabled(true);
         }
     };
@@ -468,7 +468,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            mFabSmartRemix.setVisibility(View.INVISIBLE);
+//            mFabSmartRemix.setVisibility(View.INVISIBLE);
             if (mIsAddMore) {
                 MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
                 if (menuItem != null) {
@@ -529,7 +529,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mIsMultipleMode = false;
                 mAdapter.setMultiSelectedMode(false);
             }
-            mFabSmartRemix.setVisibility(View.VISIBLE);
+//            mFabSmartRemix.setVisibility(View.VISIBLE);
             mRefreshLayout.setEnabled(true);
 
         }
@@ -566,13 +566,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             mAdapter.setMultiSelectedMode(false);
             return true;
         }
-        if (mIsRemixMode) {
-            mIsRemixMode = false;
-            mAdapter.setMultiSelectedMode(false);
-            mSmartRemixLayout.setVisibility(View.INVISIBLE);
-            mFabSmartRemix.setVisibility(View.VISIBLE);
-            return true;
-        }
+//        if (mIsRemixMode) {
+//            mIsRemixMode = false;
+//            mAdapter.setMultiSelectedMode(false);
+//            mSmartRemixLayout.setVisibility(View.INVISIBLE);
+//            mFabSmartRemix.setVisibility(View.VISIBLE);
+//            return true;
+//        }
         return false;
     }
 
