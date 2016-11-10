@@ -26,6 +26,9 @@ add_library( # Specifies the name of the library.
 #set_target_properties(lib_sqlite PROPERTIES IMPORTED_LOCATION
 #    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/libsqlite.so)
 
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
+
 set_target_properties(avrpro-lib
                       PROPERTIES
                       LIBRARY_OUTPUT_DIRECTORY

@@ -361,6 +361,34 @@ public class SqliteJobQueue implements JobQueue {
         stmt.execute();
     }
 
+    @Override
+    public Set<JobHolder> findAllJobs() {
+        Set<JobHolder> jobs = new HashSet<>();
+        String select = sqlHelper.createSelect(
+                null,
+                100,
+                new SqlHelper.Order(DbOpenHelper.PRIORITY_COLUMN,
+                        SqlHelper.Order.Type.DESC),
+                new SqlHelper.Order(DbOpenHelper.CREATED_NS_COLUMN,
+                        SqlHelper.Order.Type.ASC),
+                new SqlHelper.Order(DbOpenHelper.INSERTION_ORDER_COLUMN, SqlHelper.Order.Type.ASC)
+        );
+        Cursor cursor = db.rawQuery(select, new String[0]);
+
+        try {
+            while (cursor.moveToNext()) {
+                jobs.add(createJobHolderFromCursor(cursor));
+            }
+        } catch (InvalidJobException e) {
+            JqLog.e(e, "invalid job found by tags.");
+        } finally {
+            cursor.close();
+        }
+
+        return jobs;
+
+    }
+
     @SuppressWarnings("unused")
     public String logJobs() {
         StringBuilder sb =  new StringBuilder();

@@ -2,6 +2,10 @@
 #define __AVRPRO_STD_DATA_H__
 
 #include <stdint.h>
+
+#ifdef IOS_OS
+#include "vdb_ios_types.h"
+#endif
 //-----------------------------------------------------------------------
 //  TODO: Do we need to use SQLCipher??
 //-----------------------------------------------------------------------
@@ -12,9 +16,11 @@
 enum SMART_FILTER_TYPE {
     SMART_RANDOMCUTTING = 0,    // a mixture of all types
     SMART_FAST_FURIOUS,     // speed in a high range
-    SMART_ACCELERATION,     // dramatic gforce change 
-    SMART_SHARPTURN,        // a sharp turn 
+    SMART_ACCELERATION,     // dramatic gforce change
+    SMART_SHARPTURN,        // a sharp turn
     SMART_BUMPINGHARD,      // driving on a bumping road
+    SMART_SMOOTH_RUNNING,   // driving at a constant high speed
+    SMART_RANDOMPICK,       // random pick segments from highlights
     SMART_MAX_INDEX         // not a real type
 };
 
@@ -58,7 +64,7 @@ typedef struct gps_parsed_data_s {
     double latitude;
     double longitude;
     double altitude;
-    float track;   
+    float track;
     uint32_t utc_time;
     uint32_t utc_time_usec;
 } avrpro_gps_parsed_data_t;
@@ -87,8 +93,20 @@ typedef struct iio_parsed_data_s {
     // Euler : Degrees x 1000 = mDegrees
     int32_t euler_heading;
     int32_t euler_roll;
-    int32_t euler_pitch;    
+    int32_t euler_pitch;
 } avrpro_iio_parsed_data_t;
+
+//-----------------------------------------------------------------------
+//  ios data header
+//-----------------------------------------------------------------------
+typedef struct avrpro_ios_data_header_s {
+    int32_t data_type;//kRawData_OBD, gps, iio ...
+    int32_t start_time_sec;
+    int32_t length_sec;
+    int32_t data_count;
+    int32_t reserved[4];
+} avrpro_ios_data_header_t;
+
 
 void avrpro_set_print_proc(void (*p)(const char*));
 

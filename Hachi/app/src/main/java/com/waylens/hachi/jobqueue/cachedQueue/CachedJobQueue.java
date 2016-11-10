@@ -101,6 +101,12 @@ public class CachedJobQueue implements JobQueue {
         return delegate.findJobs(constraint);
     }
 
+    @Nullable
+    @Override
+    public Set<JobHolder> findAllJobs() {
+        return null;
+    }
+
     @Override
     public void onJobCancelled(@NonNull JobHolder holder) {
         invalidateCache();

@@ -17,6 +17,7 @@ import com.waylens.hachi.jobqueue.messaging.message.CancelMessage;
 import com.waylens.hachi.jobqueue.messaging.message.CommandMessage;
 import com.waylens.hachi.jobqueue.messaging.message.ConstraintChangeMessage;
 import com.waylens.hachi.jobqueue.messaging.message.JobConsumerIdleMessage;
+import com.waylens.hachi.jobqueue.messaging.message.JobSetQueryMessage;
 import com.waylens.hachi.jobqueue.messaging.message.PublicQueryMessage;
 import com.waylens.hachi.jobqueue.messaging.message.RunJobResultMessage;
 import com.waylens.hachi.jobqueue.messaging.message.SchedulerMessage;
@@ -256,6 +257,9 @@ class JobManagerThread implements Runnable, NetworkEventProvider.Listener {
                     case SCHEDULER:
                         handleSchedulerMessage((SchedulerMessage) message);
                         break;
+                    case JOB_SET_QUERY:
+
+                        break;
                 }
             }
 
@@ -313,11 +317,14 @@ class JobManagerThread implements Runnable, NetworkEventProvider.Listener {
         }
     }
 
+    private void handleSchedulerMessage(JobSetQueryMessage message) {
+        message.getCallback().onResult(getAllPersistentJobs());
+    }
+
     private boolean hasJobsWithSchedulerConstraint(SchedulerConstraint constraint) {
         if (consumerManager.hasJobsWithSchedulerConstraint(constraint)) {
             return true;
         }
-
         queryConstraint.clear();
         queryConstraint.setNowInNs(timer.nanoTime());
         queryConstraint.setMaxNetworkType(constraint.getNetworkStatus());
@@ -637,6 +644,10 @@ class JobManagerThread implements Runnable, NetworkEventProvider.Listener {
     // Used for testing
     JobHolder getNextJobForTesting(Collection<String> runningJobGroups) {
         return getNextJob(runningJobGroups, true);
+    }
+
+    Set<JobHolder> getAllPersistentJobs() {
+        return persistentJobQueue.findAllJobs();
     }
 
     JobHolder getNextJob(Collection<String> runningJobGroups) {

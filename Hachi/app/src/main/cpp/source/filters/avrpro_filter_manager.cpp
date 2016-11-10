@@ -10,14 +10,14 @@
 #include "../include/avrpro_filter_manager.h"
 
 FilterManager::FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t length) :
-                target_length_ms_(length),
-                segIndex_(0),
-                top_speed_kph(0),
-                filteredSelectedIdx_(NULL),
-                logged_seg_index_(0),
-                filter_type_(type),
-                current_clip_info_(NULL),
-                current_clip_reviewed_(false)
+        target_length_ms_(length),
+        segIndex_(0),
+        top_speed_kph(0),
+        filteredSelectedIdx_(NULL),
+        logged_seg_index_(0),
+        filter_type_(type),
+        current_clip_info_(NULL),
+        current_clip_reviewed_(false)
 {
     gpsDataList_._Init();
     obdDataList_._Init();
@@ -27,7 +27,20 @@ FilterManager::FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t
     clipInfoList_._Init();
     memset(sfdb_path_, 0, 1024);
     memset(sql_cmds_, 0, 1024);
+    memset(current_sfdb_version_, 0, 8);
     memset(seg_in_proc_, 0, sizeof(seg_in_proc_));
+    params_.inbound_speed_kph = INBOUND_SPEED_THRESHOLD_KPH;
+    params_.outbound_speed_kph = OUTBOUND_SPEED_THRESHOLD_KPH;
+    params_.inbound_bf_gforce_mg = INBOUND_BF_GFORCE_THRESHOLD;
+    params_.outbound_bf_gforce_mg = OUTBOUND_BF_GFORCE_THRESHOLD;
+    params_.inbound_lr_gforce_mg = INBOUND_LR_GFORCE_THRESHOLD;
+    params_.outbound_lr_gforce_mg = OUTBOUND_LR_GFORCE_THRESHOLD;
+    params_.inbound_ud_gforce_mg = INBOUND_UD_GFORCE_THRESHOLD;
+    params_.outbound_ud_gforce_mg = OUTBOUND_UD_GFORCE_THRESHOLD;
+    params_.seg_candidate_duration_ms = SEGMENT_CANDIDATE_DURATION;
+    params_.seg_connect_duration_ms = SEGMENT_CONNECT_TOLERANCE;
+    params_.min_seg_duration = MINIMUM_SEGMENT_DURATION;
+    params_.max_seg_duration = MAXIMUM_SEGMENT_DURATION;
     if (path) {
         AVRPRO_LOGD("the path prefix is %s", path);
         uint32_t prefix_len = (uint32_t)strlen(path);
@@ -74,6 +87,18 @@ void FilterManager::resetManager(bool clearFiltered)
     top_speed_kph = 0;
     current_clip_reviewed_ = false;
     memset(seg_in_proc_, 0, sizeof(seg_in_proc_));
+    params_.inbound_speed_kph = INBOUND_SPEED_THRESHOLD_KPH;
+    params_.outbound_speed_kph = OUTBOUND_SPEED_THRESHOLD_KPH;
+    params_.inbound_bf_gforce_mg = INBOUND_BF_GFORCE_THRESHOLD;
+    params_.outbound_bf_gforce_mg = OUTBOUND_BF_GFORCE_THRESHOLD;
+    params_.inbound_lr_gforce_mg = INBOUND_LR_GFORCE_THRESHOLD;
+    params_.outbound_lr_gforce_mg = OUTBOUND_LR_GFORCE_THRESHOLD;
+    params_.inbound_ud_gforce_mg = INBOUND_UD_GFORCE_THRESHOLD;
+    params_.outbound_ud_gforce_mg = OUTBOUND_UD_GFORCE_THRESHOLD;
+    params_.seg_candidate_duration_ms = SEGMENT_CANDIDATE_DURATION;
+    params_.seg_connect_duration_ms = SEGMENT_CONNECT_TOLERANCE;
+    params_.min_seg_duration = MINIMUM_SEGMENT_DURATION;
+    params_.max_seg_duration = MAXIMUM_SEGMENT_DURATION;
     gpsDataList_._Release();
     obdDataList_._Release();
     iioDataList_._Release();
@@ -85,6 +110,14 @@ void FilterManager::resetManager(bool clearFiltered)
     if (filteredSelectedIdx_) {
         avrpro_free(filteredSelectedIdx_);
     }
+}
+
+int FilterManager::loadDBVersion(void * para, int n_column,
+                                 char ** column_value, char ** column_name)
+{
+    FilterManager * obj = reinterpret_cast<FilterManager *>(para);
+    strncpy(obj->current_sfdb_version_, column_value[1], 8);
+    return 0;
 }
 
 int FilterManager::initSFDB()
@@ -107,21 +140,21 @@ int FilterManager::initSFDB()
     memset(sql_cmds_, 0, 1024);
     sprintf(sql_cmds_, "insert into VERSION Values(1, %s)", SMART_FILTER_VERSION);
     ret = sqlite3_exec(pSQLSFDB_, sql_cmds_, NULL, NULL, NULL);
-        if (ret != SQLITE_OK) {
+    if (ret != SQLITE_OK) {
         AVRPRO_LOGE("error happens when insert vesrion info");
     }
 
     memset(sql_cmds_, 0, 1024);
     sprintf(sql_cmds_, CREATECLIPINFO);
     ret = sqlite3_exec(pSQLSFDB_, sql_cmds_, NULL, NULL, NULL);
-        if (ret != SQLITE_OK) {
+    if (ret != SQLITE_OK) {
         AVRPRO_LOGE("error happens when create clipinfo table");
     }
 
     memset(sql_cmds_, 0, 1024);
     sprintf(sql_cmds_, CREATESEGMENTINFO);
     ret = sqlite3_exec(pSQLSFDB_, sql_cmds_, NULL, NULL, NULL);
-        if (ret != SQLITE_OK) {
+    if (ret != SQLITE_OK) {
         AVRPRO_LOGE("error happens when create segmentinfo table");
     }
 
@@ -138,6 +171,18 @@ int FilterManager::openSFDB()
             AVRPRO_LOGE("Error: Failed to open the sf database!");
             return -1;
         }
+        char *errmsg = NULL;
+        ret = sqlite3_exec(pSQLSFDB_, "select * from VERSION",
+                           loadDBVersion, this, &errmsg);
+        if (ret != SQLITE_OK) {
+            AVRPRO_LOGE("get sfdb version error");
+            sqlite3_free(errmsg);
+            return -1;
+        }
+        if (strcmp(current_sfdb_version_, SMART_FILTER_VERSION)) {
+            AVRPRO_LOGD("current sfdb version %s too old, rebuild it", current_sfdb_version_);
+            return initSFDB();
+        }
     } else {
         file = fopen(sfdb_path_, "w");
         fclose(file);
@@ -153,17 +198,18 @@ int FilterManager::updateSFDB(uint32_t start_idx)
         AVRPRO_LOGE("sfdb not initialized!");
         return -1;
     }
-    sprintf(sql_cmds_, "insert into CLIPINFO(GUID, CLIPTYPE, CLIPID, DURATION, STTL, STTH) Values(\'%s\', %d, %d, %d, %d, %d)", 
-        current_clip_info_->guid_str, current_clip_info_->type, current_clip_info_->id,
-        current_clip_info_->duration_ms, current_clip_info_->start_time_lo, current_clip_info_->start_time_hi);
+
+    sprintf(sql_cmds_, "insert into CLIPINFO(GUID, CLIPTYPE, CLIPID, DURATION, STTL, STTH) Values(\'%s\', %d, %d, %d, %d, %d)",
+            current_clip_info_->guid_str, current_clip_info_->type, current_clip_info_->id,
+            current_clip_info_->duration_ms, current_clip_info_->start_time_lo, current_clip_info_->start_time_hi);
     AVRPRO_LOGD("sql add clip %s", sql_cmds_);
     int result = sqlite3_exec(pSQLSFDB_, sql_cmds_, NULL, NULL, NULL);
     char * errmsg = NULL;
     char ** dbResult;
     int nRow, nColumn, index, clipIndex = 0;
-    sprintf(sql_cmds_, "select * from CLIPINFO where GUID=\'%s' and CLIPID=%d and DURATION=%d and STTL=%d and STTH=%d", 
-        current_clip_info_->guid_str, current_clip_info_->id, current_clip_info_->duration_ms,
-        current_clip_info_->start_time_lo, current_clip_info_->start_time_hi);
+    sprintf(sql_cmds_, "select * from CLIPINFO where GUID=\'%s' and CLIPID=%d and DURATION=%d and STTL=%d and STTH=%d",
+            current_clip_info_->guid_str, current_clip_info_->id, current_clip_info_->duration_ms,
+            current_clip_info_->start_time_lo, current_clip_info_->start_time_hi);
     sqlite3_get_table(pSQLSFDB_, sql_cmds_, &dbResult, &nRow, &nColumn, &errmsg);
     if (nRow > 0) {
         index = nColumn;
@@ -195,29 +241,35 @@ bool FilterManager::isClipInfoChanged(avrpro_clip_info_t * ci)
     } else {
         if (!current_clip_reviewed_ && segCandidatesList_._Size() > 0) {
             reviewSegCandidates();
-            updateSFDB(logged_seg_index_);
+            if (filter_type_ != SMART_RANDOMPICK) {
+                updateSFDB(logged_seg_index_);
+            }
+            logged_seg_index_ = filteredSegList_._Size();
         }
         current_clip_info_ = (avrpro_clip_info_t *)avrpro_malloc(sizeof(avrpro_clip_info_t));
         *current_clip_info_ = *ci;
         clipInfoList_._Append(&current_clip_info_);
         resetManager();
-        return true;        
+        return true;
     }
 }
 
 int FilterManager::fetchNextFilteredSegInfo(avrpro_segment_info_t * si, bool fromStart)
 {
+    //AVRPRO_LOGE("%s enter", __FUNCTION__);
     if (!current_clip_reviewed_ && segCandidatesList_._Size() > 0) {
         reviewSegCandidates();
-        updateSFDB(logged_seg_index_);
+        if (filter_type_ != SMART_RANDOMPICK) {
+            updateSFDB(logged_seg_index_);
+        }
+        logged_seg_index_ = filteredSegList_._Size();
     }
     if (filteredSegList_._Size() <= 0) {
         return -1;
     }
-    logged_seg_index_ = filteredSegList_._Size();
-
 
     int total_count = filteredSegList_._Size();
+
     if (fromStart) {
         uint32_t total_ms = 0;
         uint32_t rand_idx = 0;
@@ -226,50 +278,94 @@ int FilterManager::fetchNextFilteredSegInfo(avrpro_segment_info_t * si, bool fro
         }
         filteredSelectedIdx_ = (uint8_t *)avrpro_malloc(total_count);
         memset(filteredSelectedIdx_, 1, total_count);
-        for (int i = 0; i < total_count; i++) {
-            total_ms += filteredSegList_._At(i)->duration_ms;
-        }
-        if (total_ms > target_length_ms_) {
-            for (int j = 0; j < total_count; j++) {
-                rand_idx = rand() % total_count;
-                while (filteredSelectedIdx_[rand_idx] == 0) {
-                    // re-randomize
-                    rand_idx = rand() % total_count;
+        if (filter_type_ == SMART_RANDOMCUTTING) {
+            for (int i = 0; i < filteredSegList_._Size(); i++) {
+                avrpro_segment_info_t * prev = filteredSegList_._At(i);
+                for (int j = i + 1; j < filteredSegList_._Size(); j++) {
+                    avrpro_segment_info_t * next = filteredSegList_._At(j);
+                    if (prev->parent_clip != next->parent_clip) {
+                        break;
+                    }
+                    if ((next->inclip_offset_ms <= (prev->inclip_offset_ms + prev->duration_ms) &&
+                         next->inclip_offset_ms >= prev->inclip_offset_ms) ||
+                        ((next->inclip_offset_ms + next->duration_ms) <= (prev->inclip_offset_ms + prev->duration_ms) &&
+                         (next->inclip_offset_ms + next->duration_ms) >= prev->inclip_offset_ms)) {
+                        int32_t new_start = MIN(prev->inclip_offset_ms, next->inclip_offset_ms);
+                        int32_t new_end = MAX(prev->inclip_offset_ms + prev->duration_ms, next->inclip_offset_ms + next->duration_ms);
+                        prev->inclip_offset_ms = new_start;
+                        prev->duration_ms = new_end - new_start;
+                        filteredSegList_._Remove(j);
+                        j--;
+                    }
                 }
-                AVRPRO_LOGD("random index is %d", rand_idx);
-                total_ms -= filteredSegList_._At(rand_idx)->duration_ms;
-                filteredSelectedIdx_[rand_idx] = 0;
-                if (total_ms <= target_length_ms_) {
-                    AVRPRO_LOGD("now total ms is %d", total_ms);
-                    break;
+            }
+            total_count = filteredSegList_._Size();
+            for (int i = 0; i < total_count; i++) {
+                total_ms += filteredSegList_._At(i)->duration_ms;
+            }
+        } else {
+            for (int i = 0; i < total_count; i++) {
+                if (filteredSegList_._At(i)->filter_type == filter_type_) {
+                    total_ms += filteredSegList_._At(i)->duration_ms;
                 }
             }
         }
+
+        while (total_ms > target_length_ms_) {
+            rand_idx = rand() % total_count;
+            if (filteredSelectedIdx_[rand_idx] == 1 &&
+                (filteredSegList_._At(rand_idx)->filter_type == filter_type_ ||
+                 filter_type_ == SMART_RANDOMCUTTING)) {
+                if (total_ms - filteredSegList_._At(rand_idx)->duration_ms < target_length_ms_) {
+                    break;
+                }
+                AVRPRO_LOGD("remove random index is %d", rand_idx);
+                total_ms -= filteredSegList_._At(rand_idx)->duration_ms;
+                filteredSelectedIdx_[rand_idx] = 0;
+            }
+        }
+        AVRPRO_LOGD("now total ms is %d", total_ms);
         segIndex_ = 0;
     }
 
-    for (int i = segIndex_; i < total_count; i++) {
-        if (filteredSelectedIdx_[i] > 0) {
-            *si = *(filteredSegList_._At(i));
-            segIndex_ = i + 1;
-            return 0;
+    if (filter_type_ == SMART_RANDOMCUTTING) {
+        for (int i = segIndex_; i < total_count; i++) {
+            if (filteredSelectedIdx_[i] > 0) {
+                *si = *(filteredSegList_._At(i));
+                segIndex_ = i + 1;
+                return 0;
+            }
+        }
+    } else {
+        for (int i = segIndex_; i < total_count; i++) {
+            if (filteredSelectedIdx_[i] > 0 && filteredSegList_._At(i)->filter_type == filter_type_) {
+                *si = *(filteredSegList_._At(i));
+                segIndex_ = i + 1;
+                AVRPRO_LOGD("filtered %d %d", filteredSegList_._At(i)->parent_clip, filteredSegList_._At(i)->inclip_offset_ms);
+                return 0;
+            }
         }
     }
-    
+
     return -1;
 }
 
 bool FilterManager::isTypeFilteredAndCached()
 {
+    //AVRPRO_LOGE("%s enter", __FUNCTION__);
+
     if (!current_clip_info_) {
+        return false;
+    }
+    if (filter_type_ == SMART_RANDOMPICK) {
         return false;
     }
     char * errmsg = NULL;
     char ** dbResult;
     int nRow, nColumn, index, clipIndex;
-    sprintf(sql_cmds_, "select * from CLIPINFO where GUID=\'%s' and CLIPID=%d and DURATION=%d and STTL=%d and STTH=%d", 
-        current_clip_info_->guid_str, current_clip_info_->id, current_clip_info_->duration_ms,
-        current_clip_info_->start_time_lo, current_clip_info_->start_time_hi);
+    sprintf(sql_cmds_, "select * from CLIPINFO where GUID=\'%s' and CLIPID=%d and DURATION=%d and STTL=%d and STTH=%d",
+            current_clip_info_->guid_str, current_clip_info_->id, current_clip_info_->duration_ms,
+            current_clip_info_->start_time_lo, current_clip_info_->start_time_hi);
     sqlite3_get_table(pSQLSFDB_, sql_cmds_, &dbResult, &nRow, &nColumn, &errmsg);
     if (nRow > 0) {
         index = nColumn;
@@ -287,11 +383,12 @@ bool FilterManager::isTypeFilteredAndCached()
         sqlite3_exec(pSQLSFDB_, sql_cmds_, &loadSegmentInfo, this, NULL);
     }
     current_clip_reviewed_ = true;
+    //AVRPRO_LOGE("%s exit", __FUNCTION__);
     return true;
 }
 
 int FilterManager::loadSegmentInfo(void * para, int n_column,
-                                char ** column_value, char ** column_name)
+                                   char ** column_value, char ** column_name)
 {
     FilterManager * fm = reinterpret_cast<FilterManager *>(para);
     avrpro_segment_info_t si;
@@ -308,8 +405,8 @@ int FilterManager::reviewSegCandidates()
 {
     uint32_t new_speed_threshold = (top_speed_kph * 9 / 10);
 
-    if (new_speed_threshold < HIGH_SPEED_THRESHOLD_KPH) {
-        new_speed_threshold = HIGH_SPEED_THRESHOLD_KPH;
+    if (new_speed_threshold < params_.inbound_speed_kph) {
+        new_speed_threshold = params_.inbound_speed_kph;
     }
     if (segCandidatesList_._Size() == 0) {
         return 0;
@@ -318,7 +415,7 @@ int FilterManager::reviewSegCandidates()
     avrpro_segment_info_t segment_reviewed = {0};
     avrpro_segment_info_t * candidateInProc = NULL;
 
-    for (int i = 0; i < SMART_MAX_INDEX; i++) {
+    for (int i = SMART_FAST_FURIOUS; i < SMART_MAX_INDEX; i++) {
         memset(&segment_reviewed, 0, sizeof(avrpro_segment_info_t));
         for (int j = 0; j < segCandidatesList_._Size(); j++) {
             candidateInProc = segCandidatesList_._At(j);
@@ -326,8 +423,8 @@ int FilterManager::reviewSegCandidates()
                 if (segment_reviewed.inclip_offset_ms <= 0) {
                     segment_reviewed = *candidateInProc;
                 } else {
-                    if ((candidateInProc->inclip_offset_ms - segment_reviewed.inclip_offset_ms - 
-                        segment_reviewed.duration_ms) < SEGMENT_CONNECT_TOLERANCE) {
+                    if ((candidateInProc->inclip_offset_ms - segment_reviewed.inclip_offset_ms -
+                         segment_reviewed.duration_ms) < SEGMENT_CONNECT_TOLERANCE) {
                         int32_t new_duration_ms = candidateInProc->inclip_offset_ms + candidateInProc->duration_ms - segment_reviewed.inclip_offset_ms;
                         if (new_duration_ms <= MAXIMUM_SEGMENT_DURATION) {
                             segment_reviewed.duration_ms = new_duration_ms;
@@ -345,7 +442,7 @@ int FilterManager::reviewSegCandidates()
                         } else {
                             AVRPRO_LOGD("dropped one short segment: type: %d, offset: %d, duration: %d",
                                         segment_reviewed.filter_type, segment_reviewed.inclip_offset_ms, segment_reviewed.duration_ms);
-                        }                        
+                        }
                         memset(&segment_reviewed, 0, sizeof(avrpro_segment_info_t));
                     }
                 }
@@ -363,13 +460,14 @@ int FilterManager::addGPSNode(avrpro_gps_parsed_data_t * data)
         top_speed_kph = (uint32_t)(data->speed);
     }
     // it's a node worth notice
-    if (data->speed >= HIGH_SPEED_THRESHOLD_KPH) {
-        generateCandidates(SMART_FAST_FURIOUS, data->clip_time_ms, data->speed);
-    } else {
-        if (seg_in_proc_[SMART_FAST_FURIOUS].inclip_offset_ms > 0) {
+    if (seg_in_proc_[SMART_FAST_FURIOUS].inclip_offset_ms == -1) {
+        if (data->speed >= params_.inbound_speed_kph) {
             generateCandidates(SMART_FAST_FURIOUS, data->clip_time_ms, data->speed);
         }
+    } else {
+        generateCandidates(SMART_FAST_FURIOUS, data->clip_time_ms, data->speed);
     }
+
     gpsDataList_._Append(data);
     return 0;
 }
@@ -381,42 +479,50 @@ int FilterManager::addOBDNode(avrpro_obd_parsed_data_t * data)
             top_speed_kph = (uint32_t)(data->speed);
         }
         // it's a node worth notice
-        if (data->speed >= HIGH_SPEED_THRESHOLD_KPH) {
-            generateCandidates(SMART_FAST_FURIOUS, data->clip_time_ms, data->speed);            
-        } else {
-            if (seg_in_proc_[SMART_FAST_FURIOUS].inclip_offset_ms > 0) {
+        if (seg_in_proc_[SMART_FAST_FURIOUS].inclip_offset_ms == -1) {
+            if (data->speed >= params_.inbound_speed_kph) {
                 generateCandidates(SMART_FAST_FURIOUS, data->clip_time_ms, data->speed);
             }
+        } else {
+            generateCandidates(SMART_FAST_FURIOUS, data->clip_time_ms, data->speed);
         }
     }
+
     obdDataList_._Append(data);
     return 0;
 }
 
 int FilterManager::addIIONode(avrpro_iio_parsed_data_t * data)
 {
-    if (abs(data->accel_z) >= HIGH_BF_GFORCE_THRESHOLD) {
-        generateCandidates(SMART_ACCELERATION, data->clip_time_ms, data->accel_z);
-    } else {
-        if (seg_in_proc_[SMART_ACCELERATION].inclip_offset_ms > 0) {
-            generateCandidates(SMART_ACCELERATION, data->clip_time_ms, abs(data->accel_z));
+    if (seg_in_proc_[SMART_ACCELERATION].inclip_offset_ms == -1) {
+        if (abs(data->accel_z) >= params_.inbound_bf_gforce_mg) {
+            generateCandidates(SMART_ACCELERATION, data->clip_time_ms, data->accel_z);
         }
+    } else {
+        generateCandidates(SMART_ACCELERATION, data->clip_time_ms, abs(data->accel_z));
     }
-    if (abs(data->accel_x) >= HIGH_LR_GFORCE_THRESHOLD) {
-        generateCandidates(SMART_SHARPTURN, data->clip_time_ms, data->accel_x);
-    } else {
-        if (seg_in_proc_[SMART_SHARPTURN].inclip_offset_ms > 0) {
-            generateCandidates(SMART_SHARPTURN, data->clip_time_ms, abs(data->accel_x));
+
+    if (seg_in_proc_[SMART_SHARPTURN].inclip_offset_ms == -1) {
+        if (abs(data->accel_z) >= params_.inbound_lr_gforce_mg) {
+            generateCandidates(SMART_SHARPTURN, data->clip_time_ms, data->accel_x);
         }
+    } else {
+        generateCandidates(SMART_SHARPTURN, data->clip_time_ms, abs(data->accel_x));
     }
-    if (abs(data->accel_y) >= HIGH_UD_GFORCE_THRESHOLD) {
-        generateCandidates(SMART_BUMPINGHARD, data->clip_time_ms, data->accel_y);
-    } else {
-        if (seg_in_proc_[SMART_BUMPINGHARD].inclip_offset_ms > 0) {
-            generateCandidates(SMART_BUMPINGHARD, data->clip_time_ms, abs(data->accel_y));
+
+    if (seg_in_proc_[SMART_BUMPINGHARD].inclip_offset_ms == -1) {
+        if (abs(data->accel_z) >= params_.inbound_ud_gforce_mg) {
+            generateCandidates(SMART_BUMPINGHARD, data->clip_time_ms, data->accel_y);
         }
+    } else {
+        generateCandidates(SMART_BUMPINGHARD, data->clip_time_ms, abs(data->accel_y));
+    }
+
+    if (filter_type_ == SMART_RANDOMPICK) {
+        generateCandidates(SMART_RANDOMPICK, data->clip_time_ms, 0);
     }
     iioDataList_._Append(data);
+
     return 0;
 }
 
@@ -424,11 +530,19 @@ int FilterManager::generateCandidates(int type, uint64_t clip_time_ms, int32_t p
 {
     if (seg_in_proc_[type].inclip_offset_ms > 0) {
         seg_in_proc_[type].duration_ms = (uint32_t)(clip_time_ms -
-            (uint64_t)(current_clip_info_->start_time_lo) -
-            (uint64_t)((uint64_t)(current_clip_info_->start_time_hi) << 32)) -
-            seg_in_proc_[type].inclip_offset_ms;
+                                                    (uint64_t)(current_clip_info_->start_time_lo) -
+                                                    (uint64_t)((uint64_t)(current_clip_info_->start_time_hi) << 32)) -
+                                         seg_in_proc_[type].inclip_offset_ms;
         if (seg_in_proc_[type].duration_ms >= SEGMENT_CANDIDATE_DURATION) {
-            segCandidatesList_._Append(&(seg_in_proc_[type]));
+            if (type != SMART_RANDOMPICK) {
+                segCandidatesList_._Append(&(seg_in_proc_[type]));
+            } else {
+                int pick = rand() % 10;
+                if (pick >= 3) {
+                    segCandidatesList_._Append(&(seg_in_proc_[type]));
+                    AVRPRO_LOGD("random pick candidate %d, %d", seg_in_proc_[type].inclip_offset_ms, seg_in_proc_[type].duration_ms);
+                }
+            }
             //AVRPRO_LOGD("append a new segment candidate: offset: %d, duration: %d, type: %d, speed: %d",
             //    seg_in_proc_[type].inclip_offset_ms, seg_in_proc_[type].duration_ms, type, seg_in_proc_[type].max_speed_kph);
             seg_in_proc_[type].inclip_offset_ms = -1;
@@ -438,28 +552,28 @@ int FilterManager::generateCandidates(int type, uint64_t clip_time_ms, int32_t p
             if (param > seg_in_proc_[type].max_speed_kph) {
                 seg_in_proc_[type].max_speed_kph = param;
             }
-            if (param < HIGH_SPEED_THRESHOLD_KPH) {
+            if (param < params_.outbound_speed_kph) {
                 segCandidatesList_._Append(&(seg_in_proc_[type]));
                 //AVRPRO_LOGD("append a new segment candidate: offset: %d, duration: %d, type: %d, speed: %d",
                 //    seg_in_proc_[type].inclip_offset_ms, seg_in_proc_[type].duration_ms, type, seg_in_proc_[type].max_speed_kph);
                 seg_in_proc_[type].inclip_offset_ms = -1;
             }
         } else if (type == SMART_ACCELERATION) {
-            if (param < HIGH_BF_GFORCE_THRESHOLD) {
+            if (param < params_.outbound_bf_gforce_mg) {
                 segCandidatesList_._Append(&(seg_in_proc_[type]));
                 //AVRPRO_LOGD("append a new segment candidate: offset: %d, duration: %d, type: %d, speed: %d",
                 //    seg_in_proc_[type].inclip_offset_ms, seg_in_proc_[type].duration_ms, type, seg_in_proc_[type].max_speed_kph);
                 seg_in_proc_[type].inclip_offset_ms = -1;
             }
         } else if (type == SMART_SHARPTURN) {
-            if (param < HIGH_LR_GFORCE_THRESHOLD) {
+            if (param < params_.outbound_lr_gforce_mg) {
                 segCandidatesList_._Append(&(seg_in_proc_[type]));
                 //AVRPRO_LOGD("append a new segment candidate: offset: %d, duration: %d, type: %d, speed: %d",
                 //    seg_in_proc_[type].inclip_offset_ms, seg_in_proc_[type].duration_ms, type, seg_in_proc_[type].max_speed_kph);
                 seg_in_proc_[type].inclip_offset_ms = -1;
             }
         } else if (type == SMART_BUMPINGHARD) {
-            if (param < HIGH_UD_GFORCE_THRESHOLD) {
+            if (param < params_.outbound_ud_gforce_mg) {
                 segCandidatesList_._Append(&(seg_in_proc_[type]));
                 //AVRPRO_LOGD("append a new segment candidate: offset: %d, duration: %d, type: %d, speed: %d",
                 //    seg_in_proc_[type].inclip_offset_ms, seg_in_proc_[type].duration_ms, type, seg_in_proc_[type].max_speed_kph);
@@ -468,13 +582,13 @@ int FilterManager::generateCandidates(int type, uint64_t clip_time_ms, int32_t p
         }
     } else {
         seg_in_proc_[type].inclip_offset_ms = (uint32_t)(clip_time_ms -
-                (uint64_t)(current_clip_info_->start_time_lo) -
-                (uint64_t)((uint64_t)(current_clip_info_->start_time_hi) << 32));
-        seg_in_proc_[type].filter_type = type; 
+                                                         (uint64_t)(current_clip_info_->start_time_lo) -
+                                                         (uint64_t)((uint64_t)(current_clip_info_->start_time_hi) << 32));
+        seg_in_proc_[type].filter_type = type;
         seg_in_proc_[type].parent_clip = current_clip_info_;
         if (type == SMART_FAST_FURIOUS) {
             seg_in_proc_[type].max_speed_kph = param;
-        }          
+        }
     }
 
     return 0;

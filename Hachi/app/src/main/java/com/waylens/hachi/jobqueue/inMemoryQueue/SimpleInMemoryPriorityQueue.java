@@ -1,6 +1,7 @@
 package com.waylens.hachi.jobqueue.inMemoryQueue;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 
 import com.waylens.hachi.jobqueue.Constraint;
@@ -189,6 +190,12 @@ public class SimpleInMemoryPriorityQueue implements JobQueue {
             }
         }
         return result;
+    }
+
+    @Nullable
+    @Override
+    public Set<JobHolder> findAllJobs() {
+        return null;
     }
 
     @Override

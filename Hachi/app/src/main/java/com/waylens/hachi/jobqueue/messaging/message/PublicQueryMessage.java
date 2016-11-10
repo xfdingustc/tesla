@@ -14,6 +14,7 @@ public class PublicQueryMessage extends Message implements IntCallback.MessageWi
     public static final int CLEAR = 5;
     public static final int ACTIVE_CONSUMER_COUNT = 6;
     public static final int SCHEDULER_START = 7;
+    public static final int ALL_JOBS = 8;
     // used for testing
     public static final int INTERNAL_RUNNABLE = 101;
 

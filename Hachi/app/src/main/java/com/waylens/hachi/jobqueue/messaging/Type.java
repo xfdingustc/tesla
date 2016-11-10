@@ -8,6 +8,7 @@ import com.waylens.hachi.jobqueue.messaging.message.CancelResultMessage;
 import com.waylens.hachi.jobqueue.messaging.message.CommandMessage;
 import com.waylens.hachi.jobqueue.messaging.message.ConstraintChangeMessage;
 import com.waylens.hachi.jobqueue.messaging.message.JobConsumerIdleMessage;
+import com.waylens.hachi.jobqueue.messaging.message.JobSetQueryMessage;
 import com.waylens.hachi.jobqueue.messaging.message.PublicQueryMessage;
 import com.waylens.hachi.jobqueue.messaging.message.RunJobMessage;
 import com.waylens.hachi.jobqueue.messaging.message.RunJobResultMessage;
@@ -30,7 +31,8 @@ public enum Type {
     CANCEL(CancelMessage.class, 1),
     CONSTRAINT_CHANGE(ConstraintChangeMessage.class, 2),
     RUN_JOB_RESULT(RunJobResultMessage.class, 3),
-    SCHEDULER(SchedulerMessage.class, 4);
+    SCHEDULER(SchedulerMessage.class, 4),
+    JOB_SET_QUERY(JobSetQueryMessage.class, 5);
     final Class<? extends Message> klass;
     final static Map<Class<? extends Message>, Type> mapping;
     final int priority; // higher is better

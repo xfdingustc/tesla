@@ -110,6 +110,13 @@ public interface JobQueue {
     @NonNull
     Set<JobHolder> findJobs(@NonNull Constraint constraint);
 
+
+    /**
+     *
+     */
+    @Nullable
+    Set<JobHolder> findAllJobs();
+
     /**
      * Called when a job is cancelled by the user.
      * <p>
