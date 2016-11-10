@@ -298,8 +298,8 @@ public class ShareActivity extends ClipPlayActivity {
     private void initViews() {
         setContentView(R.layout.activity_share);
         setupToolbar();
-        Logger.t(TAG).d("init");
-        Logger.t(TAG).d("timezone offset" + TimeZone.getDefault().getRawOffset());
+//        Logger.t(TAG).d("init");
+//        Logger.t(TAG).d("timezone offset" + TimeZone.getDefault().getRawOffset());
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
         Observable.create(new Observable.OnSubscribe<Clip>() {

@@ -1,5 +1,6 @@
 package com.waylens.hachi.bgjob.upload;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 
 import org.greenrobot.eventbus.EventBus;
@@ -14,6 +15,7 @@ import java.util.List;
  * Created by Xiaofei on 2016/7/13.
  */
 public class UploadManager {
+    private static final String TAG = UploadManager.class.getSimpleName();
     private static UploadManager mSharedUploadManager = new UploadManager();
     private final List<UploadMomentJob> mUploadables;
 
@@ -75,7 +77,9 @@ public class UploadManager {
     }
 
     private void removeJob(UploadMomentJob job) {
+        Logger.t(TAG).d("before job size: " + mUploadables.size());
         mUploadables.remove(job);
+        Logger.t(TAG).d("after job size: " + mUploadables.size());
         for (int i = 0; i < mListenerList.size(); i++) {
             WeakReference<OnUploadJobStateChangeListener> oneListenr = mListenerList.get(i);
             if (oneListenr != null) {

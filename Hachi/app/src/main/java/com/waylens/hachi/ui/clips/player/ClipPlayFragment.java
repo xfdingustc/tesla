@@ -515,7 +515,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                             Logger.t(TAG).d("update raw data!");
                         }
                     }
-                    Logger.t(TAG).d("init gauge view!");
+//                    Logger.t(TAG).d("init gauge view!");
                 }
             });
     }

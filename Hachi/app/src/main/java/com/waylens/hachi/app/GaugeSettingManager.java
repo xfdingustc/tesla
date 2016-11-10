@@ -98,7 +98,7 @@ public class GaugeSettingManager  {
 
             }
             gaugeSettingMap.put(gaugeInfoItem.getJSParam(), value);
-            Logger.d(gaugeInfoItem.getJSParam() + ":" + value);
+//            Logger.d(gaugeInfoItem.getJSParam() + ":" + value);
         }
         return gaugeSettingMap;
     }

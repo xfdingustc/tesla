@@ -65,7 +65,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
     @Override
     public void onAdded() {
         Logger.t(TAG).d("on added");
-
+//        EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_ADDED, this));
     }
 
 
@@ -188,7 +188,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
         }
 
         if (mState != UPLOAD_STATE_CANCELLED && mState != UPLOAD_STATE_ERROR) {
-            Logger.t(TAG).d("finished " + mState);
+//            Logger.t(TAG).d("finished " + mState);
             setUploadState(UPLOAD_STATE_FINISHED);
 
             for (LocalMoment.Segment segment : mLocalMoment.mSegments) {
