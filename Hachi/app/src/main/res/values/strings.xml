@@ -530,4 +530,5 @@
     <string name="remix">Remix</string>
     <string name="remixing_text">Collecting splendid clips\nfrom your Waylens camera...</string>
     <string name="remix_failed">Failed to find interesting clip</string>
+    <string name="on">ON</string>
 </resources>

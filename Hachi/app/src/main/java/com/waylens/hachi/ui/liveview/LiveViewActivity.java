@@ -55,7 +55,6 @@ import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.xfdingustc.mjpegview.library.MjpegView;
 
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -66,6 +65,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Subscriber;
@@ -139,6 +139,12 @@ public class LiveViewActivity extends BaseActivity {
 
     @BindView(R.id.obd)
     ImageView mObd;
+
+    @BindView(R.id.gpsStatus)
+    ImageView ivGpsStatus;
+
+    @BindView(R.id.detail_gps)
+    ImageView ivDetailGps;
 
     @BindView(R.id.detail_obd)
     ImageView mDetailObd;
@@ -215,8 +221,17 @@ public class LiveViewActivity extends BaseActivity {
     @BindView(R.id.obd_ctrl_status)
     TextView mObdStatus;
 
+    @BindView(R.id.gps_status)
+    TextView tvGpsStatus;
+
     @BindView(R.id.shutter_panel)
     LinearLayout shutterPanel;
+
+    @BindString(R.string.on)
+    String strOn;
+
+    @BindString(R.string.off)
+    String strOff;
 
 
     @OnClick(R.id.pull)
@@ -358,13 +373,12 @@ public class LiveViewActivity extends BaseActivity {
                 updateMicControlButton();
                 break;
             case CameraStateChangeEvent.CAMEAR_STATE_REC_ROTATE:
-                boolean ifRoate = (Boolean)event.getExtra();
+                boolean ifRoate = (Boolean) event.getExtra();
                 mGaugeView.setRotate(ifRoate);
                 break;
         }
 
     }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -413,8 +427,6 @@ public class LiveViewActivity extends BaseActivity {
         mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
 
     }
-
-
 
 
     @Override
@@ -571,6 +583,22 @@ public class LiveViewActivity extends BaseActivity {
             updateBtDeviceState();
             openLiveViewData();
         }
+
+    }
+
+    private void updateGpsStatus(List<RawDataItem> itemList) {
+        for (RawDataItem item : itemList) {
+            if (item.getType() == RawDataItem.DATA_TYPE_GPS) {
+                ivGpsStatus.setAlpha(1.0f);
+                ivDetailGps.setAlpha(1.0f);
+                tvGpsStatus.setText(strOn);
+                return;
+            }
+        }
+
+        ivGpsStatus.setAlpha(0.2f);
+        ivDetailGps.setAlpha(0.2f);
+        tvGpsStatus.setText(strOff);
 
     }
 
@@ -739,7 +767,6 @@ public class LiveViewActivity extends BaseActivity {
     }
 
 
-
     private void stopCameraPreview() {
         if (mLiveView != null) {
             mLiveView.stopStream();
@@ -842,6 +869,7 @@ public class LiveViewActivity extends BaseActivity {
 
             if (item != null) {
                 mGaugeView.updateRawDateItem(item);
+                updateGpsStatus(item);
             }
         }
     };
@@ -1025,21 +1053,21 @@ public class LiveViewActivity extends BaseActivity {
         if (obdState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mObd.setAlpha(0.2f);
             mDetailObd.setAlpha(0.2f);
-            mObdStatus.setText("OFF");
+            mObdStatus.setText(strOff);
         } else {
             mObd.setAlpha(1.0f);
             mDetailObd.setAlpha(1.0f);
-            mObdStatus.setText("ON");
+            mObdStatus.setText(strOn);
         }
 
         if (remoteCtrState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mRemoteCtrl.setAlpha(0.2f);
             mDetailRemote.setAlpha(0.2f);
-            mRemoteStatus.setText("OFF");
+            mRemoteStatus.setText(strOff);
         } else {
             mRemoteCtrl.setAlpha(1.0f);
             mDetailRemote.setAlpha(1.0f);
-            mRemoteStatus.setText("ON");
+            mRemoteStatus.setText(strOn);
         }
     }
 
