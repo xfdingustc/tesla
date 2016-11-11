@@ -5,7 +5,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
+import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.presenter.Presenter;
 import com.waylens.hachi.presenter.impl.ClipVideoPresenterImpl;
 import com.waylens.hachi.snipe.vdb.Clip;
@@ -18,6 +22,10 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.ClipVideoView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -40,11 +48,34 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
     @BindView(R.id.fab_smart_remix)
     FloatingActionButton mFabSmartRemix;
 
+    private EventBus mEventBus = EventBus.getDefault();
+
     private Subscription mInnerOperationSubscription;
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventCameraConnection(CameraConnectionEvent event) {
+        Logger.t(TAG).d("camera connection event: " + event.getWhat());
+        switch (event.getWhat()) {
+            case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
+                mFabSmartRemix.setVisibility(View.VISIBLE);
+                break;
+            case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
+                if (VdtCameraManager.getManager().getConnectedCameras().size() == 0) {
+                    mFabSmartRemix.setVisibility(View.INVISIBLE);
+                }
+                break;
+
+            case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
+                mFabSmartRemix.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
 
     @Override
     public void onStart() {
         super.onStart();
+        mEventBus.register(this);
         mInnerOperationSubscription = RxBus.getDefault().toObserverable(ToggleFabEvent.class)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SimpleSubscribe<ToggleFabEvent>() {
@@ -60,7 +91,9 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
                         }
                     }
                 });
-
+        if (VdtCameraManager.getManager().getConnectedCameras().size() <=0 ) {
+            mFabSmartRemix.setVisibility(View.INVISIBLE);
+        }
     }
 
 
@@ -134,6 +167,7 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
     @Override
     public void onStop() {
         super.onStop();
+        mEventBus.unregister(this);
         if (!mInnerOperationSubscription.isUnsubscribed()) {
             mInnerOperationSubscription.unsubscribe();
         }

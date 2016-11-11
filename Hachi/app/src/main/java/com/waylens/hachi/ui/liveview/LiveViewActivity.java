@@ -308,15 +308,7 @@ public class LiveViewActivity extends BaseActivity {
                 mCameraConnecting.setVisibility(View.VISIBLE);
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
-                if (mVdtCamera != null) {
-                    mLiveView.stopStream();
-                }
-                mCameraNoSignal.setVisibility(View.VISIBLE);
-                mCameraConnecting.setVisibility(View.GONE);
-                mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
-                AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
-                animationDrawable.start();
-                getToolbar().getMenu().clear();
+                handleCameraListChanged();
                 break;
         }
 
@@ -431,37 +423,7 @@ public class LiveViewActivity extends BaseActivity {
 
     @Override
     public void setupToolbar() {
-        if (mVdtCameraManager.getConnectedCameras().size() > 1) {
-            List<String> cameraNames = new ArrayList<>();
-            List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
-            for (int i = 0; i < connectedCameras.size(); i++) {
-                VdtCamera camera = connectedCameras.get(i);
-                Logger.t(TAG).d("add one camera: " + camera.getName());
-                cameraNames.add(camera.getName());
-            }
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, cameraNames);
-            mCameraSpinner.setAdapter(adapter);
-
-            mCameraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                        Logger.t(TAG).d("Item Position clicked: " + position);
-                    changeCurrentCamera(position);
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
-            getToolbar().setTitle("");
-            mCameraSpinner.setVisibility(View.VISIBLE);
-
-        } else {
-            getToolbar().setTitle(R.string.live_view);
-            mCameraSpinner.setVisibility(View.GONE);
-        }
-
+        setupSpinner();
         getToolbar().getMenu().clear();
         if (VdtCameraManager.getManager().isConnected()) {
             getToolbar().inflateMenu(R.menu.menu_live_view);
@@ -545,6 +507,67 @@ public class LiveViewActivity extends BaseActivity {
         stopPreview();
         unregisterRxBusEvent();
         mEventBus.unregister(this);
+
+    }
+
+    public void handleCameraListChanged() {
+        setupSpinner();
+        if (mVdtCamera == null) {
+            mLiveView.stopStream();
+            mCameraNoSignal.setVisibility(View.VISIBLE);
+            mCameraConnecting.setVisibility(View.GONE);
+            mIvConnectIdicator.setBackgroundResource(R.drawable.camera_connecting);
+            AnimationDrawable animationDrawable = (AnimationDrawable) mIvConnectIdicator.getBackground();
+            animationDrawable.start();
+            getToolbar().getMenu().clear();
+        }
+    }
+
+    private void setupSpinner() {
+        if (mVdtCameraManager.getConnectedCameras().size() > 1) {
+            List<String> cameraNames = new ArrayList<>();
+            List<VdtCamera> connectedCameras = mVdtCameraManager.getConnectedCameras();
+            int index = -1;
+            for (int i = 0; i < connectedCameras.size(); i++) {
+                VdtCamera camera = connectedCameras.get(i);
+                if (camera.getAddress() == mVdtCamera.getAddress()) {
+                    index = i;
+                }
+                Logger.t(TAG).d("add one camera: " + camera.getName());
+                cameraNames.add(camera.getName());
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, cameraNames);
+            mCameraSpinner.setAdapter(adapter);
+            if (index < 0) {
+                mCameraSpinner.setSelection(0);
+                changeCurrentCamera(0);
+            } else {
+                mCameraSpinner.setSelection(index);
+            }
+            mCameraSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        Logger.t(TAG).d("Item Position clicked: " + position);
+                    changeCurrentCamera(position);
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+            getToolbar().setTitle("");
+            mCameraSpinner.setVisibility(View.VISIBLE);
+        } else if(mVdtCameraManager.getConnectedCameras().size() == 1){
+            if (mVdtCamera.getAddress() != mVdtCameraManager.getCurrentCamera().getAddress()) {
+                changeCurrentCamera(0);
+            }
+            getToolbar().setTitle(R.string.live_view);
+            mCameraSpinner.setVisibility(View.GONE);
+        } else {
+            mVdtCamera = null;
+            mCameraSpinner.setVisibility(View.GONE);
+        }
 
     }
 
@@ -741,6 +764,7 @@ public class LiveViewActivity extends BaseActivity {
         mVdbRequestQueue = mVdtCamera.getRequestQueue();
         mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
 //        Logger.t(TAG).d("changed vdtcamera to " + mVdtCamera.getName());
+        initViews();
         initCameraPreview();
     }
 

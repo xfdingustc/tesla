@@ -127,6 +127,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void initCamera() {
         mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
         if (mVdtCamera != null) {
+            Logger.t(TAG).d("camera name:" + mVdtCamera.getName());
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
         }
     }

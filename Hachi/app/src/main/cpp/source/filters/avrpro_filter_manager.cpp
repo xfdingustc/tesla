@@ -9,6 +9,7 @@
 #include "avrpro_std_data.h"
 #include "../include/avrpro_filter_manager.h"
 
+
 FilterManager::FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t length) :
         target_length_ms_(length),
         segIndex_(0),
@@ -42,7 +43,7 @@ FilterManager::FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t
     params_.min_seg_duration = MINIMUM_SEGMENT_DURATION;
     params_.max_seg_duration = MAXIMUM_SEGMENT_DURATION;
     if (path) {
-        AVRPRO_LOGD("the path prefix is %s", path);
+        //AVRPRO_LOGD("the path prefix is %s", path);
         uint32_t prefix_len = (uint32_t)strlen(path);
         strcpy(sfdb_path_, path);
         if (sfdb_path_[prefix_len - 1] != '/' || sfdb_path_[prefix_len - 1] != '\\') {
@@ -51,7 +52,7 @@ FilterManager::FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t
         } else {
             strcpy(sfdb_path_ + prefix_len, SMART_FILTER_DB_NAME);
         }
-        AVRPRO_LOGD("the full path is %s", sfdb_path_);
+        //AVRPRO_LOGD("the full path is %s", sfdb_path_);
     } else {
         AVRPRO_LOGW("the path prefix is null, using the current dir");
         strcpy(sfdb_path_, SMART_FILTER_DB_NAME);
@@ -533,7 +534,7 @@ int FilterManager::addIIONode(avrpro_iio_parsed_data_t * data)
     }
 
     if (seg_in_proc_[SMART_SHARPTURN].inclip_offset_ms == -1) {
-        if (abs(data->accel_z) >= params_.inbound_lr_gforce_mg) {
+        if (abs(data->accel_x) >= params_.inbound_lr_gforce_mg) {
             generateCandidates(SMART_SHARPTURN, data->clip_time_ms, data->accel_x);
         }
     } else {
@@ -541,7 +542,7 @@ int FilterManager::addIIONode(avrpro_iio_parsed_data_t * data)
     }
 
     if (seg_in_proc_[SMART_BUMPINGHARD].inclip_offset_ms == -1) {
-        if (abs(data->accel_z) >= params_.inbound_ud_gforce_mg) {
+        if (abs(data->accel_y) >= params_.inbound_ud_gforce_mg) {
             generateCandidates(SMART_BUMPINGHARD, data->clip_time_ms, data->accel_y);
         }
     } else {

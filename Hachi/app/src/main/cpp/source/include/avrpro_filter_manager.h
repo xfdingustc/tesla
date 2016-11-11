@@ -9,14 +9,14 @@ extern "C" {
 }
 
 #define SMART_FILTER_DB_NAME   "waylensfilter.db"
-#define SMART_FILTER_VERSION   "0.13"
+#define SMART_FILTER_VERSION   "0.14"
 #define INBOUND_SPEED_THRESHOLD_KPH     80
 #define OUTBOUND_SPEED_THRESHOLD_KPH    70
 
 #define INBOUND_RPM_THRESHOLD           5000
 #define OUTBOUND_RPM_THRESHOLD          3000
 
-#define INBOUND_BF_GFORCE_THRESHOLD     400     // mg
+#define INBOUND_BF_GFORCE_THRESHOLD     200     // mg
 #define OUTBOUND_BF_GFORCE_THRESHOLD    100     // mg
 
 #define INBOUND_LR_GFORCE_THRESHOLD     200     // mg
@@ -73,7 +73,7 @@ public:
 
 private:
     static int loadSegmentInfo(void * para, int n_column,
-                       char ** column_value, char ** column_name);
+                               char ** column_value, char ** column_name);
     sqlite3 * pSQLSFDB_;
     char sfdb_path_[1024];
     char sql_cmds_[1024];

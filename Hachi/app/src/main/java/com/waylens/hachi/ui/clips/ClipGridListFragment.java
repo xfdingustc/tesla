@@ -24,6 +24,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
@@ -117,10 +118,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         Logger.t(TAG).d("camera connection event: " + event.getWhat());
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
+                hideCameraDisconnect();
                 mPresenter.loadClipSet(false);
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
-                showCameraDisconnect();
+                if (VdtCameraManager.getManager().getConnectedCameras().size() == 0) {
+                    showCameraDisconnect();
+                }
                 break;
 
             case CameraConnectionEvent.VDT_CAMERA_CONNECTED:
