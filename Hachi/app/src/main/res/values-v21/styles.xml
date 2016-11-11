@@ -87,6 +87,11 @@
         <item name="android:letterSpacing">0.02</item>
     </style>
 
+    <style name="SearchWindowAnimations">
+        <item name="android:windowEnterAnimation">@null</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_rapidly</item>
+    </style>
+
     <style name="Widget.Hachi.InlineActionButton" parent="@android:style/Widget.Material.Button">
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textAppearance">@style/TextAppearance.CommentAuthor</item>
@@ -94,6 +99,29 @@
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
 
+    <style name="Widget.Hachi.SearchView" parent="android:style/Widget.Material.SearchView">
+        <item name="android:searchIcon">@android:color/transparent</item>
+        <item name="android:searchHintIcon">@android:color/transparent</item>
+        <item name="android:queryBackground">@android:color/transparent</item>
+        <item name="android:submitBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.Hachi.EmptyText">
+        <item name="android:textAppearance">@style/TextAppearance.DialogContent</item>
+        <item name="lineHeightHint">24sp</item>
+        <item name="android:textColor">@color/app_text_color_primary_light</item>
+    </style>
+
+
+    <style name="HachiOverlay" parent="@android:style/ThemeOverlay.Material.Dark.ActionBar">
+        <!-- Used to theme dark elements in light themed screens.
+             Extend the material dark Action Bar overlay as this contains text styling. -->
+    </style>
+
+    <style name="SearchViewTheme" parent="HachiOverlay">
+        <item name="colorControlActivated">?android:colorAccent</item>
+        <item name="android:searchViewStyle">@style/Widget.Hachi.SearchView</item>
+    </style>
 
     <style name="LightTheme.Translucent">
         <item name="android:windowBackground">@color/scrim</item>
@@ -129,7 +157,16 @@
         <item name="android:colorControlHighlight">@color/ripple_light</item>
     </style>
 
-
+    <style name="LightTheme.Translucent.Search">
+        <item name="android:windowAnimationStyle">@style/SearchWindowAnimations</item>
+        <item name="android:windowEnterTransition">@transition/search_enter</item>
+        <item name="android:windowReturnTransition">@transition/search_return</item>
+        <item name="android:windowSharedElementEnterTransition">@transition/search_shared_enter
+        </item>
+        <item name="android:windowSharedElementReturnTransition">@transition/search_shared_return
+        </item>
+        <item name="android:windowSharedElementsUseOverlay">true</item>
+    </style>
 
 
     <style name="LightTheme.Translucent.UserProfile">
@@ -139,7 +176,9 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementEnterTransition">@transition/hachi_user_profile_shared_enter</item>
+        <item name="android:windowSharedElementEnterTransition">
+            @transition/hachi_user_profile_shared_enter
+        </item>
         <item name="android:windowEnterTransition">@transition/hachi_user_profile_enter</item>
         <item name="android:windowReturnTransition">@transition/hachi_user_profile_return</item>
         <item name="android:windowTransitionBackgroundFadeDuration">200</item>
@@ -165,5 +204,4 @@
     </style>
 
 
-    <color name="text_secondary_dark">#8a000000</color>
 </resources>

@@ -21,10 +21,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
-import com.lapism.searchview.SearchAdapter;
-import com.lapism.searchview.SearchHistoryTable;
-import com.lapism.searchview.SearchItem;
-import com.lapism.searchview.SearchView;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GlobalVariables;
@@ -56,7 +53,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     private SimpleFragmentPagerAdapter mFeedPageAdapter;
 
-    private SearchHistoryTable mHistoryDatabase;
+//    private SearchHistoryTable mHistoryDatabase;
 
     private final static int TAKE_PHOTO = 1;
     private final static int FROM_LOCAL = 2;
@@ -70,8 +67,8 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @BindView(R.id.viewpager)
     ViewPager mViewPager;
 
-    @BindView(R.id.searchView)
-    SearchView mSearchView;
+//    @BindView(R.id.searchView)
+//    SearchView mSearchView;
 
     @BindView(R.id.fab_menu)
     FloatingActionMenu mFabMenu;
@@ -158,46 +155,46 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     }
 
     private void setupSearchView() {
-        mHistoryDatabase = new SearchHistoryTable(getActivity());
-        mHistoryDatabase.setHistorySize(5);
-        mSearchView.setVersion(SearchView.VERSION_MENU_ITEM);
-        mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM);
-        mSearchView.setHint(R.string.search_hint);
-        mSearchView.setTextSize(16);
-        mSearchView.setDivider(false);
-        mSearchView.setVoice(true);
-        mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
-        mSearchView.setShadowColor(ContextCompat.getColor(getActivity(), R.color.search_shadow_layout));
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                mHistoryDatabase.addItem(new SearchItem(query));
-                MomentSearchActivity.launch(getActivity(), query);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-
-        List<SearchItem> suggestionsList = new ArrayList<>();
-
-
-        SearchAdapter searchAdapter = new SearchAdapter(getActivity(), suggestionsList);
-        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-
-                TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
-                String query = textView.getText().toString();
-//                    getData(query, position);
-                MomentSearchActivity.launch(getActivity(), query);
-            }
-        });
-        mSearchView.setAdapter(searchAdapter);
+//        mHistoryDatabase = new SearchHistoryTable(getActivity());
+//        mHistoryDatabase.setHistorySize(5);
+//        mSearchView.setVersion(SearchView.VERSION_MENU_ITEM);
+//        mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM);
+//        mSearchView.setHint(R.string.search_hint);
+//        mSearchView.setTextSize(16);
+//        mSearchView.setDivider(false);
+//        mSearchView.setVoice(true);
+//        mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
+//        mSearchView.setShadowColor(ContextCompat.getColor(getActivity(), R.color.search_shadow_layout));
+//        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                mHistoryDatabase.addItem(new SearchItem(query));
+//                MomentSearchActivity.launch(getActivity(), query);
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//
+//
+//        List<SearchItem> suggestionsList = new ArrayList<>();
+//
+//
+//        SearchAdapter searchAdapter = new SearchAdapter(getActivity(), suggestionsList);
+//        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//
+//                TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
+//                String query = textView.getText().toString();
+////                    getData(query, position);
+//                MomentSearchActivity.launch(getActivity(), query);
+//            }
+//        });
+//        mSearchView.setAdapter(searchAdapter);
     }
 
     @Override
@@ -221,7 +218,8 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
                 switch (item.getItemId()) {
                     case R.id.search:
 //                        MomentSearchActivity.launch(getActivity());
-                        mSearchView.open(true);
+//                        mSearchView.open(true);
+                        MomentSearchActivity.launch(getActivity(), getToolbar().findViewById(R.id.search));
                         return false;
                     case R.id.my_notification:
                         NotificationActivity.launch(getActivity());
@@ -300,15 +298,16 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             PublishActivity.launch(getActivity(), imageUrl);
         } else if (requestCode == TAKE_PHOTO) {
             PublishActivity.launch(getActivity(), mPictureUri.getPath());
-        } else if (requestCode == SearchView.SPEECH_REQUEST_CODE) {
-            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (results != null && results.size() > 0) {
-                String searchWrd = results.get(0);
-                if (!TextUtils.isEmpty(searchWrd)) {
-                    mSearchView.setQuery(searchWrd);
-                }
-            }
         }
+//        } else if (requestCode == SearchView.SPEECH_REQUEST_CODE) {
+//            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+//            if (results != null && results.size() > 0) {
+//                String searchWrd = results.get(0);
+//                if (!TextUtils.isEmpty(searchWrd)) {
+//                    mSearchView.setQuery(searchWrd);
+//                }
+//            }
+//        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

@@ -12,7 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.lapism.searchview.SearchView;
+
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
@@ -207,11 +207,11 @@ public class MainActivity extends BaseActivity {
                     ((CommunityFragment) mCurrentFragment).notifyDateChanged();
                 }
                 break;
-            case SearchView.SPEECH_REQUEST_CODE:
-                if (resultCode == RESULT_OK && (mCurrentFragment instanceof CommunityFragment)) {
-                    mCurrentFragment.onActivityResult(requestCode, resultCode, data);
-                }
-                break;
+//            case SearchView.SPEECH_REQUEST_CODE:
+//                if (resultCode == RESULT_OK && (mCurrentFragment instanceof CommunityFragment)) {
+//                    mCurrentFragment.onActivityResult(requestCode, resultCode, data);
+//                }
+//                break;
 
 
             default:
