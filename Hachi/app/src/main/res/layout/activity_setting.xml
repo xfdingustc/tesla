@@ -7,34 +7,34 @@
     <include layout="@layout/toolbar_default"/>
 
     <LinearLayout
-        android:id="@+id/ll_lighttheme"
+        android:id="@+id/ll_unit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
-
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_margin="16dp"
-            android:text="@string/light_theme"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/units"
             android:textColor="?attr/appTextColorPrimary"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"></FrameLayout>
 
-        <Switch
-            android:id="@+id/btn_light_theme"
+        <TextView
+            android:id="@+id/unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|end"
-            android:layout_marginRight="16dp"/>
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="?attr/appTextColorSecondary"
+            android:text="@string/imperial"
+            android:textSize="14sp"/>
 
     </LinearLayout>
 
@@ -68,12 +68,11 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/clear_cache"
             android:textColor="?attr/appTextColorPrimary"
-            android:textSize="18sp"/>
+            android:textSize="16sp"/>
 
 
         <TextView
@@ -86,7 +85,7 @@
             android:layout_marginLeft="16dp"
             android:text="@string/calc_cache_size"
             android:textColor="?attr/appTextColorSecondary"
-            android:textSize="12sp"/>
+            android:textSize="14sp"/>
 
     </LinearLayout>
 

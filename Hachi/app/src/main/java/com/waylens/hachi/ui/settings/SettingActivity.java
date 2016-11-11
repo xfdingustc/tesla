@@ -18,6 +18,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.DataCleanManager;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.ThemeHelper;
 
@@ -31,17 +32,25 @@ import butterknife.OnClick;
 public class SettingActivity extends BaseActivity {
     private static final String TAG = SettingActivity.class.getSimpleName();
 
-    @BindView(R.id.ll_lighttheme)
-    View llLightTheme;
-
-    @BindView(R.id.btn_light_theme)
-    Switch btnLightTheme;
+    @BindView(R.id.unit)
+    TextView tvUnit;
 
     @BindView(R.id.btn_logout)
     Button btnLogout;
 
     @BindView(R.id.cache_size)
     TextView cacheSize;
+
+    @OnClick(R.id.ll_unit)
+    public void onUnitClicked() {
+        DialogHelper.showSwitchUnitDialog(this, new DialogHelper.OnPositiveClickListener() {
+            @Override
+            public void onPositiveClick() {
+                refreshUnits();
+            }
+        });
+
+    }
 
     @OnClick(R.id.btn_logout)
     public void onBtnLogoutClicked() {
@@ -89,39 +98,10 @@ public class SettingActivity extends BaseActivity {
         setContentView(R.layout.activity_setting);
         setupToolbar();
 
-        btnLightTheme.setChecked(!ThemeHelper.isDarkTheme());
-
-        btnLightTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    Logger.t(TAG).d("set to light");
-                    getApplication().setTheme(R.style.LightTheme);
-                    PreferenceUtils.putString(PreferenceUtils.APP_THEME, "light");
-                } else {
-                    Logger.t(TAG).d("set to dark");
-                    getApplication().setTheme(R.style.DarkTheme);
-                    PreferenceUtils.putString(PreferenceUtils.APP_THEME, "dark");
-                }
-
-                final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("need_delay", true);
-                startActivity(intent);
-                System.exit(0);
-            }
-        });
-
-        if (PreferenceUtils.getBoolean("debug", false) == true) {
-            llLightTheme.setVisibility(View.VISIBLE);
-        }
-
+        refreshUnits();
         refreshBtnLogout();
         refreshCacheSize();
     }
-
-
-
 
     @Override
     public void setupToolbar() {
@@ -134,6 +114,18 @@ public class SettingActivity extends BaseActivity {
             }
         });
     }
+
+    private void refreshUnits() {
+        boolean metricUnits = SettingHelper.isMetricUnit();
+        if (metricUnits) {
+            tvUnit.setText(R.string.metric_units);
+        } else {
+            tvUnit.setText(R.string.imperial);
+        }
+    }
+
+
+
 
     private void refreshBtnLogout() {
         if (SessionManager.getInstance().isLoggedIn()) {

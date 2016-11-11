@@ -531,4 +531,7 @@
     <string name="on">ON</string>
     <string name="remixing_text">Mixing your best moments together ...</string>
     <string name="remix_failed">Sorry, no video clips returned. Please try the\nfollowing: (add some criteria loosened)</string>
+    <string name="metric_units">Metric</string>
+    <string name="units">Units</string>
+    <string name="imperial">Imperial</string>
 </resources>

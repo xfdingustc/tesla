@@ -8,12 +8,15 @@ import android.view.View;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.Theme;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.settings.FirmwareUpdateActivity;
+import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.SettingHelper;
 
 import java.io.File;
 
@@ -224,6 +227,24 @@ public class DialogHelper {
                     if (positiveClickListener != null) {
                         positiveClickListener.onPositiveClick();
                     }
+                }
+            }).show();
+    }
+
+    public static MaterialDialog showSwitchUnitDialog(Context context, final OnPositiveClickListener listener) {
+        boolean isMetric = SettingHelper.isMetricUnit();
+        int selectIndex = isMetric ? 1 : 0;
+        return new MaterialDialog.Builder(context)
+            .title(R.string.units)
+            .items(R.array.units)
+            .itemsCallbackSingleChoice(selectIndex, new MaterialDialog.ListCallbackSingleChoice() {
+                @Override
+                public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
+                    SettingHelper.setMetricUnit(which == 0 ? false : true);
+                    if (listener != null) {
+                        listener.onPositiveClick();
+                    }
+                    return false;
                 }
             }).show();
     }

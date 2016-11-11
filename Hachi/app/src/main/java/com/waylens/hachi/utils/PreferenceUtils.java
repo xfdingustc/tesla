@@ -43,6 +43,8 @@ public class PreferenceUtils {
 
     public static final String BOOKMARK_NEED_REFRESH = "bookmark_need_refresh";
 
+
+
     private static Context mSharedAppContext = null;
     private static SharedPreferences mShare = null;
     private static SharedPreferences.Editor mEditor = null;
@@ -92,4 +94,6 @@ public class PreferenceUtils {
     public static long getLong(String key, long defaultValue) {
         return mShare.getLong(key, defaultValue);
     }
+
+
 }

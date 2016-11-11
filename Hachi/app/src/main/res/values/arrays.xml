@@ -297,4 +297,9 @@
         <item>7~10s</item>
         <item>10s+</item>
     </string-array>
+
+    <string-array name="units">
+        <item>@string/imperial</item>
+        <item>@string/metric_units</item>
+    </string-array>
 </resources>
