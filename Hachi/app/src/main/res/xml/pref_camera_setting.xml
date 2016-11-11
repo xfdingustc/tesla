@@ -52,7 +52,7 @@
 
         <com.waylens.hachi.preference.seekbarpreference.SeekBarPreference
             android:dependency="speaker"
-            android:icon="@drawable/settings_beeps_level"
+            android:icon="@drawable/ic_volume_up"
             android:key="speakerVol"
             android:layout="@layout/preference_seekbar"
             android:title="@string/speaker_vol"
@@ -100,7 +100,7 @@
 
 
         <com.waylens.hachi.preference.seekbarpreference.SeekBarPreference
-            android:icon="@drawable/settings_brighteness"
+            android:icon="@drawable/ic_brightness_medium"
             android:key="brightness"
             android:layout="@layout/preference_seekbar"
             android:title="@string/brightness"

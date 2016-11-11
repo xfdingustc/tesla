@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/upload" android:title="@string/upload"
-          android:icon="@drawable/btn_edit_action_share"/>
-    <item android:id="@+id/enhance" android:title="@string/enhance"
-          android:icon="@drawable/ic_enhance"/>
-    <item android:id="@+id/delete" android:title="@string/delete"
-          android:icon="@drawable/btn_edit_action_delete"/>
-</menu>

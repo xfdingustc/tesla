@@ -2,35 +2,28 @@ package com.waylens.hachi.ui.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.rest.bean.LeaderBoardItem;
 import com.waylens.hachi.rest.bean.User;
-import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.PerformanceTestFragment;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
-import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
-import com.waylens.hachi.utils.PlaceHolderHelper;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

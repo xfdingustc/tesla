@@ -21,7 +21,6 @@ import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
-import com.waylens.hachi.utils.PlaceHolderHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import java.util.ArrayList;
