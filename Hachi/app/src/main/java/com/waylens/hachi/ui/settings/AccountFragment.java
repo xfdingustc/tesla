@@ -14,6 +14,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
@@ -31,7 +32,7 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2016/9/28.
  */
 
-public class AccountFragment extends BaseFragment {
+public class AccountFragment extends BaseFragment implements FragmentNavigator{
 
     @BindView(R.id.user_avatar)
     AvatarView userAvatar;
@@ -183,4 +184,18 @@ public class AccountFragment extends BaseFragment {
     }
 
 
+    @Override
+    public boolean onInterceptBackPressed() {
+        return false;
+    }
+
+    @Override
+    public void onSelected() {
+
+    }
+
+    @Override
+    public void onDeselected() {
+
+    }
 }

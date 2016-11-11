@@ -328,5 +328,15 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         return false;
     }
 
+    @Override
+    public void onSelected() {
+
+    }
+
+    @Override
+    public void onDeselected() {
+
+    }
+
 
 }

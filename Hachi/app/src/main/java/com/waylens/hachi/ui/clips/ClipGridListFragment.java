@@ -36,6 +36,8 @@ import com.waylens.hachi.snipe.vdb.ClipActionInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
+import com.waylens.hachi.ui.clips.event.ActionButtonEvent;
+import com.waylens.hachi.ui.clips.event.ToggleFabEvent;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.preview.PreviewActivity;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
@@ -44,6 +46,8 @@ import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.ClipGridListView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,6 +60,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 
 /**
@@ -95,14 +100,13 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private TextView mTvSmartRemix;
 
+    private Subscription mFabSubscription;
+
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
 
     @BindView(R.id.refreshLayout)
     SwipeRefreshLayout mRefreshLayout;
-
-//    @BindView(R.id.fab_smart_remix)
-//    FloatingActionButton mFabSmartRemix;
 
     @BindView(R.id.layout_smart_remix)
     RelativeLayout mSmartRemixLayout;
@@ -197,7 +201,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             flag = ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_ATTR;
             attr = Clip.CLIP_ATTR_MANUALLY;
         }
-        showSmartRemixActionButton(true);
         mPresenter = new ClipGridListPresenterImpl(getActivity(), mClipSetType, flag, attr, this);
         mLoadingHandler = new LoadingHandler(this);
         initViews();
@@ -227,25 +230,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void showLoading(String msg) {
     }
 
-    private void showSmartRemixActionButton(boolean show) {
-        if (false) {
-//            mFabSmartRemix.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-//            mFabSmartRemix.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    mIsRemixMode = true;
-//                    mFabSmartRemix.setVisibility(View.INVISIBLE);
-//                    //mSmartRemixLayout.setVisibility(View.VISIBLE);
-//                    if (mActionMode == null) {
-//                        mActionMode = getActivity().startActionMode(mRemixCallback);
-//                        updateActionMode();
-//                    }
-//                    mAdapter.setMultiSelectedMode(true);
-//                    mAdapter.toggleSelectAll(true);
-//                }
-//            });
-        }
-    }
 
     private void showLoadingProgress() {
         mRefreshLayout.setRefreshing(true);
@@ -374,6 +358,29 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @Override
     public void onStart() {
         super.onStart();
+        mFabSubscription = RxBus.getDefault().toObserverable(ActionButtonEvent.class)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleSubscribe<ActionButtonEvent>() {
+                    @Override
+                    public void onNext(ActionButtonEvent actionButtonEvent) {
+                        switch (actionButtonEvent.mWhat) {
+                            case ActionButtonEvent.FAB_SMART_REMIX:
+                                if ((Integer)actionButtonEvent.mExtra == mClipSetType) {
+                                    mIsRemixMode = true;
+                                    //mSmartRemixLayout.setVisibility(View.VISIBLE);
+                                    if (mActionMode == null) {
+                                        mActionMode = getActivity().startActionMode(mRemixCallback);
+                                        updateActionMode();
+                                    }
+                                    mAdapter.setMultiSelectedMode(true);
+                                    mAdapter.toggleSelectAll(true);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                });
         mEventBus.register(this);
         if (mClipSetType == Clip.TYPE_MARKED && PreferenceUtils.getBoolean(PreferenceUtils.BOOKMARK_NEED_REFRESH, false)) {
             if (mRefreshLayout != null) {
@@ -390,6 +397,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @Override
     public void onStop() {
         super.onStop();
+        if (!mFabSubscription.isUnsubscribed()) {
+            mFabSubscription.unsubscribe();
+        }
         mEventBus.unregister(this);
     }
 
@@ -447,12 +457,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mIsMultipleMode = false;
                 mAdapter.setMultiSelectedMode(false);
             }
-//            if (mIsRemixMode) {
-//                mAdapter.setMultiSelectedMode(false);
-//                mFabSmartRemix.setVisibility(View.VISIBLE);
-//                mIsRemixMode = false;
-//                mAdapter.toggleSelectAll(false);
-//            }
+            if (mIsRemixMode) {
+                mAdapter.setMultiSelectedMode(false);
+                RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_VISIBLE, null));
+                mIsRemixMode = false;
+                mAdapter.toggleSelectAll(false);
+            }
             mRefreshLayout.setEnabled(true);
         }
     };
@@ -468,7 +478,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//            mFabSmartRemix.setVisibility(View.INVISIBLE);
+            RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_INVISIBLE, null));
             if (mIsAddMore) {
                 MenuItem menuItem = menu.findItem(R.id.menu_to_upload);
                 if (menuItem != null) {
@@ -529,7 +539,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 mIsMultipleMode = false;
                 mAdapter.setMultiSelectedMode(false);
             }
-//            mFabSmartRemix.setVisibility(View.VISIBLE);
+            RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_VISIBLE, null));
             mRefreshLayout.setEnabled(true);
 
         }
@@ -566,14 +576,19 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             mAdapter.setMultiSelectedMode(false);
             return true;
         }
-//        if (mIsRemixMode) {
-//            mIsRemixMode = false;
-//            mAdapter.setMultiSelectedMode(false);
-//            mSmartRemixLayout.setVisibility(View.INVISIBLE);
-//            mFabSmartRemix.setVisibility(View.VISIBLE);
-//            return true;
-//        }
+        if (mIsRemixMode) {
+            mIsRemixMode = false;
+            mAdapter.setMultiSelectedMode(false);
+            mSmartRemixLayout.setVisibility(View.INVISIBLE);
+            RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_VISIBLE, null));
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    public void onSelected() {
+
     }
 
     private void showRemixDialog() {
@@ -583,9 +598,11 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
             .customView(R.layout.dialog_smart_remix, true)
             .show();
-
+        mRemixLength = 20;
         mLengthSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.length_seekbar);
         mTvSmartRemix = (TextView) dialog.getCustomView().findViewById(R.id.tv_smart_remix);
+        mTvSmartRemix.setText(String.format(getString(R.string.smart_remix_length), mRemixLength));
+        mLengthSeekbar.setProgress(5);
         mLengthSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {

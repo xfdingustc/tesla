@@ -243,6 +243,16 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         return false;
     }
 
+    @Override
+    public void onSelected() {
+
+    }
+
+    @Override
+    public void onDeselected() {
+
+    }
+
 
     private void setupViewPager() {
         mFeedPageAdapter = new FeedPageAdapter(getChildFragmentManager());

@@ -13,7 +13,7 @@ FilterManager::FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t
         target_length_ms_(length),
         segIndex_(0),
         top_speed_kph(0),
-        filteredSelectedIdx_(NULL),
+        filteredPickedIdx_(NULL),
         logged_seg_index_(0),
         filter_type_(type),
         current_clip_info_(NULL),
@@ -73,8 +73,9 @@ FilterManager::~FilterManager()
         }
     }
     clipInfoList_._Release();
-    if (filteredSelectedIdx_) {
-        avrpro_free(filteredSelectedIdx_);
+    if (filteredPickedIdx_) {
+        avrpro_free(filteredPickedIdx_);
+        filteredPickedIdx_ = NULL;
     }
     if (pSQLSFDB_) {
         sqlite3_close(pSQLSFDB_);
@@ -107,8 +108,9 @@ void FilterManager::resetManager(bool clearFiltered)
         filteredSegList_._Release();
         logged_seg_index_ = 0;
     }
-    if (filteredSelectedIdx_) {
-        avrpro_free(filteredSelectedIdx_);
+    if (filteredPickedIdx_) {
+        avrpro_free(filteredPickedIdx_);
+        filteredPickedIdx_ = NULL;
     }
 }
 
@@ -216,8 +218,22 @@ int FilterManager::updateSFDB(uint32_t start_idx)
         clipIndex = atoi(dbResult[index]);
     }
     sqlite3_free_table(dbResult);
+
+    uint32_t new_speed_threshold = (top_speed_kph * 9 / 10);
+
+    if (new_speed_threshold < params_.inbound_speed_kph) {
+        new_speed_threshold = params_.inbound_speed_kph;
+    }
     for (int i = start_idx; i < filteredSegList_._Size(); i++) {
         avrpro_segment_info_t * curr_seg = filteredSegList_._At(i);
+        if (curr_seg->filter_type == SMART_FAST_FURIOUS) {
+            if (curr_seg->max_speed_kph < new_speed_threshold) {
+                AVRPRO_LOGD("current seg speed %d < new threshold %d", curr_seg->max_speed_kph, new_speed_threshold);
+                filteredSegList_._Remove(i);
+                i--;
+                continue;
+            }
+        }
         sprintf(sql_cmds_, "insert into SEGMENTINFO(CLIPINDEX, FILTERTYPE, STARTOFFSET, DURATION, MAXSPEED) Values(%d, %d, %d, %d, %d)", clipIndex, curr_seg->filter_type, curr_seg->inclip_offset_ms, curr_seg->duration_ms, curr_seg->max_speed_kph);
         result = sqlite3_exec(pSQLSFDB_, sql_cmds_, NULL, NULL, NULL);
     }
@@ -272,12 +288,13 @@ int FilterManager::fetchNextFilteredSegInfo(avrpro_segment_info_t * si, bool fro
 
     if (fromStart) {
         uint32_t total_ms = 0;
+        uint32_t picked_ms = 0;
         uint32_t rand_idx = 0;
-        if (filteredSelectedIdx_) {
-            avrpro_free(filteredSelectedIdx_);
+        if (filteredPickedIdx_) {
+            avrpro_free(filteredPickedIdx_);
         }
-        filteredSelectedIdx_ = (uint8_t *)avrpro_malloc(total_count);
-        memset(filteredSelectedIdx_, 1, total_count);
+        filteredPickedIdx_ = (int32_t *)avrpro_malloc(total_count * sizeof(int32_t));
+        memset(filteredPickedIdx_, -1, total_count * sizeof(int32_t));
         if (filter_type_ == SMART_RANDOMCUTTING) {
             for (int i = 0; i < filteredSegList_._Size(); i++) {
                 avrpro_segment_info_t * prev = filteredSegList_._At(i);
@@ -311,26 +328,45 @@ int FilterManager::fetchNextFilteredSegInfo(avrpro_segment_info_t * si, bool fro
             }
         }
 
-        while (total_ms > target_length_ms_) {
+        while (picked_ms < target_length_ms_ && picked_ms < total_ms) {
             rand_idx = rand() % total_count;
-            if (filteredSelectedIdx_[rand_idx] == 1 &&
-                (filteredSegList_._At(rand_idx)->filter_type == filter_type_ ||
-                 filter_type_ == SMART_RANDOMCUTTING)) {
-                if (total_ms - filteredSegList_._At(rand_idx)->duration_ms < target_length_ms_) {
+            int i = 0;
+            bool valid_rand = false;
+            for (i = 0; i < total_count; i++) {
+                if (rand_idx == filteredPickedIdx_[i]) {
+                    valid_rand = false;
+                    break;
+                } else if (filteredPickedIdx_[i] < 0) {
+                    valid_rand = true;
                     break;
                 }
-                AVRPRO_LOGD("remove random index is %d", rand_idx);
-                total_ms -= filteredSegList_._At(rand_idx)->duration_ms;
-                filteredSelectedIdx_[rand_idx] = 0;
             }
+            if (i >= total_count) break;
+            if ((filteredSegList_._At(rand_idx)->filter_type != filter_type_ &&
+                 filter_type_ != SMART_RANDOMCUTTING)) {
+                continue;
+            }
+            if (!valid_rand) {
+                continue;
+            }
+            filteredPickedIdx_[i] = rand_idx;
+            picked_ms += filteredSegList_._At(rand_idx)->duration_ms;
+            AVRPRO_LOGD("pick random index is %d", rand_idx);
         }
-        AVRPRO_LOGD("now total ms is %d", total_ms);
+        AVRPRO_LOGD("now picked ms is %d", picked_ms);
         segIndex_ = 0;
     }
 
-    if (filter_type_ == SMART_RANDOMCUTTING) {
+    if (filteredPickedIdx_[segIndex_] < 0 || segIndex_ >= total_count) {
+        AVRPRO_LOGD("reach the end: %d", segIndex_);
+        return -1;
+    }
+    *si = * filteredSegList_._At(filteredPickedIdx_[segIndex_]);
+    segIndex_++;
+    return 0;
+    /*if (filter_type_ == SMART_RANDOMCUTTING) {
         for (int i = segIndex_; i < total_count; i++) {
-            if (filteredSelectedIdx_[i] > 0) {
+            if (filteredPickedIdx_[i] > 0) {
                 *si = *(filteredSegList_._At(i));
                 segIndex_ = i + 1;
                 return 0;
@@ -338,16 +374,15 @@ int FilterManager::fetchNextFilteredSegInfo(avrpro_segment_info_t * si, bool fro
         }
     } else {
         for (int i = segIndex_; i < total_count; i++) {
-            if (filteredSelectedIdx_[i] > 0 && filteredSegList_._At(i)->filter_type == filter_type_) {
+            if (filteredPickedIdx_[i] > 0 && filteredSegList_._At(i)->filter_type == filter_type_) {
                 *si = *(filteredSegList_._At(i));
                 segIndex_ = i + 1;
-                AVRPRO_LOGD("filtered %d %d", filteredSegList_._At(i)->parent_clip, filteredSegList_._At(i)->inclip_offset_ms);
                 return 0;
             }
         }
     }
 
-    return -1;
+    return -1; */
 }
 
 bool FilterManager::isTypeFilteredAndCached()
@@ -403,11 +438,6 @@ int FilterManager::loadSegmentInfo(void * para, int n_column,
 
 int FilterManager::reviewSegCandidates()
 {
-    uint32_t new_speed_threshold = (top_speed_kph * 9 / 10);
-
-    if (new_speed_threshold < params_.inbound_speed_kph) {
-        new_speed_threshold = params_.inbound_speed_kph;
-    }
     if (segCandidatesList_._Size() == 0) {
         return 0;
     }

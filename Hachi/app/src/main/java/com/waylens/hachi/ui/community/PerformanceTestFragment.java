@@ -609,6 +609,16 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     }
 
     @Override
+    public void onSelected() {
+
+    }
+
+    @Override
+    public void onDeselected() {
+
+    }
+
+    @Override
     public void setupToolbar() {
         getToolbar().setTitle(R.string.leaderboard);
         super.setupToolbar();

@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Create 20s Remix"
+        android:text="Create 20-second video remix"
         android:textColor="@color/style_color_accent" />
 
 </RelativeLayout>

@@ -5,4 +5,6 @@ package com.waylens.hachi.ui.fragments;
  */
 public interface FragmentNavigator {
     boolean onInterceptBackPressed();
+    void onSelected();
+    void onDeselected();
 }

@@ -174,9 +174,10 @@ public class MainActivity extends BaseActivity {
         int menuId = mTab2MenuId.get(tag);
 
 //        mNavView.getMenu().findItem(mCurrentNavMenuId).setChecked(true);
-
+        if (mCurrentFragment != null && mCurrentFragment instanceof FragmentNavigator) {
+            ((FragmentNavigator)mCurrentFragment).onDeselected();
+        }
         Fragment fragment = mFragmentList[tag];
-
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         boolean mUseHideAndShow = true;
 

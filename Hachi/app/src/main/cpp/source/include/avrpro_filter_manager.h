@@ -9,7 +9,7 @@ extern "C" {
 }
 
 #define SMART_FILTER_DB_NAME   "waylensfilter.db"
-#define SMART_FILTER_VERSION   "0.12"
+#define SMART_FILTER_VERSION   "0.13"
 #define INBOUND_SPEED_THRESHOLD_KPH     80
 #define OUTBOUND_SPEED_THRESHOLD_KPH    70
 
@@ -19,10 +19,10 @@ extern "C" {
 #define INBOUND_BF_GFORCE_THRESHOLD     400     // mg
 #define OUTBOUND_BF_GFORCE_THRESHOLD    100     // mg
 
-#define INBOUND_LR_GFORCE_THRESHOLD     400     // mg
+#define INBOUND_LR_GFORCE_THRESHOLD     200     // mg
 #define OUTBOUND_LR_GFORCE_THRESHOLD    100     // mg
 
-#define INBOUND_UD_GFORCE_THRESHOLD     600     // mg
+#define INBOUND_UD_GFORCE_THRESHOLD     400     // mg
 #define OUTBOUND_UD_GFORCE_THRESHOLD    200     // mg
 
 #define SEGMENT_CANDIDATE_DURATION      2000    // ms
@@ -73,7 +73,7 @@ public:
 
 private:
     static int loadSegmentInfo(void * para, int n_column,
-                               char ** column_value, char ** column_name);
+                       char ** column_value, char ** column_name);
     sqlite3 * pSQLSFDB_;
     char sfdb_path_[1024];
     char sql_cmds_[1024];
@@ -81,7 +81,7 @@ private:
     uint32_t target_length_ms_;
     uint32_t segIndex_;
     uint32_t top_speed_kph;
-    uint8_t * filteredSelectedIdx_;
+    int32_t * filteredPickedIdx_;
     uint32_t logged_seg_index_;
     SMART_FILTER_TYPE filter_type_;
     avrpro_segment_info_t seg_in_proc_[SMART_MAX_INDEX];

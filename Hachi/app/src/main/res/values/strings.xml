@@ -526,9 +526,9 @@
     <string name="login_failed">Login failed</string>
     <string name="camera_will_disconnected">Camera will be disconnected, continue?</string>
     <string name="download_firmware_error">Download firmware failed</string>
-    <string name="smart_remix_length">Create %1$ds Remix</string>
+    <string name="smart_remix_length">Create %1$d-second video remix</string>
     <string name="remix">Remix</string>
-    <string name="remixing_text">Collecting splendid clips\nfrom your Waylens camera...</string>
-    <string name="remix_failed">Failed to find interesting clip</string>
     <string name="on">ON</string>
+    <string name="remixing_text">Mixing your best moments together ...</string>
+    <string name="remix_failed">Sorry, no video clips returned. Please try the\nfollowing: (add some criteria loosened)</string>
 </resources>
