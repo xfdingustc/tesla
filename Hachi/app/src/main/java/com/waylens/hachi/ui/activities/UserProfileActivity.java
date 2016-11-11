@@ -110,7 +110,6 @@ public class UserProfileActivity extends BaseActivity {
     @BindView(R.id.rvUserMomentList)
     RecyclerViewExt mRvUserMomentList;
 
-
     @BindView(R.id.userAvatar)
     AvatarView userAvatar;
 
@@ -401,9 +400,9 @@ public class UserProfileActivity extends BaseActivity {
     private void onLoadUserMoment(MomentListResponse momentListResponse, boolean isRefresh) {
         mCurrentCursor += momentListResponse.moments.size();
         if (isRefresh) {
-            mMomentRvAdapter.setMoments(momentListResponse.moments);
             ViewUtils.setPaddingTop(mRvUserMomentList, userDescription.getHeight());
-            mRvUserMomentList.setVisibility(View.VISIBLE);
+            mMomentRvAdapter.setMoments(momentListResponse.moments);
+//            mRvUserMomentList.setVisibility(View.VISIBLE);
         } else {
             mMomentRvAdapter.addMoments(momentListResponse.moments);
         }

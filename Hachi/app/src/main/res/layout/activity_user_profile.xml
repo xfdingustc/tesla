@@ -100,7 +100,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
-            android:paddingBottom="@dimen/padding_normal"
             android:paddingEnd="@dimen/padding_normal"
             android:paddingStart="@dimen/padding_normal"
             android:paddingTop="@dimen/spacing_normal">
@@ -129,7 +128,6 @@
                 style="@style/Widget.Hachi.InlineActionButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_normal"
                 android:layout_weight="1"
                 android:background="@null"
                 android:drawableTop="@drawable/ic_people_outline"

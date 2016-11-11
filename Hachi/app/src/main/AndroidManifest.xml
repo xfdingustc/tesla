@@ -271,7 +271,7 @@
         <activity
             android:name=".ui.community.MomentActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="sensor"/>
 
         <activity
             android:name=".ui.settings.FirmwareUpdateActivity"
