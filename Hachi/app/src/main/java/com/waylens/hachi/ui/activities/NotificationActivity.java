@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.widget.ViewAnimator;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -25,7 +25,6 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.ServerMessage;
-import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.VolleyUtil;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
@@ -112,9 +111,7 @@ public class NotificationActivity extends BaseActivity {
         mRvNotificationList.setAdapter(mAdapter);
 
         mRvNotificationList.setLayoutManager(new LinearLayoutManager(this));
-        if (ThemeHelper.isDarkTheme()) {
-            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
-        }
+
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

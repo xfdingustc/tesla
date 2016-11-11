@@ -26,7 +26,6 @@ import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
@@ -129,9 +128,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
         mRvVideoList.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
 
-        if (ThemeHelper.isDarkTheme()) {
-            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
-        }
+
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         return view;

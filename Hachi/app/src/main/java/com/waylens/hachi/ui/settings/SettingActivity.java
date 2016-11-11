@@ -6,21 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.DataCleanManager;
-import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.SettingHelper;
-import com.waylens.hachi.utils.StringUtils;
-import com.waylens.hachi.utils.ThemeHelper;
 
 import butterknife.BindView;
 import butterknife.OnClick;

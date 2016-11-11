@@ -39,7 +39,7 @@ import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.ServerErrorHelper;
-import com.waylens.hachi.utils.ThemeHelper;
+import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
@@ -59,8 +59,8 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     Refreshable, FragmentNavigator {
     private static final String TAG = PerformanceTestFragment.class.getSimpleName();
 
-    public final int UNIT_ENGLISH = 0;
-    public final int UNIT_METRIC = 1;
+//    public final int UNIT_ENGLISH = 0;
+//    public final int UNIT_METRIC = 1;
 
     public static final String RACING_CD6T = "RACING_CD6T";
     public static final String RACING_CD3T = "RACING_CD3T";
@@ -84,7 +84,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private int mCurrentCursor;
 
-    private int mUnits = UNIT_ENGLISH;
+//    private int mUnits = UNIT_ENGLISH;
 
     private int mRaceType = RACE_TYPE_30MPH;
 
@@ -114,7 +114,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private ListDropDownAdapter modeAdapter;
 
-    private ListDropDownAdapter typeAdapterEnglish;
+    private ListDropDownAdapter typeAdapterImperial;
 
     private ListDropDownAdapter typeAdapterMetric;
 
@@ -125,6 +125,9 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     private ListDropDownAdapter groupAdapter30;
 
     private ListDropDownAdapter currentGroupAdapter;
+
+    private  ListView mTypeView;
+    private ListView groupView;
 
     @BindView(R.id.main_layout)
     FrameLayout mLayoutMain;
@@ -165,6 +168,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     @BindView(R.id.clipMask)
     View clickMask;
 
+
     @OnClick(R.id.clipMask)
     public void onClickMaskClicked() {
         mDropDownMenu.closeMenu();
@@ -195,6 +199,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     @Override
     public void onStart() {
         super.onStart();
+        setupTypeFilter();
     }
 
 
@@ -214,10 +219,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
         setupLeaderBoardFilter();
 
-
-        if (ThemeHelper.isDarkTheme()) {
-            mRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.windowBackgroundDark);
-        }
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mMakerModelList = new ArrayList<>();
@@ -237,26 +238,28 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         modeAdapter = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.test_mode)));
         modeView.setAdapter(modeAdapter);
 
+        mTypeView = new ListView(getActivity());
 
-        final ListView typeView = new ListView(getActivity());
-        typeView.setDividerHeight(0);
-        typeAdapterEnglish = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_english)));
-        typeView.setAdapter(typeAdapterEnglish);
-        typeAdapterMetric = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_metric)));
+
+
         groupAdapter30 = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_time_030)));
         groupAdapter60 = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_time_060)));
         currentGroupAdapter = groupAdapter30;
-        final ListView groupView = new ListView(getActivity());
+        groupView = new ListView(getActivity());
         groupView.setDividerHeight(0);
         groupView.setAdapter(currentGroupAdapter);
 
+        setupTypeFilter();
+
         popupViews.add(modeView);
-        popupViews.add(typeView);
+        popupViews.add(mTypeView);
         popupViews.add(groupView);
 
         TextView contentView = new TextView(getActivity());
         contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         contentView.setAlpha(0);
+
+
 
         mDropDownMenu.setDropDownMenu(Arrays.asList(headers), popupViews, contentView);
         mDropDownMenu.setTabTextAt((String) modeAdapter.getItem(1), 0);
@@ -300,14 +303,45 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
             }
         });
 
-        mDropDownMenu.setTabTextAt((String) typeAdapterEnglish.getItem(0), 1);
-        typeAdapterEnglish.setCheckItem(0);
-        typeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+
+        groupView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i == 0) {
+                    mUpper = null;
+                    mLower = null;
+                } else if (mRaceType == RACE_TYPE_30MPH || mRaceType == RACE_TYPE_50KMH) {
+                    mLower = splitTime30[i - 1];
+                    mUpper = splitTime30[i];
+                } else {
+                    mLower = splitTime60[i - 1];
+                    mUpper = splitTime60[i];
+                }
+                currentGroupAdapter.setCheckItem(i);
+                mDropDownMenu.setTabText((String) currentGroupAdapter.getItem(i));
+                mDropDownMenu.closeMenu();
+                loadLeaderBoard(0, true);
+                onRefresh();
+            }
+        });
+    }
+
+    private void setupTypeFilter() {
+
+        mTypeView.setDividerHeight(0);
+        typeAdapterImperial = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_imperial)));
+        typeAdapterMetric = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_type_metric)));
+        mTypeView.setAdapter(SettingHelper.isMetricUnit() ? typeAdapterMetric : typeAdapterImperial);
+
+        mDropDownMenu.setTabTextAt((String) mTypeView.getAdapter().getItem(0), 1);
+        typeAdapterImperial.setCheckItem(0);
+        mTypeView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 int type = -1;
-                if (mUnits == UNIT_ENGLISH) {
+                if (!SettingHelper.isMetricUnit()) {
                     switch (position) {
                         case 0:
                             type = RACE_TYPE_30MPH;
@@ -315,32 +349,18 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                         case 1:
                             type = RACE_TYPE_60MPH;
                             break;
-                        case 2:
-                            type = RACE_TYPE_50KMH;
-                            typeView.setAdapter(typeAdapterMetric);
-                            typeAdapterMetric.setCheckItem(0);
-                            mDropDownMenu.setTabText((String) typeAdapterMetric.getItem(0));
-                            mUnits = UNIT_METRIC;
-                            break;
                     }
                     if (position < 2) {
-                        typeAdapterEnglish.setCheckItem(position);
-                        mDropDownMenu.setTabText((String) typeAdapterEnglish.getItem(position));
+                        typeAdapterImperial.setCheckItem(position);
+                        mDropDownMenu.setTabText((String) typeAdapterImperial.getItem(position));
                     }
-                } else if (mUnits == UNIT_METRIC) {
+                } else {
                     switch (position) {
                         case 0:
                             type = RACE_TYPE_50KMH;
                             break;
                         case 1:
                             type = RACE_TYPE_100KMH;
-                            break;
-                        case 2:
-                            type = RACE_TYPE_30MPH;
-                            typeView.setAdapter(typeAdapterEnglish);
-                            typeAdapterEnglish.setCheckItem(0);
-                            mDropDownMenu.setTabText((String) typeAdapterEnglish.getItem(0));
-                            mUnits = UNIT_ENGLISH;
                             break;
                         default:
                             break;
@@ -370,26 +390,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
         mDropDownMenu.setTabTextAt((String) groupAdapter30.getItem(0), 2);
 
-        groupView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i == 0) {
-                    mUpper = null;
-                    mLower = null;
-                } else if (mRaceType == RACE_TYPE_30MPH || mRaceType == RACE_TYPE_50KMH) {
-                    mLower = splitTime30[i - 1];
-                    mUpper = splitTime30[i];
-                } else {
-                    mLower = splitTime60[i - 1];
-                    mUpper = splitTime60[i];
-                }
-                currentGroupAdapter.setCheckItem(i);
-                mDropDownMenu.setTabText((String) currentGroupAdapter.getItem(i));
-                mDropDownMenu.closeMenu();
-                loadLeaderBoard(0, true);
-                onRefresh();
-            }
-        });
     }
 
     @Override

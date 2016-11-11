@@ -1,19 +1,15 @@
 package com.waylens.hachi.app;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.utils.ConnectivityHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.ThemeHelper;
 
 
 //import com.bugtags.library.Bugtags;

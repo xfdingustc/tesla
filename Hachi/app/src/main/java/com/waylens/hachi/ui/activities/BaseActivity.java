@@ -11,14 +11,11 @@ import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.utils.PreferenceUtils;
-import com.waylens.hachi.utils.ThemeHelper;
 import com.waylens.hachi.utils.VolleyUtil;
 
 
