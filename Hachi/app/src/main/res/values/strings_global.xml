@@ -31,6 +31,7 @@
 
     <string name="moment_cover" translatable="false">moment_cover</string>
     <string name="trans_avatar" translatable="false">trans_avatar</string>
+    <string name="trans_search" translatable="false">trans_search</string>
     <string name="clip_cover" translatable="false">clip_cover</string>
     <string name="transition_background" translatable="false">transition_background</string>
     <string name="transition_hachi_login" translatable="false">transition_hachi_login</string>

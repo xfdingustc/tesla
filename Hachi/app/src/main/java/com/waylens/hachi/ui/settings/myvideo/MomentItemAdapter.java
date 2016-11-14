@@ -37,12 +37,16 @@ public class MomentItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public MomentItemAdapter(Activity activity) {
         this.mActivity = activity;
-
     }
 
 
     public void setUploadedMomentList(List<MomentEx> momentList) {
         this.mUploadedMomentList = momentList;
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        mUploadedMomentList.clear();
         notifyDataSetChanged();
     }
 

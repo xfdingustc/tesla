@@ -18,7 +18,7 @@
         <item name="actionButtonColor">@color/material_deep_orange_500</item>
         <item name="signinLogoColor">@color/material_deep_orange_500</item>
         <item name="separateColor">#1E000000</item>
-        <item name="actionBarSize">48dp</item>
+        <item name="actionBarSize">56dp</item>
         <item name="momentPlaceHolderColor">#e5e5e5</item>
         <item name="overtureBgColor">@color/material_deep_orange_500</item>
         <item name="overtureLogoTint">@android:color/white</item>

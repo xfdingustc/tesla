@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/searchback_image_width"
+    android:height="@dimen/searchback_image_height"
+    android:viewportHeight="@integer/searchback_viewport_height"
+    android:viewportWidth="@integer/searchback_viewport_width">
+
+    <path
+        android:name="stem"
+        android:pathData="M24.7000008,12.6999998 C24.7000008,12.6999998 31.8173374,19.9066081 31.8173371,19.9066082 C32.7867437,20.7006357 34.4599991,23 37.5,23 C40.5400009,23 43,20.54 43,17.5 C43,14.46 40.5400009,12 37.5,12 C34.4599991,12 33.2173088,12 31.8173371,12 C31.8173374,12 18.8477173,12 18.8477173,12"
+        android:strokeColor="@color/searchback_stroke_color"
+        android:strokeWidth="@integer/searchback_stroke_width"
+        android:trimPathEnd="@fraction/searchback_stem_search_trim_end"
+        android:trimPathStart="@fraction/searchback_stem_search_trim_start"/>
+
+    <path
+        android:name="search_circle"
+        android:pathData="@string/searchback_path_circle"
+        android:strokeColor="@color/searchback_stroke_color"
+        android:strokeWidth="@integer/searchback_stroke_width"
+        android:trimPathEnd="@fraction/searchback_circle_search_trim_end"/>
+
+    <path
+        android:name="arrow_head_top"
+        android:pathData="@string/searchback_path_arrow_head_top"
+        android:strokeColor="@color/searchback_stroke_color"
+        android:strokeWidth="@integer/searchback_stroke_width"
+        android:trimPathEnd="@fraction/searchback_arrow_head_search_trim_end"/>
+
+    <path
+        android:name="arrow_head_bottom"
+        android:pathData="@string/searchback_path_arrow_head_bottom"
+        android:strokeColor="@color/searchback_stroke_color"
+        android:strokeWidth="@integer/searchback_stroke_width"
+        android:trimPathEnd="@fraction/searchback_arrow_head_search_trim_end"/>
+
+</vector>

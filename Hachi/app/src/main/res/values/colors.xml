@@ -97,4 +97,6 @@
     <color name="background_light">#fafafa</color>
     <color name="error">#ffdd2c00</color>
     <color name="hachi">@color/material_deep_orange_a200</color>
+    <color name="text_secondary_dark">#8a000000</color>
+
 </resources>
