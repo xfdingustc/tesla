@@ -8,7 +8,6 @@
     android:layout_marginRight="8dp"
     android:layout_marginTop="8dp"
     android:orientation="vertical"
-    app:cardBackgroundColor="?attr/cardViewBgColor"
     app:cardCornerRadius="2dp">
 
     <RelativeLayout
@@ -208,12 +207,14 @@
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <ImageButton
+
+
+            <com.waylens.hachi.view.CheckableButton
                 android:id="@+id/btn_like"
                 style="@style/SelectableRippleButton"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/ic_favorite_border"/>
+                android:src="@drawable/asl_heart"/>
 
             <TextSwitcher
                 android:id="@+id/ts_like_counter"

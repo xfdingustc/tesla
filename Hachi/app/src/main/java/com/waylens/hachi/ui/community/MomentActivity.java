@@ -80,6 +80,7 @@ import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.TransitionHelper;
 import com.waylens.hachi.utils.VersionHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+import com.waylens.hachi.view.CheckableButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -175,7 +176,7 @@ public class MomentActivity extends BaseActivity {
     TextView mMomentTitle;
 
     @BindView(R.id.btn_like)
-    ImageButton mBtnLike;
+    CheckableButton mBtnLike;
 
     @BindView(R.id.user_name)
     TextView mUserName;
@@ -221,7 +222,8 @@ public class MomentActivity extends BaseActivity {
         } else {
             mMomentInfo.moment.likesCount--;
         }
-        doUpdateLikeStateAnimator();
+//        doUpdateLikeStateAnimator();
+        updateLikeState();
         updateLikeCount();
     }
 
@@ -655,43 +657,10 @@ public class MomentActivity extends BaseActivity {
     }
 
 
-    private void doUpdateLikeStateAnimator() {
 
-        AnimatorSet animatorSet = new AnimatorSet();
-
-        ObjectAnimator rotationAnim = ObjectAnimator.ofFloat(mBtnLike, "rotation", 0f, 360f);
-        rotationAnim.setDuration(300);
-        rotationAnim.setInterpolator(ACCELERATE_INTERPOLATOR);
-
-        ObjectAnimator bounceAnimX = ObjectAnimator.ofFloat(mBtnLike, "scaleX", 0.2f, 1f);
-        bounceAnimX.setDuration(300);
-        bounceAnimX.setInterpolator(OVERSHOOT_INTERPOLATOR);
-
-        ObjectAnimator bounceAnimY = ObjectAnimator.ofFloat(mBtnLike, "scaleY", 0.2f, 1f);
-        bounceAnimY.setDuration(300);
-        bounceAnimY.setInterpolator(OVERSHOOT_INTERPOLATOR);
-        bounceAnimY.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                updateLikeState();
-            }
-        });
-
-        animatorSet.play(rotationAnim);
-        animatorSet.play(bounceAnimX).with(bounceAnimY).after(rotationAnim);
-
-
-        animatorSet.start();
-
-    }
 
     private void updateLikeState() {
-        if (mMomentInfo.moment.isLiked) {
-            //vh.btnLike.setImageResource(R.drawable.social_like_click);
-            mBtnLike.setImageResource(R.drawable.ic_favorite);
-        } else {
-            mBtnLike.setImageResource(R.drawable.ic_favorite_border);
-        }
+        mBtnLike.setChecked(mMomentInfo.moment.isLiked);
     }
 
     private void updateLikeCount() {

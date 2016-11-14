@@ -44,6 +44,7 @@ import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.PrettyTimeUtils;
+import com.waylens.hachi.view.CheckableButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -297,11 +298,8 @@ public class FeedListAdapter extends AbsMomentListAdapter {
             }
         });
 
-        if (moment.isLiked) {
-            holder.btnLike.setImageResource(R.drawable.ic_favorite);
-        } else {
-            holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
-        }
+
+        holder.btnLike.setChecked(moment.isLiked);
 
         holder.tsLikeCounter.setCurrentText(Integer.toString(moment.likesCount));
 
@@ -312,14 +310,14 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                 if (!moment.isLiked) {
                     holder.tsLikeCounter.setText(Integer.toString(moment.likesCount + 1));
                     moment.likesCount++;
-                    holder.btnLike.setImageResource(R.drawable.ic_favorite);
                 } else {
                     holder.tsLikeCounter.setText(Integer.toString(moment.likesCount - 1));
                     moment.likesCount--;
-                    holder.btnLike.setImageResource(R.drawable.ic_favorite_border);
                 }
+
                 BgJobHelper.addLike(moment.id, moment.isLiked);
                 moment.isLiked = !moment.isLiked;
+                holder.btnLike.setChecked(moment.isLiked);
 
             }
         });
@@ -461,7 +459,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
 
 
         @BindView(R.id.btn_like)
-        ImageButton btnLike;
+        CheckableButton btnLike;
 
         @BindView(R.id.ts_like_counter)
         TextSwitcher tsLikeCounter;

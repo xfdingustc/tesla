@@ -28,13 +28,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <ImageButton
+            <com.waylens.hachi.view.CheckableButton
                 android:id="@+id/btn_like"
                 style="@style/SelectableRippleButton"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_margin="16dp"
-                android:src="@drawable/ic_favorite_border"/>
+                android:src="@drawable/asl_heart"/>
 
             <TextSwitcher
                 android:id="@+id/like_count"
