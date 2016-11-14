@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -100,6 +101,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private SeekBar mLengthSeekbar;
 
     private TextView mTvSmartRemix;
+
+    private TextView mTvTextEnd;
 
     private Subscription mFabSubscription;
 
@@ -377,7 +380,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                                         updateActionMode();
                                     }
                                     mAdapter.setMultiSelectedMode(true);
-                                    mAdapter.toggleSelectAll(true);
+                                    mAdapter.toggleSelectAll(false);
                                 }
                                 break;
                             default:
@@ -437,13 +440,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 case R.id.menu_to_remix:
                     showRemixDialog();
                     //mode.finish();
-                    break;
-                case R.id.menu_selete_all:
-                    mAdapter.toggleSelectAll(true);
-                    break;
-                case R.id.menu_deselete_all:
-                    mAdapter.toggleSelectAll(false);
-                    mode.finish();
                     break;
                 default:
                     break;
@@ -596,16 +592,37 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     private void showRemixDialog() {
+        int totalLength = 0;
         if (mAdapter.getSelectedClipList().size() <= 0) {
             return;
+        } else {
+            for (Clip clip : mAdapter.getSelectedClipList()) {
+                totalLength += clip.getDurationMs() / 1000;
+            }
+            if (totalLength < 20) {
+                Toast.makeText(getActivity(), "Please add more clips!", Snackbar.LENGTH_SHORT).show();
+                return;
+            }
         }
         final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
             .customView(R.layout.dialog_smart_remix, true)
+            .positiveText(R.string.create)
+            .positiveColor(getResources().getColor(R.color.hachi))
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    toRemix();
+                    dialog.dismiss();
+                }
+            })
             .show();
         mRemixLength = 20;
         mLengthSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.length_seekbar);
         mTvSmartRemix = (TextView) dialog.getCustomView().findViewById(R.id.tv_smart_remix);
+        mTvTextEnd = (TextView) dialog.getCustomView().findViewById(R.id.text_end);
         mTvSmartRemix.setText(String.format(getString(R.string.smart_remix_length), mRemixLength));
+        mLengthSeekbar.setMax(Math.min(60 - 15, totalLength - 15));
+        mTvTextEnd.setText(Math.min(60, totalLength) + "s");
         mLengthSeekbar.setProgress(5);
         mLengthSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -622,13 +639,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
-        });
-        mTvSmartRemix.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toRemix();
-                dialog.dismiss();
             }
         });
     }

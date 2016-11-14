@@ -5,44 +5,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/text_start"
-        style="@style/Widget.Hachi.DialogText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="15s"
-        android:textColor="#000"/>
-
-    <TextView
-        android:layout_alignParentEnd="true"
-        style="@style/Widget.Hachi.DialogText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="60s"
-        android:textColor="#000"/>
-
-    <SeekBar
-        android:layout_centerHorizontal="true"
-        android:id="@+id/length_seekbar"
-        android:max="45"
-        android:maxHeight="12dp"
-        android:minHeight="12dp"
-        android:layout_below="@id/text_start"
+    <LinearLayout
+        android:id="@+id/layout_length"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:progressTint="@color/style_color_accent"
-        android:thumbTint="@color/style_color_accent"
-        android:progress="5"/>
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/text_start"
+            android:layout_gravity="center_vertical"
+            style="@style/Widget.Hachi.DialogText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15s"
+            android:textColor="#000"/>
+        <SeekBar
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:id="@+id/length_seekbar"
+            android:max="45"
+            android:maxHeight="12dp"
+            android:minHeight="12dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/style_color_accent"
+            android:thumbTint="@color/style_color_accent"
+            android:progress="5"/>
+
+        <TextView
+            android:id="@+id/text_end"
+            style="@style/Widget.Hachi.DialogText"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="60s"
+            android:textColor="#000"/>
+    </LinearLayout>
 
     <TextView
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/length_seekbar"
+        android:layout_below="@id/layout_length"
         android:id="@+id/tv_smart_remix"
         style="@style/Widget.Hachi.DialogText"
-        android:layout_marginBottom="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"

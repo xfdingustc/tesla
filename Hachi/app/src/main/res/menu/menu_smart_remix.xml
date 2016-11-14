@@ -2,16 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_to_remix"
-          android:icon="@drawable/nav_smart_remix"
-          android:title="@string/remix"
+          android:title="@string/remix_select_done"
           app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/menu_selete_all"
-        android:title="@string/select_all"
-        app:showAsAction="never"/>
-
-    <item
-        android:id="@+id/menu_deselete_all"
-        android:title="@string/deselect_all"
-        app:showAsAction="never"/>
 </menu>

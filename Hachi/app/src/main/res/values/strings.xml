@@ -537,4 +537,6 @@
     <string name="imperial">Imperial</string>
     <string name="no_search_results">No results for\n“%1$s”</string>
     <string name="already_logged_out">Log out</string>
+    <string name="remix_select_done">Done</string>
+    <string name="create">Create</string>
 </resources>
