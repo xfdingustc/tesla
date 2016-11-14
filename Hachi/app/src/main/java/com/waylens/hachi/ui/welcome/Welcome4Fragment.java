@@ -44,21 +44,15 @@ public class Welcome4Fragment extends BaseFragment {
     @BindView(R.id.btnEnter)
     Button mBtnEnter;
 
-    @BindView(R.id.withoutCamera)
-    TextView mWithoutCamera;
+
 
     @OnClick(R.id.btnEnter)
     public void onBtnEnterClicked() {
-        enter();
-    }
-
-
-    @OnClick(R.id.withoutCamera)
-    public void OnWithoutCameraClicked() {
         MainActivity.launch(getActivity());
         getActivity().finish();
         writeVersionName();
     }
+
 
 
 
@@ -72,7 +66,6 @@ public class Welcome4Fragment extends BaseFragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 int visibility = b ? View.VISIBLE : View.INVISIBLE;
                 mBtnEnter.setVisibility(visibility);
-                mWithoutCamera.setVisibility(visibility);
             }
         });
 
@@ -97,18 +90,7 @@ public class Welcome4Fragment extends BaseFragment {
         return TAG;
     }
 
-    private void enter() {
-        Intent intent = new Intent();
-        boolean enterSetup = VdtCameraManager.getManager().isConnected();
-        if (!enterSetup) {
-            intent.setClass(getActivity(), StartupActivity.class);
-        } else {
-            intent.setClass(getActivity(), MainActivity.class);
-        }
-        startActivity(intent);
-        getActivity().finish();
-        writeVersionName();
-    }
+
 
     private void writeVersionName() {
         PackageInfo pi = null;

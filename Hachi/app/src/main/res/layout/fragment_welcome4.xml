@@ -56,23 +56,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
+        android:layout_marginBottom="56dp"
         android:backgroundTint="?attr/actionButtonColor"
         android:textColor="@android:color/white"
         android:text="@string/wake_up_camera"
         >
     </Button>
 
-    <TextView
-        android:id="@+id/withoutCamera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:text="@string/without_camera"
-        android:textColor="@color/app_text_color_primary_light"
-        android:textSize="16sp"
-        android:layout_marginBottom="56dp"
-        />
+
 
     </LinearLayout>
 
