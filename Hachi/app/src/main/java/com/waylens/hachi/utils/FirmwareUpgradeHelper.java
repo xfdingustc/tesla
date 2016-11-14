@@ -83,8 +83,8 @@ public class FirmwareUpgradeHelper {
             if (this.mSub > firmwareVersion.mSub) {
                 return true;
             }
-            return true;
-//            return this.mBuild > firmwareVersion.mBuild;
+//            return true;
+            return this.mBuild > firmwareVersion.mBuild;
         }
 
     }
