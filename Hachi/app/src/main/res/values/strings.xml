@@ -231,6 +231,7 @@
     <string name="access_point">Hotspot</string>
     <string name="client">Client</string>
     <string name="off">Off</string>
+    <string name="no_gps_signal">No Signal</string>
     <string name="change_wifi_mode">Switch WiFi mode</string>
     <string name="change_wifi_mode_alert">Switching WiFi mode will disconnect your phone from the camera. Confirm to proceed?</string>
     <string name="wifi_added">The following WiFi profiles have been added to the camera.</string>

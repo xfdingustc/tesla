@@ -230,6 +230,9 @@ public class LiveViewActivity extends BaseActivity {
     @BindString(R.string.on)
     String strOn;
 
+    @BindString(R.string.no_gps_signal)
+    String strGpsOff;
+
     @BindString(R.string.off)
     String strOff;
 
@@ -621,7 +624,7 @@ public class LiveViewActivity extends BaseActivity {
 
         ivGpsStatus.setAlpha(0.2f);
         ivDetailGps.setAlpha(0.2f);
-        tvGpsStatus.setText(strOff);
+        tvGpsStatus.setText(strGpsOff);
 
     }
 

@@ -17,13 +17,6 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/clipGroupList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </android.support.v7.widget.RecyclerView>
-
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -38,9 +31,49 @@
         android:src="@drawable/ic_smart_remix"
         android:visibility="gone"/>
 
+
+    <FrameLayout
+        android:id="@+id/confirm_save_container"
+        android:layout_width="455dp"
+        android:layout_height="448dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/padding_normal"
+        android:layout_marginBottom="@dimen/padding_normal"
+        android:translationX="100dp"
+        android:translationY="198dp"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:layout_width="252dp"
+            android:layout_height="252dp"
+            android:layout_gravity="start|top"
+            android:gravity="bottom|end"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_smart_remix"/>
+
+            <Button
+                android:id="@+id/save_confirmed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_smart_remix"
+                android:drawablePadding="@dimen/padding_normal"
+                android:padding="@dimen/padding_normal"
+                android:text="do remix"
+                style="?android:borderlessButtonStyle" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
     <RelativeLayout
         android:id="@+id/layout_smart_remix"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:background="#efff"
         android:layout_width="match_parent"
@@ -87,5 +120,14 @@
             android:textColor="@color/style_color_accent"
             android:layout_alignParentBottom="true" />
     </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/clipGroupList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>
