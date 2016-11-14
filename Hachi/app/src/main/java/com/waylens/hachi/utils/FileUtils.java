@@ -26,8 +26,10 @@ public class FileUtils {
         return getExportPath(VIDEO_DOWNLOAD_PATH);
     }
 
-    public static String getFirmwareDownloadPath() {
-        return getExportPath(FW_DOWNLOAD_PATH) + "firmware.tsf";
+    public static String getFirmwareDownloadPath(String url) {
+        int lastSlash = url.lastIndexOf("/");
+        String fileName = url.substring(lastSlash, url.length());
+        return getExportPath(FW_DOWNLOAD_PATH) + fileName;
     }
 
     public static String getMomentCachePath() {

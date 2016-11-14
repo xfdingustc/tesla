@@ -15,6 +15,8 @@ import com.github.lzyzsd.circleprogress.ArcProgress;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCamera;
+import com.waylens.hachi.camera.VdtCameraManager;
+import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.service.download.DownloadAPI;
 import com.waylens.hachi.service.download.DownloadProgressListener;
@@ -67,11 +69,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
 
     @OnClick(R.id.btn_retry)
     public void onBtnRetryClicked() {
-        if (mUpgradeState == UPGRADE_STATE_NONE) {
-            doDownloadFirmware();
-        } else if (mUpgradeState == UPGRADE_STATE_DOWNLOADED) {
-            doSendFirmware2Camera();
-        }
+        doCheckIfFirmwareDownloaded();
     }
 
 
@@ -108,7 +106,20 @@ public class FirmwareUpdateActivity extends BaseActivity {
         super.init();
         mFirmware = (Firmware) getIntent().getSerializableExtra(EXTRA_FIRMWARE_INFO);
         initViews();
-        doDownloadFirmware();
+        doCheckIfFirmwareDownloaded();
+    }
+
+    private void doCheckIfFirmwareDownloaded() {
+        btnRetry.setVisibility(View.GONE);
+        Logger.t(TAG).d(mFirmware.url);
+        mDownloadFirmware = new File(FileUtils.getFirmwareDownloadPath(mFirmware.url));
+        Logger.t(TAG).d("output file: " + mDownloadFirmware);
+
+        if (mDownloadFirmware.exists()) {
+            startFirmwareMd5Check(mDownloadFirmware);
+        } else {
+            doDownloadFirmware();
+        }
     }
 
     private void initViews() {
@@ -124,8 +135,8 @@ public class FirmwareUpdateActivity extends BaseActivity {
     }
 
     private void doDownloadFirmware() {
-        btnRetry.setVisibility(View.GONE);
-        Logger.t(TAG).d(mFirmware.url);
+
+
         mTvBottomText.setText(R.string.download_firmware);
         DownloadProgressListener listener = new DownloadProgressListener() {
             @Override
@@ -146,8 +157,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
             }
         };
 
-        mDownloadFirmware = new File(FileUtils.getFirmwareDownloadPath());
-        Logger.t(TAG).d("output file: " + mDownloadFirmware);
+
         String baseUrl = StringUtils.getHostName(mFirmware.url);
 
         new DownloadAPI(baseUrl, listener)
@@ -219,6 +229,7 @@ public class FirmwareUpdateActivity extends BaseActivity {
 
     private void doSendFirmware2Camera() {
         btnRetry.setVisibility(View.GONE);
+        mVdtCamera = VdtCameraManager.getManager().getCurrentCamera();
         mVdtCamera.sendNewFirmware(mFirmware.md5, new VdtCamera.OnNewFwVersionListern() {
             @Override
             public void onNewVersion(final int response) {
