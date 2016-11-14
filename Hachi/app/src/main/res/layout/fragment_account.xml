@@ -14,15 +14,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:elevation="2dp"
                 android:layout_marginBottom="4dp"
+                android:elevation="2dp"
+                android:orientation="horizontal"
                 android:padding="16dp">
 
                 <com.waylens.hachi.ui.views.AvatarView
@@ -45,6 +45,7 @@
 
 
             <android.support.v7.widget.CardView
+                android:id="@+id/card_exported"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="2dp"
@@ -53,27 +54,28 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/cardViewBgColor"
                     android:orientation="vertical">
-
 
 
                     <LinearLayout
                         android:id="@+id/ll_exported_video"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        >
 
                         <ImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_file_download"
+                            android:layout_gravity="center_vertical"
                             android:tint="@color/material_green_500"/>
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:layout_centerVertical="true"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="16dp"
@@ -81,7 +83,40 @@
                             android:textColor="?attr/appTextColorPrimary"
                             android:textSize="18sp"/>
 
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/more"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginRight="16dp"/>
+
                     </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/exported_videos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp"></android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="2dp"
+                android:layout_marginTop="8dp"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/cardViewBgColor"
+                    android:orientation="vertical"
+                   >
 
 
                     <LinearLayout
@@ -286,7 +321,7 @@
                             android:layout_height="24dp"
                             android:layout_margin="16dp"
                             android:src="@drawable/ic_settings"
-                            android:tint="@color/material_blue_400"/>
+                            android:tint="@color/material_grey_500"/>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -304,8 +339,8 @@
                         android:id="@+id/ll_support"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
                         <ImageView
                             android:layout_width="24dp"

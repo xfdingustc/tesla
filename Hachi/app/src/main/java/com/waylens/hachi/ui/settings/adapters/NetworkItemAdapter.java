@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.settings;
+package com.waylens.hachi.ui.settings.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

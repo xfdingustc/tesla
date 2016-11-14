@@ -37,6 +37,7 @@ import com.waylens.hachi.camera.events.NetworkEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.ui.settings.adapters.NetworkItemAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

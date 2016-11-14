@@ -15,6 +15,7 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.entities.NetworkItemBean;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.MainActivity;
+import com.waylens.hachi.ui.settings.adapters.NetworkItemAdapter;
 
 
 import java.util.List;

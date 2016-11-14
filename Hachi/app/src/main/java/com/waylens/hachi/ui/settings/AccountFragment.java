@@ -2,6 +2,9 @@ package com.waylens.hachi.ui.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
+import com.waylens.hachi.ui.settings.adapters.SimpleExportedItemAdapter;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
@@ -32,7 +36,9 @@ import butterknife.OnClick;
  * Created by Xiaofei on 2016/9/28.
  */
 
-public class AccountFragment extends BaseFragment implements FragmentNavigator{
+public class AccountFragment extends BaseFragment implements FragmentNavigator {
+
+    private SimpleExportedItemAdapter mExportedAdapter;
 
     @BindView(R.id.user_avatar)
     AvatarView userAvatar;
@@ -46,11 +52,17 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator{
     @BindView(R.id.ll_uploading)
     View llUploading;
 
+    @BindView(R.id.exported_videos)
+    RecyclerView rvExportedVideos;
+
     @BindView(R.id.ll_my_moment)
     View llMyMoment;
 
     @BindView(R.id.ll_notification)
     View llNofitication;
+
+    @BindView(R.id.card_exported)
+    CardView cardExported;
 
 
     @BindView(R.id.user_name)
@@ -135,12 +147,19 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator{
         super.onStart();
         initViews();
         EventBus.getDefault().register(this);
+        EventBus.getDefault().register(mExportedAdapter);
+        if (mExportedAdapter.getItemCount() == 0) {
+            cardExported.setVisibility(View.GONE);
+        } else {
+            cardExported.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(mExportedAdapter);
     }
 
     private void initViews() {
@@ -159,6 +178,12 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator{
         } else {
             llCameraSetting.setVisibility(View.GONE);
         }
+
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        rvExportedVideos.setLayoutManager(layoutManager);
+        mExportedAdapter = new SimpleExportedItemAdapter(getActivity());
+        rvExportedVideos.setAdapter(mExportedAdapter);
+
 
         refreshLoginRelatedPrefs();
 
