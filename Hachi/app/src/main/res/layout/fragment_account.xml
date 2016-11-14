@@ -34,11 +34,22 @@
 
                 <TextView
                     android:id="@+id/user_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
                     android:textSize="24sp"
                     tools:text="xfding"/>
+
+                <ImageButton
+                    android:id="@+id/tvNotification"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_notifications_full"
+                    android:layout_gravity="center_vertical"
+                    android:tint="@color/material_red_400"/>
 
 
             </LinearLayout>
@@ -170,32 +181,7 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/ll_notification"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:visibility="gone"
-                        tools:visibility="visible">
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_notifications_full"
-                            android:tint="@color/material_red_400"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/notification"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/ll_waylens_cloud"

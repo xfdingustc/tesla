@@ -51,6 +51,7 @@ public class SettingActivity extends BaseActivity {
         DialogHelper.showSignoutConfirmDialog(this, new DialogHelper.OnPositiveClickListener() {
             @Override
             public void onPositiveClick() {
+                Toast.makeText(SettingActivity.this, R.string.already_logged_out, Toast.LENGTH_SHORT).show();
                 refreshBtnLogout();
             }
         });

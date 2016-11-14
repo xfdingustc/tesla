@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -58,8 +60,8 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
     @BindView(R.id.ll_my_moment)
     View llMyMoment;
 
-    @BindView(R.id.ll_notification)
-    View llNofitication;
+    @BindView(R.id.tvNotification)
+    ImageButton ivNotification;
 
     @BindView(R.id.card_exported)
     CardView cardExported;
@@ -97,7 +99,7 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
         MyMomentActivity.launch(getActivity());
     }
 
-    @OnClick(R.id.ll_notification)
+    @OnClick(R.id.tvNotification)
     public void onNotificatinoClicked() {
         NotificationActivity.launch(getActivity());
     }
@@ -199,14 +201,10 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
 
         llUploading.setVisibility(visibility);
         llMyMoment.setVisibility(visibility);
-        llNofitication.setVisibility(visibility);
+        ivNotification.setVisibility(visibility);
         llWaylensCloud.setVisibility(visibility);
     }
 
-
-    private void showUserAvatar(String avatarUrl) {
-        userAvatar.loadAvatar(avatarUrl, null);
-    }
 
 
     @Override

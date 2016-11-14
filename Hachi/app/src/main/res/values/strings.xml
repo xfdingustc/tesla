@@ -536,4 +536,5 @@
     <string name="units">Units</string>
     <string name="imperial">Imperial</string>
     <string name="no_search_results">No results for\n“%1$s”</string>
+    <string name="already_logged_out">Log out</string>
 </resources>
