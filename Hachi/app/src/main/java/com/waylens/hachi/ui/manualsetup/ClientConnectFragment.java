@@ -33,7 +33,7 @@ import com.waylens.hachi.camera.events.NetworkEvent;
 import com.waylens.hachi.hardware.WifiAutoConnectManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.settings.NetworkItemAdapter;
+import com.waylens.hachi.ui.settings.adapters.NetworkItemAdapter;
 import com.waylens.hachi.ui.views.radarview.RadarView;
 
 

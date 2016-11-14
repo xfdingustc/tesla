@@ -7,13 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ViewAnimator;
-import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.settings.adapters.UploadItemAdapter;
 
 import butterknife.BindView;
 

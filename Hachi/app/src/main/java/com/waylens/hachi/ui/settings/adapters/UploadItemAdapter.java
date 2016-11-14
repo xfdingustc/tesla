@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.settings.myvideo;
+package com.waylens.hachi.ui.settings.adapters;
 
 import android.app.Activity;
 import android.support.v7.widget.PopupMenu;

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingLeft="2dp"
+              android:paddingRight="2dp">
+
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+
+
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp"
+        tools:background="@drawable/stroke_rect">
+
+
+        <ImageView
+            android:id="@+id/video_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <ProgressBar
+            android:id="@+id/upload_progress"
+            style="?android:progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:max="100"
+            android:progressDrawable="@drawable/upload_progress_drawable"
+            tools:progress="50"/>
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+    <TextView
+        android:id="@+id/file_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="marquee"
+        android:maxLines="1"
+        android:text="20161102-192040-1.mp4"
+        android:textColor="?attr/appTextColorPrimary"/>
+
+</LinearLayout>

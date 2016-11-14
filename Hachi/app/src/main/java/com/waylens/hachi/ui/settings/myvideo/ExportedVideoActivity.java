@@ -11,6 +11,7 @@ import android.widget.ViewSwitcher;
 
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.settings.adapters.DownloadItemAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 
