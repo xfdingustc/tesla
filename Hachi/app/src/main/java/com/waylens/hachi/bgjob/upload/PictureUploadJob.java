@@ -13,7 +13,7 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.body.FinishUploadBody;
@@ -26,7 +26,6 @@ import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
-import com.waylens.hachi.utils.PictureUtils;
 import com.waylens.hachi.utils.StringUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -73,7 +72,7 @@ public class PictureUploadJob extends UploadMomentJob {
     @Override
     public void onRun() throws Throwable {
         EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_ADDED, this));
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         CreateMomentBody createMomentBody = new CreateMomentBody();
         createMomentBody.title = mTitle;
         createMomentBody.momentType = "PICTURE";

@@ -8,7 +8,7 @@ import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
 import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.service.upload.UploadAPI;
 import com.waylens.hachi.service.upload.rest.response.UploadDataResponse;
@@ -50,7 +50,7 @@ public class UploadAvatarJob extends Job {
 
 
         try {
-            HachiApi hachiApi = HachiService.createHachiApiService();
+            IHachiApi hachiApi = HachiService.createHachiApiService();
             UploadServer uploadServer = hachiApi.getAvatarUploadServer().execute().body().uploadServer;
 
             RxBus.getDefault().post(new UploadAvatarEvent(UploadAvatarEvent.UPLOAD_WHAT_START));

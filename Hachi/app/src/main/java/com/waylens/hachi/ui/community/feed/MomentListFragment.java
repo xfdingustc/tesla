@@ -12,7 +12,7 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -210,7 +210,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     private Observable<MomentListResponse> getMomentListObservable(long cursor) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         switch (mFeedTag) {
             case FEED_TAG_LATEST:
                 return hachiApi.getAllMomentsRx(cursor, DEFAULT_COUNT, "uploadtime_desc", null, true);

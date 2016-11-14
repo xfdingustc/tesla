@@ -35,8 +35,10 @@ import com.waylens.hachi.app.CachedJsonRequest;
 import com.waylens.hachi.player.HachiPlayer;
 import com.waylens.hachi.player.HlsRendererBuilder;
 import com.waylens.hachi.player.Utils;
+import com.waylens.hachi.rest.HachiApiRx;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.MomentPlayInfo;
+import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.IioData;
@@ -48,6 +50,7 @@ import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.views.gauge.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.xfdingustc.mdplaypausebutton.PlayPauseButton;
 
 import org.json.JSONArray;
@@ -81,6 +84,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     private static final String EXTRA_MOMENT_COVER = "extra_moment_cover";
 
     private static final int FADE_OUT = 1;
+    private static final int ADD_VIEW_COUNT = 2;
 
 
     private static final int DEFAULT_TIMEOUT = 3000;
@@ -94,6 +98,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     protected int mRawDataState = RAW_DATA_STATE_UNKNOWN;
 
     protected boolean mOverlayShouldDisplay = true;
+
+    private boolean mViewCountSend = false;
 
     private HachiPlayer mMediaPlayer;
     private PlayerControl mPlayerControl;
@@ -1022,6 +1028,18 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 public void run() {
                     if (mPlayerControl != null) {
                         setProgress(currentPos, mPlayerControl.getDuration());
+                        if (!mViewCountSend && currentPos > 3000) {
+                            HachiApiRx.addMomentViewCount(mMomentId)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new SimpleSubscribe<SimpleBoolResponse>() {
+                                    @Override
+                                    public void onNext(SimpleBoolResponse simpleBoolResponse) {
+                                        Logger.t(TAG).d("result: " + simpleBoolResponse.result);
+                                    }
+                                });
+                            mViewCountSend = true;
+                        }
                         //
                         mRawDataAdapter.updateCurrentTime(currentPos);
                         mGaugeView.setPlayTime(currentPos);
@@ -1049,6 +1067,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
                 case FADE_OUT:
                     fragment.hideControllers();
                     break;
+
 
             }
         }

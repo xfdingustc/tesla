@@ -9,7 +9,7 @@ import com.waylens.hachi.bgjob.social.event.SocialEvent;
 import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.RepostBody;
 import com.waylens.hachi.rest.response.RepostResponse;
@@ -24,7 +24,7 @@ public class RepostJob extends Job {
     private final long mMomentId;
     private final String mSocialProvider;
 
-    private HachiApi mHachi = HachiService.createHachiApiService();
+    private IHachiApi mHachi = HachiService.createHachiApiService();
 
     private EventBus mEventBus = EventBus.getDefault();
 

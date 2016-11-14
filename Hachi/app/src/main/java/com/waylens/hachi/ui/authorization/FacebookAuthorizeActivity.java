@@ -4,16 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
-import android.hardware.camera2.params.Face;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.widget.ImageView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -21,24 +15,19 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.utils.ServerMessage;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
 
 import butterknife.BindView;
 import retrofit2.Call;
-import retrofit2.Callback;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -52,7 +41,7 @@ public class FacebookAuthorizeActivity extends BaseActivity {
 
     private CallbackManager mCallbackManager = CallbackManager.Factory.create();
 
-    private HachiApi mHachi = HachiService.createHachiApiService();
+    private IHachiApi mHachi = HachiService.createHachiApiService();
 
 
 

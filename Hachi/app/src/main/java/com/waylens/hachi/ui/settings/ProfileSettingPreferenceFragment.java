@@ -22,7 +22,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Vehicle;
 import com.waylens.hachi.rest.body.ChangePwdBody;
@@ -82,7 +82,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     private SessionManager mSessionManager = SessionManager.getInstance();
 
 
-    private HachiApi mHachi = HachiService.createHachiApiService();
+    private IHachiApi mHachi = HachiService.createHachiApiService();
 
     private MaterialDialog mProgressDialog;
 
@@ -472,7 +472,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
 
     private void uploadPassword(String oldPwd, String newPwd) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         ChangePwdBody changePwdBody = new ChangePwdBody();
         changePwdBody.curPassword = oldPwd;
         changePwdBody.newPassword = newPwd;
@@ -494,7 +494,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void updateGender(final String gender) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         UserProfileBody userProfileBody = new UserProfileBody();
         userProfileBody.gender = gender;
         hachiApi.changeProfileRx(userProfileBody)
@@ -517,7 +517,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
 
     private void updateNewUserName(final String newUserName) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         UserProfileBody userProfileBody = new UserProfileBody();
         userProfileBody.userName = newUserName;
         hachiApi.changeProfileRx(userProfileBody)
@@ -540,7 +540,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     }
 
     private void updateBirthday(final String birthday) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         UserProfileBody userProfileBody = new UserProfileBody();
         userProfileBody.birthday = birthday;
         hachiApi.changeProfileRx(userProfileBody)

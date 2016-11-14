@@ -7,7 +7,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
@@ -35,7 +35,7 @@ public class FollowJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Call<SimpleBoolResponse> responseCall;
 
         FollowPostBody body = new FollowPostBody();

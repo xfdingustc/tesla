@@ -1,13 +1,12 @@
 package com.waylens.hachi.bgjob.social;
 
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.LikePostBody;
 import com.waylens.hachi.rest.response.LikeResponse;
@@ -33,7 +32,7 @@ public class LikeJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Call<LikeResponse> response = hachiApi.like(new LikePostBody(mMomentId, mIsCancel));
         Logger.t(TAG).d("response: " + response.execute().body().count);
     }

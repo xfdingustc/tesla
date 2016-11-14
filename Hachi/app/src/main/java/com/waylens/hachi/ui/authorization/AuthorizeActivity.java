@@ -22,7 +22,7 @@ import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
@@ -204,7 +204,7 @@ public class AuthorizeActivity extends BaseActivity {
     }
 
     private void doDeviceLogin() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         DeviceLoginBody body = new DeviceLoginBody("ANDROID", "xfding");
         hachiApi.deviceLoginRx(body)
             .subscribeOn(Schedulers.io())

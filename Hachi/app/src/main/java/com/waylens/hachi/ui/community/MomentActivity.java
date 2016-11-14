@@ -396,8 +396,6 @@ public class MomentActivity extends BaseActivity {
         }
 
         getFragmentManager().beginTransaction().replace(R.id.moment_play_container, mMomentPlayFragment).commit();
-
-
 //
     }
 

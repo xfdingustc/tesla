@@ -15,7 +15,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Notification;
 import com.waylens.hachi.rest.response.NotificationResponse;
@@ -130,7 +130,7 @@ public class NotificationActivity extends BaseActivity {
     }
 
     private void loadNotificationsRx(final boolean isRefresh) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Observable<NotificationResponse> commentObservable = hachiApi.getCommentNotificationRx(mCommentCursor, DEFAULT_COUNT)
             .doOnNext(new Action1<NotificationResponse>() {
                 @Override

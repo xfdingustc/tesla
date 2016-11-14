@@ -14,7 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.SignInPostBody;
 import com.waylens.hachi.rest.body.SignUpPostBody;
@@ -119,7 +119,7 @@ public class SignUpFragment extends BaseFragment {
         String email = mTvSignUpEmail.getText().toString();
         String password = mEvPassword.getText().toString();
 
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         SignUpPostBody signUpPostBody = new SignUpPostBody(email, email.substring(0, email.indexOf("@")), password);
 
 
@@ -237,7 +237,7 @@ public class SignUpFragment extends BaseFragment {
         String email = mTvSignUpEmail.getText().toString();
         String password = mEvPassword.getText().toString();
 
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         SignInPostBody signInPostBody = new SignInPostBody(email, password);
         Call<AuthorizeResponse> signInResponseCall = hachiApi.signin(signInPostBody);
         signInResponseCall.enqueue(new Callback<AuthorizeResponse>() {

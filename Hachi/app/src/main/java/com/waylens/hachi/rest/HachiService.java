@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class HachiService {
     private static final String TAG = HachiService.class.getSimpleName();
-    public static HachiApi mHachiApiInstance = null;
+    public static IHachiApi mHachiApiInstance = null;
 
     private static String USER_AGENT = "Android " + Build.VERSION.SDK + ";" + Build.BRAND + Build.MODEL;
 
@@ -29,7 +29,7 @@ public class HachiService {
 
     }
 
-    public static HachiApi createHachiApiService() {
+    public static IHachiApi createHachiApiService() {
         if (mHachiApiInstance == null) {
             synchronized (HachiService.class) {
                 if (mHachiApiInstance == null) {
@@ -57,7 +57,7 @@ public class HachiService {
 
                     builder.client(clientBuilder.build());
 
-                    mHachiApiInstance = builder.build().create(HachiApi.class);
+                    mHachiApiInstance = builder.build().create(IHachiApi.class);
                 }
             }
         }
@@ -68,7 +68,7 @@ public class HachiService {
     }
 
 
-    public static HachiApi createHachiApiService(int timeout, TimeUnit timeUnit) {
+    public static IHachiApi createHachiApiService(int timeout, TimeUnit timeUnit) {
         Retrofit.Builder builder = new Retrofit.Builder().addCallAdapterFactory(RxJavaCallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(Constants.HOST_URL);
@@ -94,7 +94,7 @@ public class HachiService {
             builder.client(client);
         }
 
-        return builder.build().create(HachiApi.class);
+        return builder.build().create(IHachiApi.class);
     }
 
 

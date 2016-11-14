@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ViewSwitcher;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.City;
 import com.waylens.hachi.rest.body.UserProfileBody;
@@ -104,7 +104,7 @@ public class CityActivity extends BaseActivity {
 
 
     private void getCityList() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         hachiApi.getCityListRx(mCode, cityLimit)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -135,7 +135,7 @@ public class CityActivity extends BaseActivity {
 
 
     private void changeUserCity(City city) {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         UserProfileBody userProfileBody = new UserProfileBody();
         userProfileBody.cityID = (int) city.id;
         hachiApi.changeProfileRx(userProfileBody)

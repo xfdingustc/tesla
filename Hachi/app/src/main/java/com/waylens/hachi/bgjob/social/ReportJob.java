@@ -3,20 +3,17 @@ package com.waylens.hachi.bgjob.social;
 import android.support.annotation.Nullable;
 
 
-import com.googlecode.javacv.CanvasFrame;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.rest.body.ReportUserBody;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
-
-import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -48,7 +45,7 @@ public class ReportJob extends Job {
     @Override
     public void onRun() throws Throwable {
         Logger.t(TAG).d("do report");
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Call<SimpleBoolResponse> response = null;
 
         switch (mtype) {

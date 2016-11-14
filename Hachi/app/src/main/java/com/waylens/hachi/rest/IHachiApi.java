@@ -3,6 +3,7 @@ package com.waylens.hachi.rest;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.rest.bean.MomentAmount;
+import com.waylens.hachi.rest.body.AddMomentViewCountBody;
 import com.waylens.hachi.rest.body.AddVehicleBody;
 import com.waylens.hachi.rest.body.ChangePwdBody;
 import com.waylens.hachi.rest.body.CreateMomentBody;
@@ -70,7 +71,7 @@ import rx.Observable;
 /**
  * Created by Xiaofei on 2016/6/8.
  */
-public interface HachiApi {
+public interface IHachiApi {
 //    @GET("/api/users/{userId}")
 //    Call<UserProfile> getUserProfile(@Path("userId") String userId);
 
@@ -302,5 +303,8 @@ public interface HachiApi {
 
     @GET("api/events/follows")
     Observable<NotificationResponse> getFollowNotificationRx(@Query("cursor") long cursor, @Query("count") int count);
+
+    @POST("api/moments/views")
+    Observable<SimpleBoolResponse> addViewCount(@Body AddMomentViewCountBody viewCountBody);
 
 }

@@ -1,22 +1,13 @@
 package com.waylens.hachi.app;
 
-import android.preference.Preference;
-import android.support.annotation.NonNull;
-
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.utils.PreferenceUtils;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by Xiaofei on 2016/5/4.

@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.FriendList;
 import com.waylens.hachi.ui.adapters.UserListRvAdapter;
@@ -19,7 +19,6 @@ import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
 import butterknife.BindView;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -102,7 +101,7 @@ public class FollowListActivity extends BaseActivity {
         } else {
             follow = "followings";
         }
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         hachiApi.getFriendListRx(follow, mUserId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

@@ -2,10 +2,8 @@ package com.waylens.hachi.utils;
 
 import android.text.TextUtils;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
-import com.waylens.hachi.rest.HachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Firmware;
 

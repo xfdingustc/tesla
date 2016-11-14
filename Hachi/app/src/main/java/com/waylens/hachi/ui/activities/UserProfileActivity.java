@@ -27,7 +27,7 @@ import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.jobqueue.JobManager;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.bean.User;
@@ -251,7 +251,7 @@ public class UserProfileActivity extends BaseActivity {
 
 
     private void fetchUserProfile() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
 
 
         Observable<FollowInfo> followInfoObservable = hachiApi.getFollowInfoRx(mUser.userID)

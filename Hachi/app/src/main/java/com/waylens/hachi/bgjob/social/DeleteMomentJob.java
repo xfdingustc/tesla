@@ -8,7 +8,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.jobqueue.Job;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 
@@ -33,7 +33,7 @@ public class DeleteMomentJob extends Job {
 
     @Override
     public void onRun() throws Throwable {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Call<SimpleBoolResponse> boolResponseCall = hachiApi.deleteMoment(mMomentId);
 
         Logger.t(TAG).d("result: " + boolResponseCall.execute().body().result);

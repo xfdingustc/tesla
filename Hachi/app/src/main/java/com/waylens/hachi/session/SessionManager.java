@@ -11,7 +11,7 @@ import com.facebook.login.LoginManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.JsonKey;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.SocialProvider;
@@ -55,7 +55,7 @@ public class SessionManager {
 
 
     public void reloadVerifyInfo() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Call<UserInfo> userInfoCall = hachiApi.getMyUserInfo();
         userInfoCall.enqueue(new Callback<UserInfo>() {
             @Override
@@ -341,7 +341,7 @@ public class SessionManager {
         if (sessionManager.isVerified()) {
             return true;
         } else {
-            HachiApi mHachi = HachiService.createHachiApiService();
+            IHachiApi mHachi = HachiService.createHachiApiService();
             Call<UserInfo> userInfoCall = mHachi.getUserInfo(sessionManager.getUserId());
             userInfoCall.enqueue(new Callback<UserInfo>() {
                 @Override

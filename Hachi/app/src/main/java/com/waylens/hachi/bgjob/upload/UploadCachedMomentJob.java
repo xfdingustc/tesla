@@ -18,7 +18,7 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.CreateMomentBody;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
@@ -85,7 +85,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
                 Thread.sleep(10000);
             }
         }
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         if (mLocalMoment.withCarInfo && mLocalMoment.vin != null && mLocalMoment.mVehicleMaker == null) {
 
             Call<VinQueryResponse> vinQueryResponseCall = hachiApi.queryByVin(mLocalMoment.vin);
@@ -223,7 +223,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
     private CreateMomentResponse getCloudInfo() throws IOException {
 
-        HachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
+        IHachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
         CreateMomentBody createMomentBody = new CreateMomentBody(mLocalMoment);
         Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
 
@@ -236,7 +236,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
     private boolean checkCloudStorageAvailable() {
         try {
-            HachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
+            IHachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
             Call<CloudStorageInfo> createMomentResponseCall = hachiApi.getCloudStorageInfo();
             CloudStorageInfo cloudStorageInfo = createMomentResponseCall.execute().body();
             int clipLength = 0;

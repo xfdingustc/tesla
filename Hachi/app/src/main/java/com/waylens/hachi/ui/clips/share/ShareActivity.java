@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -24,13 +23,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.GeoInfo;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
@@ -59,7 +56,6 @@ import com.waylens.hachi.utils.ViewUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TimeZone;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -122,7 +118,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     private LinkedAccounts mLinkedAccounts;
 
-    private HachiApi mHachi = HachiService.createHachiApiService();
+    private IHachiApi mHachi = HachiService.createHachiApiService();
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 

@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.event.UploadAvatarEvent;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
@@ -37,7 +37,7 @@ import rx.schedulers.Schedulers;
 public class ProfileSettingActivity extends BaseActivity {
     private Subscription mAvatarUploadSubscription;
     private SessionManager mSessionManager = SessionManager.getInstance();
-    private HachiApi mHachi = HachiService.createHachiApiService();
+    private IHachiApi mHachi = HachiService.createHachiApiService();
 
     @BindView(R.id.avatar)
     ImageView mAvatar;

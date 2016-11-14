@@ -18,7 +18,7 @@ import android.widget.ViewAnimator;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.SignInPostBody;
@@ -162,7 +162,7 @@ public class SignInFragment extends BaseFragment {
     }
 
     private void doDeviceLogin() {
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         DeviceLoginBody body = new DeviceLoginBody("ANDROID", "xfding");
         hachiApi.deviceLoginRx(body)
             .subscribeOn(Schedulers.io())

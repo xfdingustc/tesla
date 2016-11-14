@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.MomentSummaryResponse;
@@ -93,7 +93,7 @@ public class WaylensCloudActivity extends BaseActivity {
 
     private void getWaylensCloudInfo() {
 
-        HachiApi mHachi = HachiService.createHachiApiService();
+        IHachiApi mHachi = HachiService.createHachiApiService();
 
         mHachi.getMomentSummaryRx()
             .subscribeOn(Schedulers.io())

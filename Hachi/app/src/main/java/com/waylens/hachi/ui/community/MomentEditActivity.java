@@ -1,7 +1,6 @@
 package com.waylens.hachi.ui.community;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,13 +13,12 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
@@ -148,7 +146,7 @@ public class MomentEditActivity extends BaseActivity {
     }
 
     private void doModifyMoment() {
-        HachiApi mHachiApi = HachiService.createHachiApiService();
+        IHachiApi mHachiApi = HachiService.createHachiApiService();
         final MomentUpdateBody body = new MomentUpdateBody();
         body.title = mMomentTitle.getEditableText().toString();
         body.description = mMomentDescription.getEditableText().toString();

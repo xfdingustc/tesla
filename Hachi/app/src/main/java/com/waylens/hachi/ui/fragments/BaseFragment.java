@@ -15,26 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.response.ErrorMessageResponse;
 import com.waylens.hachi.snipe.VdbRequestQueue;
-import com.waylens.hachi.ui.activities.MainActivity;
 
-
-import org.json.JSONObject;
-
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.adapter.rxjava.HttpException;
 
 /**
  * Created by Xiaofei on 2015/8/4.
@@ -50,7 +40,7 @@ public abstract class BaseFragment extends Fragment {
 
 
 
-    protected HachiApi mHachi = HachiService.createHachiApiService();
+    protected IHachiApi mHachi = HachiService.createHachiApiService();
 
     private static final String STATE_SAVE_IS_HIDDEN = "STATE_SAVE_IS_HIDDEN";
 

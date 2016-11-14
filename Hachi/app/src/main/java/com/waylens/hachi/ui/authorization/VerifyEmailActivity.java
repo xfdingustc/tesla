@@ -8,10 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.rest.HachiApi;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -59,7 +58,7 @@ public class VerifyEmailActivity extends BaseActivity{
     @OnClick(R.id.resend_email)
     public void onResendEmailClicked() {
         Logger.d("butterknife works here", this);
-        HachiApi hachiApi = HachiService.createHachiApiService();
+        IHachiApi hachiApi = HachiService.createHachiApiService();
         Call<SimpleBoolResponse> resendVerifyEmailCall = hachiApi.resendVerifyEmail();
         resendVerifyEmailCall.enqueue(new Callback<SimpleBoolResponse>() {
             @Override
