@@ -140,6 +140,7 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:4.11.0'
     compile 'com.xfdingustc.fixaspectratiolayout:layout:0.2@aar'
     //    compile 'com.soundcloud.android:android-crop:1.0.0@aar'
+    compile 'com.github.clans:fab:1.6.4'
     compile 'com.google.android.gms:play-services-gcm:9.2.1'
     compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'javax.jmdns:jmdns:3.4.1'
@@ -176,7 +177,6 @@ dependencies {
     compile 'com.github.armcha:SpaceNavigationView:1.4.1'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
-    compile 'com.getbase:floatingactionbutton:1.10.1'
 
 }
 
