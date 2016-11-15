@@ -396,24 +396,7 @@ public class CameraSettingFragment extends PreferenceFragment {
                 mBeforeNumber.setValue(mVdtCamera.getMarkBeforeTime());
                 mAfterNumber.setValue(mVdtCamera.getMarkAfterTime());
 
-
-                mBeforeNumber.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                    @Override
-                    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                        int afterNumber = mAfterNumber.getValue();
-                        afterNumber = Math.min(afterNumber, MAX_BOOKMARK_LENGHT - newVal);
-                        mAfterNumber.setValue(afterNumber);
-                    }
-                });
-
-                mAfterNumber.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                    @Override
-                    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                        int beforeNumber = mBeforeNumber.getValue();
-                        beforeNumber = Math.min(beforeNumber, MAX_BOOKMARK_LENGHT - newVal);
-                        mBeforeNumber.setValue(beforeNumber);
-                    }
-                });
+                
 
                 return true;
 
