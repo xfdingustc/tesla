@@ -2,25 +2,26 @@
 <tabs>
     <tab
         id="@+id/moments"
-        icon="@drawable/moments_tab"
-        title="@string/moments" />
+        icon="@drawable/ic_wheel"
+/>
     <tab
         id="@+id/leaderboard"
         icon="@drawable/ic_virtual_racing"
-        title="@string/leaderboard" />
+/>
 
     <tab
         id="@+id/live_view"
         icon="@drawable/tab_liveview_n"
-        title="@string/live_view"/>
+        center="true"
+/>
 
     <tab
         id="@+id/video"
         icon="@drawable/tab_video_n"
-        title="@string/video" />
+ />
 
     <tab
         id="@+id/account"
         icon="@drawable/ic_person"
-        title="@string/account" />
+/>
 </tabs>

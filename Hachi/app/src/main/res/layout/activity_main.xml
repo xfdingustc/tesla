@@ -15,16 +15,16 @@
     </FrameLayout>
 
 
-    <com.luseen.spacenavigation.SpaceNavigationView
-        android:id="@+id/spaceNaviationView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:space_background_color="?attr/defaultBgColorDark"
-        app:active_item_color="@color/style_color_accent"
-        app:centre_button_color="@color/style_color_accent"
-        app:centre_button_icon_color="@android:color/white"
-        android:layout_gravity="bottom"/>
 
+    <com.waylens.hachi.view.bottombar.BottomBar
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="?attr/defaultBgColorDark"
+        app:bb_activeTabColor="@color/style_color_accent"
+        app:bb_inActiveTabColor="@color/material_grey_500"
+        app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:layout_gravity="bottom"/>
 
 
 </FrameLayout>
