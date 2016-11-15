@@ -533,7 +533,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
                 @Override
                 public void onError(Throwable e) {
-                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
+                    ServerErrorHelper.showErrorMessage(getView(), e);
                 }
             });
 
@@ -556,7 +556,8 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
                 @Override
                 public void onError(Throwable e) {
-                    Snackbar.make(getView(), new String(e.getMessage()), Snackbar.LENGTH_LONG).show();
+                    Logger.t(TAG).d(e.getLocalizedMessage());
+                    ServerErrorHelper.showErrorMessage(getView(), e);
                 }
             });
     }
