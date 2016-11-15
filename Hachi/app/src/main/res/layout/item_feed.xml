@@ -32,8 +32,8 @@
             android:layout_marginRight="4dp"
             android:drawablePadding="4dp"
             android:drawableStart="@drawable/asl_follow"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
             android:text="@string/follow"
             android:textColor="@android:color/white"
             android:theme="@style/LightRippleOverlay"/>
