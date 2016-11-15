@@ -22,6 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HachiService {
     private static final String TAG = HachiService.class.getSimpleName();
     public static IHachiApi mHachiApiInstance = null;
+    public static final int TIME_OUT_MILLI_SEC = 10000;
 
     private static String USER_AGENT = "Android " + Build.VERSION.SDK + ";" + Build.BRAND + Build.MODEL;
 
@@ -53,7 +54,9 @@ public class HachiService {
 
                             return chain.proceed(newReqBuilder.build());
                         }
-                    });
+                    })
+                        .readTimeout(TIME_OUT_MILLI_SEC, TimeUnit.MILLISECONDS)
+                        .connectTimeout(TIME_OUT_MILLI_SEC, TimeUnit.MILLISECONDS);
 
                     builder.client(clientBuilder.build());
 

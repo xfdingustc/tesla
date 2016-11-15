@@ -539,4 +539,7 @@
     <string name="already_logged_out">Log out</string>
     <string name="remix_select_done">Done</string>
     <string name="create">Create</string>
+    <string name="oops">Oops!!</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+    <string name="check_your_connection">Check your connection and try again</string>
 </resources>

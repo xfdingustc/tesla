@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.widget.TextView;
 import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
@@ -56,6 +58,8 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     private static final int CHILD_SIGNUP_ENTRY = 0;
     private static final int CHILD_MOMENTS = 1;
+    private static final int CHILD_NETWORK_ERROR = 2;
+
 
     private Subscription mSubscription;
 
@@ -66,6 +70,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     private long mCurrentCursor;
 
     private int mFeedTag;
+    private TextView tvTryAgain;
 
     @BindView(R.id.video_list_view)
     RecyclerViewExt mRvVideoList;
@@ -75,6 +80,13 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     @BindView(R.id.view_animator)
     ViewAnimator mViewAnimator;
+
+    @OnClick(R.id.btn_try_again)
+    public void onBtnTryAgainClicked() {
+        loadFeed(0, true);
+    }
+
+
 
 
     @OnClick(R.id.btn_sign_up)
@@ -142,7 +154,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
             Logger.t(TAG).d("show sign up entry");
         } else {
             if (mViewAnimator.getDisplayedChild() == CHILD_SIGNUP_ENTRY) {
-                mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
+
 //                Logger.t(TAG).d("show loading progress");
                 onRefresh();
             }
@@ -178,6 +190,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     private void loadFeed(long cursor, final boolean isRefresh) {
+        mViewAnimator.setDisplayedChild(CHILD_MOMENTS);
         getMomentListObservable(cursor)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -192,7 +205,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
                 @Override
                 public void onError(Throwable e) {
-                    onLoadMomentFailed(e);
+                    onLoadMomentFailed(isRefresh, e);
                 }
             });
 
@@ -285,10 +298,17 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
 
     }
 
-    private void onLoadMomentFailed(Throwable e) {
-        mRefreshLayout.setRefreshing(false);
-        mRvVideoList.setIsLoadingMore(false);
-        ServerErrorHelper.showErrorMessage(mRootView, e);
+    private void onLoadMomentFailed(final boolean isRefresh, Throwable e) {
+        if (isRefresh) {
+            mViewAnimator.setDisplayedChild(CHILD_NETWORK_ERROR);
+
+        } else {
+            mRefreshLayout.setRefreshing(false);
+            mRvVideoList.setIsLoadingMore(false);
+
+
+            ServerErrorHelper.showErrorMessage(mRootView, e);
+        }
     }
 
 
