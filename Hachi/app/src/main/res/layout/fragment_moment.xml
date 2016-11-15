@@ -40,49 +40,61 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-
-    <com.github.clans.fab.FloatingActionMenu
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/fab_menu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:padding="16dp"
-        fab:menu_animationDelayPerItem="0"
-        fab:menu_backgroundColor="#cc1D1F23"
-        fab:menu_colorNormal="@color/style_color_accent"
-        fab:menu_colorPressed="@color/material_deep_orange_a400"
-        fab:menu_colorRipple="@color/material_deep_orange_a700"
-        fab:menu_labels_hideAnimation="@anim/jump_to_down"
-        fab:menu_labels_showAnimation="@anim/jump_from_down"
-        fab:menu_labels_style="@style/MenuLabelsStyle"
-        fab:menu_shadowColor="#444">
+        android:layout_margin="16dp"
+        fab:fab_addButtonColorNormal="@color/style_color_accent"
+        fab:fab_addButtonColorPressed="@color/material_deep_orange_a400"
+        fab:fab_addButtonSize="mini"
+        fab:fab_addButtonPlusIconColor="@color/material_green_500"
+        fab:fab_addButtonStrokeVisible="false"/>
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_from_waylens"
-            style="@style/MenuButtonsStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_videocam_white"
-            android:tint="@android:color/white"
-            fab:fab_label="@string/from_waylens_camera"/>
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_from_gallery"
-            style="@style/MenuButtonsStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_photo_library"
-            fab:fab_label="@string/from_phone_galley"/>
+    <!--<com.github.clans.fab.FloatingActionMenu-->
+        <!--android:id="@+id/fab_menu"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:padding="16dp"-->
+        <!--fab:menu_animationDelayPerItem="0"-->
+        <!--fab:menu_backgroundColor="#cc1D1F23"-->
+        <!--fab:menu_colorNormal="@color/style_color_accent"-->
+        <!--fab:menu_colorPressed="@color/material_deep_orange_a400"-->
+        <!--fab:menu_colorRipple="@color/material_deep_orange_a700"-->
+        <!--fab:menu_labels_hideAnimation="@anim/jump_to_down"-->
+        <!--fab:menu_labels_showAnimation="@anim/jump_from_down"-->
+        <!--fab:menu_labels_style="@style/MenuLabelsStyle"-->
+        <!--fab:menu_shadowColor="#444">-->
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_from_camera"
-            style="@style/MenuButtonsStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_camera"
-            fab:fab_label="@string/take_picture"/>
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/fab_from_waylens"-->
+            <!--style="@style/MenuButtonsStyle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_videocam_white"-->
+            <!--android:tint="@android:color/white"-->
+            <!--fab:fab_label="@string/from_waylens_camera"/>-->
 
-    </com.github.clans.fab.FloatingActionMenu>
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/fab_from_gallery"-->
+            <!--style="@style/MenuButtonsStyle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_photo_library"-->
+            <!--fab:fab_label="@string/from_phone_galley"/>-->
+
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/fab_from_camera"-->
+            <!--style="@style/MenuButtonsStyle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_camera"-->
+            <!--fab:fab_label="@string/take_picture"/>-->
+
+    <!--</com.github.clans.fab.FloatingActionMenu>-->
 
 
 </android.support.design.widget.CoordinatorLayout>
