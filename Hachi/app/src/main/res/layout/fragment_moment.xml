@@ -55,7 +55,7 @@
         fab:menu_labels_hideAnimation="@anim/jump_to_down"
         fab:menu_labels_showAnimation="@anim/jump_from_down"
         fab:menu_labels_style="@style/MenuLabelsStyle"
-        fab:menu_shadowColor="#444">
+        fab:menu_shadowColor="#33616161">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_from_waylens"
