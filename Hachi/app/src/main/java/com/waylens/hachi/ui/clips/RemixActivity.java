@@ -31,6 +31,8 @@ import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.player.RawDataLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 import butterknife.BindView;
@@ -45,11 +47,13 @@ import rx.schedulers.Schedulers;
 
 public class RemixActivity extends BaseActivity{
     private static final String TAG = RemixActivity.class.getSimpleName();
-    private static final String EXTRA_PLAYLIST_ID = "playlist_id";
+    private static final String EXTRA_CLIP_LIST = "clip_list";
     private static final String EXTRA_REMIX_LENGTH = "remix_length";
+    private static final String EXTRA_REMIX_MODE = "remix_mode";
     public static final int PLAYLIST_INDEX = 0x100;
 
-    private int mPlaylistId;
+    private int mPlaylistId = 0x100;
+    private ArrayList<Clip> mClipArrayList;
     private PlayListEditor mPlaylistEditor;
     private AvrproFilter mAvrproFilter;
     private RawDataLoader mRawDataLoader;
@@ -57,13 +61,15 @@ public class RemixActivity extends BaseActivity{
     private ArrayList<Clip> mOriginClipList;
     private Subscription mRemixSubscription;
     private int mRemixLength = 20;
+    private int mRemixMode;
 
     private long RawDataUnitDuration = 5 * 60 * 1000;
 
-    public static void launch(Activity activity, int playlistId, int remixLength) {
+    public static void launch(Activity activity, ArrayList<Clip> clipArrayList, int remixLength, int remixMode) {
         Intent intent = new Intent(activity, RemixActivity.class);
-        intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
+        intent.putExtra(EXTRA_CLIP_LIST, clipArrayList);
         intent.putExtra(EXTRA_REMIX_LENGTH, remixLength);
+        intent.putExtra(EXTRA_REMIX_MODE, remixMode);
         activity.startActivity(intent);
     }
 
@@ -100,7 +106,30 @@ public class RemixActivity extends BaseActivity{
     @Override
     protected void onStart() {
         super.onStart();
-        doSmartRemix();
+        if (mClipArrayList != null && mClipArrayList.size() != 0) {
+            final int playlistId = 0x100;
+            mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
+
+            mPlaylistEditor.buildRx(mClipArrayList)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Void>(){
+                        @Override
+                        public void onCompleted() {
+                            mRemixProgressBar.setProgress(15);
+                            doSmartRemix();
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            mRemixProgressBar.setProgress(0);
+                        }
+
+                        @Override
+                        public void onNext(Void aVoid) {
+                        }
+                    });
+
+        }
     }
 
     @Override
@@ -114,7 +143,9 @@ public class RemixActivity extends BaseActivity{
         DialogHelper.showLeaveSmartRemixConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                mRemixSubscription.unsubscribe();
+                if(mRemixSubscription != null) {
+                    mRemixSubscription.unsubscribe();
+                }
                 RemixActivity.this.finish();
             }
         });
@@ -126,7 +157,7 @@ public class RemixActivity extends BaseActivity{
             return;
         }
         if (mAvrproFilter == null) {
-            mAvrproFilter = new AvrproFilter(AvrproFilter.SMART_RANDOMCUTTING, this.getExternalCacheDir(), mRemixLength * 1000);
+            mAvrproFilter = new AvrproFilter(mRemixMode, this.getExternalCacheDir(), mRemixLength * 1000);
         }
         mRemixSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
@@ -161,6 +192,7 @@ public class RemixActivity extends BaseActivity{
                         boolean isDataParsed = false;
                         long startTime = clip.getStartTimeMs();
                         long endTime = clip.getStartTimeMs() + clip.getDurationMs();
+                        Logger.t(TAG).d("start time:" + startTime + "endTime:" + endTime);
                         for (long start = startTime; start < endTime; start += RawDataUnitDuration) {
                             long duration = Math.min(RawDataUnitDuration, endTime - start);
                             RawDataLoader.RawDataBufAll rawData = mRawDataLoader.loadRawDataBuf(clip, start, (int)duration);
@@ -278,10 +310,9 @@ public class RemixActivity extends BaseActivity{
         super.init();
         initViews();
         Intent intent = getIntent();
-        mPlaylistId = intent.getIntExtra(EXTRA_PLAYLIST_ID, -1);
+        mClipArrayList = (ArrayList<Clip>) intent.getSerializableExtra(EXTRA_CLIP_LIST);
         mRemixLength = intent.getIntExtra(EXTRA_REMIX_LENGTH, 20);
-        mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
-        mPlaylistEditor.reconstruct();
+        mRemixMode = intent.getIntExtra(EXTRA_REMIX_MODE, AvrproFilter.SMART_RANDOMCUTTING);
     }
 
     private void initViews() {

@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -73,8 +74,8 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mEventBus.register(this);
         mInnerOperationSubscription = RxBus.getDefault().toObserverable(ToggleFabEvent.class)
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -91,6 +92,12 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
                         }
                     }
                 });
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (VdtCameraManager.getManager().getConnectedCameras().size() <=0 ) {
             mFabSmartRemix.setVisibility(View.INVISIBLE);
         }
@@ -132,8 +139,10 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
                     oldPosition = 0;
                 }
 
-                ClipGridListFragment fragment = (ClipGridListFragment) mVideoAdapter.getItem(oldPosition);
-                fragment.onDeselected();
+                ClipGridListFragment oldFragment = (ClipGridListFragment) mVideoAdapter.getItem(oldPosition);
+                oldFragment.onDeselected();
+                ClipGridListFragment fragment = (ClipGridListFragment) mVideoAdapter.getItem(position);
+                fragment.onSelected();
             }
 
             @Override
@@ -167,6 +176,11 @@ public class ClipVideoFragment extends BaseMVPFragment implements FragmentNaviga
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         mEventBus.unregister(this);
         if (!mInnerOperationSubscription.isUnsubscribed()) {
             mInnerOperationSubscription.unsubscribe();

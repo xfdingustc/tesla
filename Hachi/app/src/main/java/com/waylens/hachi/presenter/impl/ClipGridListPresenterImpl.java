@@ -54,9 +54,8 @@ public class ClipGridListPresenterImpl implements ClipGridListPresenter, BaseSin
     @Override
     public void onSuccess(ClipSet data) {
         mGridListView.hideLoading();
-        if (data.getCount() != 0) {
-            mGridListView.refreshClipiSet(data);
-        } else {
+        mGridListView.refreshClipiSet(data);
+        if (data.getCount() == 0) {
             mGridListView.showEmpty();
         }
     }

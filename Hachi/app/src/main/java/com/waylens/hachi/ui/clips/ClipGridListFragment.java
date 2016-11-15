@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -32,6 +31,7 @@ import com.waylens.hachi.eventbus.events.MenuItemSelectEvent;
 import com.waylens.hachi.presenter.ClipGridListPresenter;
 import com.waylens.hachi.presenter.impl.ClipGridListPresenterImpl;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.snipe.remix.AvrproFilter;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipActionInfo;
@@ -105,6 +105,10 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private TextView mTvTextEnd;
 
     private Subscription mFabSubscription;
+
+    private ClipSet mClipSet;
+
+    private boolean mIsExposed = false;
 
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
@@ -228,6 +232,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
     public void onDeselected() {
+        mIsExposed = false;
         if (mActionMode != null) {
             mActionMode.finish();
         }
@@ -249,10 +254,18 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     public void refreshClipiSet(ClipSet clipSet) {
+        if (mIsExposed) {
+            if (clipSet == null || clipSet.getClipList().size() == 0) {
+                RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_INVISIBLE, null));
+            } else {
+                RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_VISIBLE, null));
+            }
+        }
         Logger.t(TAG).d("Get clip set");
         if (mRefreshLayout != null) {
             mRefreshLayout.setRefreshing(false);
         }
+        mClipSet = clipSet;
         ClipSetGroupHelper helper = new ClipSetGroupHelper(clipSet);
         mAdapter.setClipSetGroup(helper.getClipSetGroup());
 
@@ -388,7 +401,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                         }
                     }
                 });
-        mEventBus.register(this);
+        if (!mEventBus.isRegistered(this)) {
+            mEventBus.register(this);
+        }
         if (mClipSetType == Clip.TYPE_MARKED && PreferenceUtils.getBoolean(PreferenceUtils.BOOKMARK_NEED_REFRESH, false)) {
             if (mRefreshLayout != null) {
                 mRefreshLayout.postDelayed(new Runnable() {
@@ -407,6 +422,11 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         if (!mFabSubscription.isUnsubscribed()) {
             mFabSubscription.unsubscribe();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         mEventBus.unregister(this);
     }
 
@@ -588,7 +608,14 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     @Override
     public void onSelected() {
-
+        mIsExposed = true;
+        if (mClipSet != null && mClipSet.getClipList().size() > 0) {
+            RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_VISIBLE, null));
+            Logger.t(TAG).d("visible");
+        } else {
+            RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_INVISIBLE, null));
+            Logger.t(TAG).d("invisible");
+        }
     }
 
     private void showRemixDialog() {
@@ -645,32 +672,15 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private void toRemix() {
         Logger.t(TAG).d("isAddMore: " + mIsAddMore + " isToShare: " + mIsToShare);
         ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
+        int mode = 0;
+        if (mClipSetType == Clip.TYPE_MARKED) {
+            mode = AvrproFilter.SMART_RANDOMPICK;
+        } else {
+            mode = AvrproFilter.SMART_RANDOMCUTTING;
+        }
 
-        mRefreshLayout.setRefreshing(true);
+        RemixActivity.launch(getActivity(), selectedList, mRemixLength, mode);
         Logger.t(TAG).d("selected list size: " + selectedList.size());
-
-        final int playlistId = 0x100;
-        PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
-
-        playListEditor.buildRx(selectedList)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Subscriber<Void>() {
-                @Override
-                public void onCompleted() {
-                    mRefreshLayout.setRefreshing(false);
-                    RemixActivity.launch(getActivity(), playlistId, mRemixLength);
-                }
-
-                @Override
-                public void onError(Throwable e) {
-
-                }
-
-                @Override
-                public void onNext(Void aVoid) {
-
-                }
-            });
     }
 
 

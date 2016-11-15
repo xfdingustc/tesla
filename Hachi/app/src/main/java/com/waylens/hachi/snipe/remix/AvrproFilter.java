@@ -17,8 +17,20 @@ public class AvrproFilter {
     public static int SMART_ACCELERATION = 2;
     public static int SMART_SHARPTURN = 3;
     public static int SMART_BUMPINGHARD = 4;
-    public static int SMART_MAX_INDEX = 5;
+    public static int SMART_SMOOTH_RUNNING = 5;
+    public static int SMART_RANDOMPICK = 6;
+    public static int SMART_MAX_INDEX = 7;
 
+/*
+    SMART_RANDOMCUTTING = 0,    // a mixture of all types
+    SMART_FAST_FURIOUS,     // speed in a high range
+    SMART_ACCELERATION,     // dramatic gforce change
+    SMART_SHARPTURN,        // a sharp turn
+    SMART_BUMPINGHARD,      // driving on a bumping road
+    SMART_SMOOTH_RUNNING,   // driving at a constant high speed
+    SMART_RANDOMPICK,       // random pick segments from highlights
+    SMART_MAX_INDEX
+*/
 
     public static int DEVICE_AVF = 0;
     public static int DEVICE_IOS = 1;
