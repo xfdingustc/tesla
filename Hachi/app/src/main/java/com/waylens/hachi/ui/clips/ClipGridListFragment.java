@@ -606,15 +606,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         }
         final MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
             .customView(R.layout.dialog_smart_remix, true)
-            .positiveText(R.string.create)
-            .positiveColor(getResources().getColor(R.color.hachi))
-            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    toRemix();
-                    dialog.dismiss();
-                }
-            })
             .show();
         mRemixLength = 20;
         mLengthSeekbar = (SeekBar) dialog.getCustomView().findViewById(R.id.length_seekbar);
@@ -639,6 +630,14 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
 
+            }
+        });
+
+        mTvSmartRemix.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toRemix();
+                dialog.dismiss();
             }
         });
     }

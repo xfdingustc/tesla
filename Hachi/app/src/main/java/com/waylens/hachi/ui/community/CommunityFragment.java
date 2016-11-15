@@ -28,6 +28,7 @@ import com.waylens.hachi.app.GlobalVariables;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
+import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
@@ -75,12 +76,20 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     @OnClick(R.id.fab_from_waylens)
     public void onFabFromWaylensClicked() {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(getActivity());
+            return;
+        }
         ClipChooserActivity.launch(getActivity(), false);
         mFabMenu.close(false);
     }
 
     @OnClick(R.id.fab_from_camera)
     public void onFabFromCameraClicked() {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(getActivity());
+            return;
+        }
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ContentValues values = new ContentValues(2);
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
@@ -94,6 +103,10 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
 
     @OnClick(R.id.fab_from_gallery)
     public void onFabFromGalleryClicked() {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(getActivity());
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, FROM_LOCAL);
