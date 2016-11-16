@@ -262,9 +262,9 @@
         <item>@string/timestamp_on</item>
     </string-array>
 
-    <string-array name="test_mode" translatable="false">
-        <item>@string/count_down_mode</item>
+    <string-array name="race_mode" translatable="false">
         <item>@string/auto_mode</item>
+        <item>@string/count_down_mode</item>
     </string-array>
 
     <string-array name="race_type_imperial" translatable="false">
@@ -278,7 +278,7 @@
     </string-array>
 
     <string-array name="race_time_030" translatable="false">
-        <item>All</item>
+        <item>@string/all</item>
         <item>0~2s</item>
         <item>2~4s</item>
         <item>4~8s</item>
@@ -286,7 +286,7 @@
     </string-array>
 
     <string-array name="race_time_060" translatable="false">
-        <item>All</item>
+        <item>@string/all</item>
         <item>0~3s</item>
         <item>3~3.5s</item>
         <item>3.5~4s</item>
@@ -300,4 +300,5 @@
         <item>@string/imperial</item>
         <item>@string/metric_units</item>
     </string-array>
+
 </resources>

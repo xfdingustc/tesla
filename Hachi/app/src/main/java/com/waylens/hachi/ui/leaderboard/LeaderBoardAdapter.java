@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.adapters;
+package com.waylens.hachi.ui.leaderboard;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,7 +20,6 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.community.LeaderboardFragment;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.views.AvatarView;

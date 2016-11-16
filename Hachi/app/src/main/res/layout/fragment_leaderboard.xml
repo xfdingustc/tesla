@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-    android:id="@+id/view_animator"
+    android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -71,8 +71,8 @@
                         app:hexagonBorderWidth="4dp"
                         app:hexagonCorner="2dp"
                         app:hexagonFillColor="@color/material_grey_500"
-                        app:hexagonTextSize="32sp"
-                        app:hexagonOrientation="vertical"/>
+                        app:hexagonOrientation="vertical"
+                        app:hexagonTextSize="32sp"/>
 
                     <com.github.pavlospt.roundedletterview.RoundedLetterView
                         android:layout_width="24dp"
@@ -124,8 +124,8 @@
                         app:hexagonBorderWidth="4dp"
                         app:hexagonCorner="2dp"
                         app:hexagonFillColor="@color/material_grey_500"
-                        app:hexagonTextSize="48sp"
                         app:hexagonOrientation="vertical"
+                        app:hexagonTextSize="48sp"
                         />
 
                     <com.github.pavlospt.roundedletterview.RoundedLetterView
@@ -151,6 +151,7 @@
                         android:id="@+id/firstVehicle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:textAlignment="center"
                         android:textColor="@color/white87"
                         android:textSize="12sp"
@@ -178,9 +179,9 @@
                         app:hexagonBorderOverlay="false"
                         app:hexagonBorderWidth="4dp"
                         app:hexagonCorner="2dp"
-                        app:hexagonTextSize="32sp"
                         app:hexagonFillColor="@color/material_grey_500"
-                        app:hexagonOrientation="vertical"/>
+                        app:hexagonOrientation="vertical"
+                        app:hexagonTextSize="32sp"/>
 
                     <com.github.pavlospt.roundedletterview.RoundedLetterView
                         android:layout_width="24dp"
@@ -220,20 +221,105 @@
             </LinearLayout>
 
 
-            <com.waylens.hachi.ui.views.DropDownMenu
-                android:id="@+id/dropDownMenu"
+
+            <LinearLayout
+                android:id="@+id/ll_filter_result"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvFilterMode"
+                    style="@style/Widget.Hachi.FilterSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:text="@string/auto_mode"/>
+
+                <TextView
+                    android:id="@+id/tvFilterSpeed"
+                    style="@style/Widget.Hachi.FilterSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+
+                    android:text="@string/kmh50"/>
+
+                <TextView
+                    android:id="@+id/tvFilterTime"
+                    style="@style/Widget.Hachi.FilterSelected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:text="All"/>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <ImageButton
+                    android:id="@+id/btn_drop_down"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="12sp"
+                    android:src="@drawable/ic_expand_more"
+                    android:tint="@color/black87"/>
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/separateColor"/>
+
+            <LinearLayout
+                android:id="@+id/ll_filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:dddividerColor="?attr/toolbarColor"
-                app:ddmaskColor="?attr/toolbarColor"
-                app:ddmenuBackgroundColor="?attr/toolbarColor"
-                app:ddmenuSelectedIcon="@drawable/ic_arrow_drop_up"
-                app:ddmenuTextSize="14sp"
-                app:ddmenuUnselectedIcon="@drawable/ic_arrow_drop_down"
-                app:ddtextSelectedColor="@android:color/white"
-                app:ddtextUnselectedColor="@android:color/white"
-                app:ddunderlineColor="?attr/toolbarColor"
-                />
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_mode"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/separateColor"/>
+            </LinearLayout>
+
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:visibility="gone">
+
+                <com.waylens.hachi.ui.views.RecyclerViewExt
+                    android:id="@+id/leaderboard_list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            </android.support.v4.widget.SwipeRefreshLayout>
 
 
         </LinearLayout>
@@ -363,19 +449,7 @@
 
         </LinearLayout>
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:visibility="gone">
 
-            <com.waylens.hachi.ui.views.RecyclerViewExt
-                android:id="@+id/leaderboard_list_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
 
     </FrameLayout>
 

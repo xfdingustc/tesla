@@ -99,6 +99,15 @@
         <item name="android:background">?android:selectableItemBackgroundBorderless</item>
     </style>
 
+    <style name="Widget.Hachi.FilterSelected" parent="@android:style/Widget.Material.TextView">
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:textColor">@color/style_color_accent</item>
+        <item name="android:background">@drawable/background_filter</item>
+    </style>
+
     <style name="Widget.Hachi.SearchView" parent="android:style/Widget.Material.SearchView">
         <item name="android:searchIcon">@android:color/transparent</item>
         <item name="android:searchHintIcon">@android:color/transparent</item>
@@ -204,6 +213,8 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">0.01</item>
     </style>
+
+
 
 
 </resources>
