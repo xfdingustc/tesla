@@ -29,6 +29,7 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.NotificationActivity;
 import com.waylens.hachi.ui.adapters.SimpleFragmentPagerAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.authorization.LoginActivity;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.community.event.ScrollEvent;
 import com.waylens.hachi.ui.community.feed.MomentListFragment;
@@ -74,6 +75,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @BindView(R.id.fab_menu)
     FloatingActionMenu mFabMenu;
 
+
     @OnClick(R.id.fab_from_waylens)
     public void onFabFromWaylensClicked() {
         if (!SessionManager.getInstance().isLoggedIn()) {
@@ -82,6 +84,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         }
         ClipChooserActivity.launch(getActivity(), false);
         mFabMenu.close(false);
+
     }
 
     @OnClick(R.id.fab_from_camera)
@@ -124,6 +127,16 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
+//        mFabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (SessionManager.getInstance().isLoggedIn()) {
+//                    mFabMenu.open(true);
+//                } else {
+//                    LoginActivity.launch(getActivity(), mFabMenu.getMenuIconView());
+//                }
+//            }
+//        });
         setupSearchView();
         setupViewPager();
 //        mFabMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fab_scale_up));

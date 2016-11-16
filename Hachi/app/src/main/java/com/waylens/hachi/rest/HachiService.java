@@ -22,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HachiService {
     private static final String TAG = HachiService.class.getSimpleName();
     public static IHachiApi mHachiApiInstance = null;
-    public static final int TIME_OUT_MILLI_SEC = 10000;
+    public static final int TIME_OUT_MILLI_SEC = 15000;
 
     private static String USER_AGENT = "Android " + Build.VERSION.SDK + ";" + Build.BRAND + Build.MODEL;
 
