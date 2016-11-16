@@ -124,16 +124,11 @@ public class MomentActivity extends BaseActivity {
 
     private User mReplyTo;
 
-    private String mReportReason;
 
     private boolean hasUpdates;
 
     private boolean isRequestComment = false;
 
-
-    private static final DecelerateInterpolator DECCELERATE_INTERPOLATOR = new DecelerateInterpolator();
-    private static final AccelerateInterpolator ACCELERATE_INTERPOLATOR = new AccelerateInterpolator();
-    private static final OvershootInterpolator OVERSHOOT_INTERPOLATOR = new OvershootInterpolator(4);
 
     private BottomSheetDialog mBottomSheetDialog;
 
@@ -148,10 +143,14 @@ public class MomentActivity extends BaseActivity {
         Intent intent = new Intent(activity, MomentActivity.class);
         intent.putExtra(EXTRA_MOMENT_ID, momentId);
         intent.putExtra(EXTRA_THUMBNAIL, thumbnail);
-        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-            false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        if (transitionView != null) {
+            final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+                false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+            ActivityCompat.startActivity(activity, intent, options.toBundle());
+        } else {
+            activity.startActivity(intent);
+        }
     }
 
     public static void launch(Activity activity, long momentId, String thumbnail, View transitionView, int request) {
@@ -377,7 +376,7 @@ public class MomentActivity extends BaseActivity {
         Intent intent = getIntent();
         mMomentId = intent.getLongExtra(EXTRA_MOMENT_ID, -1);
         mThumbnail = intent.getStringExtra(EXTRA_THUMBNAIL);
-        mReportReason = getResources().getStringArray(R.array.report_reason)[0];
+
         int request = intent.getIntExtra(EXTRA_REQUEST, -1);
         if (request == REQUEST_COMMENT) {
             isRequestComment = true;

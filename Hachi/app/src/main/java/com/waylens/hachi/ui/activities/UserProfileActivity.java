@@ -27,8 +27,8 @@ import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.jobqueue.JobManager;
-import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.bean.MomentAmount;
 import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.body.ReportUserBody;
@@ -82,10 +82,15 @@ public class UserProfileActivity extends BaseActivity {
         Intent intent = new Intent(activity, UserProfileActivity.class);
         intent.putExtra(EXTRA_USER, user);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-            false, new Pair<>(avatarTransitionView, activity.getString(R.string.trans_avatar)));
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        if (avatarTransitionView != null) {
+            final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
+                false, new Pair<>(avatarTransitionView, activity.getString(R.string.trans_avatar)));
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
+
+            ActivityCompat.startActivity(activity, intent, options.toBundle());
+        } else {
+            activity.startActivity(intent);
+        }
     }
 
     public static void launch(Activity activity, User user, View avatarTransitionView, View bgTransView) {

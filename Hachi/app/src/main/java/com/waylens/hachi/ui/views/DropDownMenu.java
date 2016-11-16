@@ -66,6 +66,9 @@ public class DropDownMenu extends LinearLayout {
 
     public DropDownMenu(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (isInEditMode()) {
+            return;
+        }
 
         setOrientation(VERTICAL);
 

@@ -175,6 +175,7 @@ dependencies {
     compile 'com.github.pavlospt:roundedletterview:1.2'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
+    compile 'com.lzy.widget:view-core:0.1.9'
 
 }
 

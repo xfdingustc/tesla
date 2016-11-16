@@ -17,7 +17,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
-import com.waylens.hachi.ui.community.PerformanceTestFragment;
+import com.waylens.hachi.ui.community.LeaderboardFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.LiveViewActivity;
 import com.waylens.hachi.ui.settings.AccountFragment;
@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
 
     private Fragment[] mFragmentList = new Fragment[]{
         new CommunityFragment(),
-        new PerformanceTestFragment(),
+        new LeaderboardFragment(),
         new ClipVideoFragment(),
         new AccountFragment(),
 

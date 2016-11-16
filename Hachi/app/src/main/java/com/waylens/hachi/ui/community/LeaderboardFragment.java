@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +20,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.lzy.widget.HexagonView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.bean.LeaderBoardItem;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
 import com.waylens.hachi.rest.bean.VehicleInfo;
@@ -29,6 +35,7 @@ import com.waylens.hachi.rest.body.RaceQueryBody;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.adapters.LeaderBoardAdapter;
 import com.waylens.hachi.ui.adapters.ListDropDownAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
@@ -38,6 +45,7 @@ import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.DropDownMenu;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
+import com.waylens.hachi.utils.AvatarHelper;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.ViewUtils;
@@ -55,9 +63,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-public class PerformanceTestFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
+public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
     Refreshable, FragmentNavigator {
-    private static final String TAG = PerformanceTestFragment.class.getSimpleName();
+    private static final String TAG = LeaderboardFragment.class.getSimpleName();
 
 //    public final int UNIT_ENGLISH = 0;
 //    public final int UNIT_METRIC = 1;
@@ -126,8 +134,14 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
 
     private ListDropDownAdapter currentGroupAdapter;
 
-    private  ListView mTypeView;
+    private ListView mTypeView;
     private ListView groupView;
+
+    @BindView(R.id.header_view)
+    View headerView;
+
+    @BindView(R.id.top_three)
+    View topThree;
 
     @BindView(R.id.main_layout)
     FrameLayout mLayoutMain;
@@ -168,6 +182,33 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     @BindView(R.id.clipMask)
     View clickMask;
 
+    @BindView(R.id.first)
+    HexagonView hvFirst;
+
+    @BindView(R.id.firstName)
+    TextView firstName;
+
+    @BindView(R.id.firstVehicle)
+    TextView firstVehicle;
+
+    @BindView(R.id.second)
+    HexagonView hvSecond;
+
+    @BindView(R.id.secondName)
+    TextView secondName;
+
+    @BindView(R.id.secondVehicle)
+    TextView secondVehicle;
+
+    @BindView(R.id.third)
+    HexagonView hvThird;
+
+    @BindView(R.id.thirdName)
+    TextView thirdName;
+
+    @BindView(R.id.thirdVehicle)
+    TextView thirdVehicle;
+
 
     @OnClick(R.id.clipMask)
     public void onClickMaskClicked() {
@@ -175,10 +216,10 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     }
 
 
-    public static PerformanceTestFragment newInstance(int tag) {
+    public static LeaderboardFragment newInstance(int tag) {
 
         Bundle args = new Bundle();
-        PerformanceTestFragment fragment = new PerformanceTestFragment();
+        LeaderboardFragment fragment = new LeaderboardFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -206,7 +247,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = createFragmentView(inflater, container, R.layout.fragment_performance_test, savedInstanceState);
+        View view = createFragmentView(inflater, container, R.layout.fragment_leaderboard, savedInstanceState);
         mRvLeaderboardList.setAdapter(mAdapter);
         mRvLeaderboardList.setLayoutManager(mLinearLayoutManager);
         mRefreshLayout.setOnRefreshListener(this);
@@ -226,7 +267,7 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         mRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + mDropDownMenu.getHeight());
+                ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + topThree.getHeight() + mDropDownMenu.getHeight());
             }
         });
         return view;
@@ -239,7 +280,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         modeView.setAdapter(modeAdapter);
 
         mTypeView = new ListView(getActivity());
-
 
 
         groupAdapter30 = new ListDropDownAdapter(getActivity(), Arrays.asList(getResources().getStringArray(R.array.race_time_030)));
@@ -258,7 +298,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         TextView contentView = new TextView(getActivity());
         contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         contentView.setAlpha(0);
-
 
 
         mDropDownMenu.setDropDownMenu(Arrays.asList(headers), popupViews, contentView);
@@ -302,7 +341,6 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
                 }
             }
         });
-
 
 
         groupView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -456,8 +494,23 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         }
 
         if (isRefresh) {
+            List<LeaderBoardItem> leaderBoardItems = raceQueryResponse.leaderboard;
+            int itemSize = leaderBoardItems.size();
+            if (itemSize > 0) {
+                setTopThreeUserInfo(leaderBoardItems.get(0), hvFirst, firstName, firstVehicle);
+            }
 
-            mAdapter.setMoments(raceQueryResponse.leaderboard, mRaceType, mLeaderBoardMode);
+            if (itemSize > 1) {
+                setTopThreeUserInfo(leaderBoardItems.get(1), hvSecond, secondName, secondVehicle);
+            }
+
+            if (itemSize > 2) {
+                setTopThreeUserInfo(leaderBoardItems.get(2), hvThird, thirdName, thirdVehicle);
+            }
+
+            if (itemSize > 3) {
+                mAdapter.setMoments(raceQueryResponse.leaderboard.subList(3, itemSize), mRaceType, mLeaderBoardMode);
+            }
             if (raceQueryResponse.leaderboard.size() == 0) {
                 mNoDataLayout.setVisibility(View.VISIBLE);
             } else {
@@ -500,6 +553,47 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
     }
 
 
+    private void setTopThreeUserInfo(final LeaderBoardItem item, final HexagonView avatarView, TextView tvUserName, TextView vehicleInfo) {
+        String avatarUrl = item.owner.avatarUrl;
+        if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {
+            Glide.with(this)
+                .load(item.owner.avatarUrl)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(avatarView);
+            avatarView.setText(null);
+        } else {
+            String userName = item.owner.userName;
+            avatarView.setFillColor(getResources().getColor(AvatarHelper.getAvatarBackgroundColor(userName)));
+            avatarView.setImageDrawable(null);
+            avatarView.setText(userName.substring(0, 1).toUpperCase());
+        }
+
+        avatarView.setOnHexagonClickListener(new HexagonView.OnHexagonViewClickListener() {
+            @Override
+            public void onClick(View view) {
+                MomentActivity.launch(getActivity(), item.moment.id, item.moment.thumbnail, null);
+            }
+        });
+
+        tvUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                UserProfileActivity.launch(getActivity(), item.owner, null);
+            }
+        });
+
+
+        tvUserName.setText(item.owner.userName);
+        if (!TextUtils.isEmpty(item.moment.momentVehicleInfo.toString())) {
+            vehicleInfo.setText(item.moment.momentVehicleInfo.toString());
+            vehicleInfo.setVisibility(View.VISIBLE);
+        } else {
+            vehicleInfo.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
     private void initMyTestView(RaceQueryResponse.UserRankItem userRankItem) {
         final SessionManager sessionManager = SessionManager.getInstance();
         mMyAvatar.loadAvatar(sessionManager.getAvatarUrl(), sessionManager.getUserName());
@@ -510,31 +604,31 @@ public class PerformanceTestFragment extends BaseFragment implements SwipeRefres
         final MomentInfo.MomentBasicInfo moment = userRankItem.moment;
         double raceTime = 0.0;
         switch (mRaceType) {
-            case PerformanceTestFragment.RACE_TYPE_30MPH:
-                if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_30MPH:
+                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t3_2) / 1000;
-                } else if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t3_1) / 1000;
                 }
                 break;
-            case PerformanceTestFragment.RACE_TYPE_50KMH:
-                if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_50KMH:
+                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t4_2) / 1000;
-                } else if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t4_1) / 1000;
                 }
                 break;
-            case PerformanceTestFragment.RACE_TYPE_60MPH:
-                if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_60MPH:
+                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t5_2) / 1000;
-                } else if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t5_1) / 1000;
                 }
                 break;
-            case PerformanceTestFragment.RACE_TYPE_100KMH:
-                if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_100KMH:
+                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t6_2) / 1000;
-                } else if (mLeaderBoardMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t6_1) / 1000;
                 }
                 break;

@@ -20,8 +20,8 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
+import com.waylens.hachi.ui.community.LeaderboardFragment;
 import com.waylens.hachi.ui.community.MomentActivity;
-import com.waylens.hachi.ui.community.PerformanceTestFragment;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.views.AvatarView;
 
@@ -151,12 +151,8 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         raceTime = getRaceTime(moment);
         NumberFormat formatter = new DecimalFormat("#0.00");
         holder.raceTime.setText(String.format(mContext.getString(R.string.race_time), formatter.format(raceTime)));
-        holder.userRank.setText(String.valueOf(mRankings.get(position)));
-        if (mRankings.get(position) <= 3 && position < mMoments.size()) {
-            holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape_top));
-        } else {
-            holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape));
-        }
+        holder.userRank.setText(String.valueOf(mRankings.get(position) + 3));
+        holder.userRank.setBackground(mContext.getResources().getDrawable(R.drawable.chip_shape));
 
         Glide.with(mContext)
             .load(moment.thumbnail)
@@ -176,7 +172,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             }
         });
-        
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,31 +203,31 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public double getRaceTime(MomentAbstract moment) {
         double raceTime = 0.0;
         switch (mRaceType) {
-            case PerformanceTestFragment.RACE_TYPE_30MPH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_30MPH:
+                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t3_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t3_1) / 1000;
                 }
                 break;
-            case PerformanceTestFragment.RACE_TYPE_50KMH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_50KMH:
+                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t4_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t4_1) / 1000;
                 }
                 break;
-            case PerformanceTestFragment.RACE_TYPE_60MPH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_60MPH:
+                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t5_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t5_1) / 1000;
                 }
                 break;
-            case PerformanceTestFragment.RACE_TYPE_100KMH:
-                if (mTestMode == PerformanceTestFragment.TEST_MODE_AUTO) {
+            case LeaderboardFragment.RACE_TYPE_100KMH:
+                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
                     raceTime = (double) (moment.momentTimingInfo.t6_2) / 1000;
-                } else if (mTestMode == PerformanceTestFragment.TEST_MODE_COUNTDOWN) {
+                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
                     raceTime = (double) (moment.momentTimingInfo.t6_1) / 1000;
                 }
                 break;
