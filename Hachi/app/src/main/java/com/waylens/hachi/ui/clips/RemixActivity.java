@@ -90,7 +90,9 @@ public class RemixActivity extends BaseActivity{
         DialogHelper.showLeaveSmartRemixConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                mRemixSubscription.unsubscribe();
+                if (mRemixSubscription != null && !mRemixSubscription.isUnsubscribed()) {
+                    mRemixSubscription.unsubscribe();
+                }
                 RemixActivity.this.finish();
             }
         });

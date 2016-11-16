@@ -140,6 +140,7 @@ public class CompoundEditView extends FrameLayout {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mTextInputLayout.setErrorEnabled(false);
                 mTextInputLayout.setError(null);
 //                mClearTextControl.setVisibility(TextUtils.isEmpty(s) ? View.GONE : View.VISIBLE);
             }
@@ -214,10 +215,12 @@ public class CompoundEditView extends FrameLayout {
         String text = mInputText.getText().toString();
         if (mValidPattern != null) {
             if (!mValidPattern.matcher(text).matches()) {
+                mTextInputLayout.setErrorEnabled(true);
                 mTextInputLayout.setError(mInvalidMsg);
                 return false;
             }
         }
+        mTextInputLayout.setErrorEnabled(false);
         mTextInputLayout.setError(null);
         return true;
     }
@@ -242,6 +245,7 @@ public class CompoundEditView extends FrameLayout {
     }
 
     public void setError(String error) {
+        mTextInputLayout.setErrorEnabled(true);
         mTextInputLayout.setError(error);
     }
 }

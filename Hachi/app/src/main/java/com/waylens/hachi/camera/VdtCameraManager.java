@@ -212,6 +212,7 @@ public class VdtCameraManager {
                 mCurrentCamera = null;
             } else {
                 mCurrentCamera = mConnectedVdtCameras.get(0);
+                mEventBus.post(new CameraConnectionEvent(CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED, null));
             }
         }
 

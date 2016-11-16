@@ -126,11 +126,17 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         switch (event.getWhat()) {
             case CameraConnectionEvent.VDT_CAMERA_SELECTED_CHANGED:
                 hideCameraDisconnect();
+                if (mActionMode != null) {
+                    mActionMode.finish();
+                }
                 mPresenter.loadClipSet(false);
                 break;
             case CameraConnectionEvent.VDT_CAMERA_DISCONNECTED:
                 if (VdtCameraManager.getManager().getConnectedCameras().size() == 0) {
                     showCameraDisconnect();
+                    if (mActionMode != null) {
+                        mActionMode.finish();
+                    }
                 }
                 break;
 
@@ -152,7 +158,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void onEventMenuItemSelected(MenuItemSelectEvent event) {
         switch (event.getMenuItemId()) {
             case R.id.menu_to_enhance:
-                toEnhance();
+                if (mIsAddMore) {
+                    toEnhance();
+                }
                 break;
 
             default:
@@ -389,6 +397,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                                     mIsRemixMode = true;
                                     //mSmartRemixLayout.setVisibility(View.VISIBLE);
                                     if (mActionMode == null) {
+                                        mRefreshLayout.setEnabled(false);
                                         mActionMode = getActivity().startActionMode(mRemixCallback);
                                         updateActionMode();
                                     }
@@ -609,7 +618,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     @Override
     public void onSelected() {
         mIsExposed = true;
-        if (mClipSet != null && mClipSet.getClipList().size() > 0) {
+        if (mClipSet != null && mClipSet.getClipList().size() > 0 && VdtCameraManager.getManager().getConnectedCameras().size() > 0) {
             RxBus.getDefault().post(new ToggleFabEvent(ToggleFabEvent.FAB_VISIBLE, null));
             Logger.t(TAG).d("visible");
         } else {
@@ -664,6 +673,9 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             @Override
             public void onClick(View view) {
                 toRemix();
+                if (mActionMode != null) {
+                    mActionMode.finish();
+                }
                 dialog.dismiss();
             }
         });
