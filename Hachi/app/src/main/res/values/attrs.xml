@@ -107,7 +107,7 @@
         <!--<attr name="msbp_dialogStyle" format="reference"/>-->
     </declare-styleable>
 
-   
+
     <declare-styleable name="InkPageIndicator">
         <attr name="dotDiameter" format="dimension" />
         <attr name="dotGap" format="dimension" />
