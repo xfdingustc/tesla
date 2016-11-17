@@ -1,12 +1,12 @@
 package com.waylens.hachi.ui.welcome;
 
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
@@ -18,13 +18,10 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.MainActivity;
 import com.waylens.hachi.ui.activities.WebViewActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,15 +42,12 @@ public class Welcome4Fragment extends BaseFragment {
     Button mBtnEnter;
 
 
-
     @OnClick(R.id.btnEnter)
     public void onBtnEnterClicked() {
         MainActivity.launch(getActivity());
         getActivity().finish();
         writeVersionName();
     }
-
-
 
 
     @Nullable
@@ -77,6 +71,12 @@ public class Welcome4Fragment extends BaseFragment {
                 public void onClick(View widget) {
                     WebViewActivity.launch(getActivity());
                 }
+
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setColor(getActivity().getResources().getColor(R.color.hachi));
+                }
             }, start, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ssb.append(" " + getString(R.string.agree_line3));
         mWaylensAgreement.setText(ssb);
@@ -89,7 +89,6 @@ public class Welcome4Fragment extends BaseFragment {
     protected String getRequestTag() {
         return TAG;
     }
-
 
 
     private void writeVersionName() {

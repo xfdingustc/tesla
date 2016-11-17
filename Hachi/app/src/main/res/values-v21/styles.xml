@@ -148,6 +148,12 @@
         <item name="android:colorControlHighlight">@color/ripple_light</item>
     </style>
 
+    <style name="LightTheme.Translucent.FirstInstall">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:colorButtonNormal">@color/hachi_button</item>
+        <item name="android:colorControlHighlight">@color/ripple_light</item>
+    </style>
+
 
     <style name="LightTheme.Translucent.Overture">
         <item name="android:statusBarColor">@color/style_color_accent</item>

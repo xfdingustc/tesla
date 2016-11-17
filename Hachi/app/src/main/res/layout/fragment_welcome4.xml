@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/intro4"/>
+        android:src="@drawable/intro3"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/agree_check_box"
-            android:textColor="@color/app_text_color_primary_light"
+            android:textColor="@color/white"
             tools:text="Agree with Waylens Agreement before you could use this app"/>
 
     </RelativeLayout>
@@ -57,7 +57,6 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="56dp"
-        android:backgroundTint="?attr/actionButtonColor"
         android:textColor="@android:color/white"
         android:text="@string/wake_up_camera"
         >
