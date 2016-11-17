@@ -350,6 +350,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             }
         });
         mSpeedAdapter.setSelected(getString(SettingHelper.isMetricUnit() ? R.string.kmh50 : R.string.mph30));
+        tvFilterSpeed.setText(getString(SettingHelper.isMetricUnit() ? R.string.kmh50 : R.string.mph30));
         rvSpeed.setAdapter(mSpeedAdapter);
     }
 

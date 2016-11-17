@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.views.gauge;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.v4.util.Pools;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -105,7 +104,9 @@ public class GaugeView extends FrameLayout {
                                 break;
                         }
                     }
+                    setUnit();
                 }
+
             }
         });
     }
@@ -235,6 +236,13 @@ public class GaugeView extends FrameLayout {
 
     public void updateGaugeSetting(GaugeInfoItem item) {
         mWebView.loadUrl(GaugeJsHelper.jsUpdateGaugeSetting(item));
+    }
+
+    public void setUnit() {
+        String jsSetUnit = GaugeJsHelper.jsSetMetric();
+        Logger.t(TAG).d("set unit: " + jsSetUnit);
+        mWebView.loadUrl(jsSetUnit);
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {

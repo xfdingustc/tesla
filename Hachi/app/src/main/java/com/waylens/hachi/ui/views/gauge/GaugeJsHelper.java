@@ -1,12 +1,12 @@
 package com.waylens.hachi.ui.views.gauge;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.IioData;
 import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.waylens.hachi.utils.SettingHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -144,5 +144,14 @@ public class GaugeJsHelper {
             sb.insert(state.toString().length() - 1, ",time:" + data);
         }
         return "javascript:setRawData(" + sb.toString() + ")";
+    }
+
+    public static String jsSetMetric() {
+        if (SettingHelper.isMetricUnit()) {
+            return "javascript:setState({perUnit: 'kmh'})";
+        } else {
+            return "javascript:setState({perUnit: 'mph'})";
+        }
+
     }
 }
