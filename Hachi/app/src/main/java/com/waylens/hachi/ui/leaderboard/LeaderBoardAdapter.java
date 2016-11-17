@@ -84,6 +84,11 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        mMoments.clear();
+        notifyDataSetChanged();
+    }
+
 
     public void addMoments(List<LeaderBoardItem> moments) {
         if (mMoments == null) {

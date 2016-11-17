@@ -106,9 +106,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
 //    private int mLeaderBoardEnd;
 
-    private Long mUpper;
-
-    private Long mLower;
 
     private VehicleInfo myVehicleInfo;
 
@@ -423,9 +420,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         }
 
         mLeaderBoardItemCount = 100;
-        Logger.t(TAG).d("mUpper" + mUpper + "mLower" + mLower);
+        Logger.t(TAG).d("mUpper" + getTimeGroupUpper() + "mLower" + getTimeGroupLower());
         HachiService.createHachiApiService().queryRaceRx(mode,
-            queryStart, queryEnd, mUpper, mLower, mMaker, mModel, mLeaderBoardItemCount)
+            queryStart, queryEnd, getTimeGroupUpper(), getTimeGroupLower(), mMaker, mModel, mLeaderBoardItemCount)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<RaceQueryResponse>() {
@@ -459,6 +456,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         if (isRefresh) {
             List<LeaderBoardItem> leaderBoardItems = raceQueryResponse.leaderboard;
             int itemSize = leaderBoardItems.size();
+            clearTopThreeUserInfo(hvFirst, firstName, firstVehicle, firstRaceTime);
+            clearTopThreeUserInfo(hvSecond, secondName, secondVehicle, secondRaceTime);
+            clearTopThreeUserInfo(hvThird, thirdName, thirdVehicle, thirdRaceTime);
             if (itemSize > 0) {
                 setTopThreeUserInfo(leaderBoardItems.get(0), hvFirst, firstName, firstVehicle, firstRaceTime);
             }
@@ -471,13 +471,11 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
                 setTopThreeUserInfo(leaderBoardItems.get(2), hvThird, thirdName, thirdVehicle, thirdRaceTime);
             }
 
-            if (itemSize > 3) {
-
-                mAdapter.setMoments(raceQueryResponse.leaderboard.subList(3, itemSize), getRaceType(), mModeAdapter.getSelectedIndex());
-            }
-            if (raceQueryResponse.leaderboard.size() == 0) {
+            if (raceQueryResponse.leaderboard.size() <= 3) {
+                mAdapter.clear();
                 mNoDataLayout.setVisibility(View.VISIBLE);
             } else {
+                mAdapter.setMoments(raceQueryResponse.leaderboard.subList(3, itemSize), getRaceType(), mModeAdapter.getSelectedIndex());
                 mNoDataLayout.setVisibility(View.INVISIBLE);
             }
         } else {
@@ -514,6 +512,14 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
         mRvLeaderboardList.setEnableLoadMore(false);
         mAdapter.setHasMore(false);
+    }
+
+    private void clearTopThreeUserInfo(final HexagonView avatarView, TextView tvUserName, TextView vehicleInfo, TextView raceTime) {
+        avatarView.setImageDrawable(null);
+        avatarView.setText(null);
+        tvUserName.setText(null);
+        vehicleInfo.setText(null);
+        raceTime.setText(null);
     }
 
 
@@ -558,13 +564,10 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         }
 
 
-
         NumberFormat formatter = new DecimalFormat("#0.00");
         raceTime.setText(String.format(getString(R.string.race_time), formatter.format(MomentRaceTimeHelper.getRaceTime(item.moment, getRaceType(), mModeAdapter.getSelectedIndex()))));
 
     }
-
-
 
 
     private int getRaceType() {
@@ -593,6 +596,26 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             return 2;
         } else {
             return 1;
+        }
+    }
+
+    private Long getTimeGroupUpper() {
+        if (mTimeAdapter.getSelectedIndex() == 0) {
+            return null;
+        } else if (getRaceType() == RACE_TYPE_30MPH || getRaceType() == RACE_TYPE_50KMH) {
+            return splitTime30[mTimeAdapter.getSelectedIndex()];
+        } else {
+            return splitTime60[mTimeAdapter.getSelectedIndex()];
+        }
+    }
+
+    private Long getTimeGroupLower() {
+        if (mTimeAdapter.getSelectedIndex() == 0) {
+            return null;
+        } else if (getRaceType() == RACE_TYPE_30MPH || getRaceType() == RACE_TYPE_50KMH) {
+            return splitTime30[mTimeAdapter.getSelectedIndex() - 1];
+        } else {
+            return splitTime60[mTimeAdapter.getSelectedIndex() - 1];
         }
     }
 
