@@ -568,6 +568,7 @@ public class LiveViewActivity extends BaseActivity {
             getToolbar().setTitle(R.string.live_view);
             mCameraSpinner.setVisibility(View.GONE);
         } else {
+            getToolbar().setTitle(R.string.live_view);
             mVdtCamera = null;
             mCameraSpinner.setVisibility(View.GONE);
         }
