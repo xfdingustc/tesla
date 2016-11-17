@@ -279,6 +279,7 @@
                 android:id="@+id/ll_filter_result"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
+                android:background="?selectableItemBackground"
                 android:orientation="horizontal">
 
                 <TextView
@@ -314,12 +315,11 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/btn_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:background="?selectableItemBackgroundBorderless"
                     android:padding="12sp"
                     android:src="@drawable/ic_expand_more"
                     android:tint="@color/black87"/>

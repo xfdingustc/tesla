@@ -98,14 +98,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     private int mCurrentCursor;
 
-//    private int mUnits = UNIT_ENGLISH;
-
-//    private int mRaceType = RACE_TYPE_30MPH;
-
-//    private int mLeaderBoardStart;
-
-//    private int mLeaderBoardEnd;
-
 
     private VehicleInfo myVehicleInfo;
 
@@ -117,7 +109,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     private int mLeaderBoardItemCount;
 
-    private List<View> popupViews = new ArrayList<>();
+
 
     private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
@@ -146,7 +138,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     RoundedLetterView rlvThird;
 
     @BindView(R.id.btn_drop_down)
-    ImageButton btnDropDown;
+    ImageView btnDropDown;
 
     @BindView(R.id.ll_filter)
     ViewGroup llFilter;
