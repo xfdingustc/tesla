@@ -52,6 +52,8 @@ import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -194,6 +196,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.firstVehicle)
     TextView firstVehicle;
 
+    @BindView(R.id.firstRaceTime)
+    TextView firstRaceTime;
+
     @BindView(R.id.second)
     HexagonView hvSecond;
 
@@ -203,6 +208,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.secondVehicle)
     TextView secondVehicle;
 
+    @BindView(R.id.secondRaceTime)
+    TextView secondRaceTime;
+
     @BindView(R.id.third)
     HexagonView hvThird;
 
@@ -211,6 +219,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     @BindView(R.id.thirdVehicle)
     TextView thirdVehicle;
+
+    @BindView(R.id.thirdRaceTime)
+    TextView thirdRaceTime;
 
     @BindView(R.id.rv_mode)
     RecyclerView rvMode;
@@ -449,15 +460,15 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             List<LeaderBoardItem> leaderBoardItems = raceQueryResponse.leaderboard;
             int itemSize = leaderBoardItems.size();
             if (itemSize > 0) {
-                setTopThreeUserInfo(leaderBoardItems.get(0), hvFirst, firstName, firstVehicle);
+                setTopThreeUserInfo(leaderBoardItems.get(0), hvFirst, firstName, firstVehicle, firstRaceTime);
             }
 
             if (itemSize > 1) {
-                setTopThreeUserInfo(leaderBoardItems.get(1), hvSecond, secondName, secondVehicle);
+                setTopThreeUserInfo(leaderBoardItems.get(1), hvSecond, secondName, secondVehicle, secondRaceTime);
             }
 
             if (itemSize > 2) {
-                setTopThreeUserInfo(leaderBoardItems.get(2), hvThird, thirdName, thirdVehicle);
+                setTopThreeUserInfo(leaderBoardItems.get(2), hvThird, thirdName, thirdVehicle, thirdRaceTime);
             }
 
             if (itemSize > 3) {
@@ -506,7 +517,8 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     }
 
 
-    private void setTopThreeUserInfo(final LeaderBoardItem item, final HexagonView avatarView, TextView tvUserName, TextView vehicleInfo) {
+    private void setTopThreeUserInfo(final LeaderBoardItem item, final HexagonView avatarView,
+                                     TextView tvUserName, TextView vehicleInfo, TextView raceTime) {
         String avatarUrl = item.owner.avatarUrl;
         if (!TextUtils.isEmpty(avatarUrl) && !avatarUrl.equals(Constants.DEFAULT_AVATAR)) {
             Glide.with(this)
@@ -544,7 +556,16 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         } else {
             vehicleInfo.setVisibility(View.INVISIBLE);
         }
+
+
+
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        raceTime.setText(String.format(getString(R.string.race_time), formatter.format(MomentRaceTimeHelper.getRaceTime(item.moment, getRaceType(), mModeAdapter.getSelectedIndex()))));
+
     }
+
+
+
 
     private int getRaceType() {
         if (SettingHelper.isMetricUnit()) {
@@ -708,4 +729,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         }
         return transition;
     }
+
+
 }

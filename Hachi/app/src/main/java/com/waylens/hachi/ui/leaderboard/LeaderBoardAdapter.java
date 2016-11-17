@@ -72,7 +72,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         for (int i = 0; i < mMoments.size(); i++) {
             LeaderBoardItem moment = mMoments.get(i);
-            double curTime = getRaceTime(moment.moment);
+            double curTime = MomentRaceTimeHelper.getRaceTime(moment.moment, mRaceType, mTestMode);
             if (curTime > raceTime) {
                 rank = i + 1;
                 mRankings.add(i, rank);
@@ -147,7 +147,7 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             holder.vehicleInfo.setVisibility(View.GONE);
         }
         double raceTime = 0.0;
-        raceTime = getRaceTime(moment);
+        raceTime = MomentRaceTimeHelper.getRaceTime(moment, mRaceType, mTestMode);
         NumberFormat formatter = new DecimalFormat("#0.00");
         holder.raceTime.setText(String.format(mContext.getString(R.string.race_time), formatter.format(raceTime)));
         holder.userRank.setText(String.valueOf(mRankings.get(position) + 3));
@@ -199,42 +199,6 @@ public class LeaderBoardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-    public double getRaceTime(MomentAbstract moment) {
-        double raceTime = 0.0;
-        switch (mRaceType) {
-            case LeaderboardFragment.RACE_TYPE_30MPH:
-                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t3_2) / 1000;
-                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t3_1) / 1000;
-                }
-                break;
-            case LeaderboardFragment.RACE_TYPE_50KMH:
-                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t4_2) / 1000;
-                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t4_1) / 1000;
-                }
-                break;
-            case LeaderboardFragment.RACE_TYPE_60MPH:
-                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t5_2) / 1000;
-                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t5_1) / 1000;
-                }
-                break;
-            case LeaderboardFragment.RACE_TYPE_100KMH:
-                if (mTestMode == LeaderboardFragment.TEST_MODE_AUTO) {
-                    raceTime = (double) (moment.momentTimingInfo.t6_2) / 1000;
-                } else if (mTestMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-                    raceTime = (double) (moment.momentTimingInfo.t6_1) / 1000;
-                }
-                break;
-            default:
-                break;
-        }
-        return raceTime;
-    }
 
 
     public static class LeaderBoardItemViewHolder extends RecyclerView.ViewHolder {

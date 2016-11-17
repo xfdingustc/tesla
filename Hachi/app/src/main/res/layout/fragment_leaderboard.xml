@@ -103,6 +103,23 @@
                         android:textSize="12sp"
                         tools:text="Subaru WRX 2015"/>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/separateColor"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/secondRaceTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="12sp"
+                        tools:text="0.47s"/>
+
                 </LinearLayout>
 
                 <Space
@@ -153,11 +170,27 @@
                         android:id="@+id/firstVehicle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
                         android:textAlignment="center"
                         android:textColor="@color/white87"
                         android:textSize="12sp"
                         tools:text="Audi S3 2016"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/separateColor"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/firstRaceTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="12sp"
+                        tools:text="0.37s"/>
 
                 </LinearLayout>
 
@@ -213,6 +246,23 @@
                         android:textColor="@color/white87"
                         android:textSize="12sp"
                         tools:text="Audi S3 2016"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/separateColor"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:id="@+id/thirdRaceTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="12sp"
+                        tools:text="0.57s"/>
 
                 </LinearLayout>
 
