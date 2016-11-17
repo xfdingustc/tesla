@@ -85,13 +85,16 @@ public class ExportManager {
 
     public void addJob(ExportableJob job) {
         mDownloadJobList.add(job);
+        Logger.t(TAG).d("add job event");
         mEventBus.post(new ExportEvent(ExportEvent.EXPORT_WHAT_JOB_ADDED, job));
         job.setOnProgressChangedListener(new ExportableJob.OnProgressChangedListener() {
             @Override
             public void OnProgressChanged(ExportableJob job) {
+                Logger.t(TAG).d("export job progress event");
                 for (int i = 0; i < mDownloadJobList.size(); i++) {
                     ExportableJob oneJob = mDownloadJobList.get(i);
                     if (oneJob.getId().equals(job.getId())) {
+                        Logger.t(TAG).d("export job event post");
                         mEventBus.post(new ExportEvent(ExportEvent.EXPORT_WHAT_PROGRESS, job, i));
                     }
                 }
@@ -110,7 +113,11 @@ public class ExportManager {
     }
 
     public ExportableJob getDownloadJob(int index) {
-        return mDownloadJobList.get(index);
+        if (index >= 0 && index < mDownloadJobList.size()) {
+            return mDownloadJobList.get(index);
+        } else {
+            return null;
+        }
     }
 
 

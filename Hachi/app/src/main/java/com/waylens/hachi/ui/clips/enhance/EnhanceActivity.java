@@ -345,8 +345,8 @@ public class EnhanceActivity extends ClipPlayActivity {
                     @Override
                     public void onClick(View view) {
                         mDownloadInfo = response.main;
-                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
                         ExportedVideoActivity.launch(EnhanceActivity.this);
+                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });
@@ -355,8 +355,8 @@ public class EnhanceActivity extends ClipPlayActivity {
                     @Override
                     public void onClick(View view) {
                         mDownloadInfo = response.sub;
-                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
                         ExportedVideoActivity.launch(EnhanceActivity.this);
+                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
                         mDownloadBottomSheetDialog.dismiss();
                     }
                 });

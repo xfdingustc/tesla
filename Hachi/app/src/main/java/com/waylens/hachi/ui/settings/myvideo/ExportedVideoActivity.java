@@ -9,11 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ViewSwitcher;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.export.ExportManager;
+import com.waylens.hachi.bgjob.export.event.ExportEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.adapters.DownloadItemAdapter;
+import com.waylens.hachi.utils.FileUtils;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 
@@ -22,6 +28,7 @@ import butterknife.BindView;
  */
 public class ExportedVideoActivity extends BaseActivity {
 
+    public static final String TAG = ExportedVideoActivity.class.getSimpleName();
     private DownloadItemAdapter mDownloadItemAdapter;
 
     @BindView(R.id.download_list)
@@ -32,6 +39,8 @@ public class ExportedVideoActivity extends BaseActivity {
 
 
     public static void launch(Activity activity) {
+        //install callback in bgjob
+        ExportManager.getManager();
         Intent intent = new Intent(activity, ExportedVideoActivity.class);
         activity.startActivity(intent);
     }
@@ -40,6 +49,15 @@ public class ExportedVideoActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+        EventBus.getDefault().register(ExportedVideoActivity.this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onHandleExportJobEvent(ExportEvent event) {
+        Logger.t(TAG).d("event type" + event.getWhat());
+        if (mDownloadItemAdapter != null) {
+            mDownloadItemAdapter.handleEvent(event);
+        }
     }
 
 
@@ -52,20 +70,24 @@ public class ExportedVideoActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(mDownloadItemAdapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(ExportedVideoActivity.this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(mDownloadItemAdapter);
+        EventBus.getDefault().unregister(this);
     }
 
     private void initViews() {
         setContentView(R.layout.activity_exported_video);
         setupToolbar();
         setupDownloadFileList();
-
         if (mDownloadItemAdapter.getItemCount() == 0) {
             rootSwitch.showNext();
         }

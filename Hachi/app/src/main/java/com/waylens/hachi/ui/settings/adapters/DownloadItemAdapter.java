@@ -50,8 +50,10 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private File[] mDownloadedFileList;
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onHandleExportJobEvent(ExportEvent event) {
+    private int mDownloadingCount = 0;
+
+    public void handleEvent(ExportEvent event) {
+        Logger.t(TAG).d("event type" + event.getWhat());
         switch (event.getWhat()) {
             case ExportEvent.EXPORT_WHAT_JOB_ADDED:
                 notifyDataSetChanged();
@@ -89,10 +91,10 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (position < mDownloadManager.getCount()) {
+        if (position < mDownloadingCount) {
             onBindDownloadingViewHolder(holder, position);
         } else {
-            onBindDownloadedViewHolder(holder, position - mDownloadManager.getCount());
+            onBindDownloadedViewHolder(holder, position - mDownloadingCount);
         }
 
     }
@@ -101,6 +103,9 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private void onBindDownloadingViewHolder(RecyclerView.ViewHolder holder, int position) {
         DownloadVideoItemViewHolder videoItemViewHolder = (DownloadVideoItemViewHolder) holder;
         ExportableJob job = ExportManager.getManager().getDownloadJob(position);
+        if (job == null) {
+            return;
+        }
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(job.getExportProgress());
         Glide.with(mActivity)
@@ -179,7 +184,8 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return mDownloadManager.getCount() + mDownloadedFileList.length;
+        mDownloadingCount = mDownloadManager.getCount();
+        return mDownloadingCount + mDownloadedFileList.length;
     }
 
 
