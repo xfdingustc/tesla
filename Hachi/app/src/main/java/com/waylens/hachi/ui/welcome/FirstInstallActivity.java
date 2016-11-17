@@ -71,6 +71,7 @@ public class FirstInstallActivity extends BaseActivity {
         mAdapter = new SimpleFragmentPagerAdapter(getFragmentManager());
         mAdapter.addFragment(new Welcome1Fragment());
         mAdapter.addFragment(new Welcome2Fragment());
+//        mAdapter.addFragment(new VideoWelcomeFragment());
         mAdapter.addFragment(new Welcome3Fragment());
         mAdapter.addFragment(new Welcome4Fragment());
 
