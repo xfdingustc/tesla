@@ -75,6 +75,7 @@
                         app:hexagonTextSize="32sp"/>
 
                     <com.github.pavlospt.roundedletterview.RoundedLetterView
+                        android:id="@+id/rlv_second"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_horizontal"
@@ -129,6 +130,7 @@
                         />
 
                     <com.github.pavlospt.roundedletterview.RoundedLetterView
+                        android:id="@+id/rlv_first"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_gravity="center_horizontal"
@@ -184,6 +186,7 @@
                         app:hexagonTextSize="32sp"/>
 
                     <com.github.pavlospt.roundedletterview.RoundedLetterView
+                        android:id="@+id/rlv_third"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_horizontal"

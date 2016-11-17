@@ -4,6 +4,7 @@ package com.waylens.hachi.ui.leaderboard;
  * Created by lshw on 16/9/2.
  */
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.TransitionRes;
@@ -23,11 +24,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.lzy.widget.HexagonView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -39,7 +40,6 @@ import com.waylens.hachi.rest.bean.Model;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
-import com.waylens.hachi.ui.adapters.ListDropDownAdapter;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -124,22 +124,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
     private String headers[] = {"mode", "type", "All"};
 
-    private ListDropDownAdapter modeAdapter;
-
-    private ListDropDownAdapter typeAdapterImperial;
-
-    private ListDropDownAdapter typeAdapterMetric;
-
-    private ListDropDownAdapter modelAdapter;
-
-    private ListDropDownAdapter groupAdapter60;
-
-    private ListDropDownAdapter groupAdapter30;
-
-    private ListDropDownAdapter currentGroupAdapter;
-
-    private ListView mTypeView;
-    private ListView groupView;
 
     @BindView(R.id.header_view)
     View headerView;
@@ -153,8 +137,14 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.main_layout)
     FrameLayout mLayoutMain;
 
-//    @BindView(R.id.dropDownMenu)
-//    DropDownMenu mDropDownMenu;
+    @BindView(R.id.rlv_first)
+    RoundedLetterView rlvFirst;
+
+    @BindView(R.id.rlv_second)
+    RoundedLetterView rlvSecond;
+
+    @BindView(R.id.rlv_third)
+    RoundedLetterView rlvThird;
 
     @BindView(R.id.btn_drop_down)
     ImageButton btnDropDown;
@@ -294,13 +284,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-//        setupTypeFilter();
-    }
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -316,6 +299,10 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         });
 
         setupLeaderBoardFilter();
+
+        rlvFirst.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
+        rlvSecond.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
+        rlvThird.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
 
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
@@ -334,6 +321,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         setupModeGroudRv();
         setupSpeedGroupRv();
         setupTimeGroupRv(true);
+
     }
 
     private void setupModeGroudRv() {
