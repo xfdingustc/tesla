@@ -263,7 +263,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     private void onLoadFeedSuccessful(MomentListResponse response, boolean isRefresh) {
-        mRefreshLayout.setRefreshing(false);
+
         if (isRefresh) {
             mAdapter.setMoments(response.moments);
         } else {
@@ -298,14 +298,11 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     private void onLoadMomentFailed(final boolean isRefresh, Throwable e) {
+        mRefreshLayout.setRefreshing(false);
         if (isRefresh) {
             mViewAnimator.setDisplayedChild(CHILD_NETWORK_ERROR);
-
         } else {
-            mRefreshLayout.setRefreshing(false);
             mRvVideoList.setIsLoadingMore(false);
-
-
             ServerErrorHelper.showErrorMessage(mRootView, e);
         }
     }
