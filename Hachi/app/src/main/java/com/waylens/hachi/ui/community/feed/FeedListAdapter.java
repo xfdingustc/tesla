@@ -178,10 +178,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                     popupMenu.getMenu().removeItem(R.id.edit);
                 }
 
-                if (momentEx.moment.isPictureMoment()) {
-                    popupMenu.getMenu().removeItem(R.id.edit);
-                }
-                popupMenu.getMenu().removeItem(R.id.edit);
+
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -193,7 +190,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                                 onDeleteClick(moment.id, holder.getAdapterPosition());
                                 break;
                             case R.id.edit:
-//                                onEditClick(moment.id, moment.title, holder);
+                                onEditClick(momentEx, holder);
                                 break;
 
                         }
@@ -404,7 +401,7 @@ public class FeedListAdapter extends AbsMomentListAdapter {
         return spannableStringBuilder;
     }
 
-    private void onEditClick(Moment moment, final MomentViewHolder holder) {
+    private void onEditClick(MomentEx moment, final MomentViewHolder holder) {
         MomentEditActivity.launch((Activity) mContext, moment, holder.videoCover);
     }
 

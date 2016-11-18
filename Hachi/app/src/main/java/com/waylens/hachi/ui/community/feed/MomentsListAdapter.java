@@ -222,9 +222,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                     popupMenu.getMenu().removeItem(R.id.delete);
                     popupMenu.getMenu().removeItem(R.id.edit);
                 }
-                if (momentEx.moment.isPictureMoment()) {
-                    popupMenu.getMenu().removeItem(R.id.edit);
-                }
+
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -236,7 +234,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
                                 onDeleteClick(momentAbstract.id, holder.getAdapterPosition());
                                 break;
                             case R.id.edit:
-                                onEditClick(momentAbstract, holder);
+                                onEditClick(momentEx, holder);
 
                         }
                         return true;
@@ -279,8 +277,8 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
         });
     }
 
-    private void onEditClick(MomentAbstract moment, final MomentViewHolder holder) {
-        MomentEditActivity.launch((Activity) mContext, moment.id, moment.title, holder.videoCover);
+    private void onEditClick(MomentEx moment, final MomentViewHolder holder) {
+        MomentEditActivity.launch((Activity) mContext, moment, holder.videoCover);
     }
 
 

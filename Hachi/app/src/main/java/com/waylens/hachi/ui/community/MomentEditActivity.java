@@ -25,6 +25,8 @@ import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
+import com.waylens.hachi.ui.entities.moment.MomentAbstract;
+import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.utils.TransitionHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,10 +48,10 @@ public class MomentEditActivity extends BaseActivity {
     private static final String EXTRA_MOMENT_TITLE = "momentTitle";
 
 
-    private Moment mMoment;
+    private MomentEx mMoment;
 
 
-    public static void launch(Activity activity, Moment moment, View transitionView) {
+    public static void launch(Activity activity, MomentEx moment, View transitionView) {
         Intent intent = new Intent(activity, MomentEditActivity.class);
         intent.putExtra(EXTRA_MOMENT, moment);
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
@@ -58,17 +60,7 @@ public class MomentEditActivity extends BaseActivity {
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
-    public static void launch(Activity activity, long momentId, String momentTitle, View transitionView) {
-        Intent intent = new Intent(activity, MomentEditActivity.class);
-        intent.putExtra(EXTRA_MOMENT_ID, momentId);
-        intent.putExtra(EXTRA_MOMENT_TITLE, momentTitle);
-        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-            false, new Pair<>(transitionView, activity.getString(R.string.moment_cover)));
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
-    }
-
-
+    
 
     @BindView(R.id.moment_cover)
     ImageView mMomentCover;
@@ -89,15 +81,15 @@ public class MomentEditActivity extends BaseActivity {
     protected void init() {
         super.init();
         Intent intent = getIntent();
-        mMoment = (Moment)intent.getSerializableExtra(EXTRA_MOMENT);
+        mMoment = (MomentEx)intent.getSerializableExtra(EXTRA_MOMENT);
         initViews();
     }
 
     private void initViews() {
         setContentView(R.layout.activity_moment_edit);
         setupToolbar();
-        String thumbnailUrl = mMoment.thumbnail;
-        if (!TextUtils.isEmpty(mMoment.momentType) && mMoment.momentType.equals("PICTURE")) {
+        String thumbnailUrl = mMoment.moment.thumbnail;
+        if (!TextUtils.isEmpty(mMoment.moment.momentType) && mMoment.moment.momentType.equals("PICTURE")) {
             final List<MomentPicture> momentPictures = mMoment.pictureUrls;
             if (!momentPictures.isEmpty()) {
                 MomentPicture momentPicture = momentPictures.get(0);
@@ -111,8 +103,8 @@ public class MomentEditActivity extends BaseActivity {
             }
         }
         Logger.t(TAG).d("moment: " + mMoment.toString());
-        mMomentTitle.setText(mMoment.title);
-        mMomentDescription.setText(mMoment.description);
+        mMomentTitle.setText(mMoment.moment.title);
+        mMomentDescription.setText(mMoment.moment.description);
         Glide.with(this)
             .load(thumbnailUrl)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -150,11 +142,11 @@ public class MomentEditActivity extends BaseActivity {
         final MomentUpdateBody body = new MomentUpdateBody();
         body.title = mMomentTitle.getEditableText().toString();
         body.description = mMomentDescription.getEditableText().toString();
-        mHachiApi.updateMoment(mMoment.id, body).enqueue(new Callback<SimpleBoolResponse>() {
+        mHachiApi.updateMoment(mMoment.moment.id, body).enqueue(new Callback<SimpleBoolResponse>() {
             @Override
             public void onResponse(Call<SimpleBoolResponse> call, Response<SimpleBoolResponse> response) {
                 Logger.t(TAG).d("result: " + response.body().result);
-                EventBus.getDefault().post(new MomentChangeEvent(mMoment.id, body));
+                EventBus.getDefault().post(new MomentChangeEvent(mMoment.moment.id, body));
                 onBackPressed();
             }
 

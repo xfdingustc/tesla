@@ -11,7 +11,7 @@ import com.waylens.hachi.snipe.utils.ToStringUtils;
 import java.io.Serializable;
 import java.util.List;
 
-
+@Deprecated
 public class Moment implements Serializable {
     private static final String TAG = Moment.class.getSimpleName();
     public static final long INVALID_MOMENT_ID = -1;
