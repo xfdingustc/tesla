@@ -49,6 +49,10 @@ public class OvertureActivity extends BaseActivity {
         }
     }
 
+    private boolean isFirstInstall() {
+        int oldVersionCode = PreferenceUtils.getInt(PreferenceUtils.VERSION_CODE, 0);
+        return oldVersionCode == 0;
+    }
 
 
     private boolean isUpdated() {
@@ -66,13 +70,25 @@ public class OvertureActivity extends BaseActivity {
         }
 
         return false;
+    }
 
+    private boolean hasBigChange() {
+        int newVersionCode;
 
+        try {
+            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            newVersionCode = pi.versionCode;
+
+            return newVersionCode % 10 == 0;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
     private void redirectTo() {
-        if (isUpdated()) {
+        if (isFirstInstall() || (isUpdated() && hasBigChange())) {
             FirstInstallActivity.launch(this);
         } else {
             MainActivity.launch(this);

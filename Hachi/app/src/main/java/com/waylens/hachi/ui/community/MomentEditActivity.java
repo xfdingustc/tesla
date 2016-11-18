@@ -60,7 +60,7 @@ public class MomentEditActivity extends BaseActivity {
         ActivityCompat.startActivity(activity, intent, options.toBundle());
     }
 
-    
+
 
     @BindView(R.id.moment_cover)
     ImageView mMomentCover;

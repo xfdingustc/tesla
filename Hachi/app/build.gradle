@@ -17,7 +17,7 @@ android {
         applicationId "com.waylens.hachi"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 123
+        versionCode 124
         versionName "0.7.0.0"
 //        renderscriptTargetApi 22
 //        renderscriptSupportModeEnabled true
@@ -125,7 +125,7 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //    compile(name: 'rangebar-release', ext: 'aar')
-    compile project(':mediatranscoder')
+//    compile project(':mediatranscoder')
     compile 'com.android.support:support-v13:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:recyclerview-v7:25.0.1'
