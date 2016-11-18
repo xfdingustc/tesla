@@ -543,4 +543,6 @@
     <string name="something_went_wrong">Something went wrong.</string>
     <string name="check_your_connection">Check your connection and try again</string>
     <string name="all">All</string>
+    <string name="choose_stream">Choose stream</string>
+    <string name="overlay">With overlay</string>
 </resources>

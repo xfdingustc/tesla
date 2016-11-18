@@ -118,9 +118,9 @@ public class BgJobHelper {
         jobManager.addJobInBackground(job);
     }
 
-    public static void downloadStream(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
+    public static void downloadStream(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo, boolean withOverlay) {
         JobManager jobManager = BgJobManager.getManager();
-        DownloadJob job = new DownloadJob(clip, streamInfo, downloadInfo);
+        DownloadJob job = new DownloadJob(clip, streamInfo, downloadInfo, withOverlay);
         jobManager.addJobInBackground(job);
     }
 }

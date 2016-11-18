@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.views.gauge;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -15,6 +16,7 @@ import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
@@ -29,7 +31,7 @@ import java.util.Map;
 /**
  * Created by Xiaofei on 2016/4/6.
  */
-public class GaugeView extends FrameLayout {
+public class GaugeView extends FrameLayout implements OverlayProvider{
     private static final String TAG = GaugeView.class.getSimpleName();
 
     private static final int PENDING_ACTION_INIT_GAUGE = 0x1001;
@@ -63,11 +65,17 @@ public class GaugeView extends FrameLayout {
         init(context);
     }
 
+    @Override
+    public Bitmap updateTexImage(long pts) {
+        return getDrawingCache();
+    }
+
 
     private void init(Context context) {
         if (isInEditMode()) {
             return;
         }
+        setDrawingCacheEnabled(true);
         mWebView = new WebView(context);
         final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(mWebView, params);

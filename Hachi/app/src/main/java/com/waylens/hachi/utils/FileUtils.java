@@ -104,6 +104,7 @@ public class FileUtils {
         }
     }
 
+
     public static String genMomentCacheFileName(String fileName) {
         String dir = getMomentCachePath();
         if (dir == null) {

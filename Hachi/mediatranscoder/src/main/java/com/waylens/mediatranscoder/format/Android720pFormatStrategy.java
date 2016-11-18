@@ -55,7 +55,7 @@ class Android720pFormatStrategy implements MediaFormatStrategy {
         }
         if (shorter <= SHORTER_LENGTH) {
             Log.d(TAG, "This video is less or equal to 720p, pass-through. (" + width + "x" + height + ")");
-            return null;
+//            return null;
         }
         MediaFormat format = MediaFormat.createVideoFormat("video/avc", outWidth, outHeight);
         // From Nexus 4 Camera in 720p

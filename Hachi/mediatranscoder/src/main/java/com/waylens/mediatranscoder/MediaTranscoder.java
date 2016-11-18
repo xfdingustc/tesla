@@ -72,7 +72,7 @@ public class MediaTranscoder {
      * @param listener          Listener instance for callback.
      * @throws IOException if input file could not be read.
      */
-    public void transcodeVideo(final String inPath, final String outPath, final MediaFormatStrategy outFormatStrategy, final Listener listener) throws IOException {
+    public void transcodeVideo(final String inPath, final String outPath, final MediaFormatStrategy outFormatStrategy, final Listener listener, final OverlayProvider overlayProvider) throws IOException {
         FileInputStream fileInputStream = null;
         FileDescriptor inFileDescriptor;
         try {
@@ -114,7 +114,7 @@ public class MediaTranscoder {
                     Log.e(TAG, "Can't close input stream: ", e);
                 }
             }
-        }, null);
+        }, overlayProvider);
     }
 
     /**

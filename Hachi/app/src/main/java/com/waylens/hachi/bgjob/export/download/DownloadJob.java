@@ -4,7 +4,6 @@ import android.media.MediaScannerConnection;
 import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
-import com.transee.vdb.HttpRemuxer;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.jobqueue.Params;
@@ -12,28 +11,29 @@ import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
-import com.waylens.hachi.utils.FileUtils;
+import com.waylens.hachi.utils.ClipDownloadHelper;
 
 /**
  * Created by Xiaofei on 2016/5/4.
  */
 public class DownloadJob extends ExportableJob {
     private static final String TAG = DownloadJob.class.getSimpleName();
+    private boolean mWithOverlay;
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
     private Clip mClip;
     private Clip.StreamInfo mStreamInfo;
 
+    private transient Object mDownloadFence = new Object();
 
     private String mDownloadFilePath;
 
 
-
-
-    public DownloadJob(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
+    public DownloadJob(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo, boolean withOverlay) {
         super(new Params(0).requireNetwork().setPersistent(false));
         this.mClip = clip;
         this.mStreamInfo = streamInfo;
         this.mDownloadInfo = downloadInfo;
+        this.mWithOverlay = withOverlay;
     }
 
     @Override
@@ -41,14 +41,10 @@ public class DownloadJob extends ExportableJob {
     }
 
     @Override
-    public synchronized void onRun() throws Throwable {
-        try {
-            downloadVideo();
-            wait();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+    public void onRun() throws Throwable {
+        downloadVideoSync();
     }
+
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
@@ -60,100 +56,38 @@ public class DownloadJob extends ExportableJob {
         return new RetryConstraint(false);
     }
 
-
-    private void downloadVideo() {
-        RemuxerParams params = new RemuxerParams();
-        // clip params
-        params.setClipDate(mDownloadInfo.clipDate);
-        params.setClipTimeMs(mDownloadInfo.clipTimeMs);
-        params.setClipLength(mDownloadInfo.lengthMs);
-        params.setDurationMs(mDownloadInfo.lengthMs);
-        // stream info
-        params.setStreamVersion(mStreamInfo.version);
-        params.setVideoCoding(mStreamInfo.video_coding);
-        params.setVideoFrameRate(mStreamInfo.video_framerate);
-        params.setVideoWidth(mStreamInfo.video_width);
-        params.setVideoHeight(mStreamInfo.video_height);
-        params.setAudioCoding(mStreamInfo.audio_coding);
-        params.setAudioNumChannels(mStreamInfo.audio_num_channels);
-        params.setAudioSamplingFreq(mStreamInfo.audio_sampling_freq);
-        // download params
-        params.setInputFile(mDownloadInfo.url + ",0,-1;");
-        params.setInputMime("ts");
-        params.setOutputFormat("mp4");
-//        params.setPosterData(downloadOptions.clipDownloadInfo.posterData);
-        params.setGpsData(null);
-        params.setAccData(null);
-        params.setObdData(null);
-        params.setAudioFormat("mp3");
-        // add to queue
-        //   RemuxHelper.remux(this, params);
-
-        startDownloadVideo(params);
-
-
-    }
-
-    private void startDownloadVideo(RemuxerParams params) {
-
-        Logger.t(TAG).d("start download item " + params.getInputFile());
-
-
-        HttpRemuxer remuxer = new HttpRemuxer(0);
-
-        remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
+    private void downloadVideoSync() throws InterruptedException {
+        ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mDownloadInfo, new ClipDownloadHelper.OnExportListener() {
             @Override
-            public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
-                switch (event) {
-                    case HttpRemuxer.EVENT_ERROR:
-                        handleRemuxerError(arg1, arg2);
-                        break;
-                    case HttpRemuxer.EVENT_PROGRESS:
-                        handleRemuxerProgress(arg1);
-                        break;
-                    case HttpRemuxer.EVENT_FINISHED:
-                        Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
-                        handleRemuxerFinished();
-                        break;
+            public synchronized void onExportError(int arg1, int arg2) {
+                synchronized (mDownloadFence) {
+                    mDownloadFence.notifyAll();
+                }
+            }
 
+            @Override
+            public void onExportProgress(int progress) {
+                notifyProgressChanged(progress);
+            }
+
+            @Override
+            public void onExportFinished() {
+                MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
+                    mDownloadFilePath.toString()}, null, null);
+                Logger.t(TAG).d("onExportFinished " + mDownloadFilePath);
+                synchronized (mDownloadFence) {
+                    mDownloadFence.notifyAll();
                 }
             }
         });
-
-        int clipDate = params.getClipDate();
-        long clipTimeMs = params.getClipTimeMs();
-        String outputFile = FileUtils.genDownloadFileName(clipDate, clipTimeMs);
-
-
-        Logger.t(TAG).d("outputFile: " + outputFile);
-        if (outputFile == null) {
-            Logger.t(TAG).e("Output File is null");
-        } else {
-            //item.outputFile = outputFile;
-//            mEventBus.post(new DownloadEvent(DownloadEvent.EXPORT_WHAT_START));
-            remuxer.run(params, outputFile);
-            mDownloadFilePath = outputFile;
-
-            Logger.t(TAG).d("remux is running output file is: " + outputFile);
+        mDownloadFilePath = downloadHelper.downloadVideo();
+//        wait();
+        synchronized (mDownloadFence) {
+            mDownloadFence.wait();
         }
-    }
-
-    private synchronized void handleRemuxerError(int arg1, int arg2) {
-        notifyAll();
-    }
-
-    private void handleRemuxerProgress(int progress) {
-
-        notifyProgressChanged(progress);
-    }
-
-
-    private synchronized void handleRemuxerFinished() {
-        MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
-            mDownloadFilePath.toString()}, null, null);
         Logger.t(TAG).d("download finished " + mDownloadFilePath);
-        notifyAll();
     }
+
 
     @Override
     public int getExportProgress() {

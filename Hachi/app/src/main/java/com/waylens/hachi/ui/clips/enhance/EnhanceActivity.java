@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.clips.enhance;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -11,6 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
@@ -38,6 +41,7 @@ import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipChooserActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
+import com.waylens.hachi.ui.clips.TranscodingActivity;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.music.MusicListSelectActivity;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
@@ -88,7 +92,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     private GaugeListAdapter mGaugeListAdapter;
 
 
-    private BottomSheetDialog mDownloadBottomSheetDialog;
+
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
 
 
@@ -97,6 +101,9 @@ public class EnhanceActivity extends ClipPlayActivity {
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
         activity.startActivity(intent);
     }
+
+    private RadioButton btnSd, btnHd;
+    private CheckBox checkBoxWithOverlay;
 
 
     @BindView(R.id.gauge_list_view)
@@ -327,47 +334,45 @@ public class EnhanceActivity extends ClipPlayActivity {
     private void showDownloadBottomSheetDialog() {
 
         Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
-        DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
+        final DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
             .Listener<ClipDownloadInfo>() {
             @Override
             public void onResponse(final ClipDownloadInfo response) {
                 Logger.t(TAG).d("on response:!!!!: " + response.main.url);
                 Logger.t(TAG).d("on response: " + response.sub.url);
-//                Logger.t(TAG).d("on response:!!! poster data size: " + response.posterData.length);
 
-                mDownloadBottomSheetDialog = new BottomSheetDialog(EnhanceActivity.this);
-                View view = getLayoutInflater().inflate(R.layout.bottom_sheet_download, null);
-
-                TextView tvFullHd = (TextView) view.findViewById(R.id.full_hd);
-                TextView tvSd = (TextView) view.findViewById(R.id.sd);
-
-                view.findViewById(R.id.ll_fullhd).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mDownloadInfo = response.main;
-                        ExportedVideoActivity.launch(EnhanceActivity.this);
-                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
-                        mDownloadBottomSheetDialog.dismiss();
-                    }
-                });
-
-                view.findViewById(R.id.ll_sd).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        mDownloadInfo = response.sub;
-                        ExportedVideoActivity.launch(EnhanceActivity.this);
-                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo);
-                        mDownloadBottomSheetDialog.dismiss();
-                    }
-                });
+                MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
+                    .title(R.string.download)
+                    .customView(R.layout.dialog_download, true)
+                    .positiveText(R.string.ok)
+                    .negativeText(R.string.cancel)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            if (btnSd.isChecked()) {
+                                mDownloadInfo = response.sub;
+                            } else {
+                                mDownloadInfo = response.main;
+                            }
+                            boolean withOverlay = checkBoxWithOverlay.isChecked();
+                            if (withOverlay) {
+                                TranscodingActivity.launch(EnhanceActivity.this, getClipSet().getClip(0).streams[0], mDownloadInfo);
+                            } else {
+                                ExportedVideoActivity.launch(EnhanceActivity.this);
+                                BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
+                            }
 
 
-                tvFullHd.setText(getString(R.string.fullhd, StringUtils.getSpaceString(response.main.size)));
-                tvSd.setText(getString(R.string.sd, StringUtils.getSpaceString(response.sub.size)));
+                        }
+                    })
+                    .show();
 
-                mDownloadBottomSheetDialog.setContentView(view);
-
-                mDownloadBottomSheetDialog.show();
+                btnSd = (RadioButton)dialog.findViewById(R.id.sd_stream);
+                btnHd = (RadioButton)dialog.findViewById(R.id.hd_stream);
+                checkBoxWithOverlay = (CheckBox)dialog.findViewById(R.id.with_overlay);
+                btnSd.setText(getString(R.string.sd, StringUtils.getSpaceString(response.sub.size)));
+                btnHd.setText(getString(R.string.fullhd, StringUtils.getSpaceString(response.main.size)));
+                btnSd.setChecked(true);
 
             }
         }, new VdbResponse.ErrorListener() {

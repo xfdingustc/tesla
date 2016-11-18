@@ -125,7 +125,7 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //    compile(name: 'rangebar-release', ext: 'aar')
-//    compile project(':mediatranscoder')
+    compile project(':mediatranscoder')
     compile 'com.android.support:support-v13:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:recyclerview-v7:25.0.1'
