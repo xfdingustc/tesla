@@ -62,6 +62,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -159,6 +160,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     @BindView(R.id.btnShowOverlay)
     ImageButton mBtnShowOverlay;
+
+    @BindString(R.string.app_name)
+    String appName;
 
 
     @OnClick(R.id.btnShowOverlay)
@@ -561,7 +565,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private void preparePlayer(boolean playWhenReady) {
         if (mMediaPlayer == null) {
-            String userAgent = Utils.getUserAgent(getActivity(), getString(R.string.app_name));
+            String userAgent = Utils.getUserAgent(getActivity(), appName);
             mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mVdbUrl.url));
             mMediaPlayer.addListener(this);
             mMediaPlayer.seekTo(0);
