@@ -8,7 +8,10 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.transition.TransitionManager;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -48,6 +51,9 @@ public class TranscodingActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
+    @BindView(R.id.tv_status)
+    TextView tvStatus;
+
     @BindView(R.id.progress_bar)
     ProgressBar mProgressBar;
 
@@ -71,6 +77,7 @@ public class TranscodingActivity extends BaseActivity {
     private void initViews() {
         setContentView(R.layout.activity_transcoding);
         mGaugeView.showGauge(true, true);
+
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo, new ClipDownloadHelper.OnExportListener() {
             @Override
             public void onExportError(int arg1, int arg2) {
@@ -84,15 +91,23 @@ public class TranscodingActivity extends BaseActivity {
 
             @Override
             public void onExportFinished() {
-                startTranscoding();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        startTranscoding();
+                    }
+                });
+
             }
         });
 
         mDownloadFile = downloadHelper.downloadVideo();
+        tvStatus.setText("Downloading");
 
     }
 
     private void startTranscoding() {
+        tvStatus.setText("Transcoding");
         Uri fileUri = Uri.fromFile(new File(mDownloadFile));
         ContentResolver resolver = getContentResolver();
         final ParcelFileDescriptor parcelFileDescriptor;
@@ -105,17 +120,18 @@ public class TranscodingActivity extends BaseActivity {
         }
 
         final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        String outputFile = FileUtils.genDownloadFileName(0, 0);
+        final String outputFile = FileUtils.genDownloadFileName(0, 0);
         MediaTranscoder.getInstance().transcodeVideo(fileDescriptor, outputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), new MediaTranscoder.Listener() {
             @Override
             public void onTranscodeProgress(double progress, long currentTimeMs) {
-                Logger.t(TAG).d("progress: " + progress);
                 mProgressBar.setProgress((int)(progress * 100));
             }
 
             @Override
             public void onTranscodeCompleted() {
-
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(new File(outputFile)), "video/mp4");
+                startActivity(intent);
             }
 
             @Override

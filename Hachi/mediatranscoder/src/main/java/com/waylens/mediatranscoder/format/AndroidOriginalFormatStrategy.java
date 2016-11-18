@@ -19,18 +19,18 @@ import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.util.Log;
 
-class Android720pFormatStrategy implements MediaFormatStrategy {
+class AndroidOriginalFormatStrategy implements MediaFormatStrategy {
     private static final String TAG = "720pFormatStrategy";
     private static final int LONGER_LENGTH = 1280;
     private static final int SHORTER_LENGTH = 720;
     private static final int DEFAULT_BITRATE = 8000 * 1000; // From Nexus 4 Camera in 720p
     private final int mBitRate;
 
-    public Android720pFormatStrategy() {
+    public AndroidOriginalFormatStrategy() {
         mBitRate = DEFAULT_BITRATE;
     }
 
-    public Android720pFormatStrategy(int bitRate) {
+    public AndroidOriginalFormatStrategy(int bitRate) {
         mBitRate = bitRate;
     }
 
@@ -42,13 +42,13 @@ class Android720pFormatStrategy implements MediaFormatStrategy {
         if (width >= height) {
             longer = width;
             shorter = height;
-            outWidth = LONGER_LENGTH;
-            outHeight = SHORTER_LENGTH;
+            outWidth = longer;
+            outHeight = shorter;
         } else {
             shorter = width;
             longer = height;
-            outWidth = SHORTER_LENGTH;
-            outHeight = LONGER_LENGTH;
+            outWidth = shorter;
+            outHeight = longer;
         }
         if (longer * 9 != shorter * 16) {
             throw new OutputFormatUnavailableException("This video is not 16:9, and is not able to transcode. (" + width + "x" + height + ")");

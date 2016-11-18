@@ -28,7 +28,7 @@ public class MediaFormatStrategyPresets {
      * Default bitrate is 8Mbps. {@link #createAndroid720pStrategy(int)} to specify bitrate.
      */
     public static MediaFormatStrategy createAndroid720pStrategy() {
-        return new Android720pFormatStrategy();
+        return new AndroidOriginalFormatStrategy();
     }
 
     /**
@@ -38,7 +38,7 @@ public class MediaFormatStrategyPresets {
      * @param bitRate Preferred bit rate for encoding.
      */
     public static MediaFormatStrategy createAndroid720pStrategy(int bitRate) {
-        return new Android720pFormatStrategy(bitRate);
+        return new AndroidOriginalFormatStrategy(bitRate);
     }
 
 
