@@ -2,10 +2,12 @@ package com.waylens.hachi.utils;
 
 import android.text.TextUtils;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Firmware;
+import com.waylens.hachi.snipe.utils.ToStringUtils;
 
 import java.util.List;
 
@@ -36,10 +38,13 @@ public class FirmwareUpgradeHelper {
         }
         for (int i = 0; i < firmwares.size(); i++) {
             final Firmware firmware = firmwares.get(i);
+            Logger.t(TAG).d("one firmware: " + firmware.toString());
             if (!TextUtils.isEmpty(firmware.name)
                 && firmware.name.equals(VdtCameraManager.getManager().getCurrentCamera().getHardwareName())) {
                 FirmwareVersion versionFromServer = new FirmwareVersion(firmware.version);
                 FirmwareVersion versionInCamera = new FirmwareVersion(vdtCamera.getApiVersion());
+                Logger.t(TAG).d("latest version: " + versionFromServer);
+                Logger.t(TAG).d("version of camera: " + versionInCamera);
                 if (versionFromServer.isGreaterThan(versionInCamera)) {
                     return firmware;
                 }
@@ -50,42 +55,36 @@ public class FirmwareUpgradeHelper {
 
 
     private static class FirmwareVersion {
-        private int mMain;
-        private int mSub;
-        private int mBuild;
+        private String mMain;
+        private String mSub;
+        private String mBuild;
 
         public FirmwareVersion(String firmware) {
-            int main = 0, sub = 0;
-            String build = "";
             int i_main = firmware.indexOf('.', 0);
             if (i_main >= 0) {
-                String t = firmware.substring(0, i_main);
-                main = Integer.parseInt(t);
+                mMain = firmware.substring(0, i_main);
                 i_main++;
                 int i_sub = firmware.indexOf('.', i_main);
                 if (i_sub >= 0) {
-                    t = firmware.substring(i_main, i_sub);
-                    sub = Integer.parseInt(t);
+                    mSub = firmware.substring(i_main, i_sub);
                     i_sub++;
-                    build = firmware.substring(i_sub);
+                    mBuild = firmware.substring(i_sub);
                 }
             }
-            mMain = main;
-            mSub = sub;
-            mBuild = Integer.parseInt(build);
         }
 
 
         public boolean isGreaterThan(FirmwareVersion firmwareVersion) {
-            if (this.mMain > firmwareVersion.mMain) {
-                return true;
-            }
-            if (this.mSub > firmwareVersion.mSub) {
-                return true;
-            }
-//            return true;
-            return this.mBuild > firmwareVersion.mBuild;
+            return this.toInteger() > firmwareVersion.toInteger();
         }
 
+        @Override
+        public String toString() {
+            return mMain + mSub + mBuild;
+        }
+
+        public int toInteger() {
+            return Integer.parseInt(mMain + mSub + mBuild);
+        }
     }
 }
