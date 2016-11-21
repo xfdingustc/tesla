@@ -114,7 +114,7 @@ public class PreviewActivity extends ClipPlayActivity {
                 @Override
                 public void onNext(List<Long> timeList) {
                     if (timeList != null && timeList.size() > 0) {
-                        mClipPlayFragment.setRaceTimePoints(timeList);
+//                        mClipPlayFragment.setRaceTimePoints(timeList);
                     }
                 }
             });

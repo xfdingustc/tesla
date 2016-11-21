@@ -469,7 +469,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
-        mWvGauge.showGauge(true);
+        mWvGauge.initGaugeViewBySetting();
         //mWvGauge.setEnhanceMode();
         mEventBus.register(this);
         mEventBus.register(mMultiSegSeekbar);
@@ -504,7 +504,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             .subscribe(new SimpleSubscribe() {
                 @Override
                 public void onNext(Object o) {
+                    Logger.t(TAG).d("on next");
 
+                }
+
+                @Override
+                public void onCompleted() {
+                    super.onCompleted();
+                    Logger.t(TAG).d("on complete");
                     mRawDataAdapter = new ClipRawDataAdapter(getClipSet());
                     mRawDataAdapter.setRawDataLoader(mInitDataLoader);
                     mWvGauge.setAdapter(mRawDataAdapter);
@@ -514,10 +521,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             });
     }
 
-    public void setRaceTimePoints(List<Long> timePoints) {
-        Logger.t(TAG).d("set Race time points");
-        mWvGauge.setDefaultViewAndTimePoints(timePoints);
-    }
 
 
     private void init() {
@@ -681,7 +684,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             .doOnNext(new Action1<VdbUrl>() {
                 @Override
                 public void call(VdbUrl vdbUrl) {
-                    Logger.t(TAG).d("vdb url get");
                     mVdbUrl = vdbUrl;
                     mPositionAdjuster = mUrlProvider.getPostionAdjuster();
                 }
@@ -711,7 +713,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         Observable.zip(urlObservable, loadAudioPlayerObservable, new Func2() {
             @Override
             public Object call(Object o, Object o2) {
-                Logger.t(TAG).d("zip");
                 return new Object();
             }
         })

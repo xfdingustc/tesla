@@ -79,7 +79,6 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
 
     private void hanldePendingActionItems() {
         for (PendingActionItem item : mPendingActions) {
-            Logger.t(TAG).d("item type: " + item.type);
             ArrayList<Long> timePoints;
             switch (item.type) {
                 case PENDING_ACTION_INIT_GAUGE_BY_SETTING:
@@ -161,6 +160,11 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
             public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
                 updateRawDateItem(rawDataItemList);
             }
+
+            @Override
+            public void notifyRacingTimePoints(List<Long> racingTimePoints) {
+                setDefaultViewAndTimePoints(racingTimePoints);
+            }
         };
     }
 
@@ -209,7 +213,6 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
     }
 
     public void setDefaultViewAndTimePoints(final List<Long> timepoints) {
-
         Logger.t(TAG).d("set time point delay");
         mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
         mPendingActions.add(new PendingActionItem(PENDING_ACTION_TIME_POINT, timepoints));
@@ -265,7 +268,6 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
     }
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
-
         mPendingActions.add(new PendingActionItem(PENDING_ACTION_MOMENT_SETTING, overlaySetting, timePoints));
         RxBus.getDefault().post(new EventPendingActionAdded());
     }
@@ -365,17 +367,31 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
     public abstract static class GaugeViewAdapter {
         private GaugeViewAdapterObserver mObserver;
 
+
+
         public void registerAdapterDataObserver(GaugeViewAdapterObserver observer) {
             mObserver = observer;
+            if (getRacingTimeList() != null && mObserver != null) {
+                mObserver.notifyRacingTimePoints(getRacingTimeList());
+            }
         }
 
         public abstract List<RawDataItem> getRawDataItemList(long pts);
 
+        public abstract List<Long> getRacingTimeList();
+
         public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
             if (mObserver != null) {
                 mObserver.notifyRawDataItemUpdated(rawDataItemList);
-            } else {
+            }
+        }
 
+        public void notifyRacingTimePoints(List<Long> racingTimePoints) {
+            if (mObserver != null) {
+                Logger.t(TAG).d("observer is not null");
+                mObserver.notifyRacingTimePoints(racingTimePoints);
+            } else {
+                Logger.t(TAG).d("is null");
             }
         }
     }
@@ -386,6 +402,10 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
         }
 
         public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
+
+        }
+
+        public void notifyRacingTimePoints(List<Long> racingTimePoints) {
 
         }
     }

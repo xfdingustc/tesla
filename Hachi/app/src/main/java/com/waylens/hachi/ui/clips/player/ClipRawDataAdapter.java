@@ -1,6 +1,5 @@
 package com.waylens.hachi.ui.clips.player;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.ClipSetPos;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
@@ -29,12 +28,22 @@ public class ClipRawDataAdapter extends GaugeView.GaugeViewAdapter {
             if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
                 notifyRawDataItemUpdated(rawDataItemList);
             }
+
         }
     }
 
     @Override
     public List<RawDataItem> getRawDataItemList(long pts) {
-        return null;
+       return null;
+    }
+
+    @Override
+    public List<Long> getRacingTimeList() {
+        if (mRawDataLoader != null) {
+            return mRawDataLoader.getRacingTimePoints();
+        } else {
+            return null;
+        }
     }
 
     public void setClipSetPos(ClipSetPos clipSetPos) {
