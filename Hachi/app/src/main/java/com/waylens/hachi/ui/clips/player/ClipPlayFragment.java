@@ -524,7 +524,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             });
     }
 
-    public void setRaceTimePoints(ArrayList<Long> timePoints) {
+    public void setRaceTimePoints(List<Long> timePoints) {
+        Logger.t(TAG).d("set Race time points");
         mWvGauge.setDefaultViewAndTimePoints(timePoints);
     }
 

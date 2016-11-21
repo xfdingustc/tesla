@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * Created by Xiaofei on 2016/4/6.
  */
-public class GaugeView extends FrameLayout implements OverlayProvider{
+public class GaugeView extends FrameLayout implements OverlayProvider {
     private static final String TAG = GaugeView.class.getSimpleName();
 
     private static final int PENDING_ACTION_INIT_GAUGE_BY_SETTING = 0x1001;
@@ -68,6 +68,7 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
 
     @Override
     public Bitmap updateTexImage(long pts) {
+        Logger.t(TAG).d("update text image");
         return getDrawingCache();
     }
 
@@ -174,7 +175,7 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
 
     }
 
-    public void setDefaultViewAndTimePoints(final ArrayList<Long> timepoints) {
+    public void setDefaultViewAndTimePoints(final List<Long> timepoints) {
         synchronized (mLock) {
             if (mIsLoadingFinish) {
                 initGaugeViewBySetting();
@@ -292,7 +293,7 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
 
     }
 
-    public void setRaceTimingPoints(ArrayList<Long> raceTimingPoints) {
+    public void setRaceTimingPoints(List<Long> raceTimingPoints) {
         JSONObject timePoints = new JSONObject();
         try {
             if (raceTimingPoints.get(0) > 0) {
