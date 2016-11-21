@@ -164,7 +164,7 @@ public class RemixActivity extends BaseActivity{
         mRemixSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
-                mRawDataLoader = new RawDataLoader(mPlaylistId, mVdbRequestQueue);
+                mRawDataLoader = new RawDataLoader(mPlaylistId);
                 int ret = mAvrproFilter.init();
                 if (ret == 0) {
                     Logger.t(TAG).d("init successfully!");

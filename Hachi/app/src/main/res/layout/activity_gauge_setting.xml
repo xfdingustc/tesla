@@ -20,11 +20,11 @@
             android:scaleType="centerCrop"
             android:src="@drawable/gauge_bg"/>
 
-        <com.waylens.hachi.ui.views.gauge.GaugeView
+        <com.waylens.hachi.view.gauge.GaugeView
             android:id="@+id/gaugeView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            ></com.waylens.hachi.ui.views.gauge.GaugeView>
+            ></com.waylens.hachi.view.gauge.GaugeView>
 
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

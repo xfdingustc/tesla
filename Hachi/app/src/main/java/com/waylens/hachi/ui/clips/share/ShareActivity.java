@@ -340,7 +340,7 @@ public class ShareActivity extends ClipPlayActivity {
                         Logger.t(TAG).d(e.getMessage());
                     }
                 }
-                RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId(), mVdbRequestQueue);
+                RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId());
                 try {
                     RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clipSet.getClip(0), RawDataItem.DATA_TYPE_GPS);
                     GpsData gpsData = (GpsData) rawDataBlock.getRawDataItem(0).data;

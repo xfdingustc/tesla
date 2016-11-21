@@ -1,6 +1,8 @@
 package com.waylens.hachi.snipe.vdb.rawdata;
 
 
+import com.waylens.hachi.snipe.utils.ToStringUtils;
+
 /**
  * Created by Xiaofei on 2016/1/6.
  */
@@ -40,4 +42,8 @@ public class RawDataItem {
         mPtsMs = pts;
     }
 
+    @Override
+    public String toString() {
+        return ToStringUtils.getString(this);
+    }
 }

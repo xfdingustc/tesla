@@ -14,7 +14,7 @@ import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
-import com.waylens.hachi.ui.views.gauge.GaugeView;
+import com.waylens.hachi.view.gauge.GaugeView;
 
 import org.greenrobot.eventbus.EventBus;
 

@@ -27,10 +27,10 @@
 
 
 
-    <com.waylens.hachi.ui.views.gauge.GaugeView
+    <com.waylens.hachi.view.gauge.GaugeView
         android:id="@+id/gauge_view"
         android:layout_width="1280px"
-        android:layout_height="720px"></com.waylens.hachi.ui.views.gauge.GaugeView>
+        android:layout_height="720px"></com.waylens.hachi.view.gauge.GaugeView>
 
 
 </LinearLayout>

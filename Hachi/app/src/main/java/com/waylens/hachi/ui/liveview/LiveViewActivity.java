@@ -48,7 +48,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
-import com.waylens.hachi.ui.views.gauge.GaugeView;
+import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.rxjava.RxBus;

@@ -43,7 +43,7 @@
                 android:indeterminateTint="@color/style_color_accent"
                 android:visibility="gone"/>
 
-            <com.waylens.hachi.ui.views.gauge.GaugeView
+            <com.waylens.hachi.view.gauge.GaugeView
                 android:id="@+id/gaugeView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

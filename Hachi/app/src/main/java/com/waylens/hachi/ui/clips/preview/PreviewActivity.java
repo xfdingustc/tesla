@@ -134,7 +134,7 @@ public class PreviewActivity extends ClipPlayActivity {
     public List<Long> getRaceTimeList() {
         Logger.t(TAG).d("start loading ");
         // First load raw data into memory
-        RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistId, mVdbRequestQueue);
+        RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistId);
         mRawDataLoader.loadRawData();
 
         ClipSet clipSet = getClipSet();

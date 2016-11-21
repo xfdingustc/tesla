@@ -38,11 +38,11 @@
         </com.xfdingustc.mdplaypausebutton.PlayPauseButton>
     </FrameLayout>
 
-    <com.waylens.hachi.ui.views.gauge.GaugeView
+    <com.waylens.hachi.view.gauge.GaugeView
         android:id="@+id/gaugeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        ></com.waylens.hachi.ui.views.gauge.GaugeView>
+        ></com.waylens.hachi.view.gauge.GaugeView>
 
 
     <ProgressBar

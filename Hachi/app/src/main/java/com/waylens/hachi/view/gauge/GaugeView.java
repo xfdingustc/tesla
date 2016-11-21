@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.gauge;
+package com.waylens.hachi.view.gauge;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -16,17 +16,20 @@ import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.waylens.hachi.utils.rxjava.RxBus;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/4/6.
@@ -48,11 +51,12 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
 
     private int mGaugeMode = MODE_CAMERA;
 
-    private DateFormat mDateFormat;
+    private GaugeViewAdapter mAdapter;
 
-    private final Object mLock = new Object();
+    private GaugeViewAdapterObserver mObserver;
 
-    boolean mIsLoadingFinish = false;
+
+    private Subscription mActionSubscription;
 
     private List<PendingActionItem> mPendingActions = new ArrayList<>();
 
@@ -73,6 +77,58 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
     }
 
 
+    private void hanldePendingActionItems() {
+        for (PendingActionItem item : mPendingActions) {
+            Logger.t(TAG).d("item type: " + item.type);
+            ArrayList<Long> timePoints;
+            switch (item.type) {
+                case PENDING_ACTION_INIT_GAUGE_BY_SETTING:
+                    List<GaugeInfoItem> itemList = GaugeSettingManager.getManager().getSetting();
+                    for (GaugeInfoItem gaugeInfoItem : itemList) {
+                        updateGaugeSetting(gaugeInfoItem);
+                    }
+                    changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
+                    break;
+                case PENDING_ACTION_ROTATE:
+                    mWebView.loadUrl(GaugeJsHelper.jsSetRotate((Boolean) item.param1));
+                    mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+                    break;
+                case PENDING_ACTION_MOMENT_SETTING:
+                    doGaugeSetting((Map<String, String>) item.param1);
+                    timePoints = (ArrayList) item.param2;
+                    if (timePoints != null && timePoints.size() == 6) {
+                        setRaceTimingPoints(timePoints);
+                    }
+
+                    break;
+                case PENDING_ACTION_TIME_POINT:
+                    Logger.t(TAG).d("set time points");
+                    timePoints = (ArrayList) item.param1;
+                    if (timePoints != null) {
+                        String jsApi = "javascript:setGauge('CountDown','S')";
+                        Logger.t(TAG).d(jsApi);
+                        mWebView.loadUrl(jsApi);
+                    }
+                    setRaceTimingPoints(timePoints);
+                    break;
+                case PENDING_ACTION_SHOW_DEFAULT_GAUGE:
+                    mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Logger.t(TAG).d("on detached");
+        if (mActionSubscription != null && !mActionSubscription.isUnsubscribed()) {
+            mActionSubscription.unsubscribe();
+        }
+    }
+
     private void init(Context context) {
         if (isInEditMode()) {
             return;
@@ -87,52 +143,39 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                synchronized (mLock) {
-                    mIsLoadingFinish = true;
-                    for (PendingActionItem item : mPendingActions) {
-                        Logger.t(TAG).d("item type: " + item.type);
-                        switch (item.type) {
-                            case PENDING_ACTION_INIT_GAUGE_BY_SETTING:
-                                initGaugeViewBySetting();
-                                break;
-                            case PENDING_ACTION_ROTATE:
-                                setRotate((Boolean) item.param1);
-                                break;
-                            case PENDING_ACTION_MOMENT_SETTING:
-                                doGaugeSetting((Map<String, String>) item.param1);
-                                ArrayList<Long> timePoints = (ArrayList) item.param2;
-                                if (timePoints != null && timePoints.size() == 6) {
-                                    setRaceTimingPoints(timePoints);
-                                }
-                                break;
-                            case PENDING_ACTION_TIME_POINT:
-                                Logger.t(TAG).d("set time points");
-                                ArrayList<Long> timePoint = (ArrayList) item.param1;
-                                setDefaultViewAndTimePoints(timePoint);
-                                break;
-                            case PENDING_ACTION_SHOW_DEFAULT_GAUGE:
-                                showDefaultGauge();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    setUnit();
-                }
+                mActionSubscription = RxBus.getDefault().toObserverable(EventPendingActionAdded.class)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SimpleSubscribe<EventPendingActionAdded>() {
+                        @Override
+                        public void onNext(EventPendingActionAdded pendingActionItem) {
+                            hanldePendingActionItems();
 
+                        }
+                    });
+                setUnit();
+                RxBus.getDefault().post(new EventPendingActionAdded());
             }
         });
+        mObserver = new GaugeViewAdapterObserver() {
+            @Override
+            public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
+                updateRawDateItem(rawDataItemList);
+            }
+        };
+    }
+
+    public void setAdapter(GaugeViewAdapter adapter) {
+        this.mAdapter = adapter;
+        mAdapter.registerAdapterDataObserver(mObserver);
     }
 
     public void setGaugeMode(int gaugeMode) {
         switch (gaugeMode) {
             case MODE_CAMERA:
                 mGaugeMode = gaugeMode;
-                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss"/*, Locale.getDefault()*/);
                 break;
             case MODE_MOMENT:
                 mGaugeMode = gaugeMode;
-                mDateFormat = new SimpleDateFormat("MM dd, yyyy HH:mm:ss");
                 break;
             default:
                 break;
@@ -161,59 +204,28 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
 
 
     public void initGaugeViewBySetting() {
-        synchronized (mLock) {
-            if (mIsLoadingFinish) {
-                List<GaugeInfoItem> itemList = GaugeSettingManager.getManager().getSetting();
-                for (GaugeInfoItem item : itemList) {
-                    updateGaugeSetting(item);
-                }
-                changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
-            } else {
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
-            }
-        }
-
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
+        RxBus.getDefault().post(new EventPendingActionAdded());
     }
 
     public void setDefaultViewAndTimePoints(final List<Long> timepoints) {
-        synchronized (mLock) {
-            if (mIsLoadingFinish) {
-                initGaugeViewBySetting();
-                if (timepoints != null) {
-                    String jsApi = "javascript:setGauge('CountDown','S')";
-                    Logger.t(TAG).d(jsApi);
-                    mWebView.loadUrl(jsApi);
-                }
-                setRaceTimingPoints(timepoints);
-            } else {
-                Logger.t(TAG).d("set time point delay");
-//                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_TIME_POINT, timepoints));
-            }
-        }
+
+        Logger.t(TAG).d("set time point delay");
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_TIME_POINT, timepoints));
+        RxBus.getDefault().post(new EventPendingActionAdded());
     }
 
     public void showDefaultGauge() {
-        synchronized (mLock) {
-            if (mIsLoadingFinish) {
-                mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
-            } else {
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_SHOW_DEFAULT_GAUGE, null));
-            }
-        }
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_SHOW_DEFAULT_GAUGE, null));
+        RxBus.getDefault().post(new EventPendingActionAdded());
 
     }
 
 
     public void setRotate(boolean ifRoate) {
-        synchronized (mLock) {
-            if (mIsLoadingFinish) {
-                mWebView.loadUrl(GaugeJsHelper.jsSetRotate(ifRoate));
-                mWebView.loadUrl(GaugeJsHelper.jsUpdate());
-            } else {
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_ROTATE, ifRoate));
-            }
-        }
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_ROTATE, ifRoate));
+        RxBus.getDefault().post(new EventPendingActionAdded());
     }
 
 
@@ -249,20 +261,13 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
         Logger.t(TAG).d("set unit: " + jsSetUnit);
         mWebView.loadUrl(jsSetUnit);
         mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+
     }
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
-        synchronized (mLock) {
-            if (mIsLoadingFinish) {
-                Logger.t(TAG).d("loading finish");
-                doGaugeSetting(overlaySetting);
-                if (timePoints != null && timePoints.size() == 6) {
-                    setRaceTimingPoints(timePoints);
-                }
-            } else {
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_MOMENT_SETTING, overlaySetting, timePoints));
-            }
-        }
+
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_MOMENT_SETTING, overlaySetting, timePoints));
+        RxBus.getDefault().post(new EventPendingActionAdded());
     }
 
     public void doGaugeSetting(Map<String, String> overlaySetting) {
@@ -352,4 +357,37 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
             this.param2 = param2;
         }
     }
+
+    private class EventPendingActionAdded {
+
+    }
+
+    public abstract static class GaugeViewAdapter {
+        private GaugeViewAdapterObserver mObserver;
+
+        public void registerAdapterDataObserver(GaugeViewAdapterObserver observer) {
+            mObserver = observer;
+        }
+
+        public abstract List<RawDataItem> getRawDataItemList(long pts);
+
+        public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
+            if (mObserver != null) {
+                mObserver.notifyRawDataItemUpdated(rawDataItemList);
+            } else {
+
+            }
+        }
+    }
+
+    private abstract class GaugeViewAdapterObserver {
+        public void notifyRawDataChanged() {
+
+        }
+
+        public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
+
+        }
+    }
+
 }

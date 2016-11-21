@@ -47,7 +47,7 @@ import com.waylens.hachi.snipe.vdb.urls.VdbUrl;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
-import com.waylens.hachi.ui.views.gauge.GaugeView;
+import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
@@ -57,7 +57,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -70,6 +69,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func2;
 import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
@@ -78,11 +78,6 @@ import rx.schedulers.Schedulers;
  */
 public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Callback, HachiPlayer.Listener {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
-
-    private static final int LOADING_STAGE_RAW_DATA = 0;
-    private static final int LOADING_STAGE_GET_PLAYBACK_URL = 1;
-    private static final int LOADING_STAGE_PREPARE_AUDIO = 2;
-    private static final int LOADING_STAGE_PREPARE_VIDEO = 3;
 
     private static final int FADE_OUT = 5;
 
@@ -99,7 +94,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private VdbUrl mVdbUrl;
 
     private RawDataLoader mInitDataLoader;
-    private RawDataLoader mRawDataLoader;
+//    private RawDataLoader mRawDataLoader;
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
@@ -112,9 +107,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private EventBus mEventBus = EventBus.getDefault();
 
-    private SurfaceHolder mSurfaceHolder;
 
     private Handler mHandler;
+
+    private ClipRawDataAdapter mRawDataAdapter;
 
     private boolean playerNeedsPrepare;
 
@@ -193,9 +189,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             if (mPlayerControl.isPlaying()) {
                 mPlayerControl.pause();
             } else {
-
                 mPlayerControl.start();
-
             }
         }
 
@@ -205,7 +199,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     public void onBtnFullscreenClicked() {
         if (!isFullScreen()) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
             showControlPanel();
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -504,22 +497,19 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     }
 
     public void initRawDataView() {
-        mInitDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
-        mInitDataLoader.loadRawDataRx(1000)
+        mInitDataLoader = new RawDataLoader(mClipSetIndex);
+        mInitDataLoader.loadRawDataRx()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe() {
                 @Override
                 public void onNext(Object o) {
-                    ClipSetPos clipSetPos = new ClipSetPos(0, getClipSet().getClip(0).editInfo.selectedStartValue);
-                    if (mInitDataLoader != null) {
-                        List<RawDataItem> rawDataItemList = mInitDataLoader.getRawDataItemList(clipSetPos);
-                        if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
-                            mWvGauge.updateRawDateItem(rawDataItemList);
-                            Logger.t(TAG).d("update raw data!");
-                        }
-                    }
+
+                    mRawDataAdapter = new ClipRawDataAdapter(getClipSet());
+                    mRawDataAdapter.setRawDataLoader(mInitDataLoader);
+                    mWvGauge.setAdapter(mRawDataAdapter);
 //                    Logger.t(TAG).d("init gauge view!");
+                    startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
                 }
             });
     }
@@ -556,7 +546,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         setupMultiSegSeekBar();
 
-        mSurfaceHolder = mSurfaceView.getHolder();
         mSurfaceView.getHolder().addCallback(this);
 
         updateProgressTextView(0, getClipSet().getTotalSelectedLengthMs());
@@ -687,9 +676,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         mProgressLoading.setVisibility(View.VISIBLE);
 
-        mRawDataLoader = new RawDataLoader(mClipSetIndex, mVdbRequestQueue);
 
-        Observable rawDataLoadObservable = mRawDataLoader.loadRawDataRx();
         Observable urlObservable = mUrlProvider.getUrlRx(getClipSet().getTimeOffsetByClipSetPos(clipSetPos))
             .doOnNext(new Action1<VdbUrl>() {
                 @Override
@@ -721,9 +708,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             });
 
 
-        Observable.zip(rawDataLoadObservable, urlObservable, loadAudioPlayerObservable, new Func3() {
+        Observable.zip(urlObservable, loadAudioPlayerObservable, new Func2() {
             @Override
-            public Object call(Object o, Object o2, Object o3) {
+            public Object call(Object o, Object o2) {
                 Logger.t(TAG).d("zip");
                 return new Object();
             }
@@ -777,12 +764,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
 
-        if (mRawDataLoader != null) {
-            List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
-            if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
-                mWvGauge.updateRawDateItem(rawDataItemList);
-            }
-        }
+
+        mRawDataAdapter.setClipSetPos(clipSetPos);
 
     }
 
@@ -888,9 +871,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPos);
                 ClipSetPosChangeEvent event = new ClipSetPosChangeEvent(clipSetPos, TAG);
                 mEventBus.post(event);
-            }
-            if (mRawDataLoader != null) {
-                //mRawDataLoader.updateGaugeView(currentPos, mWvGauge);
             }
 
         }

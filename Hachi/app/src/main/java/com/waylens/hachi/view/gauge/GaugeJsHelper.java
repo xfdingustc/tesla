@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.views.gauge;
+package com.waylens.hachi.view.gauge;
 
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.IioData;

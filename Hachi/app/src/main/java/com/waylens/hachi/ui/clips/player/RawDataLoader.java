@@ -46,9 +46,9 @@ public class RawDataLoader {
     int periodReached;
 
 
-    public RawDataLoader(int clipSetIndex, VdbRequestQueue requestQueue) {
+    public RawDataLoader(int clipSetIndex) {
         this.mClipSetIndex = clipSetIndex;
-        this.mVdbRequestQueue = requestQueue;
+        this.mVdbRequestQueue = VdtCameraManager.getManager().getCurrentVdbRequestQueue();
         for (int i = 0; i < 3; i++) {
             mRawDataItemList.add(null);
         }
@@ -110,31 +110,9 @@ public class RawDataLoader {
             });
     }
 
-    public Observable loadRawDataRx(final long start, final int duration) {
-        return Observable.from(getClipSet().getClipList())
-                .concatMap(new Func1<Clip, Observable<RawDataBlockAll>>() {
-                    @Override
-                    public Observable<RawDataBlockAll> call(Clip clip) {
-                        return getRawDataBlockAllRx(clip, start, duration);
-                    }
-                });
-    }
 
-    private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip, long start, int duration) {
-        Observable<RawDataBlock> obdObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_OBD, start, duration);
-        Observable<RawDataBlock> gpsObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_GPS, start, duration);
-        Observable<RawDataBlock> iioObservalbe = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_IIO, start, duration);
-        return Observable.zip(obdObservable, gpsObservable, iioObservalbe, new Func3<RawDataBlock, RawDataBlock, RawDataBlock, RawDataBlockAll>() {
-            @Override
-            public RawDataBlockAll call(RawDataBlock obd, RawDataBlock gps, RawDataBlock iio) {
-                RawDataBlockAll rawDataBlockAll = new RawDataBlockAll();
-                rawDataBlockAll.obdDataBlock = obd;
-                rawDataBlockAll.gpsDataBlock = gps;
-                rawDataBlockAll.iioDataBlock = iio;
-                return rawDataBlockAll;
-            }
-        });
-    }
+
+
 
     private Observable<RawDataBlockAll> getRawDataBlockAllRx(Clip clip, int duration) {
         Observable<RawDataBlock> obdObservable = SnipeApiRx.getRawDataBlockRx(clip, RawDataItem.DATA_TYPE_OBD, clip.getStartTimeMs(), duration);
@@ -157,21 +135,7 @@ public class RawDataLoader {
         return getRawDataBlockAllRx(clip, clip.getDurationMs());
     }
 
-    public Observable<RawDataBufAll> getRawDataBufAllRx(final Clip clip, long start, int duration) {
-        Observable<byte[]> odbObservable = SnipeApiRx.getRawDataBufRx(clip, RawDataItem.DATA_TYPE_OBD, start, duration);
-        Observable<byte[]> gpsObservable = SnipeApiRx.getRawDataBufRx(clip, RawDataItem.DATA_TYPE_GPS, start, duration);
-        Observable<byte[]> iioObservable = SnipeApiRx.getRawDataBufRx(clip, RawDataItem.DATA_TYPE_IIO, start, duration);
-        return Observable.zip(odbObservable, gpsObservable, iioObservable, new Func3<byte[], byte[], byte[], RawDataBufAll>() {
-            @Override
-            public RawDataBufAll call(byte[] obd, byte[] gps, byte[] iio) {
-                RawDataBufAll rawDataBufAll = new RawDataBufAll();
-                rawDataBufAll.obdDataBuf = obd;
-                rawDataBufAll.gpsDataBuf = gps;
-                rawDataBufAll.iioDataBuf = iio;
-                return rawDataBufAll;
-            }
-        });
-    }
+
 
     public RawDataBufAll loadRawDataBuf(final Clip clip, long start, int duration) {
         RawDataBufAll rawDataBufAll = new RawDataBufAll();
