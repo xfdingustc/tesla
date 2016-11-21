@@ -34,10 +34,11 @@ import java.util.Map;
 public class GaugeView extends FrameLayout implements OverlayProvider{
     private static final String TAG = GaugeView.class.getSimpleName();
 
-    private static final int PENDING_ACTION_INIT_GAUGE = 0x1001;
+    private static final int PENDING_ACTION_INIT_GAUGE_BY_SETTING = 0x1001;
     private static final int PENDING_ACTION_ROTATE = 0x1002;
     private static final int PENDING_ACTION_MOMENT_SETTING = 0x1003;
     private static final int PENDING_ACTION_TIME_POINT = 0x1004;
+    private static final int PENDING_ACTION_SHOW_DEFAULT_GAUGE = 0x1005;
 
     public static final int MODE_CAMERA = 0;
 
@@ -88,9 +89,10 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
                 synchronized (mLock) {
                     mIsLoadingFinish = true;
                     for (PendingActionItem item : mPendingActions) {
+                        Logger.t(TAG).d("item type: " + item.type);
                         switch (item.type) {
-                            case PENDING_ACTION_INIT_GAUGE:
-                                initGaugeView();
+                            case PENDING_ACTION_INIT_GAUGE_BY_SETTING:
+                                initGaugeViewBySetting();
                                 break;
                             case PENDING_ACTION_ROTATE:
                                 setRotate((Boolean) item.param1);
@@ -103,10 +105,12 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
                                 }
                                 break;
                             case PENDING_ACTION_TIME_POINT:
+                                Logger.t(TAG).d("set time points");
                                 ArrayList<Long> timePoint = (ArrayList) item.param1;
-                                if (timePoint != null && timePoint.size() == 6) {
-                                    setRaceTimingPoints(timePoint);
-                                }
+                                setDefaultViewAndTimePoints(timePoint);
+                                break;
+                            case PENDING_ACTION_SHOW_DEFAULT_GAUGE:
+                                showDefaultGauge();
                                 break;
                             default:
                                 break;
@@ -133,13 +137,7 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
                 break;
         }
         if (mGaugeMode != MODE_MOMENT) {
-            synchronized (mLock) {
-                if (mIsLoadingFinish) {
-                    initGaugeView();
-                } else {
-                    mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE, null));
-                }
-            }
+            initGaugeViewBySetting();
         }
     }
 
@@ -161,18 +159,25 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
     }
 
 
-    public void initGaugeView() {
-        List<GaugeInfoItem> itemList = GaugeSettingManager.getManager().getSetting();
-        for (GaugeInfoItem item : itemList) {
-            updateGaugeSetting(item);
+    public void initGaugeViewBySetting() {
+        synchronized (mLock) {
+            if (mIsLoadingFinish) {
+                List<GaugeInfoItem> itemList = GaugeSettingManager.getManager().getSetting();
+                for (GaugeInfoItem item : itemList) {
+                    updateGaugeSetting(item);
+                }
+                changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
+            } else {
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
+            }
         }
-        changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
+
     }
 
     public void setDefaultViewAndTimePoints(final ArrayList<Long> timepoints) {
         synchronized (mLock) {
             if (mIsLoadingFinish) {
-                initGaugeView();
+                initGaugeViewBySetting();
                 if (timepoints != null) {
                     String jsApi = "javascript:setGauge('CountDown','S')";
                     Logger.t(TAG).d(jsApi);
@@ -180,23 +185,24 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
                 }
                 setRaceTimingPoints(timepoints);
             } else {
-                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE, null));
+                Logger.t(TAG).d("set time point delay");
+//                mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
                 mPendingActions.add(new PendingActionItem(PENDING_ACTION_TIME_POINT, timepoints));
             }
         }
     }
 
-    public void initDefaultGauge() {
-        mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
+    public void showDefaultGauge() {
+        synchronized (mLock) {
+            if (mIsLoadingFinish) {
+                mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
+            } else {
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_SHOW_DEFAULT_GAUGE, null));
+            }
+        }
+
     }
 
-    public void setVisibility(boolean show) {
-        if (show) {
-            mWebView.setVisibility(View.VISIBLE);
-        } else {
-            mWebView.setVisibility(View.INVISIBLE);
-        }
-    }
 
     public void setRotate(boolean ifRoate) {
         synchronized (mLock) {
@@ -215,18 +221,9 @@ public class GaugeView extends FrameLayout implements OverlayProvider{
     }
 
     public void showGauge(boolean show, final boolean showAll) {
-        //CameraPreview and ClipPlay need to initialize gauge style, using initGaugeView
+        //CameraPreview and ClipPlay need to initialize gauge style, using initGaugeViewBySetting
         if (show) {
             mWebView.setVisibility(View.VISIBLE);
-            mWebView.setWebViewClient(new WebViewClient() {
-                @Override
-                public void onPageFinished(WebView view, String url) {
-                    if (showAll) {
-                        initDefaultGauge();
-                    }
-                    initGaugeView();
-                }
-            });
         } else {
             mWebView.setVisibility(View.INVISIBLE);
         }

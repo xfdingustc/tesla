@@ -90,6 +90,8 @@ public class GaugeSettingActivity extends BaseActivity {
         setContentView(R.layout.activity_gauge_setting);
         mGaugeView.showGauge(true, true);
 //        mGaugeView.initDefaultGauge();
+        mGaugeView.showDefaultGauge();
+        mGaugeView.initGaugeViewBySetting();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mGaugeListView.setLayoutManager(layoutManager);
