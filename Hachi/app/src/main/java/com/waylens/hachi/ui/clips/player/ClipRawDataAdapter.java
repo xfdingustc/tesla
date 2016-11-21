@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips.player;
 
 import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.snipe.vdb.ClipSetManager;
 import com.waylens.hachi.snipe.vdb.ClipSetPos;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.view.gauge.GaugeView;
@@ -54,4 +55,7 @@ public class ClipRawDataAdapter extends GaugeView.GaugeViewAdapter {
             }
         }
     }
+
+
+
 }

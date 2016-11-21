@@ -356,7 +356,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                             }
                             boolean withOverlay = checkBoxWithOverlay.isChecked();
                             if (withOverlay) {
-                                TranscodingActivity.launch(EnhanceActivity.this, getClipSet().getClip(0).streams[0], mDownloadInfo);
+                                TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo);
                             } else {
                                 ExportedVideoActivity.launch(EnhanceActivity.this);
                                 BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);

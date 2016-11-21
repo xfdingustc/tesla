@@ -34,7 +34,7 @@ import rx.android.schedulers.AndroidSchedulers;
 /**
  * Created by Xiaofei on 2016/4/6.
  */
-public class GaugeView extends FrameLayout implements OverlayProvider {
+public class GaugeView extends FrameLayout {
     private static final String TAG = GaugeView.class.getSimpleName();
 
     private static final int PENDING_ACTION_INIT_GAUGE_BY_SETTING = 0x1001;
@@ -68,12 +68,6 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
     public GaugeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
-    }
-
-    @Override
-    public Bitmap updateTexImage(long pts) {
-        Logger.t(TAG).d("update text image");
-        return getDrawingCache();
     }
 
 
@@ -122,7 +116,6 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        Logger.t(TAG).d("on detached");
         if (mActionSubscription != null && !mActionSubscription.isUnsubscribed()) {
             mActionSubscription.unsubscribe();
         }
@@ -382,6 +375,7 @@ public class GaugeView extends FrameLayout implements OverlayProvider {
 
         public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
             if (mObserver != null) {
+                Logger.t(TAG).d("notifyRawDataItemUpdated");
                 mObserver.notifyRawDataItemUpdated(rawDataItemList);
             }
         }
