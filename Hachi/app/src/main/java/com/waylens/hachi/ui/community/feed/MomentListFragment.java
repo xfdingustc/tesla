@@ -263,7 +263,7 @@ public class MomentListFragment extends BaseFragment implements SwipeRefreshLayo
     }
 
     private void onLoadFeedSuccessful(MomentListResponse response, boolean isRefresh) {
-
+        mRefreshLayout.setRefreshing(false);
         if (isRefresh) {
             mAdapter.setMoments(response.moments);
         } else {
