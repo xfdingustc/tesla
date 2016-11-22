@@ -375,18 +375,14 @@ public class GaugeView extends FrameLayout {
 
         public void notifyRawDataItemUpdated(List<RawDataItem> rawDataItemList) {
             if (mObserver != null) {
-                Logger.t(TAG).d("notifyRawDataItemUpdated");
                 mObserver.notifyRawDataItemUpdated(rawDataItemList);
             }
         }
 
         public void notifyRacingTimePoints(List<Long> racingTimePoints) {
             if (mObserver != null) {
-                Logger.t(TAG).d("observer is not null");
                 mObserver.notifyRacingTimePoints(racingTimePoints);
-            } else {
-                Logger.t(TAG).d("is null");
-            }
+            } 
         }
     }
 

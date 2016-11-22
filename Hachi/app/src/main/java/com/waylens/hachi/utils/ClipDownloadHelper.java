@@ -8,7 +8,6 @@ import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.Subscription;
 
 /**
  * Created by Xiaofei on 2016/11/18.
@@ -35,7 +34,6 @@ public class ClipDownloadHelper {
             }
         });
     }
-
 
 
     private void doDownloadClip(String outputFile, Subscriber<? super Integer> subscriber) {
@@ -94,11 +92,6 @@ public class ClipDownloadHelper {
             }
         });
 
-        int clipDate = params.getClipDate();
-        long clipTimeMs = params.getClipTimeMs();
-//        String outputFile = FileUtils.genDownloadFileName(clipDate, clipTimeMs);
-
-
         Logger.t(TAG).d("outputFile: " + outputFile);
         if (outputFile == null) {
             Logger.t(TAG).e("Output File is null");
@@ -108,11 +101,4 @@ public class ClipDownloadHelper {
         }
     }
 
-    public interface OnExportListener {
-        void onExportError(int arg1, int arg2);
-
-        void onExportProgress(int progress);
-
-        void onExportFinished();
-    }
 }

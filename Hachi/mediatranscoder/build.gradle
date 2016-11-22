@@ -20,4 +20,5 @@ android {
 
 dependencies {
     compile 'org.jcodec:jcodec:0.1.9'
+    compile 'io.reactivex:rxjava:1.2.2'
 }

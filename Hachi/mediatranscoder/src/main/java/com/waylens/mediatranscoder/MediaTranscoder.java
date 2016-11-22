@@ -15,10 +15,10 @@
  */
 package com.waylens.mediatranscoder;
 
+
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
 
 import com.waylens.mediatranscoder.engine.MediaTranscoderEngine;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
@@ -31,6 +31,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import rx.Observable;
+import rx.Subscriber;
 
 public class MediaTranscoder {
     private static final String TAG = MediaTranscoder.class.getSimpleName();
@@ -178,6 +181,60 @@ public class MediaTranscoder {
     }
 
 
+    public Observable<TranscodeProgress> transcodeVideoRx(final FileDescriptor inFileDescriptor, final String outPath,
+                                                          final MediaFormatStrategy outFormatStrategy,
+                                                          final OverlayProvider overlayProvider) {
+        return Observable.create(new Observable.OnSubscribe<TranscodeProgress>() {
+            @Override
+            public void call(Subscriber<? super TranscodeProgress> subscriber) {
+                doTranscodeVideo(inFileDescriptor, outPath, outFormatStrategy, overlayProvider, subscriber);
+            }
+        });
+
+
+    }
+
+    private void doTranscodeVideo(final FileDescriptor inFileDescriptor, final String outPath,
+                                  final MediaFormatStrategy outFormatStrategy,
+                                  final OverlayProvider overlayProvider,
+                                  final Subscriber<? super TranscodeProgress> subscriber) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Exception caughtException = null;
+                try {
+                    MediaTranscoderEngine engine = new MediaTranscoderEngine();
+                    engine.setProgressCallback(new MediaTranscoderEngine.ProgressCallback() {
+                        @Override
+                        public void onProgress(final double progress, final long currentTimeMs) {
+                            TranscodeProgress transcodeProgress = new TranscodeProgress();
+                            transcodeProgress.progress = progress;
+                            transcodeProgress.currentTimeMs = currentTimeMs;
+                            subscriber.onNext(transcodeProgress);
+                        }
+                    });
+                    engine.setDataSource(inFileDescriptor);
+                    engine.transcodeVideo(outPath, outFormatStrategy, overlayProvider);
+                } catch (IOException e) {
+                    Log.w(TAG, "Transcode failed: input file (fd: " + inFileDescriptor.toString() + ") not found"
+                        + " or could not open output file ('" + outPath + "') .", e);
+                    caughtException = e;
+                } catch (RuntimeException e) {
+                    Log.e(TAG, "Fatal error while transcoding, this might be invalid format or bug in engine or Android.", e);
+                    caughtException = e;
+                }
+
+                final Exception exception = caughtException;
+                if (exception == null) {
+                    subscriber.onCompleted();
+                } else {
+                    subscriber.onError(exception);
+                }
+            }
+        });
+    }
+
+
     public interface Listener {
         /**
          * Called to notify progress.
@@ -198,5 +255,10 @@ public class MediaTranscoder {
          *                  Note that it IS NOT {@link Throwable}. This means {@link Error} won't be caught.
          */
         void onTranscodeFailed(Exception exception);
+    }
+
+    public static class TranscodeProgress {
+        public double progress;
+        public long currentTimeMs;
     }
 }

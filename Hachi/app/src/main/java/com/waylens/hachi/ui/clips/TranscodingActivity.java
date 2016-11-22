@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.waylens.hachi.R;
+import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -28,6 +29,7 @@ import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
+import com.waylens.mediatranscoder.format.MediaFormatStrategy;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
 import java.io.File;
@@ -162,31 +164,28 @@ public class TranscodingActivity extends BaseActivity {
         final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
         final String outputFile = FileUtils.genDownloadFileName(0, 0);
         mOverlayProvider = new ClipRawDataOverlayProvider();
-        MediaTranscoder.getInstance().transcodeVideo(fileDescriptor, outputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), new MediaTranscoder.Listener() {
-            @Override
-            public void onTranscodeProgress(final double progress, long currentTimeMs) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDownloadView.setProgress(((float) progress * 100) / 2 + 50.0f);
-                    }
-                });
+        MediaTranscoder.getInstance().transcodeVideoRx(fileDescriptor, outputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), mOverlayProvider)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<MediaTranscoder.TranscodeProgress>() {
+                @Override
+                public void onCompleted() {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.fromFile(new File(outputFile)), "video/mp4");
+                    startActivity(intent);
+                }
 
-            }
+                @Override
+                public void onError(Throwable e) {
+                    mDownloadView.fail();
+                }
 
-            @Override
-            public void onTranscodeCompleted() {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(outputFile)), "video/mp4");
-                startActivity(intent);
-            }
+                @Override
+                public void onNext(MediaTranscoder.TranscodeProgress transcodeProgress) {
+                    mDownloadView.setProgress(((float) transcodeProgress.progress * 100) / 2 + 50.0f);
+                }
+            });
 
-            @Override
-            public void onTranscodeFailed(Exception exception) {
-                mDownloadView.fail();
-
-            }
-        }, mOverlayProvider);
     }
 
     private ClipSet getClipSet() {
