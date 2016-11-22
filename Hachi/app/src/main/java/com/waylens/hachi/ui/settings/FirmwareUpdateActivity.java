@@ -16,7 +16,6 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
-import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.service.download.DownloadAPI;
 import com.waylens.hachi.service.download.DownloadProgressListener;
@@ -28,7 +27,6 @@ import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -195,6 +193,10 @@ public class FirmwareUpdateActivity extends BaseActivity {
                     if (downloadFileMd5.equals(mFirmware.md5)) {
                         subscriber.onNext(1);
                     } else {
+
+                        if (mDownloadFirmware != null && mDownloadFirmware.exists()) {
+                            mDownloadFirmware.delete();
+                        }
                         subscriber.onNext(-1);
                     }
                 } catch (IOException | NoSuchAlgorithmException e) {
