@@ -382,7 +382,7 @@ public class GaugeView extends FrameLayout {
         public void notifyRacingTimePoints(List<Long> racingTimePoints) {
             if (mObserver != null) {
                 mObserver.notifyRacingTimePoints(racingTimePoints);
-            } 
+            }
         }
     }
 

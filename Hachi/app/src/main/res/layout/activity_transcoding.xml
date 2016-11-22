@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/style_color_accent"
               android:orientation="vertical">
 
-    <is.arontibo.library.ElasticDownloadView
-        android:id="@+id/elastic_download_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+    <include layout="@layout/toolbar_default"/>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <it.michelelacorte.elasticprogressbar.ElasticDownloadView
+            android:id="@+id/elastic_download_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerInParent="true"
+            />
+    </FrameLayout>
 
 
     <com.waylens.hachi.view.gauge.GaugeView
         android:id="@+id/gauge_view"
-        android:layout_width="1280px"
-        android:layout_height="720px"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"></com.waylens.hachi.view.gauge.GaugeView>
+        android:layout_width="1920px"
+        android:layout_height="1080px"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"></com.waylens.hachi.view.gauge.GaugeView>
 
 
-</RelativeLayout>
+</LinearLayout>

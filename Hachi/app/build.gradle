@@ -103,22 +103,12 @@ repositories {
     flatDir {
         dirs 'libs'
     }
-    maven {
-        url "https://dl.bintray.com/xfdingustc/maven"
-    }
-
-    maven {
-        url "http://maven.bughd.com/public"
-    }
-    maven {
-        url "http://oss.sonatype.org/content/repositories/snapshots/"
-    }
-    maven {
-        url "https://jitpack.io"
-    }
-    maven {
-        url 'http://dl.bintray.com/amulyakhare/maven'
-    }
+    maven { url "https://dl.bintray.com/xfdingustc/maven" }
+    maven { url "http://maven.bughd.com/public" }
+    maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://jitpack.io" }
+    maven { url 'http://dl.bintray.com/amulyakhare/maven' }
+    maven { url 'https://dl.bintray.com/michelelacorte/maven/' }
 }
 
 
@@ -176,9 +166,7 @@ dependencies {
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
     compile 'com.lzy.widget:view-core:0.1.9'
-    compile 'com.github.tibolte:elasticdownload:1.0.+'
-
-
+    compile 'it.michelelacorte.elasticprogressbar:library:1.0.5@aar'
 
 }
 

@@ -765,8 +765,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
         updateProgressTextView(timeOffset, getClipSet().getTotalSelectedLengthMs());
 
-
-        mRawDataAdapter.setClipSetPos(clipSetPos);
+        if (mRawDataAdapter != null) {
+            mRawDataAdapter.setClipSetPos(clipSetPos);
+        }
 
     }
 

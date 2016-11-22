@@ -5,8 +5,9 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
-import android.media.DrmInitData;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -14,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -29,15 +29,16 @@ import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
-import com.waylens.mediatranscoder.format.MediaFormatStrategy;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 
+import butterknife.BindColor;
 import butterknife.BindView;
-import is.arontibo.library.ElasticDownloadView;
+import it.michelelacorte.elasticprogressbar.ElasticDownloadView;
+import it.michelelacorte.elasticprogressbar.OptionView;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -79,6 +80,9 @@ public class TranscodingActivity extends BaseActivity {
     @BindView(R.id.elastic_download_view)
     ElasticDownloadView mDownloadView;
 
+    @BindColor(R.color.hachi)
+    int hachiColor;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +99,14 @@ public class TranscodingActivity extends BaseActivity {
     }
 
     private void initViews() {
+        OptionView.noBackground = true;
+        OptionView.setColorProgressBarInProgress(R.color.style_color_accent);
+        OptionView.setColorCloud(R.color.style_color_accent);
+        OptionView.setColorProgressBarText(R.color.white);
+        OptionView.setColorSuccess(R.color.white);
+        OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
+        getToolbar().setTitle(R.string.transcoding);
         mGaugeView.showGauge(true, true);
 
         mDownloadView.startIntro();
@@ -126,7 +137,7 @@ public class TranscodingActivity extends BaseActivity {
 
     private void downloadClipEsData() {
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo);
-        mDownloadFile = FileUtils.genDownloadFileName(mStreamDownloadInfo.clipDate, mStreamDownloadInfo.clipTimeMs);
+        mDownloadFile = FileUtils.genDownloadFileName(mStreamDownloadInfo.clipDate, mStreamDownloadInfo.clipTimeMs) + ".mp4";
         downloadHelper.downloadClipRx(mDownloadFile)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -138,7 +149,9 @@ public class TranscodingActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-                    mDownloadView.fail();
+                   onTranscodeError(e);
+
+
                 }
 
                 @Override
@@ -148,6 +161,8 @@ public class TranscodingActivity extends BaseActivity {
             });
 
     }
+
+
 
     private void startTranscoding() {
         Uri fileUri = Uri.fromFile(new File(mDownloadFile));
@@ -170,14 +185,16 @@ public class TranscodingActivity extends BaseActivity {
             .subscribe(new Subscriber<MediaTranscoder.TranscodeProgress>() {
                 @Override
                 public void onCompleted() {
+                    mDownloadView.success();
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(Uri.fromFile(new File(outputFile)), "video/mp4");
                     startActivity(intent);
+                    deleteTempFile();
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    mDownloadView.fail();
+                    onTranscodeError(e);
                 }
 
                 @Override
@@ -186,6 +203,18 @@ public class TranscodingActivity extends BaseActivity {
                 }
             });
 
+    }
+
+    private void onTranscodeError(Throwable e) {
+        mDownloadView.fail();
+        deleteTempFile();
+    }
+
+    private void deleteTempFile() {
+        File file = new File(mDownloadFile);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     private ClipSet getClipSet() {
