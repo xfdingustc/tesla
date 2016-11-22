@@ -1,10 +1,15 @@
 package com.waylens.hachi.app;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
+import com.google.android.exoplayer.ExoPlayerLibraryInfo;
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
@@ -25,6 +30,8 @@ public class Hachi extends MultiDexApplication {
 
 
     private static Context mSharedContext = null;
+
+    private static String mUserAgent;
 
 
     @Override
@@ -81,6 +88,7 @@ public class Hachi extends MultiDexApplication {
 //        ConnectivityHelper.setPreferredNetwork(ConnectivityManager.TYPE_WIFI);
 
         VdtCameraConnectivityManager.getManager().startSearchCamera();
+        mUserAgent = initUserAgent(getString(R.string.app_name));
 
 
     }
@@ -114,6 +122,24 @@ public class Hachi extends MultiDexApplication {
             .hideThreadInfo()
             .methodCount(1);
 
+    }
+
+    private String initUserAgent(String applicationName) {
+        String versionName;
+        try {
+
+            String packageName = getPackageName();
+            PackageInfo info = getPackageManager().getPackageInfo(packageName, 0);
+            versionName = info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            versionName = "?";
+        }
+        return applicationName + "/" + versionName + " (Linux;Android " + Build.VERSION.RELEASE
+            + ") " + "ExoPlayerLib/" + ExoPlayerLibraryInfo.VERSION;
+    }
+
+    public static String getUserAgent() {
+        return mUserAgent;
     }
 
 
