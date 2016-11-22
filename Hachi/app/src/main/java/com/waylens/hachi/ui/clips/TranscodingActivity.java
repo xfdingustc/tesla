@@ -5,17 +5,13 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
@@ -38,6 +34,7 @@ import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 
 import butterknife.BindView;
+import is.arontibo.library.ElasticDownloadView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -70,14 +67,13 @@ public class TranscodingActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
-    @BindView(R.id.tv_status)
-    TextView tvStatus;
-
-    @BindView(R.id.progress_bar)
-    ProgressBar mProgressBar;
 
     @BindView(R.id.gauge_view)
     GaugeView mGaugeView;
+
+
+    @BindView(R.id.elastic_download_view)
+    ElasticDownloadView mDownloadView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,6 +94,7 @@ public class TranscodingActivity extends BaseActivity {
         setContentView(R.layout.activity_transcoding);
         mGaugeView.showGauge(true, true);
 
+        mDownloadView.startIntro();
 
         mRawDataLoader = new RawDataLoader(mPlaylistId);
         mRawDataLoader.loadRawDataRx()
@@ -124,15 +121,23 @@ public class TranscodingActivity extends BaseActivity {
     }
 
     private void downloadClipEsData() {
-        ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo, new ClipDownloadHelper.OnExportListener() {
+        ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo);
+
+        mDownloadFile = downloadHelper.downloadVideo(new ClipDownloadHelper.OnExportListener() {
             @Override
             public void onExportError(int arg1, int arg2) {
 
             }
 
             @Override
-            public void onExportProgress(int progress) {
-                mProgressBar.setProgress(progress);
+            public void onExportProgress(final int progress) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDownloadView.setProgress((float) progress / 2);
+                    }
+                });
+
             }
 
             @Override
@@ -146,13 +151,9 @@ public class TranscodingActivity extends BaseActivity {
 
             }
         });
-
-        mDownloadFile = downloadHelper.downloadVideo();
-        tvStatus.setText("Downloading");
     }
 
     private void startTranscoding() {
-        tvStatus.setText("Transcoding");
         Uri fileUri = Uri.fromFile(new File(mDownloadFile));
         ContentResolver resolver = getContentResolver();
         final ParcelFileDescriptor parcelFileDescriptor;
@@ -169,8 +170,14 @@ public class TranscodingActivity extends BaseActivity {
         mOverlayProvider = new ClipRawDataOverlayProvider();
         MediaTranscoder.getInstance().transcodeVideo(fileDescriptor, outputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), new MediaTranscoder.Listener() {
             @Override
-            public void onTranscodeProgress(double progress, long currentTimeMs) {
-                mProgressBar.setProgress((int) (progress * 100));
+            public void onTranscodeProgress(final double progress, long currentTimeMs) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDownloadView.setProgress(((float) progress * 100) / 2 + 50.0f);
+                    }
+                });
+
             }
 
             @Override
@@ -182,6 +189,7 @@ public class TranscodingActivity extends BaseActivity {
 
             @Override
             public void onTranscodeFailed(Exception exception) {
+                mDownloadView.fail();
 
             }
         }, mOverlayProvider);

@@ -14,17 +14,18 @@ public class ClipDownloadHelper {
     private static final String TAG = ClipDownloadHelper.class.getSimpleName();
     private final Clip.StreamInfo mStreamInfo;
     private final ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
-    private final OnExportListener mListener;
+    private OnExportListener mListener;
 
     public ClipDownloadHelper(Clip.StreamInfo streamInfo,
-                              ClipDownloadInfo.StreamDownloadInfo downloadInfo, OnExportListener listener) {
+                              ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
         this.mStreamInfo = streamInfo;
         this.mDownloadInfo = downloadInfo;
-        this.mListener = listener;
+
     }
 
 
-    public String downloadVideo() {
+    public String downloadVideo(OnExportListener listener) {
+        this.mListener = listener;
         RemuxerParams params = new RemuxerParams();
         // clip params
         params.setClipDate(mDownloadInfo.clipDate);

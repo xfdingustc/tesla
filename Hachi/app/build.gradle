@@ -176,6 +176,9 @@ dependencies {
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
     compile 'com.lzy.widget:view-core:0.1.9'
+    compile 'com.github.tibolte:elasticdownload:1.0.+'
+
+
 
 }
 

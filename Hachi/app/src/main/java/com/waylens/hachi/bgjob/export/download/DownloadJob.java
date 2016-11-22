@@ -57,7 +57,8 @@ public class DownloadJob extends ExportableJob {
     }
 
     private void downloadVideoSync() throws InterruptedException {
-        ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mDownloadInfo, new ClipDownloadHelper.OnExportListener() {
+        ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mDownloadInfo);
+        mDownloadFilePath = downloadHelper.downloadVideo(new ClipDownloadHelper.OnExportListener() {
             @Override
             public synchronized void onExportError(int arg1, int arg2) {
                 synchronized (mDownloadFence) {
@@ -80,7 +81,6 @@ public class DownloadJob extends ExportableJob {
                 }
             }
         });
-        mDownloadFilePath = downloadHelper.downloadVideo();
 //        wait();
         synchronized (mDownloadFence) {
             mDownloadFence.wait();
