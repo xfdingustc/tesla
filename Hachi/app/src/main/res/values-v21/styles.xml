@@ -164,6 +164,12 @@
 
     </style>
 
+    <style name="LightTheme.Translucent.Enhance">
+        <item name="android:statusBarColor">#1D1D1D</item>
+
+    </style>
+
+
 
     <style name="LightTheme.Translucent.Startup">
         <item name="android:statusBarColor">@color/light_immersive_bars</item>
