@@ -14,6 +14,7 @@ public class Utils {
     public static String getUserAgent(Context context, String applicationName) {
         String versionName;
         try {
+
             String packageName = context.getPackageName();
             PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
             versionName = info.versionName;

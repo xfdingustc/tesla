@@ -27,6 +27,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.exoplayer.util.PlayerControl;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.eventbus.events.ClipEditEvent;
@@ -558,7 +559,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private void preparePlayer(boolean playWhenReady) {
         if (mMediaPlayer == null) {
-            String userAgent = Utils.getUserAgent(getActivity(), appName);
+            String userAgent = Hachi.getUserAgent();
             mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mVdbUrl.url));
             mMediaPlayer.addListener(this);
             mMediaPlayer.seekTo(0);

@@ -76,7 +76,7 @@ public class ClipsEditView extends LinearLayout {
     private LinearLayoutManager mLayoutManager;
     private int mClipSetIndex;
 
-    private RecyclerViewAdapter mClipCoverGridAdapter;
+    private ClipCoverViewAdapter mClipCoverGridAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private OnClipEditListener mOnClipEditListener;
 
@@ -133,7 +133,7 @@ public class ClipsEditView extends LinearLayout {
         mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mClipCoverGridAdapter = new RecyclerViewAdapter(mLayoutManager);
+        mClipCoverGridAdapter = new ClipCoverViewAdapter(mLayoutManager);
         mRecyclerView.setAdapter(mClipCoverGridAdapter);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mClipCoverGridAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
@@ -348,32 +348,32 @@ public class ClipsEditView extends LinearLayout {
             R.plurals.numbers_of_clips, clipCount, clipCount));
     }
 
-    private void layoutTransition(ClipViewHolder holder, boolean isSelected) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TransitionManager.beginDelayedTransition(holder.cardView);
-        }
-        ViewGroup.LayoutParams lp = holder.cardView.getLayoutParams();
-        if (isSelected) {
-            if (mOriginalSize == 0) {
-                mOriginalSize = holder.cardView.getWidth();
-            }
-            int newSize = ViewUtils.dp2px(112);
-            lp.width = newSize;
-            lp.height = newSize;
-        } else {
-            if (mOriginalSize == 0) {
-                mOriginalSize = ViewUtils.dp2px(80);
-            }
-            lp.width = mOriginalSize;
-            lp.height = mOriginalSize;
-        }
-        holder.cardView.setLayoutParams(lp);
-    }
+//    private void layoutTransition(ClipViewHolder holder, boolean isSelected) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            TransitionManager.beginDelayedTransition(holder.cardView);
+//        }
+//        ViewGroup.LayoutParams lp = holder.cardView.getLayoutParams();
+//        if (isSelected) {
+//            if (mOriginalSize == 0) {
+//                mOriginalSize = holder.cardView.getWidth();
+//            }
+//            int newSize = ViewUtils.dp2px(112);
+//            lp.width = newSize;
+//            lp.height = newSize;
+//        } else {
+//            if (mOriginalSize == 0) {
+//                mOriginalSize = ViewUtils.dp2px(80);
+//            }
+//            lp.width = mOriginalSize;
+//            lp.height = mOriginalSize;
+//        }
+//        holder.cardView.setLayoutParams(lp);
+//    }
 
-    private class RecyclerViewAdapter extends RecyclerView.Adapter<ClipViewHolder> implements ItemTouchListener {
+    private class ClipCoverViewAdapter extends RecyclerView.Adapter<ClipViewHolder> implements ItemTouchListener {
 
 
-        RecyclerViewAdapter(LinearLayoutManager layoutManager) {
+        ClipCoverViewAdapter(LinearLayoutManager layoutManager) {
             mLayoutManager = layoutManager;
         }
 
@@ -402,7 +402,7 @@ public class ClipsEditView extends LinearLayout {
                 public void onClick(View v) {
                     if (mSelectedPosition == holder.getAdapterPosition()) {
                         holder.itemView.setAlpha(HALF_ALPHA);
-                        layoutTransition(holder, false);
+//                        layoutTransition(holder, false);
                         internalOnExitEditing();
                         return;
                     }
@@ -412,13 +412,13 @@ public class ClipsEditView extends LinearLayout {
                             view.setAlpha(HALF_ALPHA);
                             Object tag = view.getTag();
                             if (tag instanceof ClipViewHolder) {
-                                layoutTransition((ClipViewHolder) tag, false);
+//                                layoutTransition((ClipViewHolder) tag, false);
                             }
                         }
 
                     }
                     holder.itemView.setAlpha(FULL_ALPHA);
-                    layoutTransition(holder, true);
+//                    layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();
                     internalOnSelectClip(mSelectedPosition, clip);
                 }
@@ -495,28 +495,26 @@ public class ClipsEditView extends LinearLayout {
         }
     }
 
-    private class ClipViewHolder extends RecyclerView.ViewHolder implements ItemViewHolderListener {
+    public class ClipViewHolder extends RecyclerView.ViewHolder implements ItemViewHolderListener {
+        @BindView(R.id.clip_thumbnail)
         ImageView clipThumbnail;
-        CardView cardView;
-        float defaultElevation = 6.0f;
+
 
         public ClipViewHolder(View itemView) {
             super(itemView);
-            clipThumbnail = (ImageView) itemView.findViewById(R.id.clip_thumbnail);
-            cardView = (CardView) itemView.findViewById(R.id.card_view);
-            defaultElevation = cardView.getCardElevation();
+            ButterKnife.bind(this, itemView);
         }
 
         @Override
         public void onItemSelected() {
             //cardView.setCardElevation(12.0f);
-            layoutTransition(this, true);
+//            layoutTransition(this, true);
         }
 
         @Override
         public void onItemClear() {
             //cardView.setCardElevation(defaultElevation);
-            layoutTransition(this, false);
+//            layoutTransition(this, false);
         }
     }
 
