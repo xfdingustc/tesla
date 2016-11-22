@@ -826,16 +826,16 @@ public class LiveViewActivity extends BaseActivity {
                 public void onNext(SpaceInfo spaceInfo) {
                     Logger.t(TAG).d("response: " + spaceInfo.toString());
                     mStorageView.getProgressDrawable().clearColorFilter();
-                    mStorageView.setMax((int) (spaceInfo.total / (1024 * 1024)));
-                    mStorageView.setProgress((int) (spaceInfo.marked / (1024 * 1024)));
-                    mStorageView.setSecondaryProgress((int) (spaceInfo.total / (1024 * 1024)));
+                    mStorageView.setMax((int) (spaceInfo.total / (1000 * 1000)));
+                    mStorageView.setProgress((int) (spaceInfo.marked / (1000 * 1000)));
+                    mStorageView.setSecondaryProgress((int) (spaceInfo.total / (1000 * 1000)));
                     mTvSpaceLeft.setText(StringUtils.getSpaceString(spaceInfo.getLoopedSpace()) + " " + getString(R.string.ready_to_record));
 
                     inflateDetailedPanel();
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
                     mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.getLoopedSpace()));
                     Logger.t(TAG).d(spaceInfo.total - spaceInfo.used);
-                    if (spaceInfo.getLoopedSpace() < (long) 8 * 1024 * 1024 * 1024) {
+                    if (spaceInfo.getLoopedSpace() < (long) 8 * 1000 * 1000 * 1000) {
                         Logger.t(TAG).d("show notification");
                         mCardNotification.setVisibility(View.VISIBLE);
                     } else {

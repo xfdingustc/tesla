@@ -76,7 +76,7 @@ public class GpsData implements Serializable {
 
         result.reserved = stream.readUint32();
 
-        result.GMS84ToGCJ02();
+        //result.GMS84ToGCJ02();
 
         return result;
     }

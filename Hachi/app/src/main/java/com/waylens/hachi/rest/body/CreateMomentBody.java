@@ -72,9 +72,9 @@ public class CreateMomentBody {
             timingPoints.t6 = localMoment.mTimingPoints.get(5);
         } else {
             if (localMoment.mSegments.size() > 1) {
-                momentType = "NORMAL_SINGLE";
-            } else {
                 momentType = "NORMAL_MULTI";
+            } else {
+                momentType = "NORMAL_SINGLE";
             }
         }
         if (localMoment.withCarInfo) {

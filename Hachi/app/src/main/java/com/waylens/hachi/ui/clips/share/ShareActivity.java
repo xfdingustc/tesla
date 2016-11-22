@@ -27,6 +27,10 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobHelper;
+import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
+import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
+import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
+import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.GeoInfo;
@@ -550,6 +554,7 @@ public class ShareActivity extends ClipPlayActivity {
             ClipSet clipSet = getClipSet();
             if (clipSet.getCount() > 1) {
                 localMoment.momentType = "NORMAL_MULTI";
+            } else {
                 localMoment.momentType = "NORMAL_SINGLE";
             }
         }
@@ -571,7 +576,14 @@ public class ShareActivity extends ClipPlayActivity {
             localMoment.withGeoTag = false;
         }
         ToStringUtils.getString(localMoment);
-        BgJobHelper.uploadMoment(localMoment);
+        //BgJobHelper.uploadMoment(localMoment);
+        CacheUploadMomentService.scheduleJob(getApplicationContext());
+        CacheUploadMomentJob cacheUploadMomentJob = new CacheUploadMomentJob(localMoment);
+        StateJobHolder stateJobHolder = new StateJobHolder(cacheUploadMomentJob.getId(), StateJobHolder.INITIAL_STATE, null, cacheUploadMomentJob);
+        PersistentQueue.getPersistentQueue().insert(stateJobHolder);
+        Intent startServiceIntent = new Intent(this, CacheUploadMomentService.class);
+        startService(startServiceIntent);
+        //PersistentQueue.create();
         UploadingMomentActivity.launch(this);
         finish();
 //

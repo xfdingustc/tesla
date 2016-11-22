@@ -16,10 +16,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import com.waylens.hachi.R;
 
-public class SectorSeekBar extends View {
+public class SectorSeekbar extends View {
 
     private final boolean DEBUG = true;
-    private final String TAG = SectorSeekBar.class.getSimpleName();
+    private final String TAG = SectorSeekbar.class.getSimpleName();
 
     private Context mContext = null;
 
@@ -61,21 +61,21 @@ public class SectorSeekBar extends View {
         void onStopTrackingTouch();
     }
 
-    public SectorSeekBar(Context context, AttributeSet attrs, int defStyle) {
+    public SectorSeekbar(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         initViewAttrs(attrs);
         mArcRectF = new RectF();
     }
 
-    public SectorSeekBar(Context context, AttributeSet attrs) {
+    public SectorSeekbar(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         initViewAttrs(attrs);
         mArcRectF = new RectF();
     }
 
-    public SectorSeekBar(Context context) {
+    public SectorSeekbar(Context context) {
         super(context);
         mContext = context;
         initViewDefault();

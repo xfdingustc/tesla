@@ -46,7 +46,6 @@ public class UploadManager {
         mEventBus.register(this);
     }
 
-
     public static UploadManager getManager() {
         return mSharedUploadManager;
     }

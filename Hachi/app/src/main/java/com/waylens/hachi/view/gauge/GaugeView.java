@@ -1,6 +1,7 @@
 package com.waylens.hachi.view.gauge;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -52,7 +53,6 @@ public class GaugeView extends FrameLayout {
     private GaugeViewAdapter mAdapter;
 
     private GaugeViewAdapterObserver mObserver;
-
 
     private Subscription mActionSubscription;
 
@@ -137,6 +137,11 @@ public class GaugeView extends FrameLayout {
         mWebView.setBackgroundColor(Color.TRANSPARENT);
         mWebView.loadUrl("file:///android_asset/build/api.html");
         mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap bitmap) {
+
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 mActionSubscription = RxBus.getDefault().toObserverable(EventPendingActionAdded.class)
