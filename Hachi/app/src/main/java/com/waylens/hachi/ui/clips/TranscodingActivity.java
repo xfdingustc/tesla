@@ -5,13 +5,14 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.waylens.hachi.R;
@@ -35,8 +36,8 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 
-import butterknife.BindColor;
 import butterknife.BindView;
+import butterknife.OnClick;
 import it.michelelacorte.elasticprogressbar.ElasticDownloadView;
 import it.michelelacorte.elasticprogressbar.OptionView;
 import rx.Subscriber;
@@ -58,6 +59,7 @@ public class TranscodingActivity extends BaseActivity {
     private ClipDownloadInfo.StreamDownloadInfo mStreamDownloadInfo;
 
     private String mDownloadFile;
+    private String mOutputFile;
 
     private RawDataLoader mRawDataLoader;
     private ClipRawDataAdapter mAdapter;
@@ -80,8 +82,18 @@ public class TranscodingActivity extends BaseActivity {
     @BindView(R.id.elastic_download_view)
     ElasticDownloadView mDownloadView;
 
-    @BindColor(R.color.hachi)
-    int hachiColor;
+    @BindView(R.id.share_fab)
+    FloatingActionButton mShareFab;
+
+    @OnClick(R.id.share_fab)
+    public void onShareFabClicked() {
+        Intent intent =  new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, (Uri.fromFile(new File(mOutputFile))));
+        intent.setType("video/mp4");
+        startActivity(Intent.createChooser(intent, getResources().getText(R.string.share)));
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,7 +161,7 @@ public class TranscodingActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-                   onTranscodeError(e);
+                    onTranscodeError(e);
 
 
                 }
@@ -161,7 +173,6 @@ public class TranscodingActivity extends BaseActivity {
             });
 
     }
-
 
 
     private void startTranscoding() {
@@ -177,19 +188,18 @@ public class TranscodingActivity extends BaseActivity {
         }
 
         final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        final String outputFile = FileUtils.genDownloadFileName(0, 0);
+        mOutputFile = FileUtils.genDownloadFileName(0, 0);
         mOverlayProvider = new ClipRawDataOverlayProvider();
-        MediaTranscoder.getInstance().transcodeVideoRx(fileDescriptor, outputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), mOverlayProvider)
+        MediaTranscoder.getInstance().transcodeVideoRx(fileDescriptor, mOutputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), mOverlayProvider)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Subscriber<MediaTranscoder.TranscodeProgress>() {
                 @Override
                 public void onCompleted() {
-                    mDownloadView.success();
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.fromFile(new File(outputFile)), "video/mp4");
-                    startActivity(intent);
-                    deleteTempFile();
+
+//
+                    onTranscodeFinished();
+
                 }
 
                 @Override
@@ -203,6 +213,26 @@ public class TranscodingActivity extends BaseActivity {
                 }
             });
 
+    }
+
+    private void onTranscodeFinished() {
+        mDownloadView.success();
+        deleteTempFile();
+        mShareFab.setVisibility(View.VISIBLE);
+        getToolbar().inflateMenu(R.menu.menu_transcode);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.preview:
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(new File(mOutputFile)), "video/mp4");
+                        startActivity(intent);
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void onTranscodeError(Throwable e) {
