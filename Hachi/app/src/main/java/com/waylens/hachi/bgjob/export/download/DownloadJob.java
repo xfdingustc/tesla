@@ -12,6 +12,11 @@ import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.utils.ClipDownloadHelper;
+import com.waylens.hachi.utils.FileUtils;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Xiaofei on 2016/5/4.
@@ -58,30 +63,35 @@ public class DownloadJob extends ExportableJob {
 
     private void downloadVideoSync() throws InterruptedException {
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mDownloadInfo);
-        mDownloadFilePath = downloadHelper.downloadVideo(new ClipDownloadHelper.OnExportListener() {
-            @Override
-            public synchronized void onExportError(int arg1, int arg2) {
-                synchronized (mDownloadFence) {
-                    mDownloadFence.notifyAll();
-                }
-            }
 
-            @Override
-            public void onExportProgress(int progress) {
-                notifyProgressChanged(progress);
-            }
-
-            @Override
-            public void onExportFinished() {
-                MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
-                    mDownloadFilePath.toString()}, null, null);
-                Logger.t(TAG).d("onExportFinished " + mDownloadFilePath);
-                synchronized (mDownloadFence) {
-                    mDownloadFence.notifyAll();
+        String outputFile = FileUtils.genDownloadFileName(mDownloadInfo.clipDate, mDownloadInfo.clipTimeMs);
+        downloadHelper.downloadClipRx(outputFile)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Integer>() {
+                @Override
+                public void onCompleted() {
+                    MediaScannerConnection.scanFile(Hachi.getContext(), new String[]{
+                        mDownloadFilePath.toString()}, null, null);
+                    Logger.t(TAG).d("onExportFinished " + mDownloadFilePath);
+                    synchronized (mDownloadFence) {
+                        mDownloadFence.notifyAll();
+                    }
                 }
-            }
-        });
-//        wait();
+
+                @Override
+                public void onError(Throwable e) {
+                    synchronized (mDownloadFence) {
+                        mDownloadFence.notifyAll();
+                    }
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+                    notifyProgressChanged(integer);
+                }
+
+
+            });
         synchronized (mDownloadFence) {
             mDownloadFence.wait();
         }

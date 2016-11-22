@@ -6,6 +6,10 @@ import com.waylens.hachi.bgjob.export.download.RemuxerParams;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+
 /**
  * Created by Xiaofei on 2016/11/18.
  */
@@ -14,7 +18,7 @@ public class ClipDownloadHelper {
     private static final String TAG = ClipDownloadHelper.class.getSimpleName();
     private final Clip.StreamInfo mStreamInfo;
     private final ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
-    private OnExportListener mListener;
+
 
     public ClipDownloadHelper(Clip.StreamInfo streamInfo,
                               ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
@@ -23,9 +27,18 @@ public class ClipDownloadHelper {
 
     }
 
+    public Observable<Integer> downloadClipRx(final String outputFile) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                doDownloadClip(outputFile, subscriber);
+            }
+        });
+    }
 
-    public String downloadVideo(OnExportListener listener) {
-        this.mListener = listener;
+
+
+    private void doDownloadClip(String outputFile, Subscriber<? super Integer> subscriber) {
         RemuxerParams params = new RemuxerParams();
         // clip params
         params.setClipDate(mDownloadInfo.clipDate);
@@ -52,32 +65,29 @@ public class ClipDownloadHelper {
         params.setAudioFormat("mp3");
         // add to queue
         //   RemuxHelper.remux(this, params);
-        return startDownloadVideo(params);
+        startDownloadVideo(outputFile, params, subscriber);
     }
 
-    private String startDownloadVideo(RemuxerParams params) {
-
+    private void startDownloadVideo(String outputFile, RemuxerParams params, final Subscriber<? super Integer> subscriber) {
         Logger.t(TAG).d("start download item " + params.getInputFile());
-
-
         HttpRemuxer remuxer = new HttpRemuxer(0);
 
         remuxer.setEventListener(new HttpRemuxer.RemuxerEventListener() {
             @Override
             public void onEventAsync(HttpRemuxer remuxer, int event, int arg1, int arg2) {
-                if (mListener == null) {
+                if (subscriber == null) {
                     return;
                 }
                 switch (event) {
                     case HttpRemuxer.EVENT_ERROR:
-                        mListener.onExportError(arg1, arg2);
+                        subscriber.onError(new Throwable("download error"));
                         break;
                     case HttpRemuxer.EVENT_PROGRESS:
-                        mListener.onExportProgress(arg1);
+                        subscriber.onNext(arg1);
                         break;
                     case HttpRemuxer.EVENT_FINISHED:
                         Logger.t(TAG).d("Event: " + event + " arg1: " + arg1 + " arg2: " + arg2);
-                        mListener.onExportFinished();
+                        subscriber.onCompleted();
                         break;
 
                 }
@@ -86,7 +96,7 @@ public class ClipDownloadHelper {
 
         int clipDate = params.getClipDate();
         long clipTimeMs = params.getClipTimeMs();
-        String outputFile = FileUtils.genDownloadFileName(clipDate, clipTimeMs);
+//        String outputFile = FileUtils.genDownloadFileName(clipDate, clipTimeMs);
 
 
         Logger.t(TAG).d("outputFile: " + outputFile);
@@ -96,8 +106,6 @@ public class ClipDownloadHelper {
             remuxer.run(params, outputFile);
             Logger.t(TAG).d("remux is running output file is: " + outputFile);
         }
-
-        return outputFile;
     }
 
     public interface OnExportListener {

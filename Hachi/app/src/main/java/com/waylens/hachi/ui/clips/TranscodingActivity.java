@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.media.DrmInitData;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -35,6 +36,7 @@ import java.io.FileNotFoundException;
 
 import butterknife.BindView;
 import is.arontibo.library.ElasticDownloadView;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -122,35 +124,27 @@ public class TranscodingActivity extends BaseActivity {
 
     private void downloadClipEsData() {
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo);
+        mDownloadFile = FileUtils.genDownloadFileName(mStreamDownloadInfo.clipDate, mStreamDownloadInfo.clipTimeMs);
+        downloadHelper.downloadClipRx(mDownloadFile)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Integer>() {
+                @Override
+                public void onCompleted() {
+                    startTranscoding();
+                }
 
-        mDownloadFile = downloadHelper.downloadVideo(new ClipDownloadHelper.OnExportListener() {
-            @Override
-            public void onExportError(int arg1, int arg2) {
+                @Override
+                public void onError(Throwable e) {
+                    mDownloadView.fail();
+                }
 
-            }
+                @Override
+                public void onNext(Integer integer) {
+                    mDownloadView.setProgress((float) integer / 2);
+                }
+            });
 
-            @Override
-            public void onExportProgress(final int progress) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDownloadView.setProgress((float) progress / 2);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onExportFinished() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        startTranscoding();
-                    }
-                });
-
-            }
-        });
     }
 
     private void startTranscoding() {
