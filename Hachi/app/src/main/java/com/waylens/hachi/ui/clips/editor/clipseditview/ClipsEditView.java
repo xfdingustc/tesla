@@ -53,8 +53,6 @@ import rx.Subscriber;
 
 public class ClipsEditView extends LinearLayout {
     private static final String TAG = ClipsEditView.class.getSimpleName();
-    final static float HALF_ALPHA = 0.5f;
-    final static float FULL_ALPHA = 1.0f;
 
     public final static int POSITION_UNKNOWN = -1;
 
@@ -337,9 +335,7 @@ public class ClipsEditView extends LinearLayout {
             return;
         }
         View child = mLayoutManager.findViewByPosition(mSelectedPosition);
-        if (child != null) {
-            child.setAlpha(HALF_ALPHA);
-        }
+
         internalOnExitEditing();
     }
 
@@ -348,27 +344,7 @@ public class ClipsEditView extends LinearLayout {
             R.plurals.numbers_of_clips, clipCount, clipCount));
     }
 
-//    private void layoutTransition(ClipViewHolder holder, boolean isSelected) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            TransitionManager.beginDelayedTransition(holder.cardView);
-//        }
-//        ViewGroup.LayoutParams lp = holder.cardView.getLayoutParams();
-//        if (isSelected) {
-//            if (mOriginalSize == 0) {
-//                mOriginalSize = holder.cardView.getWidth();
-//            }
-//            int newSize = ViewUtils.dp2px(112);
-//            lp.width = newSize;
-//            lp.height = newSize;
-//        } else {
-//            if (mOriginalSize == 0) {
-//                mOriginalSize = ViewUtils.dp2px(80);
-//            }
-//            lp.width = mOriginalSize;
-//            lp.height = mOriginalSize;
-//        }
-//        holder.cardView.setLayoutParams(lp);
-//    }
+
 
     private class ClipCoverViewAdapter extends RecyclerView.Adapter<ClipViewHolder> implements ItemTouchListener {
 
@@ -401,7 +377,7 @@ public class ClipsEditView extends LinearLayout {
                 @Override
                 public void onClick(View v) {
                     if (mSelectedPosition == holder.getAdapterPosition()) {
-                        holder.itemView.setAlpha(HALF_ALPHA);
+                        holder.selectMask.setVisibility(GONE);
 //                        layoutTransition(holder, false);
                         internalOnExitEditing();
                         return;
@@ -409,15 +385,17 @@ public class ClipsEditView extends LinearLayout {
                     if (mSelectedPosition != -1) {
                         View view = mLayoutManager.findViewByPosition(mSelectedPosition);
                         if (view != null) {
-                            view.setAlpha(HALF_ALPHA);
+
                             Object tag = view.getTag();
                             if (tag instanceof ClipViewHolder) {
 //                                layoutTransition((ClipViewHolder) tag, false);
+                                ((ClipViewHolder)tag).selectMask.setVisibility(GONE);
                             }
                         }
 
                     }
-                    holder.itemView.setAlpha(FULL_ALPHA);
+
+                    holder.selectMask.setVisibility(VISIBLE);
 //                    layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();
                     internalOnSelectClip(mSelectedPosition, clip);
@@ -438,9 +416,9 @@ public class ClipsEditView extends LinearLayout {
         public void onViewAttachedToWindow(ClipViewHolder holder) {
             super.onViewAttachedToWindow(holder);
             if (holder.getAdapterPosition() == mSelectedPosition) {
-                holder.itemView.setAlpha(FULL_ALPHA);
+                holder.selectMask.setVisibility(VISIBLE);
             } else {
-                holder.itemView.setAlpha(HALF_ALPHA);
+                holder.selectMask.setVisibility(GONE);
             }
         }
 
@@ -498,6 +476,9 @@ public class ClipsEditView extends LinearLayout {
     public class ClipViewHolder extends RecyclerView.ViewHolder implements ItemViewHolderListener {
         @BindView(R.id.clip_thumbnail)
         ImageView clipThumbnail;
+
+        @BindView(R.id.select_mask)
+        View selectMask;
 
 
         public ClipViewHolder(View itemView) {
