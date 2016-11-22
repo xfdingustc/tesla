@@ -11,9 +11,8 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.GaugeSettingManager;
-import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
+import com.waylens.hachi.view.gauge.GaugeInfoItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;

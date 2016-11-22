@@ -5,7 +5,6 @@ import com.waylens.hachi.snipe.vdb.rawdata.IioData;
 import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
-import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.utils.SettingHelper;
 
 import org.json.JSONException;

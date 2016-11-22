@@ -1,7 +1,7 @@
-package com.waylens.hachi.app;
+package com.waylens.hachi.view.gauge;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import java.util.ArrayList;

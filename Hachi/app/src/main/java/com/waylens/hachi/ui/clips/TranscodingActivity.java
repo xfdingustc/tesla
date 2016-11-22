@@ -24,6 +24,7 @@ import com.waylens.hachi.snipe.vdb.ClipSetPos;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.ClipRawDataAdapter;
 import com.waylens.hachi.ui.clips.player.RawDataLoader;
+import com.waylens.hachi.utils.BitmapUtils;
 import com.waylens.hachi.utils.ClipDownloadHelper;
 import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
@@ -119,6 +120,7 @@ public class TranscodingActivity extends BaseActivity {
         OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
         getToolbar().setTitle(R.string.transcoding);
+        mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
         mGaugeView.showGauge(true, true);
 
         mDownloadView.startIntro();
@@ -258,28 +260,17 @@ public class TranscodingActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(pts / 1000000);
+                    int currentPlayTime = (int)(pts / 1000000);
+                    mGaugeView.setPlayTime(currentPlayTime);
+                    ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPlayTime);
                     mAdapter.setClipSetPos(clipSetPos);
 
                 }
             });
-            return getBitmapFromView(mGaugeView);
+            return BitmapUtils.getBitmapFromView(mGaugeView);
         }
     }
 
 
-    public static Bitmap getBitmapFromView(View v) {
-        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-        // Draw background
-        Drawable bgDrawable = v.getBackground();
-        if (bgDrawable != null) {
-            bgDrawable.draw(c);
-        }
 
-        // Draw view to canvas
-        v.draw(c);
-        return b;
-    }
 }

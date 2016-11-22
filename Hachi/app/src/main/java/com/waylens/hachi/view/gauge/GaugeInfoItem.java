@@ -1,4 +1,4 @@
-package com.waylens.hachi.ui.clips.player;
+package com.waylens.hachi.view.gauge;
 
 import android.text.TextUtils;
 

@@ -2,17 +2,15 @@ package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.design.widget.Snackbar;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
 import java.util.Map;
 

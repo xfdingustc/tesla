@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;

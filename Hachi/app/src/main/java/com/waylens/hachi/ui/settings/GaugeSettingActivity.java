@@ -2,18 +2,22 @@ package com.waylens.hachi.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.GaugeSettingManager;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
-import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
+import com.waylens.hachi.view.gauge.GaugeInfoItem;
+import com.waylens.hachi.utils.BitmapUtils;
 import com.waylens.hachi.view.gauge.GaugeView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,6 +44,9 @@ public class GaugeSettingActivity extends BaseActivity {
     @BindView(R.id.gaugeView)
     GaugeView mGaugeView;
 
+    @BindView(R.id.test_cache)
+    ImageView ivTestCache;
+
     @OnClick(R.id.btnThemeOff)
     public void onBtnThemeOffClicked() {
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "NA"));
@@ -55,6 +62,12 @@ public class GaugeSettingActivity extends BaseActivity {
     public void onBtnThemeNeoClicked() {
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "neo"));
         GaugeSettingManager.getManager().saveTheme("neo");
+    }
+
+    @OnClick(R.id.btn_refresh)
+    public void onBtnRefreshClicked() {
+        Bitmap bitmap = BitmapUtils.getBitmapFromView(mGaugeView);
+        ivTestCache.setImageDrawable(new BitmapDrawable(bitmap));
     }
 
     public static void launch(Activity activity) {
@@ -88,6 +101,7 @@ public class GaugeSettingActivity extends BaseActivity {
 
     private void initViews() {
         setContentView(R.layout.activity_gauge_setting);
+
         mGaugeView.showGauge(true, true);
 //        mGaugeView.initDefaultGauge();
         mGaugeView.showDefaultGauge();

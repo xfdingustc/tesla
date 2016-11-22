@@ -1,7 +1,6 @@
 package com.waylens.hachi.view.gauge;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -12,13 +11,10 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.app.GaugeSettingManager;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
-import com.waylens.hachi.ui.clips.player.GaugeInfoItem;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
-import com.waylens.mediatranscoder.engine.OverlayProvider;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
@@ -119,6 +115,10 @@ public class GaugeView extends FrameLayout {
         if (mActionSubscription != null && !mActionSubscription.isUnsubscribed()) {
             mActionSubscription.unsubscribe();
         }
+    }
+
+    public WebView getWebView() {
+        return mWebView;
     }
 
     private void init(Context context) {
