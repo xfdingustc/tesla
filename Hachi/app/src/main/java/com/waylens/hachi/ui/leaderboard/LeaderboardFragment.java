@@ -311,7 +311,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         mRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                ViewUtils.setPaddingTop(mLayoutMain, getToolbar().getHeight() + topThree.getHeight());
+                ViewUtils.setPaddingTop(mLayoutMain, headerView.getHeight());
             }
         });
         return view;
@@ -730,11 +730,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     }
 
-    @Override
-    public void setupToolbar() {
-        getToolbar().setTitle(R.string.leaderboard);
-        super.setupToolbar();
-    }
+
 
     private Transition getTransition(@TransitionRes int transitionId) {
         android.transition.Transition transition = transitions.get(transitionId);
