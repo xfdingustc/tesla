@@ -125,9 +125,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.top_three)
     View topThree;
 
-    @BindView(R.id.main_layout)
-    FrameLayout mLayoutMain;
-
     @BindView(R.id.rlv_first)
     RoundedLetterView rlvFirst;
 
@@ -172,9 +169,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     @BindView(R.id.layout_no_data)
     LinearLayout mNoDataLayout;
-
-    @BindView(R.id.clipMask)
-    View clickMask;
 
     @BindView(R.id.first)
     HexagonView hvFirst;
@@ -308,12 +302,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mMakerModelList = new ArrayList<>();
 
-        mRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                ViewUtils.setPaddingTop(mLayoutMain, headerView.getHeight());
-            }
-        });
         return view;
     }
 
