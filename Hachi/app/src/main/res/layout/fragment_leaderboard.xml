@@ -16,12 +16,6 @@
         android:elevation="@dimen/z_card">
 
 
-        <View
-            android:id="@+id/clipMask"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#cc1D1F23"
-            android:visibility="gone"/>
 
         <LinearLayout
             android:id="@+id/header_view"
@@ -373,19 +367,54 @@
                     android:background="?attr/separateColor"/>
             </LinearLayout>
 
-            <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/refresh_layout"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:visibility="gone">
+                android:layout_height="match_parent">
 
-                <com.waylens.hachi.ui.views.RecyclerViewExt
-                    android:id="@+id/leaderboard_list_view"
+                <android.support.v4.widget.SwipeRefreshLayout
+                    android:id="@+id/refresh_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-            </android.support.v4.widget.SwipeRefreshLayout>
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    tools:visibility="gone">
+
+                    <com.waylens.hachi.ui.views.RecyclerViewExt
+                        android:id="@+id/leaderboard_list_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                </android.support.v4.widget.SwipeRefreshLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_no_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="invisible"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/trophy">
+
+                    </ImageView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/no_race_data"
+                        android:textColor="?attr/appTextColorSecondary"
+                        android:textSize="14sp"/>
+
+
+                </LinearLayout>
+            </FrameLayout>
 
 
         </LinearLayout>
@@ -479,45 +508,6 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/main_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:visibility="visible">
-
-        <LinearLayout
-            android:id="@+id/layout_no_data"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="invisible"
-            tools:visibility="visible">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="56dp"
-                android:src="@drawable/trophy">
-
-            </ImageView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="@string/no_race_data"
-                android:textColor="?attr/appTextColorSecondary"
-                android:textSize="14sp"/>
-
-
-        </LinearLayout>
-
-
-
-    </FrameLayout>
 
 
 </FrameLayout>
