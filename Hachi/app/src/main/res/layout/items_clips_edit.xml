@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="80dp"
-    android:layout_height="80dp"
+    android:layout_width="82dp"
+    android:layout_height="82dp"
     android:layout_marginEnd="4dp"
     android:layout_marginStart="4dp">
 
@@ -11,7 +11,13 @@
         android:id="@+id/clip_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="@null"
+        android:padding="2dp"
         android:scaleType="centerCrop"/>
+
+    <View
+        android:id="@+id/select_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/clip_selected"/>
 
 </FrameLayout>
