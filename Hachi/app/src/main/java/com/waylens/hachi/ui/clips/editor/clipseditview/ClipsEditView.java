@@ -346,21 +346,39 @@ public class ClipsEditView extends LinearLayout {
 
 
 
-    private class ClipCoverViewAdapter extends RecyclerView.Adapter<ClipViewHolder> implements ItemTouchListener {
-
+    private class ClipCoverViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ItemTouchListener {
+        private final int VIEW_TYPE_CLIP = 0;
+        private final int VIEW_TYPE_ADD_MORE = 1;
 
         ClipCoverViewAdapter(LinearLayoutManager layoutManager) {
             mLayoutManager = layoutManager;
         }
 
         @Override
-        public ClipViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.items_clips_edit, parent, false);
-            return new ClipViewHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (viewType == VIEW_TYPE_CLIP) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.items_clips_edit, parent, false);
+                return new ClipViewHolder(view);
+            } else {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_clip_add_more, parent, false);
+                return new ClipAddMoreViewHolder(view);
+            }
         }
 
         @Override
-        public void onBindViewHolder(final ClipViewHolder holder, final int position) {
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+            int viewType = getItemViewType(position);
+            if (viewType == VIEW_TYPE_CLIP) {
+                bindClipViewHolder(holder, position);
+            } else {
+                bindAddMoreViewHolder(holder, position);
+            }
+
+        }
+
+
+        private void bindClipViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+            final ClipViewHolder holder = (ClipViewHolder)viewHolder;
             final Clip clip = getClipSet().getClip(position);
 
             ClipPos clipPos = new ClipPos(clip);
@@ -403,27 +421,49 @@ public class ClipsEditView extends LinearLayout {
             });
         }
 
+
+        private void bindAddMoreViewHolder(RecyclerView.ViewHolder holder, int position) {
+
+        }
+
         @Override
         public int getItemCount() {
             if (getClipSet() == null) {
-                return 0;
+                return 1;
             } else {
-                return getClipSet().getCount();
+                return getClipSet().getCount() + 1;
             }
         }
 
         @Override
-        public void onViewAttachedToWindow(ClipViewHolder holder) {
+        public int getItemViewType(int position) {
+            int clipSetSize = 0;
+            if (getClipSet() != null) {
+                clipSetSize = getClipSet().getCount();
+            }
+
+            if (position < clipSetSize) {
+                return VIEW_TYPE_CLIP;
+            } else {
+                return VIEW_TYPE_ADD_MORE;
+            }
+        }
+
+        @Override
+        public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
             super.onViewAttachedToWindow(holder);
-            if (holder.getAdapterPosition() == mSelectedPosition) {
-                holder.selectMask.setVisibility(VISIBLE);
-            } else {
-                holder.selectMask.setVisibility(GONE);
+            if (holder instanceof ClipViewHolder) {
+                ClipViewHolder viewHolder = (ClipViewHolder)holder;
+                if (viewHolder.getAdapterPosition() == mSelectedPosition) {
+                    viewHolder.selectMask.setVisibility(VISIBLE);
+                } else {
+                    viewHolder.selectMask.setVisibility(GONE);
+                }
             }
         }
 
         @Override
-        public void onViewDetachedFromWindow(ClipViewHolder holder) {
+        public void onViewDetachedFromWindow(RecyclerView.ViewHolder holder) {
             super.onViewDetachedFromWindow(holder);
             holder.itemView.setTag(null);
         }
@@ -496,6 +536,13 @@ public class ClipsEditView extends LinearLayout {
         public void onItemClear() {
             //cardView.setCardElevation(defaultElevation);
 //            layoutTransition(this, false);
+        }
+    }
+
+    public class ClipAddMoreViewHolder extends RecyclerView.ViewHolder {
+
+        public ClipAddMoreViewHolder(View itemView) {
+            super(itemView);
         }
     }
 
