@@ -53,7 +53,7 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean isItemViewSwipeEnabled() {
-        return true;
+        return false;
     }
 
     @Override
@@ -64,14 +64,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
             return makeMovementFlags(0, 0);
         }
         LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
-        int dragFlags;
-        int swipeFlags;
+        int dragFlags = 0;
+        int swipeFlags = 0;
         if (linearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-            dragFlags = ItemTouchHelper.START | ItemTouchHelper.END;
-            swipeFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        } else {
-            dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+            if (viewHolder instanceof ClipsEditView.ClipViewHolder) {
+                dragFlags = ItemTouchHelper.START | ItemTouchHelper.END;
+                swipeFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            }
         }
 
         return makeMovementFlags(dragFlags, swipeFlags);
@@ -93,8 +92,6 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int i) {
-        // Notify the adapter of the dismissal
-        mAdapter.onItemDismiss(viewHolder.getAdapterPosition());
     }
 
     @Override
