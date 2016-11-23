@@ -11,7 +11,7 @@ import com.waylens.hachi.view.gauge.GaugeView;
 
 public class BitmapUtils {
     public static Bitmap getBitmapFromView(GaugeView v) {
-        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.RGB_565);
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
         v.draw(c);
