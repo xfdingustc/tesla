@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="84dp"
-    android:layout_height="84dp"
+    android:layout_width="88dp"
+    android:layout_height="88dp"
     android:layout_margin="4dp"
     >
 
@@ -11,13 +11,24 @@
         android:id="@+id/clip_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="2dp"
+        android:layout_margin="4dp"
         android:scaleType="centerCrop"/>
 
     <View
         android:id="@+id/select_mask"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="4dp"
         android:background="@drawable/clip_selected"/>
+
+    <ImageView
+        android:id="@+id/btn_delete"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="right"
+        android:layout_margin="-8dp"
+        android:background="@drawable/clip_delect_bg"
+        android:padding="4dp"
+        android:src="@drawable/ic_close"/>
 
 </FrameLayout>

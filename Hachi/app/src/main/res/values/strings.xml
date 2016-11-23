@@ -546,4 +546,5 @@
     <string name="choose_stream">Choose stream</string>
     <string name="overlay">With overlay</string>
     <string name="transcoding">Transcoding</string>
+    <string name="delete_clip_confirm">Remove this clip?</string>
 </resources>
