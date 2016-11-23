@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:background="@color/black87"
               android:orientation="vertical">
 
@@ -11,11 +11,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="#1D1D1D"
         app:elevation="@dimen/default_elevation"
         app:layout_scrollFlags="scroll"
-        android:background="#1D1D1D"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:navigationIcon="@drawable/ic_arrow_back"/>
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <FrameLayout
         android:id="@+id/player_fragment_content"
@@ -63,14 +63,6 @@
                     android:contentDescription="@null"
                     android:src="@drawable/btn_enhance_gauge"/>
 
-                <ImageView
-                    android:id="@+id/btn_add_video"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:contentDescription="@null"
-                    android:src="@drawable/btn_enhance_addvideo"/>
 
                 <ImageView
                     android:id="@+id/btn_music"
@@ -87,23 +79,12 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/settings_line_separator"
-                />
-
-            <ViewAnimator
-                android:id="@+id/view_animator"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                tools:layout_height="match_parent"
-                tools:visibility="visible">
-
-                <include layout="@layout/layout_enhance_gauge"/>
-
-                <include layout="@layout/layout_enhance_add_video"/>
+                android:background="@color/settings_line_separator"/>
 
 
-            </ViewAnimator>
+            <include layout="@layout/layout_enhance_gauge"/>
+
+
         </LinearLayout>
     </FrameLayout>
 
