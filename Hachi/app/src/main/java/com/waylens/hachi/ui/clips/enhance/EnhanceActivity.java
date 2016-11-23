@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -19,7 +20,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.view.gauge.GaugeSettingManager;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
@@ -40,7 +40,6 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.TranscodingActivity;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.music.MusicListSelectActivity;
-import com.waylens.hachi.view.gauge.GaugeInfoItem;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
@@ -48,7 +47,8 @@ import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
-
+import com.waylens.hachi.view.gauge.GaugeInfoItem;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -88,7 +88,6 @@ public class EnhanceActivity extends ClipPlayActivity {
     private GaugeListAdapter mGaugeListAdapter;
 
 
-
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
 
 
@@ -108,8 +107,8 @@ public class EnhanceActivity extends ClipPlayActivity {
     @BindView(R.id.clips_edit_view)
     ClipsEditView mClipsEditView;
 
-    @BindView(R.id.view_animator)
-    ViewAnimator mViewAnimator;
+    @BindView(R.id.enhance_gauge)
+    ViewGroup enhanceGauge;
 
     @BindView(R.id.enhance_action_bar)
     View mEnhanceActionBar;
@@ -154,7 +153,6 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
 
-
     @OnClick(R.id.btn_gauge)
     public void showGauge(View view) {
         btnMusic.setSelected(false);
@@ -179,18 +177,6 @@ public class EnhanceActivity extends ClipPlayActivity {
     public void onBtnThemeNeoClicked() {
         mEventBus.post(new GaugeEvent(GaugeEvent.EVENT_WHAT_CHANGE_THEME, "neo"));
         GaugeSettingManager.getManager().saveTheme("neo");
-    }
-
-    @OnClick({R.id.btn_add_video, R.id.btn_add_video_extra})
-    public void showClipChooser() {
-        btnMusic.setSelected(false);
-//        btnRemix.setSelected(false);
-        btnGauge.setSelected(false);
-        if (mViewAnimator.getDisplayedChild() != ACTION_ADD_VIDEO) {
-            configureActionUI(ACTION_NONE, false);
-        }
-
-        ClipChooserActivity.launch(this, REQUEST_CODE_ENHANCE);
     }
 
 
@@ -248,7 +234,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                                 }
                             });
                     }
-                    if (getClipSet().getCount() > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+                    if (getClipSet().getCount() > 0) {
                         btnGauge.setEnabled(true);
                         btnMusic.setEnabled(true);
                         configureActionUI(ACTION_NONE, false);
@@ -363,9 +349,9 @@ public class EnhanceActivity extends ClipPlayActivity {
                     })
                     .show();
 
-                btnSd = (RadioButton)dialog.findViewById(R.id.sd_stream);
-                btnHd = (RadioButton)dialog.findViewById(R.id.hd_stream);
-                checkBoxWithOverlay = (CheckBox)dialog.findViewById(R.id.with_overlay);
+                btnSd = (RadioButton) dialog.findViewById(R.id.sd_stream);
+                btnHd = (RadioButton) dialog.findViewById(R.id.hd_stream);
+                checkBoxWithOverlay = (CheckBox) dialog.findViewById(R.id.with_overlay);
                 btnSd.setText(getString(R.string.sd, StringUtils.getSpaceString(response.sub.size)));
                 btnHd.setText(getString(R.string.fullhd, StringUtils.getSpaceString(response.main.size)));
                 btnSd.setChecked(true);
@@ -402,11 +388,10 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void configureActionUI(int child, boolean isShow) {
         if (isShow && (child != ACTION_NONE)) {
-            mViewAnimator.setVisibility(View.VISIBLE);
-            mViewAnimator.setDisplayedChild(child);
+            enhanceGauge.setVisibility(View.VISIBLE);
             mClipsEditView.setVisibility(View.GONE);
         } else {
-            mViewAnimator.setVisibility(View.GONE);
+            enhanceGauge.setVisibility(View.GONE);
             mClipsEditView.setVisibility(View.VISIBLE);
         }
     }
@@ -417,6 +402,14 @@ public class EnhanceActivity extends ClipPlayActivity {
         Logger.t(TAG).d("List size :" + getClipSet().getClipList().size());
         mClipsEditView.setPlayListEditor(mPlaylistEditor);
         mClipsEditView.setOnClipEditListener(new ClipsEditView.OnClipEditListener() {
+            @Override
+            public void onAddClipClicked() {
+                btnMusic.setSelected(false);
+                btnGauge.setSelected(false);
+
+                ClipChooserActivity.launch(EnhanceActivity.this, REQUEST_CODE_ENHANCE);
+            }
+
             @Override
             public void onClipSelected(int position, Clip clip) {
                 getToolbar().setTitle(R.string.trim);
@@ -445,7 +438,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     return;
                 }
 
-                if (clipCount > 0 && mViewAnimator.getDisplayedChild() == ACTION_ADD_VIDEO) {
+                if (clipCount > 0 ) {
                     btnGauge.setEnabled(true);
                     btnMusic.setEnabled(true);
                     configureActionUI(ACTION_NONE, false);

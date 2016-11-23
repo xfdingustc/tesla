@@ -423,7 +423,14 @@ public class ClipsEditView extends LinearLayout {
 
 
         private void bindAddMoreViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+            holder.itemView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mOnClipEditListener != null) {
+                        mOnClipEditListener.onAddClipClicked();
+                    }
+                }
+            });
         }
 
         @Override
@@ -547,6 +554,8 @@ public class ClipsEditView extends LinearLayout {
     }
 
     public interface OnClipEditListener {
+        void onAddClipClicked();
+
         void onClipSelected(int position, Clip clip);
 
         void onClipMoved(int fromPosition, int toPosition, Clip clip);
