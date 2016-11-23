@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.clips.editor.clipseditview;
 
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
@@ -36,7 +39,7 @@ import com.waylens.hachi.snipe.vdb.ClipSetManager;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.views.rangbar.RangeBar;
 import com.waylens.hachi.utils.ViewUtils;
-
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -48,6 +51,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscriber;
 
 
@@ -377,7 +381,7 @@ public class ClipsEditView extends LinearLayout {
         }
 
 
-        private void bindClipViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        private void bindClipViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
             final ClipViewHolder holder = (ClipViewHolder)viewHolder;
             final Clip clip = getClipSet().getClip(position);
 
@@ -396,6 +400,7 @@ public class ClipsEditView extends LinearLayout {
                 public void onClick(View v) {
                     if (mSelectedPosition == holder.getAdapterPosition()) {
                         holder.selectMask.setVisibility(GONE);
+                        holder.btnDelete.setVisibility(GONE);
 //                        layoutTransition(holder, false);
                         internalOnExitEditing();
                         return;
@@ -408,15 +413,42 @@ public class ClipsEditView extends LinearLayout {
                             if (tag instanceof ClipViewHolder) {
 //                                layoutTransition((ClipViewHolder) tag, false);
                                 ((ClipViewHolder)tag).selectMask.setVisibility(GONE);
+                                ((ClipViewHolder)tag).btnDelete.setVisibility(GONE);
                             }
                         }
 
                     }
 
                     holder.selectMask.setVisibility(VISIBLE);
+                    holder.btnDelete.setVisibility(VISIBLE);
 //                    layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();
                     internalOnSelectClip(mSelectedPosition, clip);
+                }
+            });
+
+            holder.btnDelete.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MaterialDialog dialog = new MaterialDialog.Builder(getContext())
+                        .content(R.string.delete_clip_confirm)
+                        .positiveText(R.string.remove)
+                        .negativeText(R.string.cancel)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                mPlayListEditor.removeRx(position)
+                                    .subscribe(new SimpleSubscribe<Void>() {
+                                        @Override
+                                        public void onNext(Void aVoid) {
+                                            
+                                        }
+                                    });
+                                internalOnClipRemoved(position);
+                                notifyItemRemoved(position);
+                            }
+                        }).show();
+
                 }
             });
         }
@@ -463,8 +495,10 @@ public class ClipsEditView extends LinearLayout {
                 ClipViewHolder viewHolder = (ClipViewHolder)holder;
                 if (viewHolder.getAdapterPosition() == mSelectedPosition) {
                     viewHolder.selectMask.setVisibility(VISIBLE);
+                    viewHolder.btnDelete.setVisibility(VISIBLE);
                 } else {
                     viewHolder.selectMask.setVisibility(GONE);
+                    viewHolder.btnDelete.setVisibility(GONE);
                 }
             }
         }
@@ -498,25 +532,7 @@ public class ClipsEditView extends LinearLayout {
 
         @Override
         public void onItemDismiss(int position) {
-            mPlayListEditor.removeRx(position)
-                .subscribe(new Subscriber<Void>() {
-                    @Override
-                    public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Void aVoid) {
-
-                    }
-                });
-            internalOnClipRemoved(position);
-            notifyItemRemoved(position);
         }
     }
 
@@ -527,6 +543,8 @@ public class ClipsEditView extends LinearLayout {
         @BindView(R.id.select_mask)
         View selectMask;
 
+        @BindView(R.id.btn_delete)
+        ImageView btnDelete;
 
         public ClipViewHolder(View itemView) {
             super(itemView);
@@ -535,14 +553,10 @@ public class ClipsEditView extends LinearLayout {
 
         @Override
         public void onItemSelected() {
-            //cardView.setCardElevation(12.0f);
-//            layoutTransition(this, true);
         }
 
         @Override
         public void onItemClear() {
-            //cardView.setCardElevation(defaultElevation);
-//            layoutTransition(this, false);
         }
     }
 
