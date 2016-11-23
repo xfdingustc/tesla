@@ -441,7 +441,7 @@ public class ClipsEditView extends LinearLayout {
                                     .subscribe(new SimpleSubscribe<Void>() {
                                         @Override
                                         public void onNext(Void aVoid) {
-                                            
+
                                         }
                                     });
                                 internalOnClipRemoved(position);

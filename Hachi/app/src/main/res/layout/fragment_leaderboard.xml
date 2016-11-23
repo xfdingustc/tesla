@@ -31,14 +31,25 @@
             >
 
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/toolbarColor"
-                app:elevation="@dimen/default_elevation"
-                app:layout_scrollFlags="scroll"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+                app:layout_scrollFlags="scroll">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:text="@string/leaderboard"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
+
+
+            </FrameLayout>
 
 
             <LinearLayout
@@ -337,7 +348,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:background="@color/windowBackgroundLight"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_mode"
