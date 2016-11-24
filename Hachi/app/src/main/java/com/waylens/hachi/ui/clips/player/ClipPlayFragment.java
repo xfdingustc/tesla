@@ -558,6 +558,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
     private void preparePlayer(boolean playWhenReady) {
+        if (isDetached()) {
+            return;
+        }
         if (mMediaPlayer == null) {
             String userAgent = Hachi.getUserAgent();
             mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mVdbUrl.url));
