@@ -61,7 +61,7 @@ public class MomentSearchActivity extends BaseActivity {
     private static final String EXTRA_QUERY = "extra_query";
     private MomentItemAdapter mVideoItemAdapter;
 
-    private SparseArray<Transition> transitions = new SparseArray<>();
+
 //    private SearchHistoryTable mHistoryDatabase;
 
 //    private String mQuery;
@@ -257,13 +257,6 @@ public class MomentSearchActivity extends BaseActivity {
 
 
 
-    private Transition getTransition(@TransitionRes int transitionId) {
-        android.transition.Transition transition = transitions.get(transitionId);
-        if (transition == null) {
-            transition = TransitionInflater.from(this).inflateTransition(transitionId);
-            transitions.put(transitionId, transition);
-        }
-        return transition;
-    }
+
 
 }

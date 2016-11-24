@@ -549,4 +549,6 @@
     <string name="delete_clip_confirm">Remove this clip?</string>
     <string name="rank">Your rank: No. %1$d</string>
     <string name="exporting">Exporting</string>
+    <string name="exit_exporting_confirm">Exporting is not finished. Are you sure?</string>
+    <string name="exit">exit</string>
 </resources>

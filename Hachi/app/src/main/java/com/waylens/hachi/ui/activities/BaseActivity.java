@@ -3,10 +3,14 @@ package com.waylens.hachi.ui.activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.TransitionRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.util.SparseArray;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -33,6 +37,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
 
     public Hachi thisApp;
+    private SparseArray<Transition> transitions = new SparseArray<>();
 
     protected RequestQueue mRequestQueue;
     protected VdtCamera mVdtCamera;
@@ -173,6 +178,15 @@ public class BaseActivity extends AppCompatActivity {
 
     public void hideStatusBar() {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
+
+    protected Transition getTransition(@TransitionRes int transitionId) {
+        android.transition.Transition transition = transitions.get(transitionId);
+        if (transition == null) {
+            transition = TransitionInflater.from(this).inflateTransition(transitionId);
+            transitions.put(transitionId, transition);
+        }
+        return transition;
     }
 
 
