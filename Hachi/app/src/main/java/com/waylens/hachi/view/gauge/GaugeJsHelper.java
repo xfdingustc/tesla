@@ -153,4 +153,8 @@ public class GaugeJsHelper {
         }
 
     }
+
+    public static String jsResizeMap() {
+        return "javascript:fixRenderingsByResizeMap()";
+    }
 }

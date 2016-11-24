@@ -70,7 +70,6 @@ public class GaugeListAdapter extends RecyclerView.Adapter<GaugeListAdapter.VH> 
         } else {
             holder.radioGroup.setVisibility(View.INVISIBLE);
         }
-        Logger.t(TAG).d("setChecked");
         holder.btnSwitch.setChecked(gaugeItem.isEnabled);
         holder.btnSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
