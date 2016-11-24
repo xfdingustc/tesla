@@ -44,8 +44,7 @@ public class GaugeSettingActivity extends BaseActivity {
     @BindView(R.id.gaugeView)
     GaugeView mGaugeView;
 
-    @BindView(R.id.test_cache)
-    ImageView ivTestCache;
+
 
     @OnClick(R.id.btnThemeOff)
     public void onBtnThemeOffClicked() {
@@ -64,11 +63,6 @@ public class GaugeSettingActivity extends BaseActivity {
         GaugeSettingManager.getManager().saveTheme("neo");
     }
 
-    @OnClick(R.id.btn_refresh)
-    public void onBtnRefreshClicked() {
-        Bitmap bitmap = BitmapUtils.getBitmapFromView(mGaugeView);
-        ivTestCache.setImageDrawable(new BitmapDrawable(bitmap));
-    }
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, GaugeSettingActivity.class);
