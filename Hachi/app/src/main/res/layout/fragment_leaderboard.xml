@@ -16,7 +16,6 @@
         android:elevation="@dimen/z_card">
 
 
-
         <LinearLayout
             android:id="@+id/header_view"
             android:layout_width="match_parent"
@@ -29,18 +28,55 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/toolbarColor"
-
                 app:layout_scrollFlags="scroll">
 
                 <TextView
+                    android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:text="@string/leaderboard"
-                    android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    android:textSize="20sp" />
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:visibility="gone"/>
+
+                <LinearLayout
+                    android:id="@+id/layout_your_rank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    >
+
+
+                    <ImageView
+                        android:id="@+id/imageView2"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/white_round"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_trophy"/>
+
+                    <TextView
+                        android:id="@+id/tv_your_rank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        tools:text="No. 46"/>
+
+
+                </LinearLayout>
 
 
             </FrameLayout>
@@ -111,17 +147,17 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="?attr/separateColor"
+                        android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:background="?attr/separateColor"/>
 
                     <TextView
                         android:id="@+id/secondRaceTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:layout_marginBottom="8dp"
                         android:textSize="12sp"
                         tools:text="0.47s"/>
 
@@ -183,17 +219,17 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="?attr/separateColor"
+                        android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:background="?attr/separateColor"/>
 
                     <TextView
                         android:id="@+id/firstRaceTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:layout_marginBottom="8dp"
                         android:textSize="12sp"
                         tools:text="0.37s"/>
 
@@ -255,17 +291,17 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="?attr/separateColor"
+                        android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
+                        android:background="?attr/separateColor"/>
 
                     <TextView
                         android:id="@+id/thirdRaceTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:layout_marginBottom="8dp"
                         android:textSize="12sp"
                         tools:text="0.57s"/>
 
@@ -277,7 +313,6 @@
                     android:layout_weight="1"/>
 
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -341,8 +376,8 @@
                 android:id="@+id/ll_filter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:background="@color/windowBackgroundLight"
+                android:orientation="vertical"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -507,7 +542,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 
 </FrameLayout>

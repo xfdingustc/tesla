@@ -224,6 +224,15 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.tvFilterTime)
     TextView tvFilterTime;
 
+    @BindView(R.id.title)
+    TextView title;
+
+    @BindView(R.id.layout_your_rank)
+    View yourRank;
+
+    @BindView(R.id.tv_your_rank)
+    TextView tvYourRank;
+
     @BindArray(R.array.race_mode)
     String[] raceModeList;
 
@@ -400,7 +409,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         }
 
         mLeaderBoardItemCount = 100;
-        Logger.t(TAG).d("mUpper" + getTimeGroupUpper() + "mLower" + getTimeGroupLower());
+//        Logger.t(TAG).d("mUpper" + getTimeGroupUpper() + "mLower" + getTimeGroupLower());
         HachiService.createHachiApiService().queryRaceRx(mode,
             queryStart, queryEnd, getTimeGroupUpper(), getTimeGroupLower(), mMaker, mModel, mLeaderBoardItemCount)
             .subscribeOn(Schedulers.io())
@@ -468,31 +477,22 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
                 rank = raceQueryResponse.userRankings.get(i).rank;
                 bestRankIndex = i;
             } else {
-                if (rank < raceQueryResponse.userRankings.get(i).rank) {
+                if (rank > raceQueryResponse.userRankings.get(i).rank) {
                     rank = raceQueryResponse.userRankings.get(i).rank;
                     bestRankIndex = i;
                 }
             }
         }
-        if (rank > 0 && bestRankIndex >= 0) {
-//            mMyTestLayout.setVisibility(View.VISIBLE);
-            initMyTestView(raceQueryResponse.userRankings.get(bestRankIndex));
-            String maker = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleMaker;
-            String model = raceQueryResponse.userRankings.get(bestRankIndex).vehicle.vehicleModel;
-            if (maker != null && model != null) {
-                myVehicleInfo = new VehicleInfo();
-                myVehicleInfo.vehicleMaker = maker;
-                myVehicleInfo.vehicleModel = model;
-            }
-        } else {
-            mMyTestLayout.setVisibility(View.GONE);
-        }
+        Logger.t(TAG).d("rank: " + rank + " bestRankIndex: " + bestRankIndex);
+
+        initMyRankView(rank, bestRankIndex);
         mRvLeaderboardList.setIsLoadingMore(false);
         mCurrentCursor += raceQueryResponse.leaderboard.size();
 
         mRvLeaderboardList.setEnableLoadMore(false);
         mAdapter.setHasMore(false);
     }
+
 
     private void clearTopThreeUserInfo(final HexagonView avatarView, TextView tvUserName, TextView vehicleInfo, TextView raceTime) {
         avatarView.setImageDrawable(null);
@@ -600,83 +600,15 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     }
 
 
-    private void initMyTestView(RaceQueryResponse.UserRankItem userRankItem) {
-//        final SessionManager sessionManager = SessionManager.getInstance();
-//        mMyAvatar.loadAvatar(sessionManager.getAvatarUrl(), sessionManager.getUserName());
-//        mMyName.setText(sessionManager.getUserName());
-//        if (userRankItem.vehicle.vehicleMaker != null) {
-//            mMyVehicleInfo.setText(userRankItem.vehicle.vehicleMaker + " " + userRankItem.vehicle.vehicleModel + " " + userRankItem.vehicle.vehicleYear);
-//        }
-//        final MomentInfo.MomentBasicInfo moment = userRankItem.moment;
-//        double raceTime = 0.0;
-//        switch (mRaceType) {
-//            case LeaderboardFragment.RACE_TYPE_30MPH:
-//                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
-//                    raceTime = (double) (moment.momentTimingInfo.t3_2) / 1000;
-//                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-//                    raceTime = (double) (moment.momentTimingInfo.t3_1) / 1000;
-//                }
-//                break;
-//            case LeaderboardFragment.RACE_TYPE_50KMH:
-//                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
-//                    raceTime = (double) (moment.momentTimingInfo.t4_2) / 1000;
-//                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-//                    raceTime = (double) (moment.momentTimingInfo.t4_1) / 1000;
-//                }
-//                break;
-//            case LeaderboardFragment.RACE_TYPE_60MPH:
-//                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
-//                    raceTime = (double) (moment.momentTimingInfo.t5_2) / 1000;
-//                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-//                    raceTime = (double) (moment.momentTimingInfo.t5_1) / 1000;
-//                }
-//                break;
-//            case LeaderboardFragment.RACE_TYPE_100KMH:
-//                if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_AUTO) {
-//                    raceTime = (double) (moment.momentTimingInfo.t6_2) / 1000;
-//                } else if (mLeaderBoardMode == LeaderboardFragment.TEST_MODE_COUNTDOWN) {
-//                    raceTime = (double) (moment.momentTimingInfo.t6_1) / 1000;
-//                }
-//                break;
-//            default:
-//                break;
-//        }
-//        NumberFormat formatter = new DecimalFormat("#0.00");
-//        mMyRaceTime.setText(String.format(getString(R.string.race_time), formatter.format(raceTime)));
-//        mMyRank.setText(String.valueOf(userRankItem.rank));
-//
-//        mMyAvatar.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!SessionManager.getInstance().isLoggedIn()) {
-//                    AuthorizeActivity.launch(getActivity());
-//                    return;
-//                }
-////                UserProfileActivity.launch(getActivity(), sessionManager.getUserId(), mMyAvatar);
-//
-//            }
-//        });
-//
-//        mMyName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!SessionManager.getInstance().isLoggedIn()) {
-//                    AuthorizeActivity.launch(getActivity());
-//                    return;
-//                }
-////                UserProfileActivity.launch(getActivity(), sessionManager.getUserId(), mMyAvatar);
-//
-//            }
-//        });
-//
-//        mMyLeaderBoardPlay.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                MomentActivity.launch(getActivity(), moment.id, moment.thumbnail, mMyLeaderBoardPlay);
-//            }
-//        });
-
-
+    private void initMyRankView(int rank, int bestRankIndex) {
+        if (rank > 0 && bestRankIndex >= 0) {
+            title.setVisibility(View.GONE);
+            yourRank.setVisibility(View.VISIBLE);
+            tvYourRank.setText(getString(R.string.rank, rank));
+        } else {
+            title.setVisibility(View.VISIBLE);
+            yourRank.setVisibility(View.GONE);
+        }
     }
 
 
