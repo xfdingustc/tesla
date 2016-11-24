@@ -38,6 +38,7 @@ public class GaugeView extends FrameLayout {
     private static final int PENDING_ACTION_MOMENT_SETTING = 0x1003;
     private static final int PENDING_ACTION_TIME_POINT = 0x1004;
     private static final int PENDING_ACTION_SHOW_DEFAULT_GAUGE = 0x1005;
+    private static final int PENDInG_ACTION_RESIZE_MAP = 0x1006;
 
     public static final int MODE_CAMERA = 0;
 
@@ -103,6 +104,10 @@ public class GaugeView extends FrameLayout {
                 case PENDING_ACTION_SHOW_DEFAULT_GAUGE:
                     mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
                     break;
+                case PENDInG_ACTION_RESIZE_MAP:
+                    mWebView.loadUrl(GaugeJsHelper.jsResizeMap());
+                    break;
+
                 default:
                     break;
             }
@@ -117,15 +122,11 @@ public class GaugeView extends FrameLayout {
         }
     }
 
-    public WebView getWebView() {
-        return mWebView;
-    }
 
     private void init(Context context) {
         if (isInEditMode()) {
             return;
         }
-        setDrawingCacheEnabled(true);
         mWebView = new WebView(context);
         final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addView(mWebView, params);
@@ -145,6 +146,7 @@ public class GaugeView extends FrameLayout {
                         }
                     });
                 setUnit();
+                mPendingActions.add(new PendingActionItem(PENDInG_ACTION_RESIZE_MAP, null));
                 RxBus.getDefault().post(new EventPendingActionAdded());
             }
         });
@@ -160,6 +162,8 @@ public class GaugeView extends FrameLayout {
             }
         };
     }
+
+
 
     public void setAdapter(GaugeViewAdapter adapter) {
         this.mAdapter = adapter;
@@ -259,6 +263,8 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl(GaugeJsHelper.jsUpdate());
 
     }
+
+
 
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
         mPendingActions.add(new PendingActionItem(PENDING_ACTION_MOMENT_SETTING, overlaySetting, timePoints));
