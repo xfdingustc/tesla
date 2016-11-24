@@ -119,8 +119,9 @@ public class TranscodingActivity extends BaseActivity {
         OptionView.setColorSuccess(R.color.white);
         OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
-        getToolbar().setTitle(R.string.transcoding);
+        getToolbar().setTitle(R.string.exporting);
         mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
+        mGaugeView.initGaugeViewBySetting();
         mGaugeView.showGauge(true, true);
 
         mDownloadView.startIntro();
