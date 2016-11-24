@@ -38,7 +38,7 @@ public class GaugeView extends FrameLayout {
     private static final int PENDING_ACTION_MOMENT_SETTING = 0x1003;
     private static final int PENDING_ACTION_TIME_POINT = 0x1004;
     private static final int PENDING_ACTION_SHOW_DEFAULT_GAUGE = 0x1005;
-    private static final int PENDInG_ACTION_RESIZE_MAP = 0x1006;
+    private static final int PENDING_ACTION_RESIZE_MAP = 0x1006;
 
     public static final int MODE_CAMERA = 0;
 
@@ -104,7 +104,7 @@ public class GaugeView extends FrameLayout {
                 case PENDING_ACTION_SHOW_DEFAULT_GAUGE:
                     mWebView.loadUrl(GaugeJsHelper.jsInitDefaultGauge());
                     break;
-                case PENDInG_ACTION_RESIZE_MAP:
+                case PENDING_ACTION_RESIZE_MAP:
                     mWebView.loadUrl(GaugeJsHelper.jsResizeMap());
                     break;
 
@@ -146,7 +146,7 @@ public class GaugeView extends FrameLayout {
                         }
                     });
                 setUnit();
-                mPendingActions.add(new PendingActionItem(PENDInG_ACTION_RESIZE_MAP, null));
+                mPendingActions.add(new PendingActionItem(PENDING_ACTION_RESIZE_MAP, null));
                 RxBus.getDefault().post(new EventPendingActionAdded());
             }
         });

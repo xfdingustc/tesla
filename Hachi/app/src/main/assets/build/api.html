@@ -247,6 +247,9 @@
     var getOverlayOption = hachi.gauge.getOverlayOption.bind(hachi.gauge);
     var fixRenderingsByResizeMap = function () {
         var BackgroundEl = document.getElementsByClassName('hack-className-for-renderings-changeBackground')
+        if(!BackgroundEl||!BackgroundEl.length){
+            setTimeout(fixRenderingsByResizeMap,80)
+        }
         var mapEl = document.getElementsByClassName('map-core')
         if (BackgroundEl && BackgroundEl[0]) {
             BackgroundEl[0].style.fill = 'rgb(77,69,90)'
