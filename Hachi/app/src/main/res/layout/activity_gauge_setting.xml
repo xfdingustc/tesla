@@ -29,28 +29,7 @@
     </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
 
-    <com.xfdingustc.far.FixedAspectRatioFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_below="@id/title"
-        android:background="@drawable/stroke_rect"
-        app:farfl_xratio="16dp"
-        app:farfl_yratio="9dp">
 
-        <ImageView
-            android:id="@+id/test_cache"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
-
-
-    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
-
-    <Button
-        android:id="@+id/btn_refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refresh"/>
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

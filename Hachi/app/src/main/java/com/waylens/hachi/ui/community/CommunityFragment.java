@@ -127,20 +127,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_moment, savedInstanceState);
-//        mFabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (SessionManager.getInstance().isLoggedIn()) {
-//                    mFabMenu.open(true);
-//                } else {
-//                    LoginActivity.launch(getActivity(), mFabMenu.getMenuIconView());
-//                }
-//            }
-//        });
-        setupSearchView();
         setupViewPager();
-//        mFabMenu.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.fab_scale_up));
-
         return view;
     }
 
@@ -149,9 +136,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mFabMenu.setClosedOnTouchOutside(true);
-
         mFabMenu.hideMenuButton(false);
-//        mFabMenu.showMenuButton(true);
     }
 
     @Override
@@ -180,48 +165,7 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
         }
     }
 
-    private void setupSearchView() {
-//        mHistoryDatabase = new SearchHistoryTable(getActivity());
-//        mHistoryDatabase.setHistorySize(5);
-//        mSearchView.setVersion(SearchView.VERSION_MENU_ITEM);
-//        mSearchView.setVersionMargins(SearchView.VERSION_MARGINS_MENU_ITEM);
-//        mSearchView.setHint(R.string.search_hint);
-//        mSearchView.setTextSize(16);
-//        mSearchView.setDivider(false);
-//        mSearchView.setVoice(true);
-//        mSearchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
-//        mSearchView.setShadowColor(ContextCompat.getColor(getActivity(), R.color.search_shadow_layout));
-//        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                mHistoryDatabase.addItem(new SearchItem(query));
-//                MomentSearchActivity.launch(getActivity(), query);
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-//
-//
-//        List<SearchItem> suggestionsList = new ArrayList<>();
-//
-//
-//        SearchAdapter searchAdapter = new SearchAdapter(getActivity(), suggestionsList);
-//        searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//
-//                TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
-//                String query = textView.getText().toString();
-////                    getData(query, position);
-//                MomentSearchActivity.launch(getActivity(), query);
-//            }
-//        });
-//        mSearchView.setAdapter(searchAdapter);
-    }
+
 
     @Override
     public void setupToolbar() {
@@ -243,8 +187,6 @@ public class CommunityFragment extends BaseFragment implements FragmentNavigator
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.search:
-//                        MomentSearchActivity.launch(getActivity());
-//                        mSearchView.open(true);
                         MomentSearchActivity.launch(getActivity(), getToolbar().findViewById(R.id.search));
                         return false;
                     case R.id.my_notification:

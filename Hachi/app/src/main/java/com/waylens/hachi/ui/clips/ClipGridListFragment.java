@@ -158,8 +158,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void onEventMenuItemSelected(MenuItemSelectEvent event) {
         switch (event.getMenuItemId()) {
             case R.id.menu_to_enhance:
+                Logger.t(TAG).d("menu item seleted");
                 if (mIsAddMore) {
                     toEnhance();
+                }
+                if (mIsToShare) {
+                    toShare();
                 }
                 break;
 
