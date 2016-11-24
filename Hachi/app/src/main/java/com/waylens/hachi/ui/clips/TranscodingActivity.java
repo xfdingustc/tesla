@@ -4,17 +4,20 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
@@ -55,6 +58,12 @@ public class TranscodingActivity extends BaseActivity {
     private static final String EXTRA_STREAM_INFO = "stream.info";
     private static final String EXTRA_STREAM_DOWNLOAD_INFO = "stream.download.info";
 
+    private static final int TRANS_STATE_ERROR = -1;
+    private static final int TRANS_STATE_LOAD_RAW_DATA = 0;
+    private static final int TRANS_STATE_DOWNLOAD_CLIP = 1;
+    private static final int TRANS_STATE_TRANCODING = 2;
+    private static final int TRANS_STATE_FINISHED = 3;
+
     private int mPlaylistId;
     private Clip.StreamInfo mStreamInfo;
     private ClipDownloadInfo.StreamDownloadInfo mStreamDownloadInfo;
@@ -67,6 +76,8 @@ public class TranscodingActivity extends BaseActivity {
 
     private OverlayProvider mOverlayProvider;
 
+    private int mState = TRANS_STATE_LOAD_RAW_DATA;
+
     public static void launch(Activity activity, int playListId, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
         Intent intent = new Intent(activity, TranscodingActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
@@ -74,6 +85,9 @@ public class TranscodingActivity extends BaseActivity {
         intent.putExtra(EXTRA_STREAM_DOWNLOAD_INFO, downloadInfo);
         activity.startActivity(intent);
     }
+
+    @BindView(R.id.container)
+    ViewGroup container;
 
 
     @BindView(R.id.gauge_view)
@@ -83,12 +97,12 @@ public class TranscodingActivity extends BaseActivity {
     @BindView(R.id.elastic_download_view)
     ElasticDownloadView mDownloadView;
 
-    @BindView(R.id.share_fab)
+    @BindView(R.id.fab)
     FloatingActionButton mShareFab;
 
-    @OnClick(R.id.share_fab)
+    @OnClick(R.id.fab)
     public void onShareFabClicked() {
-        Intent intent =  new Intent();
+        Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_STREAM, (Uri.fromFile(new File(mOutputFile))));
         intent.setType("video/mp4");
@@ -100,6 +114,28 @@ public class TranscodingActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mState != TRANS_STATE_FINISHED && mState != TRANS_STATE_ERROR) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .content(R.string.exit_exporting_confirm)
+                .positiveText(R.string.exit)
+                .negativeText(R.string.stay)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        if (mState == TRANS_STATE_DOWNLOAD_CLIP) {
+
+                        } else if (mState == TRANS_STATE_TRANCODING) {
+
+                        }
+                        TranscodingActivity.super.onBackPressed();
+                    }
+                }).show();
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -120,6 +156,12 @@ public class TranscodingActivity extends BaseActivity {
         OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
         getToolbar().setTitle(R.string.exporting);
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
         mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
         mGaugeView.initGaugeViewBySetting();
         mGaugeView.showGauge(true, true);
@@ -143,7 +185,6 @@ public class TranscodingActivity extends BaseActivity {
                     mAdapter.setRawDataLoader(mRawDataLoader);
                     mGaugeView.setAdapter(mAdapter);
                     downloadClipEsData();
-
                 }
             });
 
@@ -151,6 +192,7 @@ public class TranscodingActivity extends BaseActivity {
     }
 
     private void downloadClipEsData() {
+        mState = TRANS_STATE_DOWNLOAD_CLIP;
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo);
         mDownloadFile = FileUtils.genDownloadFileName(mStreamDownloadInfo.clipDate, mStreamDownloadInfo.clipTimeMs) + ".mp4";
         downloadHelper.downloadClipRx(mDownloadFile)
@@ -165,8 +207,6 @@ public class TranscodingActivity extends BaseActivity {
                 @Override
                 public void onError(Throwable e) {
                     onTranscodeError(e);
-
-
                 }
 
                 @Override
@@ -179,6 +219,7 @@ public class TranscodingActivity extends BaseActivity {
 
 
     private void startTranscoding() {
+        mState = TRANS_STATE_TRANCODING;
         Uri fileUri = Uri.fromFile(new File(mDownloadFile));
         ContentResolver resolver = getContentResolver();
         final ParcelFileDescriptor parcelFileDescriptor;
@@ -199,10 +240,7 @@ public class TranscodingActivity extends BaseActivity {
             .subscribe(new Subscriber<MediaTranscoder.TranscodeProgress>() {
                 @Override
                 public void onCompleted() {
-
-//
                     onTranscodeFinished();
-
                 }
 
                 @Override
@@ -219,8 +257,10 @@ public class TranscodingActivity extends BaseActivity {
     }
 
     private void onTranscodeFinished() {
+        mState = TRANS_STATE_FINISHED;
         mDownloadView.success();
         deleteTempFile();
+        TransitionManager.beginDelayedTransition(container, getTransition(R.transition.trancode_show_fab));
         mShareFab.setVisibility(View.VISIBLE);
         getToolbar().inflateMenu(R.menu.menu_transcode);
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -236,11 +276,13 @@ public class TranscodingActivity extends BaseActivity {
                 return true;
             }
         });
+
     }
 
     private void onTranscodeError(Throwable e) {
         mDownloadView.fail();
         deleteTempFile();
+        mState = TRANS_STATE_ERROR;
     }
 
     private void deleteTempFile() {
@@ -261,7 +303,7 @@ public class TranscodingActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    int currentPlayTime = (int)(pts / 1000000);
+                    int currentPlayTime = (int) (pts / 1000000);
                     mGaugeView.setPlayTime(currentPlayTime);
                     ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPlayTime);
                     mAdapter.setClipSetPos(clipSetPos);
@@ -271,7 +313,6 @@ public class TranscodingActivity extends BaseActivity {
             return BitmapUtils.getBitmapFromView(mGaugeView);
         }
     }
-
 
 
 }
