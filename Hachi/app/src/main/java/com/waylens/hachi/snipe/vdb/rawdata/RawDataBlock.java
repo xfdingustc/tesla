@@ -1,7 +1,6 @@
 package com.waylens.hachi.snipe.vdb.rawdata;
 
 
-
 import com.waylens.hachi.snipe.vdb.Clip;
 
 import java.util.ArrayList;
@@ -67,9 +66,9 @@ public class RawDataBlock {
 
     public RawDataItem getRawDataItemByTime(long timeMs) {
         int low = 0;
-        int high = mRawDataItems.size() -1;
+        int high = mRawDataItems.size() - 1;
         int mid, res = -1;
-        if (mRawDataItems.get(low).getPtsMs() > timeMs || mRawDataItems.get(high).getPtsMs() < timeMs ) {
+        if (mRawDataItems.get(low).getPtsMs() > timeMs || mRawDataItems.get(high).getPtsMs() < timeMs) {
             return null;
         }
         while (low < high) {
@@ -77,7 +76,7 @@ public class RawDataBlock {
             if (mRawDataItems.get(mid).getPtsMs() == timeMs) {
                 res = mid;
                 break;
-            } else if (mRawDataItems.get(mid).getPtsMs() < timeMs){
+            } else if (mRawDataItems.get(mid).getPtsMs() < timeMs) {
                 low = mid + 1;
             } else {
                 high = mid - 1;
@@ -90,7 +89,7 @@ public class RawDataBlock {
             updateItem = new RawDataItem(mRawDataItems.get(low));
         }
 
-        if ( Math.abs(updateItem.getPtsMs() - timeMs) <= 5000 ) {
+        if (Math.abs(updateItem.getPtsMs() - timeMs) <= 5000) {
             return updateItem;
         } else {
             return null;

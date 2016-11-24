@@ -1,5 +1,6 @@
 package com.waylens.hachi.view.gauge;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.IioData;
 import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 
 public class GaugeJsHelper {
+    private static final String TAG = GaugeJsHelper.class.getSimpleName();
     private static int mIioPressure;
 
     public static String jsInitDefaultGauge() {
@@ -89,8 +91,8 @@ public class GaugeJsHelper {
                     }*/
                         //Logger.t(TAG).d("GPS data");
                         GpsData gpsData = (GpsData) item.data;
-                        state.put("lng", gpsData.coord.lng);
-                        state.put("lat", gpsData.coord.lat);
+                        state.put("lng", gpsData.coord.lng_orig);
+                        state.put("lat", gpsData.coord.lat_orig);
                         state.put("gpsSpeed", gpsData.speed);
                         break;
                     case RawDataItem.DATA_TYPE_OBD:
