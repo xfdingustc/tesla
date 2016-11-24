@@ -2,14 +2,12 @@ package com.waylens.hachi.ui.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.waylens.hachi.R;
@@ -63,8 +61,8 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
     @BindView(R.id.tvNotification)
     ImageButton ivNotification;
 
-    @BindView(R.id.card_exported)
-    CardView cardExported;
+    @BindView(R.id.exported_grid)
+    ViewGroup gridExported;
 
 
     @BindView(R.id.user_name)
@@ -151,9 +149,9 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
         EventBus.getDefault().register(this);
         EventBus.getDefault().register(mExportedAdapter);
         if (mExportedAdapter.getItemCount() == 0) {
-            cardExported.setVisibility(View.GONE);
+            gridExported.setVisibility(View.GONE);
         } else {
-            cardExported.setVisibility(View.VISIBLE);
+            gridExported.setVisibility(View.VISIBLE);
         }
     }
 
