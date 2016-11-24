@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -14,14 +13,13 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:elevation="2dp"
+                android:background="@color/white"
+                android:layout_marginBottom="8dp"
                 android:orientation="horizontal"
                 android:padding="16dp">
 
@@ -36,8 +34,8 @@
                     android:id="@+id/user_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
                     android:textSize="24sp"
                     tools:text="xfding"/>
 
@@ -45,337 +43,303 @@
                     android:id="@+id/tvNotification"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:padding="12dp"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_notifications_full"
                     android:layout_gravity="center_vertical"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_notifications_full"
                     android:tint="@color/material_red_400"/>
 
 
             </LinearLayout>
 
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/card_exported"
+            <LinearLayout
+                android:id="@+id/exported_grid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="2dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/ll_exported_video"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_file_download"
+                        android:tint="@color/material_green_500"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_weight="1"
+                        android:text="@string/my_videos"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:text="@string/more"/>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/exported_videos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"></android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
                 >
 
+
                 <LinearLayout
+                    android:id="@+id/ll_uploading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_cloud_upload"
+                        android:tint="@color/material_cyan_300"/>
 
-                    <LinearLayout
-                        android:id="@+id/ll_exported_video"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        >
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/uploading"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
 
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_file_download"
-                            android:layout_gravity="center_vertical"
-                            android:tint="@color/material_green_500"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/my_videos"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/more"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:layout_marginRight="16dp"/>
-
-                    </LinearLayout>
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/exported_videos"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="6dp"
-                        android:paddingRight="6dp"></android.support.v7.widget.RecyclerView>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
 
 
-            <android.support.v7.widget.CardView
+                <LinearLayout
+                    android:id="@+id/ll_my_moment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_movie_filter"
+                        android:tint="@color/material_orange_300"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/my_moments"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/ll_waylens_cloud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_cloud"
+                        android:tint="@color/material_cyan_300"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/waylens_cloud"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/ll_camera_setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_camera"
+                        android:tint="@color/style_color_accent"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/camera_setting"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_setup_camera"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_add_camera"
+                        android:tint="@color/style_color_accent"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/add_new_camera"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="2dp"
-                android:layout_marginTop="8dp"
-                >
+                android:background="@color/white"
+                android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/ll_setting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/cardViewBgColor"
-                    android:orientation="vertical"
-                   >
+                    android:orientation="horizontal">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_settings"
+                        android:tint="@color/material_grey_500"/>
 
-                    <LinearLayout
-                        android:id="@+id/ll_uploading"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_cloud_upload"
-                            android:tint="@color/material_cyan_300"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/uploading"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
-
-                    <LinearLayout
-                        android:id="@+id/ll_my_moment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_movie_filter"
-                            android:tint="@color/material_orange_300"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/my_moments"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
-
-
-                    <LinearLayout
-                        android:id="@+id/ll_waylens_cloud"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_cloud"
-                            android:tint="@color/material_cyan_300"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/waylens_cloud"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/settings"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardCornerRadius="2dp">
-
-
                 <LinearLayout
+                    android:id="@+id/ll_support"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/cardViewBgColor"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
-                    <LinearLayout
-                        android:id="@+id/ll_camera_setting"
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_settings_help"
+                        android:tint="@color/material_grey_600"/>
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_camera"
-                            android:tint="@color/style_color_accent"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/camera_setting"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_setup_camera"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_add_camera"
-                            android:tint="@color/style_color_accent"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/add_new_camera"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="Help"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
-
-
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardCornerRadius="2dp">
-
-
                 <LinearLayout
+                    android:id="@+id/ll_about"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="?attr/cardViewBgColor"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:id="@+id/ll_setting"
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_info_outline"
+                        android:tint="@color/material_brown_300"/>
+
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_settings"
-                            android:tint="@color/material_grey_500"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/settings"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_support"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:visibility="gone">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_settings_help"
-                            android:tint="@color/material_grey_600"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="Help"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/ll_about"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_margin="16dp"
-                            android:src="@drawable/ic_info_outline"
-                            android:tint="@color/material_brown_300"/>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="16dp"
-                            android:text="@string/about"
-                            android:textColor="?attr/appTextColorPrimary"
-                            android:textSize="18sp"/>
-
-                    </LinearLayout>
-
+                        android:layout_centerVertical="true"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="@string/about"
+                        android:textColor="?attr/appTextColorPrimary"
+                        android:textSize="18sp"/>
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

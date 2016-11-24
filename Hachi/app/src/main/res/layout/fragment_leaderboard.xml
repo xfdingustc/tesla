@@ -26,7 +26,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="48dp"
                 android:background="?attr/toolbarColor"
                 app:layout_scrollFlags="scroll">
 
@@ -145,17 +145,18 @@
                         tools:text="Subaru WRX 2015"/>
 
                     <View
-                        android:layout_width="match_parent"
+                        android:layout_width="56dp"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_gravity="center_horizontal"
                         android:background="?attr/separateColor"/>
 
                     <TextView
                         android:id="@+id/secondRaceTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -217,17 +218,18 @@
                         tools:text="Audi S3 2016"/>
 
                     <View
-                        android:layout_width="match_parent"
+                        android:layout_width="56dp"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
                         android:background="?attr/separateColor"/>
 
                     <TextView
                         android:id="@+id/firstRaceTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="12sp"
@@ -289,17 +291,18 @@
                         tools:text="Audi S3 2016"/>
 
                     <View
-                        android:layout_width="match_parent"
+                        android:layout_width="56dp"
                         android:layout_height="1dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_gravity="center_horizontal"
                         android:background="?attr/separateColor"/>
 
                     <TextView
                         android:id="@+id/thirdRaceTime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="4dp"
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="12sp"
