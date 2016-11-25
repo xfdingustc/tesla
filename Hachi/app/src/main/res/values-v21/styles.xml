@@ -164,6 +164,15 @@
 
     </style>
 
+    <style name="LightTheme.Transcode">
+        <item name="android:statusBarColor">@color/light_immersive_bars</item>
+    </style>
+
+    <style name="LightTheme.Finished">
+        <item name="android:windowEnterTransition">@transition/finish_enter</item>
+        <item name="android:windowReturnTransition">@transition/finish_exit</item>
+    </style>
+
     <style name="LightTheme.Translucent.Enhance">
         <item name="android:statusBarColor">#1D1D1D</item>
 

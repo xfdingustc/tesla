@@ -114,8 +114,8 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.manualsetup.StartupActivity"
-            android:theme="@style/LightTheme.Translucent.Startup"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/LightTheme.Translucent.Startup"/>
 
         <activity
             android:name=".ui.manualsetup.ScanQrCodeActivity"
@@ -185,9 +185,9 @@
 
         <activity
             android:name=".ui.clips.share.ShareActivity"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"/>
 
         <activity
             android:name=".ui.settings.myvideo.MyMomentActivity"
@@ -248,8 +248,15 @@
             android:name=".ui.settings.GaugeSettingActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ui.clips.TranscodingActivity"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.clips.TranscodingActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightTheme.Transcode"/>
+        <activity
+            android:name=".ui.clips.FinishedActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightTheme.Finished"/>
 
         <activity
             android:name=".ui.settings.WaylensCloudActivity"
