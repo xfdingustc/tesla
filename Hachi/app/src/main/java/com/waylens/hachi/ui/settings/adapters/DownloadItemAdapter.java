@@ -121,6 +121,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         videoItemViewHolder.btnMore.setVisibility(View.GONE);
         videoItemViewHolder.description.setText(mActivity.getString(R.string.exported, String.valueOf(job.getExportProgress())));
         videoItemViewHolder.imageMoment.setVisibility(View.GONE);
+        videoItemViewHolder.btnShare.setVisibility(View.GONE);
     }
 
     private void onBindDownloadedViewHolder(RecyclerView.ViewHolder holder, final int position) {
@@ -166,7 +167,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                         oneDownloadedFile.delete();
                                         mDownloadedFileList = FileUtils.getExportedFileList();
-                                        notifyDataSetChanged();
+                                        notifyItemRemoved(viewHolder.getAdapterPosition());
                                     }
                                 });
 
@@ -179,6 +180,17 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         });
         viewHolder.imageMoment.setVisibility(View.GONE);
+        viewHolder.btnShare.setVisibility(View.VISIBLE);
+        viewHolder.btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_STREAM, (Uri.fromFile(oneDownloadedFile)));
+                intent.setType("video/mp4");
+                mActivity.startActivity(Intent.createChooser(intent, mActivity.getResources().getText(R.string.share)));
+            }
+        });
     }
 
 
@@ -210,6 +222,9 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @BindView(R.id.btn_more)
         ImageButton btnMore;
+
+        @BindView(R.id.btn_share)
+        ImageButton btnShare;
 
         @BindView(R.id.image_moment)
         ImageView imageMoment;

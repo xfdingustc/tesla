@@ -40,7 +40,6 @@
                 tools:progress="50"/>
 
 
-
             <TextView
                 android:id="@+id/video_duration"
                 android:layout_width="wrap_content"
@@ -59,8 +58,8 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="12dp"
                 android:alpha="0.8"
-                android:tint="@android:color/white"
-                android:src="@drawable/ic_landscape"/>
+                android:src="@drawable/ic_landscape"
+                android:tint="@android:color/white"/>
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
@@ -73,7 +72,7 @@
                 android:id="@+id/moment_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="40dp"
+                android:layout_marginRight="72dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="?attr/appTextColorPrimary"
@@ -98,14 +97,30 @@
                 android:textColor="?attr/appTextColorSecondary"
                 tools:text="4 weeks ago * 4 Views"/>
 
+
             <ImageButton
                 android:id="@+id/btn_more"
                 style="@style/SelectableRippleButton"
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:paddingRight="8dp"
                 android:paddingBottom="8dp"
-                android:src="@drawable/ic_more"                />
+                android:paddingLeft="4dp"
+                android:src="@drawable/ic_more"/>
+
+            <ImageButton
+                android:id="@+id/btn_share"
+                style="@style/SelectableRippleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="4dp"
+                android:layout_toLeftOf="@id/btn_more"
+                android:src="@drawable/ic_share_grey"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
         </RelativeLayout>
 
