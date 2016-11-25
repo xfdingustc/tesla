@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/toolbar_default"/>
+
+        <com.xfdingustc.far.FixedAspectRatioFrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#e5e5e5"
+            app:farfl_xratio="16dp"
+            app:farfl_yratio="9dp">
+
+            <ImageView
+                android:id="@+id/clip_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_circle_outline_black_24dp"
+                android:tint="@color/white"/>
+
+        </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+
+        <TextView
+            android:id="@+id/clip_title"
+            style="@style/HachiTextViewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            tools:text="Momemnt Title"/>
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        style="@style/RemixMenuButtonsStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="32dp"
+        android:src="@drawable/ic_share"
+        tools:visibility="visible"/>
+
+</FrameLayout>

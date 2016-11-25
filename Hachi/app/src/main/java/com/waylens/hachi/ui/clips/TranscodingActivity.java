@@ -15,6 +15,7 @@ import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -86,6 +87,9 @@ public class TranscodingActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
+    @BindView(R.id.export_status)
+    TextView exportStatus;
+
     @BindView(R.id.container)
     ViewGroup container;
 
@@ -97,17 +101,12 @@ public class TranscodingActivity extends BaseActivity {
     @BindView(R.id.elastic_download_view)
     ElasticDownloadView mDownloadView;
 
-    @BindView(R.id.fab)
-    FloatingActionButton mShareFab;
-
-    @OnClick(R.id.fab)
-    public void onShareFabClicked() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, (Uri.fromFile(new File(mOutputFile))));
-        intent.setType("video/mp4");
-        startActivity(Intent.createChooser(intent, getResources().getText(R.string.share)));
+    @OnClick(R.id.btn_close)
+    public void onBtnCloseClicked() {
+        onBackPressed();
     }
+
+
 
 
     @Override
@@ -134,8 +133,10 @@ public class TranscodingActivity extends BaseActivity {
                         TranscodingActivity.super.onBackPressed();
                     }
                 }).show();
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
+
     }
 
     @Override
@@ -155,13 +156,13 @@ public class TranscodingActivity extends BaseActivity {
         OptionView.setColorSuccess(R.color.white);
         OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
-        getToolbar().setTitle(R.string.exporting);
-        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+//        getToolbar().setTitle(R.string.exporting);
+//        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                onBackPressed();
+//            }
+//        });
         mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
         mGaugeView.initGaugeViewBySetting();
         mGaugeView.showGauge(true, true);
@@ -193,6 +194,7 @@ public class TranscodingActivity extends BaseActivity {
 
     private void downloadClipEsData() {
         mState = TRANS_STATE_DOWNLOAD_CLIP;
+        exportStatus.setText(R.string.exporting);
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mStreamDownloadInfo);
         mDownloadFile = FileUtils.genDownloadFileName(mStreamDownloadInfo.clipDate, mStreamDownloadInfo.clipTimeMs) + ".mp4";
         downloadHelper.downloadClipRx(mDownloadFile)
@@ -220,6 +222,7 @@ public class TranscodingActivity extends BaseActivity {
 
     private void startTranscoding() {
         mState = TRANS_STATE_TRANCODING;
+        exportStatus.setText(R.string.transcoding);
         Uri fileUri = Uri.fromFile(new File(mDownloadFile));
         ContentResolver resolver = getContentResolver();
         final ParcelFileDescriptor parcelFileDescriptor;
@@ -260,22 +263,23 @@ public class TranscodingActivity extends BaseActivity {
         mState = TRANS_STATE_FINISHED;
         mDownloadView.success();
         deleteTempFile();
-        TransitionManager.beginDelayedTransition(container, getTransition(R.transition.trancode_show_fab));
-        mShareFab.setVisibility(View.VISIBLE);
-        getToolbar().inflateMenu(R.menu.menu_transcode);
-        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.preview:
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(new File(mOutputFile)), "video/mp4");
-                        startActivity(intent);
-                        break;
-                }
-                return true;
-            }
-        });
+//        TransitionManager.beginDelayedTransition(container, getTransition(R.transition.trancode_show_fab));
+//        mShareFab.setVisibility(View.VISIBLE);
+//        getToolbar().inflateMenu(R.menu.menu_transcode);
+//        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.preview:
+//                        Intent intent = new Intent(Intent.ACTION_VIEW);
+//                        intent.setDataAndType(Uri.fromFile(new File(mOutputFile)), "video/mp4");
+//                        startActivity(intent);
+//                        break;
+//                }
+//                return true;
+//            }
+//        });
+        FinishedActivity.launch(this, mOutputFile);
 
     }
 
