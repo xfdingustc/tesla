@@ -179,7 +179,7 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
             llCameraSetting.setVisibility(View.GONE);
         }
 
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 4);
         rvExportedVideos.setLayoutManager(layoutManager);
         mExportedAdapter = new SimpleExportedItemAdapter(getActivity());
         rvExportedVideos.setAdapter(mExportedAdapter);
