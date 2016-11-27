@@ -48,11 +48,11 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
-import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+import com.waylens.hachi.view.gauge.GaugeView;
 import com.xfdingustc.mjpegview.library.MjpegView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -435,9 +435,6 @@ public class LiveViewActivity extends BaseActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.cameraInfo:
-                        toggleInfoView();
-                        break;
                     case R.id.cameraSetting:
                         LiveViewSettingActivity.launch(LiveViewActivity.this);
                         break;
@@ -561,7 +558,7 @@ public class LiveViewActivity extends BaseActivity {
             });
             getToolbar().setTitle("");
             mCameraSpinner.setVisibility(View.VISIBLE);
-        } else if(mVdtCameraManager.getConnectedCameras().size() == 1){
+        } else if (mVdtCameraManager.getConnectedCameras().size() == 1) {
             if (mVdtCamera.getAddress() != mVdtCameraManager.getCurrentCamera().getAddress()) {
                 changeCurrentCamera(0);
             }
@@ -1034,19 +1031,6 @@ public class LiveViewActivity extends BaseActivity {
         }
     }
 
-    private void toggleInfoView() {
-
-        int visibility = mInfoView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-        mInfoView.setVisibility(visibility);
-
-        if (visibility == View.VISIBLE) {
-            mPull.setVisibility(visibility);
-            updateCameraInfoPanel();
-        } else {
-            mDetailInfoPanel.setVisibility(visibility);
-        }
-
-    }
 
     private void updateCameraInfoPanel() {
         if (mInfoView.getVisibility() != View.VISIBLE) {
