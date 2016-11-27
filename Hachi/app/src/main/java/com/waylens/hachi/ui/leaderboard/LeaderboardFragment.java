@@ -20,8 +20,6 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -49,7 +47,6 @@ import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.AvatarHelper;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.SettingHelper;
-import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.text.DecimalFormat;
@@ -110,7 +107,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private int mLeaderBoardItemCount;
 
 
-
+    private Transition mFilterResultTransition;
     private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
     private String headers[] = {"mode", "type", "All"};
@@ -233,6 +230,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.tv_your_rank)
     TextView tvYourRank;
 
+    @BindView(R.id.ll_filter_result)
+    View llFilterResult;
+
     @BindArray(R.array.race_mode)
     String[] raceModeList;
 
@@ -252,13 +252,11 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @OnClick(R.id.ll_filter_result)
     public void onllFilterClicked() {
         if (llFilter.getVisibility() != View.VISIBLE) {
-            TransitionManager.beginDelayedTransition(rootContainer,
-                getTransition(R.transition.auto));
+            TransitionManager.beginDelayedTransition(rootContainer, mFilterResultTransition);
             llFilter.setVisibility(View.VISIBLE);
             btnDropDown.setRotation(180);
         } else {
-            TransitionManager.beginDelayedTransition(rootContainer,
-                getTransition(R.transition.auto));
+            TransitionManager.beginDelayedTransition(rootContainer, mFilterResultTransition);
             llFilter.setVisibility(View.GONE);
             btnDropDown.setRotation(0);
 
@@ -310,6 +308,39 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mMakerModelList = new ArrayList<>();
+
+        mFilterResultTransition = getTransition(R.transition.auto);
+        mFilterResultTransition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                llFilterResult.setOnClickListener(null);
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                llFilterResult.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onllFilterClicked();
+                    }
+                });
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
 
         return view;
     }
@@ -651,9 +682,8 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     }
 
 
-
     private Transition getTransition(@TransitionRes int transitionId) {
-        android.transition.Transition transition = transitions.get(transitionId);
+        Transition transition = transitions.get(transitionId);
         if (transition == null) {
             transition = TransitionInflater.from(getActivity()).inflateTransition(transitionId);
             transitions.put(transitionId, transition);
