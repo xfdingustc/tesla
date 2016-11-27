@@ -102,4 +102,6 @@
     <color name="bb_darkBackgroundColor">#212121</color>
     <color name="bb_tabletRightBorderDark">#505050</color>
 
+    <color name="placeholder_bg_color">#e5e5e5</color>
+
 </resources>
