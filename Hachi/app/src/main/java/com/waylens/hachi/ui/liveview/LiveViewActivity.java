@@ -15,6 +15,7 @@ import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -47,7 +48,6 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
-import com.waylens.hachi.ui.settings.CameraSettingActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
@@ -96,6 +96,19 @@ public class LiveViewActivity extends BaseActivity {
 
     private int mFabStopSrc;
 
+    private View mDetailInfoPanel;
+    private ImageView mWifiMode;
+    private TextView mWifiModeDescription;
+    private TextView mHighlightSpace;
+    private TextView mLoopRecordSpace;
+    private TextView mRemoteStatus;
+    private TextView mObdStatus;
+    private TextView tvGpsStatus;
+    private ImageView mDetailRemote;
+    private ImageView mBtnPush;
+    private ImageView ivDetailGps;
+    private ImageView mDetailObd;
+
     @BindView(R.id.camera_preview)
     MjpegView mLiveView;
 
@@ -135,32 +148,17 @@ public class LiveViewActivity extends BaseActivity {
     @BindView(R.id.remote_ctrl)
     ImageView mRemoteCtrl;
 
-    @BindView(R.id.detail_remote)
-    ImageView mDetailRemote;
-
-    @BindView(R.id.obd)
-    ImageView mObd;
-
     @BindView(R.id.gpsStatus)
     ImageView ivGpsStatus;
 
-    @BindView(R.id.detail_gps)
-    ImageView ivDetailGps;
-
-    @BindView(R.id.detail_obd)
-    ImageView mDetailObd;
+    @BindView(R.id.obd)
+    ImageView mObd;
 
     @BindView(R.id.storageView)
     AnimationProgressBar mStorageView;
 
     @BindView(R.id.recordDot)
     ImageView mRecordDot;
-
-    @BindView(R.id.wifiMode)
-    ImageView mWifiMode;
-
-    @BindView(R.id.wifi_mode_description)
-    TextView mWifiModeDescription;
 
     @BindView(R.id.ivBatterStatus)
     ImageView mIvBatterStatus;
@@ -204,26 +202,10 @@ public class LiveViewActivity extends BaseActivity {
     @BindView(R.id.pull)
     ImageView mPull;
 
-    @BindView(R.id.push)
-    ImageView mPush;
 
-    @BindView(R.id.detail_info_panel)
-    View mDetailInfoPanel;
 
-    @BindView(R.id.highlight_space)
-    TextView mHighlightSpace;
-
-    @BindView(R.id.loop_record_space)
-    TextView mLoopRecordSpace;
-
-    @BindView(R.id.remote_ctrl_status)
-    TextView mRemoteStatus;
-
-    @BindView(R.id.obd_ctrl_status)
-    TextView mObdStatus;
-
-    @BindView(R.id.gps_status)
-    TextView tvGpsStatus;
+    @BindView(R.id.viewstub_detailed_info)
+    ViewStub detailedInfo;
 
     @BindView(R.id.shutter_panel)
     LinearLayout shutterPanel;
@@ -240,15 +222,17 @@ public class LiveViewActivity extends BaseActivity {
 
     @OnClick(R.id.pull)
     public void onPullClicked() {
+        inflateDetailedPanel();
         mDetailInfoPanel.setVisibility(View.VISIBLE);
         mPull.setVisibility(View.GONE);
     }
 
-    @OnClick(R.id.push)
-    public void onPushClicked() {
-        mDetailInfoPanel.setVisibility(View.GONE);
-        mPull.setVisibility(View.VISIBLE);
-    }
+
+//    @OnClick(R.id.push)
+//    public void onPushClicked() {
+//        mDetailInfoPanel.setVisibility(View.GONE);
+//        mPull.setVisibility(View.VISIBLE);
+//    }
 
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
@@ -613,6 +597,7 @@ public class LiveViewActivity extends BaseActivity {
     }
 
     private void updateGpsStatus(List<RawDataItem> itemList) {
+        inflateDetailedPanel();
         for (RawDataItem item : itemList) {
             if (item.getType() == RawDataItem.DATA_TYPE_GPS) {
                 ivGpsStatus.setAlpha(1.0f);
@@ -837,6 +822,7 @@ public class LiveViewActivity extends BaseActivity {
                     mStorageView.setSecondaryProgress((int) (spaceInfo.total / (1024 * 1024)));
                     mTvSpaceLeft.setText(StringUtils.getSpaceString(spaceInfo.getLoopedSpace()) + " " + getString(R.string.ready_to_record));
 
+                    inflateDetailedPanel();
                     mHighlightSpace.setText(StringUtils.getSpaceString(spaceInfo.marked));
                     mLoopRecordSpace.setText(StringUtils.getSpaceString(spaceInfo.getLoopedSpace()));
                     Logger.t(TAG).d(spaceInfo.total - spaceInfo.used);
@@ -1050,6 +1036,7 @@ public class LiveViewActivity extends BaseActivity {
         // update Wifi info:
         //WifiState wifiState = mVdtCamera.getWifiStates();
 //        Logger.t(TAG).d("WifiMode: " + mVdtCamera.getWifiMode());
+        inflateDetailedPanel();
         int wifiMode = mVdtCamera.getWifiMode();
         if (wifiMode == VdtCamera.WIFI_MODE_AP) {
             mWifiMode.setImageResource(R.drawable.rec_info_camera_mode_ap);
@@ -1060,9 +1047,37 @@ public class LiveViewActivity extends BaseActivity {
         }
     }
 
+
+    private void inflateDetailedPanel() {
+        if (mDetailInfoPanel == null) {
+            View view = detailedInfo.inflate();
+            mDetailInfoPanel = view.findViewById(R.id.detail_info_panel);
+            mHighlightSpace = (TextView) view.findViewById(R.id.highlight_space);
+            mLoopRecordSpace = (TextView) view.findViewById(R.id.loop_record_space);
+            mRemoteStatus = (TextView) view.findViewById(R.id.remote_ctrl_status);
+            mObdStatus = (TextView) view.findViewById(R.id.obd_ctrl_status);
+            tvGpsStatus = (TextView) view.findViewById(R.id.gps_status);
+            mWifiMode = (ImageView) view.findViewById(R.id.wifiMode);
+            mWifiModeDescription = (TextView) view.findViewById(R.id.wifi_mode_description);
+            mDetailRemote = (ImageView) view.findViewById(R.id.detail_remote);
+            mObd = (ImageView) view.findViewById(R.id.detail_obd);
+            ivDetailGps = (ImageView) view.findViewById(R.id.detail_gps);
+            mBtnPush = (ImageView) view.findViewById(R.id.push);
+            mDetailObd = (ImageView) view.findViewById(R.id.detail_obd);
+            mBtnPush.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mDetailInfoPanel.setVisibility(View.GONE);
+                    mPull.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+    }
+
     private void updateBtDeviceState() {
         BtDevice obdState = mVdtCamera.getObdDevice();
         BtDevice remoteCtrState = mVdtCamera.getRemoteCtrlDevice();
+        inflateDetailedPanel();
 
         if (obdState.getState() != BtDevice.BT_DEVICE_STATE_ON) {
             mObd.setAlpha(0.2f);

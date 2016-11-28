@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/detail_info_panel"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/infoPanel"
+    android:background="@color/windowBackgroundDark"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:visibility="gone"
+    tools:visibility="visible">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp">
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:background="@color/style_color_accent"></View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="@string/highlights"
+            android:textColor="@color/app_text_color_primary"/>
+
+        <TextView
+            android:id="@+id/highlight_space"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_text_color_primary"
+            tools:text="12.1GB"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp">
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:background="@color/second_progress_color"></View>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Loop Recording Space"
+            android:textColor="@color/app_text_color_primary"/>
+
+        <TextView
+            android:id="@+id/loop_record_space"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_text_color_primary"
+            tools:text="3.9GB"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp">
+
+        <ImageView
+            android:id="@+id/detail_remote"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/rec_info_remote_control_on"></ImageView>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="Remote Control"
+            android:textColor="@color/app_text_color_primary"/>
+
+        <TextView
+            android:id="@+id/remote_ctrl_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_text_color_primary"
+            tools:text="ON"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp">
+
+        <ImageView
+            android:id="@+id/detail_obd"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/rec_info_obd_on"></ImageView>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="OBD"
+            android:textColor="@color/app_text_color_primary"/>
+
+        <TextView
+            android:id="@+id/obd_ctrl_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_text_color_primary"
+            tools:text="ON"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp">
+
+        <ImageView
+            android:id="@+id/detail_gps"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:src="@drawable/ic_gps_fixed"
+            android:tint="@color/app_text_color_primary"></ImageView>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="GPS"
+            android:textColor="@color/app_text_color_primary"/>
+
+        <TextView
+            android:id="@+id/gps_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/app_text_color_primary"
+            tools:text="ON"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/wifiMode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:src="@drawable/rec_info_camera_mode_ap"/>
+
+    <TextView
+        android:id="@+id/wifi_mode_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:paddingTop="12dp"
+        android:textColor="@color/app_text_color_primary"
+        tools:text="Your phone is directly connected to camera"/>
+
+    <ImageView
+        android:id="@+id/push"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"
+        android:rotation="180"
+        android:src="@drawable/ic_expand_more"
+        android:tint="@color/app_text_color_primary"/>
+
+
+</LinearLayout>

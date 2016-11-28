@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.TransitionRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.SharedElementCallback;
@@ -20,10 +19,8 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.transition.TransitionSet;
-import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
@@ -61,10 +58,7 @@ public class MomentSearchActivity extends BaseActivity {
     private static final String EXTRA_QUERY = "extra_query";
     private MomentItemAdapter mVideoItemAdapter;
 
-
-//    private SearchHistoryTable mHistoryDatabase;
-
-//    private String mQuery;
+    private TextView noResults;
 
     public static void launch(Activity activity, View transitionView) {
         Intent intent = new Intent(activity, MomentSearchActivity.class);
@@ -95,8 +89,6 @@ public class MomentSearchActivity extends BaseActivity {
         finishAfterTransition();
     }
 
-    private TextView noResults;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,7 +114,6 @@ public class MomentSearchActivity extends BaseActivity {
         setupTransitions();
 
     }
-
 
 
     private void setupSearchView() {
@@ -165,7 +156,7 @@ public class MomentSearchActivity extends BaseActivity {
                         return;
                     }
                     int centerX = (searchIcon.getLeft() + searchIcon.getRight()) / 2;
-                    CircularReveal hideResults = (CircularReveal) TransitionUtils.findTransition((TransitionSet)getWindow().getReturnTransition(), CircularReveal.class, R.id.results_container);
+                    CircularReveal hideResults = (CircularReveal) TransitionUtils.findTransition((TransitionSet) getWindow().getReturnTransition(), CircularReveal.class, R.id.results_container);
                     if (hideResults != null) {
                         hideResults.setCenter(new Point(centerX, 0));
                     }
@@ -253,10 +244,6 @@ public class MomentSearchActivity extends BaseActivity {
         super.setupToolbar();
         getToolbar().inflateMenu(R.menu.menu_search);
     }
-
-
-
-
 
 
 }
