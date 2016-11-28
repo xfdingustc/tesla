@@ -302,7 +302,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private void setupLeaderBoardFilter() {
         setupModeGroudRv();
         setupSpeedGroupRv();
-        setupTimeGroupRv(true);
+        setupTimeGroupRv(false);
 
     }
 
@@ -331,8 +331,8 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
                 loadLeaderBoard(0, true);
             }
         });
-        mSpeedAdapter.setSelected(getString(SettingHelper.isMetricUnit() ? R.string.kmh50 : R.string.mph30));
-        tvFilterSpeed.setText(getString(SettingHelper.isMetricUnit() ? R.string.kmh50 : R.string.mph30));
+        mSpeedAdapter.setSelected(getString(SettingHelper.isMetricUnit() ? R.string.kmh100 : R.string.mph60));
+        tvFilterSpeed.setText(getString(SettingHelper.isMetricUnit() ? R.string.kmh100 : R.string.mph60));
         rvSpeed.setAdapter(mSpeedAdapter);
     }
 
