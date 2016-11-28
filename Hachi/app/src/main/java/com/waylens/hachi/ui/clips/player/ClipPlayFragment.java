@@ -461,12 +461,14 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Logger.t(TAG).d("on view created");
         initRawDataView();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        Logger.t(TAG).d("on start");
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
@@ -481,6 +483,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onStop() {
         super.onStop();
+        Logger.t(TAG).d("on stop");
         mTimer.cancel();
         mEventBus.unregister(this);
         mEventBus.unregister(mMultiSegSeekbar);
@@ -494,6 +497,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Logger.t(TAG).d("on destroy");
         releasePlayer();
     }
 
@@ -506,13 +510,16 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 @Override
                 public void onNext(Object o) {
                     Logger.t(TAG).d("on next");
-
                 }
 
                 @Override
                 public void onCompleted() {
                     super.onCompleted();
-                    Logger.t(TAG).d("on complete");
+                    Logger.t(TAG).d("load raw data finished");
+                    if (getActivity() == null || getActivity().isDestroyed()) {
+                        Logger.t(TAG).d("destroyed");
+                        return;
+                    }
                     mRawDataAdapter = new ClipRawDataAdapter(getClipSet());
                     mRawDataAdapter.setRawDataLoader(mInitDataLoader);
                     mWvGauge.setAdapter(mRawDataAdapter);
@@ -559,8 +566,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private void preparePlayer(boolean playWhenReady) {
         if (isDetached()) {
+            Logger.t(TAG).d("detached");
             return;
         }
+
+        Logger.t(TAG).d("prepare player");
         if (mMediaPlayer == null) {
             String userAgent = Hachi.getUserAgent();
             mMediaPlayer = new HachiPlayer(new HlsRendererBuilder(getActivity(), userAgent, mVdbUrl.url));
