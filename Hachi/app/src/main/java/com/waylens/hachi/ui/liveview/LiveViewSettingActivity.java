@@ -15,6 +15,7 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.settings.CameraSettingActivity;
 
 
 import org.greenrobot.eventbus.EventBus;
@@ -116,6 +117,18 @@ public class LiveViewSettingActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        getToolbar().inflateMenu(R.menu.live_view_setting);
+        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.advanced:
+                        CameraSettingActivity.launch(LiveViewSettingActivity.this);
+                        break;
+                }
+                return true;
             }
         });
         super.setupToolbar();

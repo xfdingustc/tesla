@@ -47,6 +47,7 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
+import com.waylens.hachi.ui.settings.CameraSettingActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
@@ -449,6 +450,7 @@ public class LiveViewActivity extends BaseActivity {
                 finish();
             }
         });
+
 
         super.setupToolbar();
     }

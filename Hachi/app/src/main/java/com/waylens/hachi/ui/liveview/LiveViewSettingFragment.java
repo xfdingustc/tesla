@@ -3,9 +3,11 @@ package com.waylens.hachi.ui.liveview;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.SwitchPreference;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
@@ -17,9 +19,10 @@ import org.greenrobot.eventbus.EventBus;
  * Created by Xiaofei on 2016/5/29.
  */
 public class LiveViewSettingFragment extends PreferenceFragment {
+    private static final String TAG = LiveViewSettingFragment.class.getSimpleName();
     private Preference mResolution;
     private Preference mFramerate;
-    private Preference mTimestamp;
+    private SwitchPreference mTimestamp;
     private VdtCamera mVdtCamera;
     private int tmpResIndex;
 
@@ -89,24 +92,15 @@ public class LiveViewSettingFragment extends PreferenceFragment {
                 return true;
             }
         });
-
-        mTimestamp = findPreference("timestamp");
-        final int timeStampOn = mVdtCamera.getOverlayState() / 2;
-        mTimestamp.setSummary(timeStampOn == 0 ? R.string.timestamp_off : R.string.timestamp_on);
-        mTimestamp.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        mTimestamp = (SwitchPreference) findPreference("timestamp");
+        boolean isOverlayShown = mVdtCamera.getOverlayState() != 0;
+        mTimestamp.setChecked(isOverlayShown);
+        mTimestamp.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceClick(Preference preference) {
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .items(R.array.timestamp_state)
-                        .itemsCallbackSingleChoice(timeStampOn, new MaterialDialog.ListCallbackSingleChoice() {
-                            @Override
-                            public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                                mTimestamp.setSummary(text);
-                                dialog.dismiss();
-                                mEventBus.post(new VideoSettingChangEvent(VideoSettingChangEvent.WHAT_TIMESTAMP, which * 2));
-                                return true;
-                            }
-                        }).show();
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                int newOverlayState = mTimestamp.isChecked() ? 0 : 2;
+                Logger.t(TAG).d("new overlay state: " + newOverlayState);
+                mVdtCamera.setOverlayState(newOverlayState);
                 return true;
             }
         });

@@ -554,4 +554,6 @@
     <string name="finished">Finished</string>
     <string name="export_clips">Export clips</string>
     <string name="export_clips_tip">Now you can export clips with overlay. Let\'s have a try.</string>
+    <string name="timestamp">Timestamp</string>
+    <string name="advance">advance</string>
 </resources>

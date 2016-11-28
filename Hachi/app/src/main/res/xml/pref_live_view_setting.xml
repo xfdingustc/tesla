@@ -14,10 +14,12 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="@string/timestamp_on_video">
+        android:title="@string/timestamp">
 
-        <Preference
+        <SwitchPreference
             android:key="timestamp"
+            android:persistent="false"
+            android:summary="@string/timestamp_on_video"
             android:title="@string/timestamp_overlay"/>
 
     </PreferenceCategory>

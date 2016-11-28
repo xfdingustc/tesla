@@ -149,7 +149,8 @@
 
         <activity
             android:name=".ui.liveview.LiveViewSettingActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:noHistory="true"/>
 
         <activity
             android:name=".ui.manualsetup.ManualSetupActivity"
