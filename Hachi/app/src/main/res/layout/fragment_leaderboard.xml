@@ -203,52 +203,39 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+
     <LinearLayout
-        android:id="@+id/header_view"
+        android:id="@+id/layout_no_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:visibility="invisible"
+        tools:visibility="visible">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/trophy">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        </ImageView>
 
-
-            <LinearLayout
-                android:id="@+id/layout_no_data"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="invisible"
-                tools:visibility="visible">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/trophy">
-
-                </ImageView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center"
-                    android:text="@string/no_race_data"
-                    android:textColor="?attr/appTextColorSecondary"
-                    android:textSize="14sp"/>
-
-
-            </LinearLayout>
-        </FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/no_race_data"
+            android:textColor="?attr/appTextColorSecondary"
+            android:textSize="14sp"/>
 
 
     </LinearLayout>
+
+
 
 
 </android.support.design.widget.CoordinatorLayout>
