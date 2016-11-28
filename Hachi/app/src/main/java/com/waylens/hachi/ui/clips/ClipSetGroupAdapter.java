@@ -187,16 +187,10 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String clipDuration = DateUtils.formatElapsedTime(clip.getDurationMs() / 1000);
         viewHolder.tvDuration.setText(clipDuration);
 
-        int placeHolder = R.drawable.icon_video_default_1;
-        if (mLayoutRes == R.layout.item_clip_set_card) {
-            placeHolder = R.drawable.icon_video_default_2;
-        }
-
         Glide.with(mContext)
             .using(new SnipeGlideLoader(mVdbRequestQueue))
             .load(clipPos)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(placeHolder)
             .crossFade()
             .into(viewHolder.ivClipCover);
 
