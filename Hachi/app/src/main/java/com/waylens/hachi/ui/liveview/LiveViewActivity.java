@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
+import android.transition.Transition;
+import android.transition.TransitionManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,6 +94,8 @@ public class LiveViewActivity extends BaseActivity {
     private Subscription mCameraStateChangeEventSubscription;
     private Subscription mUpdateCameraStatusEventSubscription;
 
+    private Transition mDetailedInfoPanelTransition;
+
     private int mFabStartSrc;
 
     private int mFabStopSrc;
@@ -105,9 +109,11 @@ public class LiveViewActivity extends BaseActivity {
     private TextView mObdStatus;
     private TextView tvGpsStatus;
     private ImageView mDetailRemote;
-    private ImageView mBtnPush;
     private ImageView ivDetailGps;
     private ImageView mDetailObd;
+
+    @BindView(R.id.root_container)
+    ViewGroup rootContainer;
 
     @BindView(R.id.camera_preview)
     MjpegView mLiveView;
@@ -223,16 +229,18 @@ public class LiveViewActivity extends BaseActivity {
     @OnClick(R.id.pull)
     public void onPullClicked() {
         inflateDetailedPanel();
-        mDetailInfoPanel.setVisibility(View.VISIBLE);
-        mPull.setVisibility(View.GONE);
+        if (mDetailInfoPanel.getVisibility() != View.VISIBLE) {
+            TransitionManager.beginDelayedTransition(rootContainer, mDetailedInfoPanelTransition);
+            mDetailInfoPanel.setVisibility(View.VISIBLE);
+            mPull.setRotation(180);
+        } else {
+            TransitionManager.beginDelayedTransition(rootContainer, mDetailedInfoPanelTransition);
+            mDetailInfoPanel.setVisibility(View.GONE);
+            mPull.setRotation(0);
+
+        }
+
     }
-
-
-//    @OnClick(R.id.push)
-//    public void onPushClicked() {
-//        mDetailInfoPanel.setVisibility(View.GONE);
-//        mPull.setVisibility(View.VISIBLE);
-//    }
 
     @OnClick(R.id.btnMicControl)
     public void onBtnMicControlClicked() {
@@ -560,6 +568,7 @@ public class LiveViewActivity extends BaseActivity {
 
     protected void init() {
         mHandler = new Handler();
+        mDetailedInfoPanelTransition = getTransition(R.transition.auto);
     }
 
     private void initViews() {
@@ -1062,15 +1071,7 @@ public class LiveViewActivity extends BaseActivity {
             mDetailRemote = (ImageView) view.findViewById(R.id.detail_remote);
             mObd = (ImageView) view.findViewById(R.id.detail_obd);
             ivDetailGps = (ImageView) view.findViewById(R.id.detail_gps);
-            mBtnPush = (ImageView) view.findViewById(R.id.push);
             mDetailObd = (ImageView) view.findViewById(R.id.detail_obd);
-            mBtnPush.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mDetailInfoPanel.setVisibility(View.GONE);
-                    mPull.setVisibility(View.VISIBLE);
-                }
-            });
         }
     }
 
