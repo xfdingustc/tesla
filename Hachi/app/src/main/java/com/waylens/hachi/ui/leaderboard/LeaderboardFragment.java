@@ -35,14 +35,12 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.LeaderBoardItem;
 import com.waylens.hachi.rest.bean.Maker;
 import com.waylens.hachi.rest.bean.Model;
-import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.fragments.Refreshable;
-import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.AvatarHelper;
 import com.waylens.hachi.utils.ServerErrorHelper;
@@ -65,16 +63,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     Refreshable, FragmentNavigator {
     private static final String TAG = LeaderboardFragment.class.getSimpleName();
 
-//    public final int UNIT_ENGLISH = 0;
-//    public final int UNIT_METRIC = 1;
-
-    public static final String RACING_CD6T = "RACING_CD6T";
-    public static final String RACING_CD3T = "RACING_CD3T";
-    public static final String RACING_AU6T = "RACING_AU6T";
-    public static final String RACING_AU3T = "RACING_AU3T";
-
     private SparseArray<Transition> transitions = new SparseArray<>();
-
 
     public static final int RACE_TYPE_30MPH = 0;
     public static final int RACE_TYPE_60MPH = 1;
@@ -92,25 +81,19 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private LeaderboardFilterAdapter mSpeedAdapter;
     private LeaderboardFilterAdapter mTimeAdapter;
 
-
     private int mCurrentCursor;
-
-
-    private VehicleInfo myVehicleInfo;
 
     private String mMaker;
 
     private String mModel;
 
     private List<Pair<Maker, Model>> mMakerModelList;
-
     private int mLeaderBoardItemCount;
-
 
     private Transition mFilterResultTransition;
     private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
-    private String headers[] = {"mode", "type", "All"};
+
 
 
     @BindView(R.id.header_view)
@@ -143,26 +126,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
 
-    @BindView(R.id.my_avatar)
-    AvatarView mMyAvatar;
-
-    @BindView(R.id.my_name)
-    TextView mMyName;
-
-    @BindView(R.id.my_rank)
-    TextView mMyRank;
-
-    @BindView(R.id.my_vehicle_info)
-    TextView mMyVehicleInfo;
-
-    @BindView(R.id.my_race_time)
-    TextView mMyRaceTime;
-
-    @BindView(R.id.my_leaderboard_play)
-    ImageView mMyLeaderBoardPlay;
-
-    @BindView(R.id.layout_my_test)
-    LinearLayout mMyTestLayout;
 
     @BindView(R.id.layout_no_data)
     LinearLayout mNoDataLayout;
@@ -261,15 +224,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             btnDropDown.setRotation(0);
 
         }
-    }
-
-
-    public static LeaderboardFragment newInstance(int tag) {
-
-        Bundle args = new Bundle();
-        LeaderboardFragment fragment = new LeaderboardFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
 
