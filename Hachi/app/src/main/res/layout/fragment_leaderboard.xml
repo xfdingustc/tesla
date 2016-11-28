@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<android.support.design.widget.CoordinatorLayout
     android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,456 +10,245 @@
     android:orientation="vertical">
 
 
-    <FrameLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:elevation="@dimen/z_card">
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-
-        <LinearLayout
-            android:id="@+id/header_view"
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginStart="64dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="?attr/toolbarColor"
-                app:layout_scrollFlags="scroll">
+                android:layout_height="wrap_content"
+                android:background="?attr/defaultBgColor"
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7">
 
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_gravity="center"
-                    android:text="@string/leaderboard"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    tools:visibility="gone"/>
-
-                <LinearLayout
-                    android:id="@+id/layout_your_rank"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    >
-
-
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/white_round"
-                        android:padding="4dp"
-                        android:src="@drawable/ic_trophy"/>
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/toolbarColor"
+                    app:layout_collapseMode="pin">
 
                     <TextView
-                        android:id="@+id/tv_your_rank"
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:text="@string/leaderboard"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        tools:visibility="gone"/>
+
+                    <LinearLayout
+                        android:id="@+id/layout_your_rank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        >
+
+
+                        <ImageView
+                            android:id="@+id/imageView2"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@drawable/white_round"
+                            android:padding="4dp"
+                            android:src="@drawable/ic_trophy"/>
+
+                        <TextView
+                            android:id="@+id/tv_your_rank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="16dp"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="No. 46"/>
+
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+
+                <include layout="@layout/leaderboard_top_three"/>
+
+
+                <LinearLayout
+                    android:id="@+id/ll_filter_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvFilterMode"
+                        style="@style/Widget.Hachi.FilterSelected"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="16dp"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="No. 46"/>
+                        android:text="@string/auto_mode"/>
 
+                    <TextView
+                        android:id="@+id/tvFilterSpeed"
+                        style="@style/Widget.Hachi.FilterSelected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+
+                        android:text="@string/kmh50"/>
+
+                    <TextView
+                        android:id="@+id/tvFilterTime"
+                        style="@style/Widget.Hachi.FilterSelected"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="16dp"
+                        android:text="All"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"/>
+
+                    <ImageView
+                        android:id="@+id/btn_drop_down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:padding="12sp"
+                        android:src="@drawable/ic_expand_more"
+                        android:tint="@color/black87"/>
 
                 </LinearLayout>
 
-
-            </FrameLayout>
-
-
-            <LinearLayout
-                android:id="@+id/top_three"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/toolbarColor"
-                android:orientation="horizontal">
-
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-
-
-                    <com.lzy.widget.HexagonView
-                        android:id="@+id/second"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginTop="32dp"
-                        app:hexagonBorderColor="@android:color/white"
-                        app:hexagonBorderOverlay="false"
-                        app:hexagonBorderWidth="4dp"
-                        app:hexagonCorner="2dp"
-                        app:hexagonFillColor="@color/material_grey_500"
-                        app:hexagonOrientation="vertical"
-                        app:hexagonTextSize="32sp"/>
-
-                    <com.github.pavlospt.roundedletterview.RoundedLetterView
-                        android:id="@+id/rlv_second"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="-16dp"
-                        app:rlv_backgroundColorValue="#86e680"
-                        app:rlv_titleColor="@color/black87"
-                        app:rlv_titleSize="16sp"
-                        app:rlv_titleText="2"/>
-
-                    <TextView
-                        android:id="@+id/secondName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/white"
-                        tools:text="NateSimeon"/>
-
-                    <TextView
-                        android:id="@+id/secondVehicle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textColor="@color/white87"
-                        android:textSize="12sp"
-                        tools:text="Subaru WRX 2015"/>
-
-                    <View
-                        android:layout_width="56dp"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="?attr/separateColor"/>
-
-                    <TextView
-                        android:id="@+id/secondRaceTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        tools:text="0.47s"/>
-
-                </LinearLayout>
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-
-                    <com.lzy.widget.HexagonView
-                        android:id="@+id/first"
-                        android:layout_width="112dp"
-                        android:layout_height="112dp"
-                        app:hexagonBorderColor="@android:color/white"
-                        app:hexagonBorderOverlay="false"
-                        app:hexagonBorderWidth="4dp"
-                        app:hexagonCorner="2dp"
-                        app:hexagonFillColor="@color/material_grey_500"
-                        app:hexagonOrientation="vertical"
-                        app:hexagonTextSize="48sp"
-                        />
-
-                    <com.github.pavlospt.roundedletterview.RoundedLetterView
-                        android:id="@+id/rlv_first"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="-24dp"
-                        app:rlv_backgroundColorValue="@color/material_amber_400"
-                        app:rlv_titleColor="@color/black87"
-                        app:rlv_titleSize="20sp"
-                        app:rlv_titleText="1"/>
-
-                    <TextView
-                        android:id="@+id/firstName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/white"
-                        tools:text="jcarlock"/>
-
-                    <TextView
-                        android:id="@+id/firstVehicle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textColor="@color/white87"
-                        android:textSize="12sp"
-                        tools:text="Audi S3 2016"/>
-
-                    <View
-                        android:layout_width="56dp"
-                        android:layout_height="1dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginTop="4dp"
-                        android:background="?attr/separateColor"/>
-
-                    <TextView
-                        android:id="@+id/firstRaceTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        tools:text="0.37s"/>
-
-                </LinearLayout>
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clipChildren="false"
-                    android:orientation="vertical">
-
-                    <com.lzy.widget.HexagonView
-                        android:id="@+id/third"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginTop="32dp"
-                        app:hexagonBorderColor="@android:color/white"
-                        app:hexagonBorderOverlay="false"
-                        app:hexagonBorderWidth="4dp"
-                        app:hexagonCorner="2dp"
-                        app:hexagonFillColor="@color/material_grey_500"
-                        app:hexagonOrientation="vertical"
-                        app:hexagonTextSize="32sp"/>
-
-                    <com.github.pavlospt.roundedletterview.RoundedLetterView
-                        android:id="@+id/rlv_third"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="-16dp"
-                        app:rlv_backgroundColorValue="#b17fd5"
-                        app:rlv_titleColor="@color/black87"
-                        app:rlv_titleSize="16sp"
-                        app:rlv_titleText="3"/>
-
-                    <TextView
-                        android:id="@+id/thirdName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@android:color/white"
-                        tools:text="Lukas Graham"/>
-
-                    <TextView
-                        android:id="@+id/thirdVehicle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="center"
-                        android:textColor="@color/white87"
-                        android:textSize="12sp"
-                        tools:text="Audi S3 2016"/>
-
-                    <View
-                        android:layout_width="56dp"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="?attr/separateColor"/>
-
-                    <TextView
-                        android:id="@+id/thirdRaceTime"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        tools:text="0.57s"/>
-
-                </LinearLayout>
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/ll_filter_result"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="?selectableItemBackground"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvFilterMode"
-                    style="@style/Widget.Hachi.FilterSelected"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="16dp"
-                    android:text="@string/auto_mode"/>
-
-                <TextView
-                    android:id="@+id/tvFilterSpeed"
-                    style="@style/Widget.Hachi.FilterSelected"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="16dp"
-
-                    android:text="@string/kmh50"/>
-
-                <TextView
-                    android:id="@+id/tvFilterTime"
-                    style="@style/Widget.Hachi.FilterSelected"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="16dp"
-                    android:text="All"/>
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"/>
-
-                <ImageView
-                    android:id="@+id/btn_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:padding="12sp"
-                    android:src="@drawable/ic_expand_more"
-                    android:tint="@color/black87"/>
-
-            </LinearLayout>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/separateColor"/>
-
-            <LinearLayout
-                android:id="@+id/ll_filter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/windowBackgroundLight"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_mode"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_speed"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?attr/separateColor"/>
-            </LinearLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <android.support.v4.widget.SwipeRefreshLayout
-                    android:id="@+id/refresh_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    tools:visibility="gone">
-
-                    <com.waylens.hachi.ui.views.RecyclerViewExt
-                        android:id="@+id/leaderboard_list_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-                </android.support.v4.widget.SwipeRefreshLayout>
 
                 <LinearLayout
-                    android:id="@+id/layout_no_data"
+                    android:id="@+id/ll_filter"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/windowBackgroundLight"
                     android:orientation="vertical"
-                    android:visibility="invisible"
+                    android:visibility="gone"
                     tools:visibility="visible">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="16dp"
-                        android:src="@drawable/trophy">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_mode"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
 
-                    </ImageView>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_speed"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center"
-                        android:text="@string/no_race_data"
-                        android:textColor="?attr/appTextColorSecondary"
-                        android:textSize="14sp"/>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"></android.support.v7.widget.RecyclerView>
 
-
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?attr/separateColor"/>
                 </LinearLayout>
-            </FrameLayout>
-
-
-        </LinearLayout>
-
-    </FrameLayout>
+            </LinearLayout>
 
 
 
 
-</FrameLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:visibility="gone">
+
+        <com.waylens.hachi.ui.views.RecyclerViewExt
+            android:id="@+id/leaderboard_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/header_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:id="@+id/layout_no_data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="invisible"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:src="@drawable/trophy">
+
+                </ImageView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center"
+                    android:text="@string/no_race_data"
+                    android:textColor="?attr/appTextColorSecondary"
+                    android:textSize="14sp"/>
+
+
+            </LinearLayout>
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

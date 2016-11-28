@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/top_three"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/toolbarColor"
+
+    android:orientation="horizontal">
+
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+
+        <com.lzy.widget.HexagonView
+            android:id="@+id/second"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="32dp"
+            app:hexagonBorderColor="@android:color/white"
+            app:hexagonBorderOverlay="false"
+            app:hexagonBorderWidth="4dp"
+            app:hexagonCorner="2dp"
+            app:hexagonFillColor="@color/material_grey_500"
+            app:hexagonOrientation="vertical"
+            app:hexagonTextSize="32sp"/>
+
+        <com.github.pavlospt.roundedletterview.RoundedLetterView
+            android:id="@+id/rlv_second"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-16dp"
+            app:rlv_backgroundColorValue="#86e680"
+            app:rlv_titleColor="@color/black87"
+            app:rlv_titleSize="16sp"
+            app:rlv_titleText="2"/>
+
+        <TextView
+            android:id="@+id/secondName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            tools:text="NateSimeon"/>
+
+        <TextView
+            android:id="@+id/secondVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white87"
+            android:textSize="12sp"
+            tools:text="Subaru WRX 2015"/>
+
+        <View
+            android:layout_width="56dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/separateColor"/>
+
+        <TextView
+            android:id="@+id/secondRaceTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="0.47s"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <com.lzy.widget.HexagonView
+            android:id="@+id/first"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            app:hexagonBorderColor="@android:color/white"
+            app:hexagonBorderOverlay="false"
+            app:hexagonBorderWidth="4dp"
+            app:hexagonCorner="2dp"
+            app:hexagonFillColor="@color/material_grey_500"
+            app:hexagonOrientation="vertical"
+            app:hexagonTextSize="48sp"
+            />
+
+        <com.github.pavlospt.roundedletterview.RoundedLetterView
+            android:id="@+id/rlv_first"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-24dp"
+            app:rlv_backgroundColorValue="@color/material_amber_400"
+            app:rlv_titleColor="@color/black87"
+            app:rlv_titleSize="20sp"
+            app:rlv_titleText="1"/>
+
+        <TextView
+            android:id="@+id/firstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            tools:text="jcarlock"/>
+
+        <TextView
+            android:id="@+id/firstVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white87"
+            android:textSize="12sp"
+            tools:text="Audi S3 2016"/>
+
+        <View
+            android:layout_width="56dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/separateColor"/>
+
+        <TextView
+            android:id="@+id/firstRaceTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="0.37s"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:orientation="vertical">
+
+        <com.lzy.widget.HexagonView
+            android:id="@+id/third"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="32dp"
+            app:hexagonBorderColor="@android:color/white"
+            app:hexagonBorderOverlay="false"
+            app:hexagonBorderWidth="4dp"
+            app:hexagonCorner="2dp"
+            app:hexagonFillColor="@color/material_grey_500"
+            app:hexagonOrientation="vertical"
+            app:hexagonTextSize="32sp"/>
+
+        <com.github.pavlospt.roundedletterview.RoundedLetterView
+            android:id="@+id/rlv_third"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-16dp"
+            app:rlv_backgroundColorValue="#b17fd5"
+            app:rlv_titleColor="@color/black87"
+            app:rlv_titleSize="16sp"
+            app:rlv_titleText="3"/>
+
+        <TextView
+            android:id="@+id/thirdName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            tools:text="Lukas Graham"/>
+
+        <TextView
+            android:id="@+id/thirdVehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white87"
+            android:textSize="12sp"
+            tools:text="Audi S3 2016"/>
+
+        <View
+            android:layout_width="56dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/separateColor"/>
+
+        <TextView
+            android:id="@+id/thirdRaceTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            tools:text="0.57s"/>
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+</LinearLayout>
