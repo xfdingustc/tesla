@@ -14,10 +14,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.ViewAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
@@ -46,6 +47,7 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.utils.StringUtils;
+import com.waylens.hachi.utils.TapTargetHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeInfoItem;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
@@ -56,6 +58,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -121,6 +124,12 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     @BindView(R.id.style_radio_group)
     RadioGroup mStyleRadioGroup;
+
+    @BindString(R.string.export_clips)
+    String strExportClips;
+
+    @BindString(R.string.export_clips_tip)
+    String strExportClipsTip;
 
 
     @OnClick(R.id.btn_music)
@@ -276,6 +285,27 @@ public class EnhanceActivity extends ClipPlayActivity {
         setContentView(R.layout.activity_enhance);
         setupToolbar();
         mClipsEditView.setVisibility(View.VISIBLE);
+        showTagTagetView();
+    }
+
+    private void showTagTagetView() {
+        if (TapTargetHelper.shouldShowExportTapTarget()) {
+            TapTargetView.showFor(this, TapTarget.forToolbarMenuItem(getToolbar(), R.id.menu_to_download, strExportClips, strExportClipsTip)
+                    .dimColor(android.R.color.black)
+                    .outerCircleColor(R.color.colorAccent)
+                    .targetCircleColor(android.R.color.black)
+                    .transparentTarget(true)
+                    .textColor(android.R.color.black),
+                new TapTargetView.Listener() {
+                    @Override
+                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
+                        super.onTargetDismissed(view, userInitiated);
+                        TapTargetHelper.onShowExportTargetTaped();
+                    }
+                });
+        }
+
+
     }
 
 
@@ -438,7 +468,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                     return;
                 }
 
-                if (clipCount > 0 ) {
+                if (clipCount > 0) {
                     btnGauge.setEnabled(true);
                     btnMusic.setEnabled(true);
                     configureActionUI(ACTION_NONE, false);

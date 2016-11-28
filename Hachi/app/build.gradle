@@ -167,6 +167,7 @@ dependencies {
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
     compile 'com.lzy.widget:view-core:0.1.9'
     compile 'it.michelelacorte.elasticprogressbar:library:1.0.5@aar'
+    compile 'com.getkeepsafe.taptargetview:taptargetview:1.5.3'
 
 }
 

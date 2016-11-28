@@ -552,4 +552,6 @@
     <string name="exit_exporting_confirm">Exporting is not finished. Are you sure?</string>
     <string name="exit">exit</string>
     <string name="finished">Finished</string>
+    <string name="export_clips">Export clips</string>
+    <string name="export_clips_tip">Now you can export clips with overlay. Let\'s have a try.</string>
 </resources>
