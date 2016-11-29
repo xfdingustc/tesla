@@ -95,10 +95,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
 
 
-
-    @BindView(R.id.header_view)
-    View headerView;
-
     @BindView(R.id.container)
     ViewGroup rootContainer;
 
