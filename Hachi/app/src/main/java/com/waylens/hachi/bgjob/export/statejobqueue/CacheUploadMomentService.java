@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import com.orhanobut.logger.Logger;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob.JobCallback;
+import com.waylens.hachi.bgjob.export.statejobqueue.UploadMomentJob.JobCallback;
 import com.waylens.hachi.jobqueue.JobHolder;
 
 import java.util.concurrent.Executors;
@@ -100,8 +100,10 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
             running = true;
             try {
                 Job job = stateJobHolder.getJob();
-                if (job instanceof CacheUploadMomentJob) {
+                if (job instanceof CacheUploadMomentJob ) {
                     ((CacheUploadMomentJob) job).setJobCallback(this);
+                } else if (job instanceof UploadMomentJob) {
+                    ((UploadPictureJob) job).setJobCallback(this);
                 }
                 executor.execute(new Worker(job, stateJobHolder.getJobState()));
             } catch (Throwable throwable) {
@@ -115,7 +117,7 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
     }
 
     @Override
-    public void onSuccess(CacheUploadMomentJob job) {
+    public void onSuccess(UploadMomentJob job) {
         Logger.t(TAG).d("onSuccess");
         running = false;
         //queue.delete();
@@ -127,7 +129,7 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
     }
 
     @Override
-    public void updateJob(CacheUploadMomentJob job) {
+    public void updateJob(UploadMomentJob job) {
         Logger.t(TAG).d("updateJob");
         String jobId = job.getId();
         StateJobHolder jobHolder = queue.findJobById(jobId);
@@ -137,8 +139,9 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
     }
 
     @Override
-    public void onFailure(CacheUploadMomentJob job) {
+    public void onFailure(UploadMomentJob job) {
         Logger.t(TAG).d("onFailure");
+        running = false;
         String jobId = job.getId();
         StateJobHolder jobHolder = queue.findJobById(jobId);
         jobHolder.setJobState(-1);
@@ -147,7 +150,7 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
     }
 
     @Override
-    public void updateProgress(CacheUploadMomentJob job) {
+    public void updateProgress(UploadMomentJob job) {
         Logger.t(TAG).d("update progress");
         String jobId = job.getId();
         StateJobHolder jobHolder = queue.findJobById(jobId);

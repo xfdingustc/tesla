@@ -429,16 +429,6 @@ public class CacheUploadMomentJob extends UploadMomentJob {
         setUploadState(UPLOAD_STATE_PROGRESS, percentage);
     }
 
-    public interface JobCallback {
-        void updateJob(CacheUploadMomentJob job);
-
-        void onSuccess(CacheUploadMomentJob job);
-
-        void onFailure(CacheUploadMomentJob job);
-
-        void updateProgress(CacheUploadMomentJob job);
-    }
-
     @Override
     public void cancelUpload() {
 

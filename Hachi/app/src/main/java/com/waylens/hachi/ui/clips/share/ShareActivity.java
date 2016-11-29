@@ -581,8 +581,7 @@ public class ShareActivity extends ClipPlayActivity {
         CacheUploadMomentJob cacheUploadMomentJob = new CacheUploadMomentJob(localMoment);
         StateJobHolder stateJobHolder = new StateJobHolder(cacheUploadMomentJob.getId(), StateJobHolder.INITIAL_STATE, null, cacheUploadMomentJob);
         PersistentQueue.getPersistentQueue().insert(stateJobHolder);
-        Intent startServiceIntent = new Intent(this, CacheUploadMomentService.class);
-        startService(startServiceIntent);
+        CacheUploadMomentService.launch(this);
         //PersistentQueue.create();
         UploadingMomentActivity.launch(this);
         finish();

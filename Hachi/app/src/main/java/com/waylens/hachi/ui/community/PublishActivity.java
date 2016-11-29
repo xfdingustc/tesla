@@ -13,6 +13,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
+import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
+import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
+import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
+import com.waylens.hachi.bgjob.export.statejobqueue.UploadPictureJob;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
@@ -74,7 +78,11 @@ public class PublishActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.share:
-                        BgJobHelper.uploadPictureMoment(mTitle.getEditableText().toString(), mPhotoUrl);
+                        //BgJobHelper.uploadPictureMoment(mTitle.getEditableText().toString(), mPhotoUrl);
+                        UploadPictureJob uploadPictureJob = new UploadPictureJob(mTitle.getEditableText().toString(), mPhotoUrl);
+                        StateJobHolder stateJobHolder = new StateJobHolder(uploadPictureJob.getId(), StateJobHolder.INITIAL_STATE, null, uploadPictureJob);
+                        PersistentQueue.getPersistentQueue().insert(stateJobHolder);
+                        CacheUploadMomentService.launch(PublishActivity.this);
                         finish();
                         UploadingMomentActivity.launch(PublishActivity.this, true);
                         break;

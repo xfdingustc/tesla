@@ -146,4 +146,16 @@ public abstract class UploadMomentJob extends Job {
     public String getThumbnail() {
         return mLocalMoment.thumbnailPath;
     }
+
+
+    public interface JobCallback {
+        void updateJob(UploadMomentJob job);
+
+        void onSuccess(UploadMomentJob job);
+
+        void onFailure(UploadMomentJob job);
+
+        void updateProgress(UploadMomentJob job);
+    }
+
 }
