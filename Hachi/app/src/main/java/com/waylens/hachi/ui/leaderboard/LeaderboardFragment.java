@@ -243,8 +243,15 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_leaderboard, savedInstanceState);
-        setupLeaderboardItemList();
-
+        mRvLeaderboardList.setAdapter(mAdapter);
+        mRvLeaderboardList.setLayoutManager(mLinearLayoutManager);
+        mRefreshLayout.setOnRefreshListener(this);
+        mRvLeaderboardList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                //loadLeaderBoard(mCurrentCursor, false);
+            }
+        });
 
         setupLeaderBoardFilter();
 
@@ -290,35 +297,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         });
 
         return view;
-    }
-
-    private void setupLeaderboardItemList() {
-        mRvLeaderboardList.setAdapter(mAdapter);
-        mRvLeaderboardList.setLayoutManager(mLinearLayoutManager);
-        mRefreshLayout.setOnRefreshListener(this);
-        mRvLeaderboardList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-            @Override
-            public void loadMore() {
-                //loadLeaderBoard(mCurrentCursor, false);
-            }
-        });
-//        mRvLeaderboardList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//            }
-//        });
-//        mRvLeaderboardList.setOnFlingListener(new RecyclerView.OnFlingListener() {
-//            @Override
-//            public boolean onFling(int velocityX, int velocityY) {
-//                return false;
-//            }
-//        });
     }
 
     private void setupLeaderBoardFilter() {
