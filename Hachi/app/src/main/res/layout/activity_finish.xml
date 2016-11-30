@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
         <include layout="@layout/toolbar_default"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
 
         <com.xfdingustc.far.FixedAspectRatioFrameLayout
             android:layout_width="match_parent"
@@ -35,18 +36,49 @@
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
 
         <TextView
             android:id="@+id/clip_title"
             style="@style/HachiTextViewTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            tools:text="Momemnt Title"/>
+            android:layout_margin="16dp"
+            tools:text="17000101-00000000-52.mp4"
+            android:textStyle="bold"/>
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/ic_access_time"
+                android:layout_gravity="center_vertical"
+                android:tint="@color/material_grey_500"/>
+
+            <TextView
+                android:id="@+id/clip_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:textColor="@color/material_grey_500"
+                android:layout_gravity="center_vertical"
+                tools:text="Today"/>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -58,4 +90,4 @@
         android:src="@drawable/ic_share"
         tools:visibility="visible"/>
 
-</FrameLayout>
+</LinearLayout>

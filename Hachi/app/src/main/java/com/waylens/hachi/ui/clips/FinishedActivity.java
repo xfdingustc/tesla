@@ -11,8 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import java.io.File;
 
@@ -40,6 +42,9 @@ public class FinishedActivity extends BaseActivity {
 
     @BindView(R.id.clip_title)
     TextView clipTitle;
+
+    @BindView(R.id.clip_time)
+    TextView tvClipTime;
 
     @BindView(R.id.fab)
     FloatingActionButton mShareFab;
@@ -84,6 +89,8 @@ public class FinishedActivity extends BaseActivity {
             }
         });
         File file = new File(mOutputFile);
+
+        tvClipTime.setText(PrettyTimeUtils.getTimeAgo(file.lastModified()));
 
         Glide.with(this)
             .loadFromMediaStore(Uri.fromFile(file))
