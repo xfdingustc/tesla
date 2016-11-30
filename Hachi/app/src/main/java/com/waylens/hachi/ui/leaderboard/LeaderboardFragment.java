@@ -4,18 +4,19 @@ package com.waylens.hachi.ui.leaderboard;
  * Created by lshw on 16/9/2.
  */
 
+import android.animation.ObjectAnimator;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.TransitionRes;
 import android.support.v4.util.Pair;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
-import android.transition.TransitionManager;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter;
+import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.github.pavlospt.roundedletterview.RoundedLetterView;
 import com.lzy.widget.HexagonView;
 import com.orhanobut.logger.Logger;
@@ -90,7 +93,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private List<Pair<Maker, Model>> mMakerModelList;
     private int mLeaderBoardItemCount;
 
-    private Transition mFilterResultTransition;
+
     private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
 
@@ -114,7 +117,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     ImageView btnDropDown;
 
     @BindView(R.id.ll_filter)
-    ViewGroup llFilter;
+    ExpandableLinearLayout llFilter;
 
     @BindView(R.id.leaderboard_list_view)
     RecyclerViewExt mRvLeaderboardList;
@@ -210,16 +213,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     @OnClick(R.id.ll_filter_result)
     public void onllFilterClicked() {
-        if (llFilter.getVisibility() != View.VISIBLE) {
-            TransitionManager.beginDelayedTransition(rootContainer, mFilterResultTransition);
-            llFilter.setVisibility(View.VISIBLE);
-            btnDropDown.setRotation(180);
-        } else {
-            TransitionManager.beginDelayedTransition(rootContainer, mFilterResultTransition);
-            llFilter.setVisibility(View.GONE);
-            btnDropDown.setRotation(0);
-
-        }
+        llFilter.toggle();
     }
 
 
@@ -248,6 +242,27 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
                 //loadLeaderBoard(mCurrentCursor, false);
             }
         });
+        llFilter.collapse();
+        llFilter.setInterpolator(new FastOutSlowInInterpolator());
+        llFilter.setListener(new ExpandableLayoutListenerAdapter() {
+            @Override
+            public void onPreOpen() {
+                super.onPreOpen();
+                ObjectAnimator dropDownAnimator = ObjectAnimator.ofFloat(btnDropDown, View.ROTATION, 0, 180)
+                    .setDuration(300);
+                dropDownAnimator.setInterpolator(new FastOutSlowInInterpolator());
+                dropDownAnimator.start();
+            }
+
+            @Override
+            public void onPreClose() {
+                super.onPreClose();
+                ObjectAnimator dropDownAnimator = ObjectAnimator.ofFloat(btnDropDown, View.ROTATION, 180, 0)
+                    .setDuration(300);
+                dropDownAnimator.setInterpolator(new FastOutSlowInInterpolator());
+                dropDownAnimator.start();
+            }
+        });
 
         setupLeaderBoardFilter();
 
@@ -258,39 +273,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mMakerModelList = new ArrayList<>();
-
-        mFilterResultTransition = getTransition(R.transition.auto);
-        mFilterResultTransition.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(Transition transition) {
-                llFilterResult.setOnClickListener(null);
-            }
-
-            @Override
-            public void onTransitionEnd(Transition transition) {
-                llFilterResult.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onllFilterClicked();
-                    }
-                });
-            }
-
-            @Override
-            public void onTransitionCancel(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(Transition transition) {
-
-            }
-        });
 
         return view;
     }
@@ -412,13 +394,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     }
 
     private void onHandleRaceQuery(RaceQueryResponse raceQueryResponse, boolean isRefresh) {
-        if (llFilter.getVisibility() == View.VISIBLE) {
-            TransitionManager.beginDelayedTransition(rootContainer,
-                getTransition(R.transition.auto));
-            llFilter.setVisibility(View.GONE);
-            mRvLeaderboardList.scrollTo(0, 0);
-            btnDropDown.setRotation(0);
-        }
+        llFilter.collapse();
         if (raceQueryResponse.leaderboard == null) {
             return;
         }

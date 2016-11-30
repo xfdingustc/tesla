@@ -18,19 +18,13 @@
     <include layout="@layout/leaderboard_filter_result"/>
 
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?attr/separateColor"/>
-
-    <LinearLayout
+    <com.github.aakira.expandablelayout.ExpandableLinearLayout
         android:id="@+id/ll_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/windowBackgroundLight"
         android:orientation="vertical"
-        android:visibility="gone"
-        tools:visibility="visible">
+        >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_mode"
@@ -51,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?attr/separateColor"/>
-    </LinearLayout>
+    </com.github.aakira.expandablelayout.ExpandableLinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"

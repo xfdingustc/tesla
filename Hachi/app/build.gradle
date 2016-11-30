@@ -168,7 +168,7 @@ dependencies {
     compile 'com.lzy.widget:view-core:0.1.9'
     compile 'it.michelelacorte.elasticprogressbar:library:1.0.5@aar'
     compile 'com.getkeepsafe.taptargetview:taptargetview:1.5.3'
-
+    compile 'com.github.aakira:expandable-layout:1.6.0@aar'
 }
 
 apply plugin: 'com.google.gms.google-services'

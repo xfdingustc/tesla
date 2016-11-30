@@ -1,52 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     android:id="@+id/ll_filter_result"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
-    android:orientation="horizontal"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvFilterMode"
-        style="@style/Widget.Hachi.FilterSelected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
-        android:text="@string/auto_mode"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/tvFilterSpeed"
-        style="@style/Widget.Hachi.FilterSelected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
+        <TextView
+            android:id="@+id/tvFilterMode"
+            style="@style/Widget.Hachi.FilterSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:text="@string/auto_mode"/>
 
-        android:text="@string/kmh50"/>
+        <TextView
+            android:id="@+id/tvFilterSpeed"
+            style="@style/Widget.Hachi.FilterSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
 
-    <TextView
-        android:id="@+id/tvFilterTime"
-        style="@style/Widget.Hachi.FilterSelected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="16dp"
-        android:text="All"/>
+            android:text="@string/kmh50"/>
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/tvFilterTime"
+            style="@style/Widget.Hachi.FilterSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="16dp"
+            android:text="All"/>
 
-    <ImageView
-        android:id="@+id/btn_drop_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="12sp"
-        android:src="@drawable/ic_expand_more"
-        android:tint="@color/black87"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
 
+        <ImageView
+            android:id="@+id/btn_drop_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="12sp"
+            android:src="@drawable/ic_expand_more"
+            android:tint="@color/black87"/>
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?attr/separateColor"/>
 </LinearLayout>
