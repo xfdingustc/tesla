@@ -68,6 +68,10 @@
         <item name="android:alpha">0.12</item>
     </style>
 
+    <style name="ToolTipLayoutDefaultStyle.Custom1">
+        <item name="android:textAppearance">?android:attr/textAppearanceSmallInverse</item>
+        <item name="android:gravity">center</item>
+    </style>
 
     <style name="ContextMenuButton">
         <item name="android:layout_width">match_parent</item>

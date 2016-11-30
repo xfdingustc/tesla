@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
@@ -59,6 +57,7 @@ import java.util.List;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
+import it.sephiroth.android.library.tooltip.Tooltip;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -292,19 +291,36 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void showTagTagetView() {
         if (TapTargetHelper.shouldShowExportTapTarget()) {
-            TapTargetView.showFor(this, TapTarget.forToolbarMenuItem(getToolbar(), R.id.menu_to_download, strExportClips, strExportClipsTip)
-                    .dimColor(android.R.color.black)
-                    .outerCircleColor(R.color.colorAccent)
-                    .targetCircleColor(android.R.color.black)
-                    .transparentTarget(true)
-                    .textColor(android.R.color.black),
-                new TapTargetView.Listener() {
+            Tooltip.make(this, new Tooltip.Builder()
+                .anchor(getToolbar().findViewById(R.id.menu_to_download), Tooltip.Gravity.BOTTOM)
+                .closePolicy(Tooltip.ClosePolicy.TOUCH_ANYWHERE_CONSUME, -1)
+                .text(strExportClipsTip)
+                .withArrow(true)
+                .withOverlay(true)
+                .maxWidth(getResources().getDisplayMetrics().widthPixels / 2)
+                .withStyleId(R.style.ToolTipLayoutDefaultStyle_Custom1)
+                .floatingAnimation(Tooltip.AnimationBuilder.DEFAULT)
+                .withCallback(new Tooltip.Callback() {
                     @Override
-                    public void onTargetDismissed(TapTargetView view, boolean userInitiated) {
-                        super.onTargetDismissed(view, userInitiated);
+                    public void onTooltipClose(Tooltip.TooltipView tooltipView, boolean b, boolean b1) {
                         TapTargetHelper.onShowExportTargetTaped();
                     }
-                });
+
+                    @Override
+                    public void onTooltipFailed(Tooltip.TooltipView tooltipView) {
+
+                    }
+
+                    @Override
+                    public void onTooltipShown(Tooltip.TooltipView tooltipView) {
+
+                    }
+
+                    @Override
+                    public void onTooltipHidden(Tooltip.TooltipView tooltipView) {
+
+                    }
+                })).show();
         }
 
 
