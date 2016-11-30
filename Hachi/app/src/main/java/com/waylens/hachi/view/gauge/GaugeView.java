@@ -39,6 +39,7 @@ public class GaugeView extends FrameLayout {
     private static final int PENDING_ACTION_TIME_POINT = 0x1004;
     private static final int PENDING_ACTION_SHOW_DEFAULT_GAUGE = 0x1005;
     private static final int PENDING_ACTION_RESIZE_MAP = 0x1006;
+    private static final int PENDING_ACTION_TAIL = 0x1007;
 
     public static final int MODE_CAMERA = 0;
 
@@ -89,7 +90,6 @@ public class GaugeView extends FrameLayout {
                     if (timePoints != null && timePoints.size() == 6) {
                         setRaceTimingPoints(timePoints);
                     }
-
                     break;
                 case PENDING_ACTION_TIME_POINT:
                     Logger.t(TAG).d("set time points");
@@ -107,7 +107,10 @@ public class GaugeView extends FrameLayout {
                 case PENDING_ACTION_RESIZE_MAP:
                     mWebView.loadUrl(GaugeJsHelper.jsResizeMap());
                     break;
-
+                case PENDING_ACTION_TAIL:
+                    mWebView.loadUrl(GaugeJsHelper.jsSetTail((int)item.param1));
+                    mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+                    break;
                 default:
                     break;
             }
@@ -228,6 +231,11 @@ public class GaugeView extends FrameLayout {
         RxBus.getDefault().post(new EventPendingActionAdded());
     }
 
+    public void setTail(int startTailMs) {
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_TAIL, startTailMs));
+        RxBus.getDefault().post(new EventPendingActionAdded());
+    }
+
 
     public void showGauge(boolean show) {
         showGauge(show, false);
@@ -322,8 +330,8 @@ public class GaugeView extends FrameLayout {
         mWebView.loadUrl(jsApi);
     }
 
-    public void setPlayTime(int currentTime) {
-        String playTime = "javascript:setPlayTime(" + currentTime + ")";
+    public void setPlayTime(int msecs) {
+        String playTime = "javascript:setPlayTime(" + msecs + ")";
         mWebView.loadUrl(playTime);
     }
 

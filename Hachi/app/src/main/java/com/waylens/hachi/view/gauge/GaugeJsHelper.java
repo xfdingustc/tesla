@@ -31,6 +31,10 @@ public class GaugeJsHelper {
         return "javascript:setState({" + "ifRotate:" + rotate + "})";
     }
 
+    public static String jsSetTail(int startTailMs) {
+        return "javascript:setState({" + "startTail:" + startTailMs + "})";
+    }
+
     public static String jsUpdate() {
         return "javascript:update()";
     }

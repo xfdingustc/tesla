@@ -166,9 +166,9 @@ public class TranscodingActivity extends BaseActivity {
         mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
         mGaugeView.initGaugeViewBySetting();
         mGaugeView.showGauge(true, true);
-
+        int totalLengthMs = getClipSet().getTotalLengthMs();
+        mGaugeView.setTail(totalLengthMs - 1000);
         mDownloadView.startIntro();
-
         mRawDataLoader = new RawDataLoader(mPlaylistId);
         mRawDataLoader.loadRawDataRx()
             .subscribeOn(Schedulers.io())
@@ -303,13 +303,13 @@ public class TranscodingActivity extends BaseActivity {
     private class ClipRawDataOverlayProvider implements OverlayProvider {
 
         @Override
-        public Bitmap updateTexImage(final long pts) {
+        public Bitmap updateTexImage(final long ptsNs) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    int currentPlayTime = (int) (pts / 1000000);
-                    mGaugeView.setPlayTime(currentPlayTime);
-                    ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPlayTime);
+                    int currentPlayTimeMs = (int) (ptsNs / 1000000);
+                    mGaugeView.setPlayTime(currentPlayTimeMs);
+                    ClipSetPos clipSetPos = getClipSet().getClipSetPosByTimeOffset(currentPlayTimeMs);
                     mAdapter.setClipSetPos(clipSetPos);
 
                 }

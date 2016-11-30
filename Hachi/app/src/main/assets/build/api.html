@@ -35,19 +35,29 @@
      * @method set the overlay params to the buffer, not take effect immediately
      * @param { json }
      * @param { {theme: "neo"} } change the theme to neo, value of acceptance:["neo","default","None"]
-     * @param { {mph: number} } set the value of speed gauge, unit of acceptance:mph
-     * @param { {throttle: number} } set the value of speed gauge, range of acceptance :[]
-     * @param { {whp: number} }
-     * @param { {gpsSpeed: number} } set the value of speed gauge, Unit of acceptance: km/h
-     * @param { {obdSpeed: number} } set the value of speed gauge, Unit of acceptance: km/h
+     *
      * @param { {rpm: number} } set the value of RPM gauge
      * @param { {psi: number} } set the value of BOOST gauge, Unit of acceptance: inHg
+     * @param { {throttle: number} } set the value of speed gauge, range of acceptance :[]
+     * @param { {whp: number} }
+     *
+     * @param { {gpsSpeed: number} } set the value of speed gauge, Unit of acceptance: km/h
+     * @param { {obdSpeed: number} } set the value of speed gauge, Unit of acceptance: km/h
+     * @param { {mph: number} } set the value of speed gauge, unit of acceptance:mph
+     *
      * @param { {gforceBA: number} } set the value of beforeAfter of Gforce gauge, range of acceptance :0~1000
      * @param { {gforceLR: number} } set the value of LeftRight of Gforce gauge, range of acceptance :0~1000
+     *
      * @param { {lat: number} } set latitude for GPS
      * @param { {lng: number} } set longitude for GPS
+     *
      * @param { {roll: number} } set roll
      * @param { {pitch: number} } set pitch
+     *
+     * @param { {startTail: number} set the start time point of showing up tail, Unit of acceptance:ms
+     *
+     * @param { {playTime: number} set the process of video playing, Unit of acceptance:ms
+     * playTime will influence the opacity of tail,countDown gauge, and LapTimer gauge
      *
      * @param { {time: Date} }
      * @example
