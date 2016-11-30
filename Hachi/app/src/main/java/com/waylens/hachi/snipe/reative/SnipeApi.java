@@ -5,15 +5,18 @@ import android.os.Bundle;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestFuture;
+import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
 import com.waylens.hachi.snipe.toolbox.GetSpaceInfoRequest;
 import com.waylens.hachi.snipe.toolbox.PlaylistPlaybackUrlRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBlockRequest;
 import com.waylens.hachi.snipe.toolbox.RawDataBufRequest;
 import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.snipe.vdb.Vdb;
@@ -107,6 +110,13 @@ class SnipeApi {
     public static Integer addHighlight(Clip.ID clipId, long startTimeMs, long endTimeMs) throws ExecutionException, InterruptedException {
         VdbRequestFuture<Integer> requestFuture = VdbRequestFuture.newFuture();
         AddBookmarkRequest request = new AddBookmarkRequest(clipId, startTimeMs, endTimeMs, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+        return requestFuture.get();
+    }
+
+    public static ClipDownloadInfo getClipDownloadInfo(Clip.ID cid, long start, int length) throws ExecutionException, InterruptedException {
+        VdbRequestFuture<ClipDownloadInfo> requestFuture = VdbRequestFuture.newFuture();
+        DownloadUrlRequest request = new DownloadUrlRequest(cid,  start, length, requestFuture, requestFuture);
         VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
         return requestFuture.get();
     }

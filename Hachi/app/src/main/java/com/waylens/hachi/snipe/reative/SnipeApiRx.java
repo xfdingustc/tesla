@@ -1,6 +1,7 @@
 package com.waylens.hachi.snipe.reative;
 
 import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.SpaceInfo;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
@@ -86,6 +87,7 @@ public class SnipeApiRx {
             }
         });
     }
+
     public static Observable<byte[]> getRawDataBufRx(final Clip clip, final int dataType, final long startTime, final int duration) {
         return Observable.defer(new Func0<Observable<byte[]>>() {
             @Override
@@ -133,6 +135,20 @@ public class SnipeApiRx {
                 }
             }
         });
+    }
+
+    public static Observable<ClipDownloadInfo> getClipDownloadInfoRx(final Clip.ID cid, final long start, final int length) {
+        return Observable.defer(new Func0<Observable<ClipDownloadInfo>>() {
+            @Override
+            public Observable<ClipDownloadInfo> call() {
+                try {
+                    return Observable.just(SnipeApi.getClipDownloadInfo(cid, start, length));
+                } catch (ExecutionException | InterruptedException e) {
+                    return Observable.error(e);
+                }
+            }
+        });
+
     }
 
 

@@ -64,8 +64,8 @@ public class DownloadJob extends ExportableJob {
     private void downloadVideoSync() throws InterruptedException {
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mDownloadInfo);
 
-        String outputFile = FileUtils.genDownloadFileName(mDownloadInfo.clipDate, mDownloadInfo.clipTimeMs);
-        downloadHelper.downloadClipRx(outputFile)
+        mDownloadFilePath = FileUtils.genDownloadFileName(mDownloadInfo.clipDate, mDownloadInfo.clipTimeMs);
+        downloadHelper.downloadClipRx(mDownloadFilePath)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Subscriber<Integer>() {
                 @Override
