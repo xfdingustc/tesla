@@ -21,9 +21,9 @@ import android.util.Log;
 
 class AndroidOriginalFormatStrategy implements MediaFormatStrategy {
     private static final String TAG = "720pFormatStrategy";
-    private static final int LONGER_LENGTH = 1280;
-    private static final int SHORTER_LENGTH = 720;
     private static final int DEFAULT_BITRATE = 8000 * 1000; // From Nexus 4 Camera in 720p
+    private int mMaxWidth = -1;
+    private int mMaxHeight = -1;
     private final int mBitRate;
 
     public AndroidOriginalFormatStrategy() {
@@ -31,6 +31,12 @@ class AndroidOriginalFormatStrategy implements MediaFormatStrategy {
     }
 
     public AndroidOriginalFormatStrategy(int bitRate) {
+        mBitRate = bitRate;
+    }
+
+    public AndroidOriginalFormatStrategy(int maxWidth, int maxHeight, int bitRate) {
+        mMaxWidth = maxWidth;
+        mMaxHeight = maxHeight;
         mBitRate = bitRate;
     }
 
@@ -53,15 +59,16 @@ class AndroidOriginalFormatStrategy implements MediaFormatStrategy {
         if (longer * 9 != shorter * 16) {
             throw new OutputFormatUnavailableException("This video is not 16:9, and is not able to transcode. (" + width + "x" + height + ")");
         }
-        if (shorter <= SHORTER_LENGTH) {
-            Log.d(TAG, "This video is less or equal to 720p, pass-through. (" + width + "x" + height + ")");
-//            return null;
+
+        if (mMaxHeight > 0) {
+            outWidth = Math.min(outWidth, mMaxWidth);
+            outHeight = Math.min(outHeight, mMaxHeight);
         }
         MediaFormat format = MediaFormat.createVideoFormat("video/avc", outWidth, outHeight);
         // From Nexus 4 Camera in 720p
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 3);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         return format;
     }

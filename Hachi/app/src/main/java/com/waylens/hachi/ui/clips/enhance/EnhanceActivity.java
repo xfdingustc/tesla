@@ -373,7 +373,13 @@ public class EnhanceActivity extends ClipPlayActivity {
                     mDownloadInfo = clipDownloadInfo.main;
                     boolean withOverlay = mMaskWithOverlay.getVisibility() == View.VISIBLE;
                     if (withOverlay) {
-                        TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo);
+                        int qualityIndex = 0;
+                        if (btnHd.isChecked()) {
+                            qualityIndex = 1;
+                        } else if (btnFullHd.isChecked()) {
+                            qualityIndex = 2;
+                        }
+                        TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo, qualityIndex);
                     } else {
                         if (btnSd.isChecked()) {
                             mDownloadInfo = clipDownloadInfo.sub;

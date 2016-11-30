@@ -35,6 +35,7 @@ import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.mediatranscoder.MediaTranscoder;
 import com.waylens.mediatranscoder.engine.OverlayProvider;
+import com.waylens.mediatranscoder.format.MediaFormatStrategy;
 import com.waylens.mediatranscoder.format.MediaFormatStrategyPresets;
 
 import java.io.File;
@@ -58,6 +59,7 @@ public class TranscodingActivity extends BaseActivity {
     private static final String EXTRA_PLAYLIST_ID = "playlist.id";
     private static final String EXTRA_STREAM_INFO = "stream.info";
     private static final String EXTRA_STREAM_DOWNLOAD_INFO = "stream.download.info";
+    private static final String EXTRA_QUALITY_INDEX = "quality.index";
 
     private static final int TRANS_STATE_ERROR = -1;
     private static final int TRANS_STATE_LOAD_RAW_DATA = 0;
@@ -74,16 +76,18 @@ public class TranscodingActivity extends BaseActivity {
 
     private RawDataLoader mRawDataLoader;
     private ClipRawDataAdapter mAdapter;
+    private int mQualityIndex;
 
     private OverlayProvider mOverlayProvider;
 
     private int mState = TRANS_STATE_LOAD_RAW_DATA;
 
-    public static void launch(Activity activity, int playListId, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo) {
+    public static void launch(Activity activity, int playListId, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo, int qualityIndex) {
         Intent intent = new Intent(activity, TranscodingActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
         intent.putExtra(EXTRA_STREAM_INFO, streamInfo);
         intent.putExtra(EXTRA_STREAM_DOWNLOAD_INFO, downloadInfo);
+        intent.putExtra(EXTRA_QUALITY_INDEX, qualityIndex);
         activity.startActivity(intent);
     }
 
@@ -142,9 +146,11 @@ public class TranscodingActivity extends BaseActivity {
     @Override
     protected void init() {
         super.init();
-        mPlaylistId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
-        mStreamInfo = (Clip.StreamInfo) getIntent().getSerializableExtra(EXTRA_STREAM_INFO);
-        mStreamDownloadInfo = (ClipDownloadInfo.StreamDownloadInfo) getIntent().getSerializableExtra(EXTRA_STREAM_DOWNLOAD_INFO);
+        Intent intent = getIntent();
+        mPlaylistId = intent.getIntExtra(EXTRA_PLAYLIST_ID, -1);
+        mStreamInfo = (Clip.StreamInfo) intent.getSerializableExtra(EXTRA_STREAM_INFO);
+        mStreamDownloadInfo = (ClipDownloadInfo.StreamDownloadInfo) intent.getSerializableExtra(EXTRA_STREAM_DOWNLOAD_INFO);
+        mQualityIndex = intent.getIntExtra(EXTRA_QUALITY_INDEX, 0);
         initViews();
     }
 
@@ -237,7 +243,10 @@ public class TranscodingActivity extends BaseActivity {
         final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
         mOutputFile = FileUtils.genDownloadFileName(0, 0);
         mOverlayProvider = new ClipRawDataOverlayProvider();
-        MediaTranscoder.getInstance().transcodeVideoRx(fileDescriptor, mOutputFile, MediaFormatStrategyPresets.createAndroid720pStrategy(), mOverlayProvider)
+
+
+
+        MediaTranscoder.getInstance().transcodeVideoRx(fileDescriptor, mOutputFile, getMediaFormatStrategy(), mOverlayProvider)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new Subscriber<MediaTranscoder.TranscodeProgress>() {
@@ -263,22 +272,6 @@ public class TranscodingActivity extends BaseActivity {
         mState = TRANS_STATE_FINISHED;
         mDownloadView.success();
         deleteTempFile();
-//        TransitionManager.beginDelayedTransition(container, getTransition(R.transition.trancode_show_fab));
-//        mShareFab.setVisibility(View.VISIBLE);
-//        getToolbar().inflateMenu(R.menu.menu_transcode);
-//        getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.preview:
-//                        Intent intent = new Intent(Intent.ACTION_VIEW);
-//                        intent.setDataAndType(Uri.fromFile(new File(mOutputFile)), "video/mp4");
-//                        startActivity(intent);
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
         FinishedActivity.launch(this, mOutputFile);
 
     }
@@ -315,6 +308,18 @@ public class TranscodingActivity extends BaseActivity {
                 }
             });
             return BitmapUtils.getBitmapFromView(mGaugeView);
+        }
+    }
+
+    private MediaFormatStrategy getMediaFormatStrategy() {
+        switch (mQualityIndex) {
+            case 1:
+                return MediaFormatStrategyPresets.createAndroid720pStrategy();
+            case 2:
+                return MediaFormatStrategyPresets.createAndroid1080pStrategy();
+
+            default:
+                return MediaFormatStrategyPresets.createAndroid480pStrategy();
         }
     }
 
