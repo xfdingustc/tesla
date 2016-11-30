@@ -11,9 +11,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,9 +27,7 @@ import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.SnipeError;
-import com.waylens.hachi.snipe.VdbResponse;
-import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -46,7 +45,6 @@ import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
-import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.TapTargetHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeInfoItem;
@@ -61,6 +59,8 @@ import java.util.List;
 import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -100,8 +100,10 @@ public class EnhanceActivity extends ClipPlayActivity {
         activity.startActivity(intent);
     }
 
-    private RadioButton btnSd, btnHd;
-    private CheckBox checkBoxWithOverlay;
+    private RadioButton btnSd, btnHd, btnFullHd;
+    private View mMaskWithOverlay;
+    private View mMaskWithoutOverlay;
+    private TextView mExportTip;
 
 
     @BindView(R.id.gauge_list_view)
@@ -333,7 +335,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                         toShare();
                         break;
                     case R.id.menu_to_download:
-                        showDownloadBottomSheetDialog();
+                        getClipSetDownloadInfo();
                         break;
                 }
                 return true;
@@ -343,58 +345,73 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     }
 
-    private void showDownloadBottomSheetDialog() {
+    private void getClipSetDownloadInfo() {
 
-        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null); // TODO
-        final DownloadUrlRequest request = new DownloadUrlRequest(cid, 0, getClipSet().getTotalLengthMs(), new VdbResponse
-            .Listener<ClipDownloadInfo>() {
-            @Override
-            public void onResponse(final ClipDownloadInfo response) {
-                Logger.t(TAG).d("on response:!!!!: " + response.main.url);
-                Logger.t(TAG).d("on response: " + response.sub.url);
+        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null);
+        SnipeApiRx.getClipDownloadInfoRx(cid, 0, getClipSet().getTotalLengthMs())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
+                @Override
+                public void onNext(ClipDownloadInfo clipDownloadInfo) {
+                    showExportDetailDialog(clipDownloadInfo);
 
-                MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
-                    .title(R.string.download)
-                    .customView(R.layout.dialog_download, true)
-                    .positiveText(R.string.ok)
-                    .negativeText(R.string.cancel)
-                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            if (btnSd.isChecked()) {
-                                mDownloadInfo = response.sub;
-                            } else {
-                                mDownloadInfo = response.main;
-                            }
-                            boolean withOverlay = checkBoxWithOverlay.isChecked();
-                            if (withOverlay) {
-                                TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo);
-                            } else {
-                                ExportedVideoActivity.launch(EnhanceActivity.this);
-                                BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
-                            }
+                }
+            });
 
+    }
 
+    private void showExportDetailDialog(final ClipDownloadInfo clipDownloadInfo) {
+        MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
+            .title(R.string.download)
+            .customView(R.layout.dialog_download, true)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    mDownloadInfo = clipDownloadInfo.main;
+                    boolean withOverlay = mMaskWithOverlay.getVisibility() == View.VISIBLE;
+                    if (withOverlay) {
+                        TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo);
+                    } else {
+                        if (btnSd.isChecked()) {
+                            mDownloadInfo = clipDownloadInfo.sub;
                         }
-                    })
-                    .show();
+                        ExportedVideoActivity.launch(EnhanceActivity.this);
+                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
+                    }
+                }
+            })
+            .show();
 
-                btnSd = (RadioButton) dialog.findViewById(R.id.sd_stream);
-                btnHd = (RadioButton) dialog.findViewById(R.id.hd_stream);
-                checkBoxWithOverlay = (CheckBox) dialog.findViewById(R.id.with_overlay);
-                btnSd.setText(getString(R.string.sd, StringUtils.getSpaceString(response.sub.size)));
-                btnHd.setText(getString(R.string.fullhd, StringUtils.getSpaceString(response.main.size)));
-                btnSd.setChecked(true);
-
-            }
-        }, new VdbResponse.ErrorListener() {
+        btnSd = (RadioButton) dialog.findViewById(R.id.sd_stream);
+        btnHd = (RadioButton) dialog.findViewById(R.id.hd_stream);
+        btnFullHd = (RadioButton) dialog.findViewById(R.id.full_hd_stream);
+        mExportTip = (TextView) dialog.findViewById(R.id.download_tip);
+        FrameLayout layoutWithOverlay = (FrameLayout) dialog.findViewById(R.id.layout_with_overlay);
+        FrameLayout layoutWithoutOverlay = (FrameLayout) dialog.findViewById(R.id.layout_without_overlay);
+        mMaskWithOverlay = dialog.findViewById(R.id.select_mask_with_overlay);
+        mMaskWithoutOverlay = dialog.findViewById(R.id.select_mask_without_overlay);
+        layoutWithOverlay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onErrorResponse(SnipeError error) {
-
+            public void onClick(View view) {
+                mMaskWithOverlay.setVisibility(View.VISIBLE);
+                mMaskWithoutOverlay.setVisibility(View.GONE);
+                btnHd.setVisibility(View.VISIBLE);
+                mExportTip.setText(R.string.tip_with_overlay);
             }
         });
-        mVdbRequestQueue.add(request);
-
+        layoutWithoutOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMaskWithoutOverlay.setVisibility(View.VISIBLE);
+                mMaskWithOverlay.setVisibility(View.GONE);
+                btnHd.setVisibility(View.GONE);
+                mExportTip.setText(R.string.tip_without_overlay);
+            }
+        });
+        btnSd.setChecked(true);
     }
 
 
