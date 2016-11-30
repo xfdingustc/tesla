@@ -233,15 +233,22 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = createFragmentView(inflater, container, R.layout.fragment_leaderboard, savedInstanceState);
-        mRvLeaderboardList.setAdapter(mAdapter);
-        mRvLeaderboardList.setLayoutManager(mLinearLayoutManager);
-        mRefreshLayout.setOnRefreshListener(this);
-        mRvLeaderboardList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
-            @Override
-            public void loadMore() {
-                //loadLeaderBoard(mCurrentCursor, false);
-            }
-        });
+
+        setupExpandableFilter();
+        setLeaderboardItemList();
+        setupLeaderBoardFilter();
+
+        rlvFirst.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
+        rlvSecond.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
+        rlvThird.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
+
+
+        mMakerModelList = new ArrayList<>();
+
+        return view;
+    }
+
+    private void setupExpandableFilter() {
         llFilter.collapse();
         llFilter.setInterpolator(new FastOutSlowInInterpolator());
         llFilter.setListener(new ExpandableLayoutListenerAdapter() {
@@ -257,24 +264,37 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             @Override
             public void onPreClose() {
                 super.onPreClose();
-                ObjectAnimator dropDownAnimator = ObjectAnimator.ofFloat(btnDropDown, View.ROTATION, 180, 0)
-                    .setDuration(300);
-                dropDownAnimator.setInterpolator(new FastOutSlowInInterpolator());
-                dropDownAnimator.start();
+                if (btnDropDown.getRotation() == 180) {
+                    ObjectAnimator dropDownAnimator = ObjectAnimator.ofFloat(btnDropDown, View.ROTATION, 180, 0)
+                        .setDuration(300);
+                    dropDownAnimator.setInterpolator(new FastOutSlowInInterpolator());
+                    dropDownAnimator.start();
+                }
             }
         });
+    }
 
-        setupLeaderBoardFilter();
-
-        rlvFirst.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
-        rlvSecond.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
-        rlvThird.setTextTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
-
+    private void setLeaderboardItemList() {
         mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
             android.R.color.holo_orange_light, android.R.color.holo_red_light);
-        mMakerModelList = new ArrayList<>();
-
-        return view;
+        mRvLeaderboardList.setAdapter(mAdapter);
+        mRvLeaderboardList.setLayoutManager(mLinearLayoutManager);
+        mRefreshLayout.setOnRefreshListener(this);
+        mRvLeaderboardList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
+            @Override
+            public void loadMore() {
+                //loadLeaderBoard(mCurrentCursor, false);
+            }
+        });
+        mRvLeaderboardList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    llFilter.collapse();
+                }
+            }
+        });
     }
 
     private void setupLeaderBoardFilter() {
