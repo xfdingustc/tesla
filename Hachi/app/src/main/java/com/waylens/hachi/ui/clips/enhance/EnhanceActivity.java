@@ -100,8 +100,8 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
     private RadioButton btnSd, btnHd, btnFullHd;
-    private View mMaskWithOverlay;
-    private View mMaskWithoutOverlay;
+    private View mUnselectMaskWithOverlay, mSelectorWithOverlay;
+    private View mUnselectMaskWithoutOverlay, mSelectorWithoutOverlay;
     private TextView mExportTip;
 
 
@@ -303,7 +303,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                 .withCallback(new Tooltip.Callback() {
                     @Override
                     public void onTooltipClose(Tooltip.TooltipView tooltipView, boolean b, boolean b1) {
-                        TapTargetHelper.onShowExportTargetTaped();
+
                     }
 
                     @Override
@@ -313,7 +313,7 @@ public class EnhanceActivity extends ClipPlayActivity {
 
                     @Override
                     public void onTooltipShown(Tooltip.TooltipView tooltipView) {
-
+                        TapTargetHelper.onShowExportTargetTaped();
                     }
 
                     @Override
@@ -387,7 +387,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                     mDownloadInfo = clipDownloadInfo.main;
-                    boolean withOverlay = mMaskWithOverlay.getVisibility() == View.VISIBLE;
+                    boolean withOverlay = mSelectorWithOverlay.getVisibility() == View.VISIBLE;
                     if (withOverlay) {
                         int qualityIndex = 0;
                         if (btnHd.isChecked()) {
@@ -413,13 +413,17 @@ public class EnhanceActivity extends ClipPlayActivity {
         mExportTip = (TextView) dialog.findViewById(R.id.download_tip);
         FrameLayout layoutWithOverlay = (FrameLayout) dialog.findViewById(R.id.layout_with_overlay);
         FrameLayout layoutWithoutOverlay = (FrameLayout) dialog.findViewById(R.id.layout_without_overlay);
-        mMaskWithOverlay = dialog.findViewById(R.id.select_mask_with_overlay);
-        mMaskWithoutOverlay = dialog.findViewById(R.id.select_mask_without_overlay);
+        mUnselectMaskWithOverlay = dialog.findViewById(R.id.unselect_mask_with_overlay);
+        mUnselectMaskWithoutOverlay = dialog.findViewById(R.id.unselect_mask_without_overlay);
+        mSelectorWithOverlay = dialog.findViewById(R.id.select_mask_with_overlay);
+        mSelectorWithoutOverlay = dialog.findViewById(R.id.select_mask_without_overlay);
         layoutWithOverlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMaskWithOverlay.setVisibility(View.VISIBLE);
-                mMaskWithoutOverlay.setVisibility(View.GONE);
+                mUnselectMaskWithOverlay.setVisibility(View.GONE);
+                mUnselectMaskWithoutOverlay.setVisibility(View.VISIBLE);
+                mSelectorWithOverlay.setVisibility(View.VISIBLE);
+                mSelectorWithoutOverlay.setVisibility(View.GONE);
                 btnHd.setVisibility(View.VISIBLE);
                 mExportTip.setText(R.string.tip_with_overlay);
             }
@@ -427,8 +431,10 @@ public class EnhanceActivity extends ClipPlayActivity {
         layoutWithoutOverlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMaskWithoutOverlay.setVisibility(View.VISIBLE);
-                mMaskWithOverlay.setVisibility(View.GONE);
+                mUnselectMaskWithOverlay.setVisibility(View.VISIBLE);
+                mUnselectMaskWithoutOverlay.setVisibility(View.GONE);
+                mSelectorWithOverlay.setVisibility(View.GONE);
+                mSelectorWithoutOverlay.setVisibility(View.VISIBLE);
                 btnHd.setVisibility(View.GONE);
                 mExportTip.setText(R.string.tip_without_overlay);
             }

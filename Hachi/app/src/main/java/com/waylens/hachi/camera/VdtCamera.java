@@ -1391,7 +1391,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
 
 
     private void ack_getDisplayAutoOffTime(String p1, String p2) {
-        Logger.t(TAG).d(String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2));
+//        Logger.t(TAG).d(String.format("ack_get_display_auto_off_time: p1: %s, p2: %s", p1, p2));
         try {
             mAutoOffTime = p1;
         } catch (Exception e) {
@@ -1409,7 +1409,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void ack_getAutoPowerOffDelay(String p1, String p2) {
-        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
+//        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
         try {
             mAutoPowerOffDelay = p1;
         } catch (Exception e) {
@@ -1441,7 +1441,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     private void ack_getScreenSaverStyle(String p1, String p2) {
-        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
+//        Logger.t(TAG).d(String.format("%s, %s", p1, p2));
         try {
             mScreenSaverStyle = p1;
         } catch (Exception e) {
