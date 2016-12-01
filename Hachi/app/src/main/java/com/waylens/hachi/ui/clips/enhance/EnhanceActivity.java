@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.Theme;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
@@ -47,6 +48,8 @@ import com.waylens.hachi.utils.TapTargetHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeInfoItem;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -88,6 +91,8 @@ public class EnhanceActivity extends ClipPlayActivity {
     private MusicItem mMusicItem;
     private int mPlaylistId;
     private GaugeListAdapter mGaugeListAdapter;
+
+    private LoadToast mLoadToast;
 
 
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
@@ -362,6 +367,13 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
     private void getClipSetDownloadInfo() {
+        if (mLoadToast != null) {
+            return;
+        }
+
+        mLoadToast = new LoadToast(this);
+        mLoadToast.setText(getString(R.string.loading));
+        mLoadToast.show();
 
         Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null);
         SnipeApiRx.getClipDownloadInfoRx(cid, 0, getClipSet().getTotalLengthMs())
@@ -370,8 +382,16 @@ public class EnhanceActivity extends ClipPlayActivity {
             .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
                 @Override
                 public void onNext(ClipDownloadInfo clipDownloadInfo) {
+                    mLoadToast.success();
+                    mLoadToast = null;
                     showExportDetailDialog(clipDownloadInfo);
+                }
 
+                @Override
+                public void onError(Throwable e) {
+                    mLoadToast.error();
+                    mLoadToast = null;
+                    super.onError(e);
                 }
             });
 
@@ -381,6 +401,7 @@ public class EnhanceActivity extends ClipPlayActivity {
         MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
             .title(R.string.download)
             .customView(R.layout.dialog_download, true)
+            .canceledOnTouchOutside(false)
             .positiveText(R.string.ok)
             .negativeText(R.string.cancel)
             .onPositive(new MaterialDialog.SingleButtonCallback() {

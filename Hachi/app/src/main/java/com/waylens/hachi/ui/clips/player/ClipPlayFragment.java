@@ -488,11 +488,16 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mEventBus.unregister(this);
         mEventBus.unregister(mMultiSegSeekbar);
         mEventBus.unregister(mWvGauge);
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
         if (mMediaPlayer != null && mPlayerControl != null) {
             mPlayerControl.pause();
         }
     }
-
 
     @Override
     public void onDestroy() {

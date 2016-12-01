@@ -26,7 +26,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="2dp"
-                android:src="@drawable/gauge_bg"/>
+                android:src="@drawable/gauge_bg"
+                android:scaleType="centerCrop"/>
 
             <View
                 android:id="@+id/unselect_mask_without_overlay"
@@ -68,7 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="2dp"
-                android:src="@drawable/gauge"/>
+                android:src="@drawable/gauge"
+                android:scaleType="centerCrop"/>
 
             <View
                 android:id="@+id/unselect_mask_with_overlay"
