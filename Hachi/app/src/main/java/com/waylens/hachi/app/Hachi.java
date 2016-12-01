@@ -11,6 +11,7 @@ import com.google.android.exoplayer.ExoPlayerLibraryInfo;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
+import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.session.SessionManager;
@@ -74,6 +75,8 @@ public class Hachi extends MultiDexApplication {
         UploadManager uploadManager = UploadManager.getManager();
 
         configureJobManager();
+
+        ExportManager.getManager();
 
         PreferenceUtils.initialize(this);
 

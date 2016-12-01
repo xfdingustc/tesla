@@ -31,9 +31,6 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
 
 import butterknife.BindView;
@@ -53,12 +50,12 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private int mDownloadingCount = 0;
 
     public void handleEvent(ExportEvent event) {
-        Logger.t(TAG).d("event type" + event.getWhat());
         switch (event.getWhat()) {
             case ExportEvent.EXPORT_WHAT_JOB_ADDED:
                 notifyDataSetChanged();
                 break;
             case ExportEvent.EXPORT_WHAT_PROGRESS:
+                Logger.t(TAG).d("download progress " + event.getWhat() + " index: " + event.getIndex());
                 notifyItemChanged(event.getIndex());
                 break;
             case ExportEvent.EXPORT_WHAT_FINISHED:

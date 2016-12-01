@@ -139,6 +139,7 @@ public class TranscodingActivity extends BaseActivity {
                             Logger.t(TAG).d("Delete output file: " + mOutputFile);
                             File file = new File(mOutputFile);
                             file.delete();
+                            MediaTranscoder.getInstance().cancel();
                         }
                         TranscodingActivity.super.onBackPressed();
                     }
@@ -318,7 +319,7 @@ public class TranscodingActivity extends BaseActivity {
                 return MediaFormatStrategyPresets.createAndroid1080pStrategy();
 
             default:
-                return MediaFormatStrategyPresets.createAndroid480pStrategy();
+                return MediaFormatStrategyPresets.createAndroid360pStrategy();
         }
     }
 

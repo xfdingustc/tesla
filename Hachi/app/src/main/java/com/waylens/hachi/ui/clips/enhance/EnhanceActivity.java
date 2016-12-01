@@ -408,6 +408,9 @@ public class EnhanceActivity extends ClipPlayActivity {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                     mDownloadInfo = clipDownloadInfo.main;
+                    if (btnSd.isChecked()) {
+                        mDownloadInfo = clipDownloadInfo.sub;
+                    }
                     boolean withOverlay = mSelectorWithOverlay.getVisibility() == View.VISIBLE;
                     if (withOverlay) {
                         int qualityIndex = 0;
@@ -418,9 +421,7 @@ public class EnhanceActivity extends ClipPlayActivity {
                         }
                         TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo, qualityIndex);
                     } else {
-                        if (btnSd.isChecked()) {
-                            mDownloadInfo = clipDownloadInfo.sub;
-                        }
+
                         ExportedVideoActivity.launch(EnhanceActivity.this);
                         BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
                     }
@@ -495,6 +496,9 @@ public class EnhanceActivity extends ClipPlayActivity {
 
     private void configEnhanceView() {
 //        mClipsEditView.setClipIndex(mPlaylistEditor.getPlaylistId());
+        if (getClipSet() == null || getClipSet().getClipList() == null) {
+            return;
+        }
         Logger.t(TAG).d("List size :" + getClipSet().getClipList().size());
         mClipsEditView.setPlayListEditor(mPlaylistEditor);
         mClipsEditView.setOnClipEditListener(new ClipsEditView.OnClipEditListener() {

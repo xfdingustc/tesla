@@ -11,11 +11,9 @@ import android.widget.ViewSwitcher;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.bgjob.export.event.ExportEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.adapters.DownloadItemAdapter;
-import com.waylens.hachi.utils.FileUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -40,7 +38,6 @@ public class ExportedVideoActivity extends BaseActivity {
 
     public static void launch(Activity activity) {
         //install callback in bgjob
-        ExportManager.getManager();
         Intent intent = new Intent(activity, ExportedVideoActivity.class);
         activity.startActivity(intent);
     }
@@ -49,7 +46,7 @@ public class ExportedVideoActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        EventBus.getDefault().register(ExportedVideoActivity.this);
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -70,13 +67,10 @@ public class ExportedVideoActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(ExportedVideoActivity.this);
-    }
+
 
     @Override
     protected void onStop() {

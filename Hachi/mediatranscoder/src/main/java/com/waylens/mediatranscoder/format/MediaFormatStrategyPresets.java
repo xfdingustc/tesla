@@ -23,8 +23,8 @@ public class MediaFormatStrategyPresets {
     public static final MediaFormatStrategy EXPORT_PRESET_960x540 = new ExportPreset960x540Strategy();
 
 
-    public static MediaFormatStrategy createAndroid480pStrategy() {
-        return new AndroidOriginalFormatStrategy(854, 480, 1900 * 1000);
+    public static MediaFormatStrategy createAndroid360pStrategy() {
+        return new AndroidOriginalFormatStrategy(640, 360, 1900 * 1000);
     }
 
     public static MediaFormatStrategy createAndroid1080pStrategy() {

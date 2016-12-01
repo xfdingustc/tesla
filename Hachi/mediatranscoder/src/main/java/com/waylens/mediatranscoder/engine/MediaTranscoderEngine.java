@@ -127,6 +127,13 @@ public class MediaTranscoderEngine {
         }
     }
 
+    public void stop() {
+        if (mExtractor != null) {
+            mExtractor.release();
+            mExtractor = null;
+        }
+    }
+
     private void setupMetadata() throws IOException {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(mInputFileDescriptor);
