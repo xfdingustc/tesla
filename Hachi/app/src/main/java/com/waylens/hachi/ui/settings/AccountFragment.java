@@ -15,6 +15,7 @@ import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.NotificationActivity;
+import com.waylens.hachi.ui.activities.WebViewActivity;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
@@ -121,6 +122,11 @@ public class AccountFragment extends BaseFragment implements FragmentNavigator {
     @OnClick(R.id.ll_about)
     public void onAboutClicked() {
         AboutActivity.launch(getActivity());
+    }
+
+    @OnClick(R.id.ll_quick_start)
+    public void onQuickStartClicked() {
+        WebViewActivity.launch(getActivity(), WebViewActivity.PAGE_SUPPORT);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
