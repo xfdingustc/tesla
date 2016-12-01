@@ -790,36 +790,43 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
         Logger.t(TAG).d("isAddMore: " + mIsAddMore + " isToShare: " + mIsToShare);
         if (!mIsAddMore) {
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
-
-            mRefreshLayout.setRefreshing(true);
+            if (mLoadToast != null) {
+                return;
+            }
+            mLoadToast = new LoadToast(getActivity());
+            mLoadToast.setText(getString(R.string.loading));
+            mLoadToast.show();
             Logger.t(TAG).d("selected list size: " + selectedList.size());
 
             final int playlistId = 0x100;
             PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
 
             playListEditor.buildRx(selectedList)
-                .subscribe(new Subscriber<Void>() {
+                .subscribe(new SimpleSubscribe<Void>() {
                     @Override
                     public void onCompleted() {
+                        mLoadToast.success();
+                        mLoadToast = null;
                         if (mIsToShare) {
-                            mRefreshLayout.setRefreshing(false);
                             ShareActivity.launch(getActivity(), playlistId, -1);
                             getActivity().finish();
                         } else {
-                            mRefreshLayout.setRefreshing(false);
                             EnhanceActivity.launch(getActivity(), playlistId);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        mLoadToast.error();
+                        mLoadToast = null;
                     }
 
                     @Override
                     public void onNext(Void aVoid) {
 
                     }
+
+
                 });
 
         } else {
@@ -834,7 +841,12 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private void toShare() {
         if (SessionManager.getInstance().isLoggedIn()) {
 
-            mRefreshLayout.setRefreshing(true);
+            if (mLoadToast != null) {
+                return;
+            }
+            mLoadToast = new LoadToast(getActivity());
+            mLoadToast.setText(getString(R.string.loading));
+            mLoadToast.show();
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 
             final int playlistId = 0x100;
@@ -843,13 +855,15 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 .subscribe(new Subscriber<Void>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
+                        mLoadToast.success();
+                        mLoadToast = null;
                         ShareActivity.launch(getActivity(), playlistId, -1);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        mLoadToast.error();
+                        mLoadToast = null;
                     }
 
                     @Override
@@ -863,27 +877,5 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
-    private static class LoadingHandler extends Handler {
-        private WeakReference<ClipGridListFragment> mFragmentRef;
 
-        private static final int SHOW_LOADING = 1;
-
-        LoadingHandler(ClipGridListFragment fragment) {
-            super();
-            mFragmentRef = new WeakReference<>(fragment);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            ClipGridListFragment fragment = mFragmentRef.get();
-            if (fragment == null) {
-                return;
-            }
-            switch (msg.what) {
-                case SHOW_LOADING:
-                    fragment.showLoading(null);
-                    break;
-            }
-        }
-    }
 }
