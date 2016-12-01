@@ -68,7 +68,7 @@ class AndroidOriginalFormatStrategy implements MediaFormatStrategy {
         // From Nexus 4 Camera in 720p
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, 30);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 3);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         return format;
     }
