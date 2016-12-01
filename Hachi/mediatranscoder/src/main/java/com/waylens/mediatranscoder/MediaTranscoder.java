@@ -198,40 +198,36 @@ public class MediaTranscoder {
                                   final MediaFormatStrategy outFormatStrategy,
                                   final OverlayProvider overlayProvider,
                                   final Subscriber<? super TranscodeProgress> subscriber) {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                Exception caughtException = null;
-                try {
-                    MediaTranscoderEngine engine = new MediaTranscoderEngine();
-                    engine.setProgressCallback(new MediaTranscoderEngine.ProgressCallback() {
-                        @Override
-                        public void onProgress(final double progress, final long currentTimeMs) {
-                            TranscodeProgress transcodeProgress = new TranscodeProgress();
-                            transcodeProgress.progress = progress;
-                            transcodeProgress.currentTimeMs = currentTimeMs;
-                            subscriber.onNext(transcodeProgress);
-                        }
-                    });
-                    engine.setDataSource(inFileDescriptor);
-                    engine.transcodeVideo(outPath, outFormatStrategy, overlayProvider);
-                } catch (IOException e) {
-                    Log.w(TAG, "Transcode failed: input file (fd: " + inFileDescriptor.toString() + ") not found"
-                        + " or could not open output file ('" + outPath + "') .", e);
-                    caughtException = e;
-                } catch (RuntimeException e) {
-                    Log.e(TAG, "Fatal error while transcoding, this might be invalid format or bug in engine or Android.", e);
-                    caughtException = e;
+        Exception caughtException = null;
+        try {
+            MediaTranscoderEngine engine = new MediaTranscoderEngine();
+            engine.setProgressCallback(new MediaTranscoderEngine.ProgressCallback() {
+                @Override
+                public void onProgress(final double progress, final long currentTimeMs) {
+                    TranscodeProgress transcodeProgress = new TranscodeProgress();
+                    transcodeProgress.progress = progress;
+                    transcodeProgress.currentTimeMs = currentTimeMs;
+                    subscriber.onNext(transcodeProgress);
                 }
+            });
+            engine.setDataSource(inFileDescriptor);
+            engine.transcodeVideo(outPath, outFormatStrategy, overlayProvider);
+        } catch (IOException e) {
+            Log.w(TAG, "Transcode failed: input file (fd: " + inFileDescriptor.toString() + ") not found"
+                + " or could not open output file ('" + outPath + "') .", e);
+            caughtException = e;
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Fatal error while transcoding, this might be invalid format or bug in engine or Android.", e);
+            caughtException = e;
+        }
 
-                final Exception exception = caughtException;
-                if (exception == null) {
-                    subscriber.onCompleted();
-                } else {
-                    subscriber.onError(exception);
-                }
-            }
-        });
+        final Exception exception = caughtException;
+        if (exception == null) {
+            subscriber.onCompleted();
+        } else {
+            subscriber.onError(exception);
+        }
+
     }
 
 
@@ -248,12 +244,7 @@ public class MediaTranscoder {
          */
         void onTranscodeCompleted();
 
-        /**
-         * Called when transcode failed.
-         *
-         * @param exception Exception thrown from {@link MediaTranscoderEngine#transcodeVideo(String, MediaFormatStrategy)}.
-         *                  Note that it IS NOT {@link Throwable}. This means {@link Error} won't be caught.
-         */
+
         void onTranscodeFailed(Exception exception);
     }
 

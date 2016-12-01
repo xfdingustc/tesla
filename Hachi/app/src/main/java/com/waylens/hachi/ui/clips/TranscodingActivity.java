@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
@@ -129,10 +130,15 @@ public class TranscodingActivity extends BaseActivity {
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        if (mState == TRANS_STATE_DOWNLOAD_CLIP) {
-
-                        } else if (mState == TRANS_STATE_TRANCODING) {
-
+                        if (mDownloadFile != null) {
+                            Logger.t(TAG).d("Delete temp file: " + mDownloadFile);
+                            File file = new File(mDownloadFile);
+                            file.delete();
+                        }
+                        if (mState == TRANS_STATE_TRANCODING) {
+                            Logger.t(TAG).d("Delete output file: " + mOutputFile);
+                            File file = new File(mOutputFile);
+                            file.delete();
                         }
                         TranscodingActivity.super.onBackPressed();
                     }
@@ -162,13 +168,6 @@ public class TranscodingActivity extends BaseActivity {
         OptionView.setColorSuccess(R.color.white);
         OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
-//        getToolbar().setTitle(R.string.exporting);
-//        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                onBackPressed();
-//            }
-//        });
         mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
         mGaugeView.initGaugeViewBySetting();
         mGaugeView.showGauge(true, true);
@@ -219,7 +218,7 @@ public class TranscodingActivity extends BaseActivity {
 
                 @Override
                 public void onNext(Integer integer) {
-                    mDownloadView.setProgress((float) integer / 2);
+                    mDownloadView.setProgress((float) integer * 2 / 3);
                 }
             });
 
@@ -241,7 +240,7 @@ public class TranscodingActivity extends BaseActivity {
         }
 
         final FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        mOutputFile = FileUtils.genDownloadFileName(0, 0);
+        mOutputFile = FileUtils.genDownloadFileName(mStreamDownloadInfo.clipDate, mStreamDownloadInfo.clipTimeMs);
         mOverlayProvider = new ClipRawDataOverlayProvider();
 
 
@@ -262,7 +261,7 @@ public class TranscodingActivity extends BaseActivity {
 
                 @Override
                 public void onNext(MediaTranscoder.TranscodeProgress transcodeProgress) {
-                    mDownloadView.setProgress(((float) transcodeProgress.progress * 100) / 2 + 50.0f);
+                    mDownloadView.setProgress(((float) transcodeProgress.progress * 100) / 3 + 66.66f);
                 }
             });
 
