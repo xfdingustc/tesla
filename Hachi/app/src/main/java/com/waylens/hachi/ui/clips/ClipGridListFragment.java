@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
@@ -51,6 +51,8 @@ import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.ClipGridListView;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -90,8 +92,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
     private int mRemixLength = 20;
 
-    private LoadingHandler mLoadingHandler;
-
     private EventBus mEventBus = EventBus.getDefault();
 
     private ActionMode mActionMode;
@@ -109,6 +109,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     private ClipSet mClipSet;
 
     private boolean mIsExposed = false;
+
+    private LoadToast mLoadToast;
 
     @BindView(R.id.clipGroupList)
     RecyclerView mRvClipGroupList;
@@ -225,7 +227,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             attr = Clip.CLIP_ATTR_MANUALLY;
         }
         mPresenter = new ClipGridListPresenterImpl(getActivity(), mClipSetType, flag, attr, this);
-        mLoadingHandler = new LoadingHandler(this);
         initViews();
     }
 
@@ -391,29 +392,29 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     public void onStart() {
         super.onStart();
         mFabSubscription = RxBus.getDefault().toObserverable(ActionButtonEvent.class)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new SimpleSubscribe<ActionButtonEvent>() {
-                    @Override
-                    public void onNext(ActionButtonEvent actionButtonEvent) {
-                        switch (actionButtonEvent.mWhat) {
-                            case ActionButtonEvent.FAB_SMART_REMIX:
-                                if ((Integer)actionButtonEvent.mExtra == mClipSetType) {
-                                    mIsRemixMode = true;
-                                    //mSmartRemixLayout.setVisibility(View.VISIBLE);
-                                    if (mActionMode == null) {
-                                        mRefreshLayout.setEnabled(false);
-                                        mActionMode = getActivity().startActionMode(mRemixCallback);
-                                        updateActionMode();
-                                    }
-                                    mAdapter.setMultiSelectedMode(true);
-                                    mAdapter.toggleSelectAll(false);
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ActionButtonEvent>() {
+                @Override
+                public void onNext(ActionButtonEvent actionButtonEvent) {
+                    switch (actionButtonEvent.mWhat) {
+                        case ActionButtonEvent.FAB_SMART_REMIX:
+                            if ((Integer) actionButtonEvent.mExtra == mClipSetType) {
+                                mIsRemixMode = true;
+                                //mSmartRemixLayout.setVisibility(View.VISIBLE);
+                                if (mActionMode == null) {
+                                    mRefreshLayout.setEnabled(false);
+                                    mActionMode = getActivity().startActionMode(mRemixCallback);
+                                    updateActionMode();
                                 }
-                                break;
-                            default:
-                                break;
-                        }
+                                mAdapter.setMultiSelectedMode(true);
+                                mAdapter.toggleSelectAll(false);
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                });
+                }
+            });
         if (!mEventBus.isRegistered(this)) {
             mEventBus.register(this);
         }
@@ -701,16 +702,21 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
 
     private void toPreview(final Clip clip, final View transitionView) {
+        if (mLoadToast != null) {
+            return;
+        }
+        mLoadToast = new LoadToast(getActivity());
+        mLoadToast.setText(getString(R.string.loading));
+        mLoadToast.show();
 
-        mLoadingHandler.sendMessageDelayed(mLoadingHandler.obtainMessage(LoadingHandler.SHOW_LOADING), 1000);
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
         playListEditor.buildRx(clip)
             .subscribe(new Subscriber<Void>() {
                 @Override
                 public void onCompleted() {
-                    mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
-                    mRefreshLayout.setRefreshing(false);
+                    mLoadToast.success();
+                    mLoadToast = null;
                     Logger.t(TAG).d("type race:" + clip.typeRace);
                     PreviewActivity.launch(getActivity(), playlistId, transitionView);
                 }
@@ -718,8 +724,8 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 @Override
                 public void onError(Throwable e) {
                     e.printStackTrace();
-                    mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
-                    mRefreshLayout.setRefreshing(false);
+                    mLoadToast.error();
+                    mLoadToast = null;
                     Snackbar snackbar = Snackbar.make(mRefreshLayout, R.string.camera_no_response, Snackbar.LENGTH_LONG);
                     snackbar.setAction(R.string.retry, new View.OnClickListener() {
                         @Override
@@ -739,22 +745,29 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
 
 
     private void launchFootageActivity(final Clip clip, final View transitionView) {
-        mLoadingHandler.sendMessageDelayed(mLoadingHandler.obtainMessage(LoadingHandler.SHOW_LOADING), 1000);
+        if (mLoadToast != null) {
+            return;
+        }
+        mLoadToast = new LoadToast(getActivity());
+        mLoadToast.setText(getString(R.string.loading));
+        mLoadToast.show();
+
         final int playlistId = 0x100;
         PlayListEditor playListEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
         playListEditor.buildRx(clip)
             .subscribe(new Subscriber<Void>() {
                 @Override
                 public void onCompleted() {
-                    mLoadingHandler.removeMessages(LoadingHandler.SHOW_LOADING);
-                    mRefreshLayout.setRefreshing(false);
+                    mLoadToast.success();
+                    mLoadToast = null;
                     FootageActivity.launch(getActivity(), playlistId, transitionView);
                 }
 
                 @Override
                 public void onError(Throwable e) {
                     e.printStackTrace();
-                    mRefreshLayout.setRefreshing(false);
+                    mLoadToast.error();
+                    mLoadToast = null;
                     Snackbar snackbar = Snackbar.make(mRefreshLayout, R.string.camera_no_response, Snackbar.LENGTH_LONG);
                     snackbar.setAction(R.string.retry, new View.OnClickListener() {
                         @Override

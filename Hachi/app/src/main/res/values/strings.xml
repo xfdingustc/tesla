@@ -92,7 +92,7 @@
     <string name="like">like</string>
     <string name="like_your_post">like your post</string>
     <string name="live_view">Live View</string>
-    <string name="loading">Loading</string>
+    <string name="loading">Loading...</string>
     <string name="login">Login</string>
     <string name="login_cancelled">Login cancelled</string>
     <string name="login_error_facebook">Error occurred while connecting to Facebook</string>
