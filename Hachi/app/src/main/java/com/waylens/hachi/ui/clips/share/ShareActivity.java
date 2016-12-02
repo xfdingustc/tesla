@@ -22,22 +22,20 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.view.gauge.GaugeSettingManager;
-import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
 import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
 import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
 import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
-import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.body.GeoInfo;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -56,6 +54,8 @@ import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.VersionHelper;
 import com.waylens.hachi.utils.ViewUtils;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -104,11 +104,10 @@ public class ShareActivity extends ClipPlayActivity {
 
     private GeoInfo mGeoInfo = new GeoInfo();
 
-    public ArrayList<Long> timingPoints = null;
+    public ArrayList<Long> mTimingPoints = null;
 
-    public String momentType = null;
+    public String mMomentType = null;
 
-    private MaterialDialog mUploadDialog;
 
     private String[] mSupportedPrivacy;
 
@@ -228,7 +227,7 @@ public class ShareActivity extends ClipPlayActivity {
             intent.putExtra("vin", vin);
         }
         if (timingPoints != null && timingPoints.size() > 0) {
-            intent.putExtra("timingPoints", timingPoints);
+            intent.putExtra("mTimingPoints", timingPoints);
         }
         intent.putExtra("raceType", raceType);
         activity.startActivity(intent);
@@ -237,12 +236,8 @@ public class ShareActivity extends ClipPlayActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mVin = getIntent().getStringExtra("vin");
-        timingPoints = (ArrayList<Long>) getIntent().getSerializableExtra("timingPoints");
-        mRaceType = getIntent().getIntExtra("raceType", -1);
         init();
-        getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     @Override
@@ -291,6 +286,9 @@ public class ShareActivity extends ClipPlayActivity {
         super.init();
         mPlayListId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         mAudioId = getIntent().getIntExtra(EXTRA_AUDIO_ID, -1);
+        mVin = getIntent().getStringExtra("vin");
+//        mTimingPoints = (ArrayList<Long>) getIntent().getSerializableExtra("mTimingPoints");
+//        mRaceType = getIntent().getIntExtra("raceType", -1);
         initViews();
     }
 
@@ -298,10 +296,40 @@ public class ShareActivity extends ClipPlayActivity {
     private void initViews() {
         setContentView(R.layout.activity_share);
         setupToolbar();
-//        Logger.t(TAG).d("init");
-//        Logger.t(TAG).d("timezone offset" + TimeZone.getDefault().getRawOffset());
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
+
+        if (getClipSet().getCount() == 1) {
+            SnipeApiRx.getClipInfo(getClipSet().getClip(0))
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SimpleSubscribe<Clip>() {
+                    @Override
+                    public void onNext(Clip clip) {
+                        switch (clip.typeRace & Clip.MASK_RACE) {
+                            case Clip.TYPE_RACE_AU3T:
+                                mMomentType = "RACING_AU3T";
+                                break;
+                            case Clip.TYPE_RACE_AU6T:
+                                mMomentType = "RACING_AU6T";
+                                break;
+                            case Clip.TYPE_RACE_CD3T:
+                                mMomentType = "RACING_CD3T";
+                                break;
+                            case Clip.TYPE_RACE_CD6T:
+                                mMomentType = "RACING_CD6T";
+                                break;
+                            default:
+                                break;
+                        }
+                        mTimingPoints = clip.raceTimingPoints;
+                        for (long time : mTimingPoints) {
+                            Logger.t(TAG).d(time);
+                        }
+                        Logger.t(TAG).d(clip.getStartTimeMs());
+                    }
+                });
+        }
+
         Observable.create(new Observable.OnSubscribe<Clip>() {
             @Override
             public void call(Subscriber<? super Clip> subscriber) {
@@ -312,7 +340,7 @@ public class ShareActivity extends ClipPlayActivity {
                     Clip clip = null;
                     if (mRaceType >= 0 && clipSet.getCount() == 1) {
                         clip = clipSet.getClip(0);
-                        clip.raceTimingPoints = timingPoints;
+                        clip.raceTimingPoints = mTimingPoints;
                         clip.typeRace = mRaceType;
                         subscriber.onNext(clip);
                     } else {
@@ -395,26 +423,8 @@ public class ShareActivity extends ClipPlayActivity {
                     Logger.t(TAG).d("typeRace:" + clip.typeRace);
                     Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
                     //mRaceLayout.setVisibility(View.VISIBLE);
-                    switch (clip.typeRace & Clip.MASK_RACE) {
-                        case Clip.TYPE_RACE_AU3T:
-                            momentType = "RACING_AU3T";
-                            break;
-                        case Clip.TYPE_RACE_AU6T:
-                            momentType = "RACING_AU6T";
-                            break;
-                        case Clip.TYPE_RACE_CD3T:
-                            momentType = "RACING_CD3T";
-                            break;
-                        case Clip.TYPE_RACE_CD6T:
-                            momentType = "RACING_CD6T";
-                            break;
-                        default:
-                            break;
-                    }
-                    for (long time : timingPoints) {
-                        Logger.t(TAG).d(time);
-                    }
-                    Logger.t(TAG).d(clip.getStartTimeMs());
+
+
                 }
             });
 
@@ -499,7 +509,6 @@ public class ShareActivity extends ClipPlayActivity {
     }
 
 
-
     private void setupParallex() {
         if (VersionHelper.isGreateThanMashmellow()) {
             final int width = mPlayerContainer.getMeasuredWidth();
@@ -544,12 +553,12 @@ public class ShareActivity extends ClipPlayActivity {
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption,
             tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked, mIsYoutubeShareChecked, cache);
-        if (momentType != null && momentType.startsWith("RACING")) {
-            Logger.t(TAG).d(momentType);
+        if (mMomentType != null && mMomentType.startsWith("RACING")) {
+            Logger.t(TAG).d(mMomentType);
             String vehicleDescription = mVehicleDesc.getEditableText().toString();
-            localMoment.momentType = momentType;
+            localMoment.momentType = mMomentType;
             localMoment.mVehicleDesc = vehicleDescription;
-            localMoment.mTimingPoints = timingPoints;
+            localMoment.mTimingPoints = mTimingPoints;
         } else {
             ClipSet clipSet = getClipSet();
             if (clipSet.getCount() > 1) {

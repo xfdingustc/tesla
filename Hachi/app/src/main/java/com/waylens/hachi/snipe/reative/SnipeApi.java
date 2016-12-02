@@ -2,12 +2,11 @@ package com.waylens.hachi.snipe.reative;
 
 import android.os.Bundle;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.snipe.VdbRequestFuture;
-import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.AddBookmarkRequest;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
+import com.waylens.hachi.snipe.toolbox.ClipInfoRequest;
 import com.waylens.hachi.snipe.toolbox.ClipPlaybackUrlExRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.toolbox.DownloadUrlRequest;
@@ -67,6 +66,7 @@ class SnipeApi {
             return null;
         }
     }
+
     public static byte[] getRawDataBuf(Clip clip, int dataType, long startTime, int duration) {
         Bundle params = new Bundle();
         params.putInt(RawDataBufRequest.PARAM_DATA_TYPE, dataType);
@@ -116,8 +116,18 @@ class SnipeApi {
 
     public static ClipDownloadInfo getClipDownloadInfo(Clip.ID cid, long start, int length) throws ExecutionException, InterruptedException {
         VdbRequestFuture<ClipDownloadInfo> requestFuture = VdbRequestFuture.newFuture();
-        DownloadUrlRequest request = new DownloadUrlRequest(cid,  start, length, requestFuture, requestFuture);
+        DownloadUrlRequest request = new DownloadUrlRequest(cid, start, length, requestFuture, requestFuture);
         VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
         return requestFuture.get();
+    }
+
+    public static Clip getClipInfo(Clip clip) throws ExecutionException, InterruptedException {
+        VdbRequestFuture<Clip> requestFuture = VdbRequestFuture.newFuture();
+        ClipInfoRequest request = new ClipInfoRequest(clip.cid, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
+            clip.cid.type, 0, requestFuture, requestFuture);
+        VdtCameraManager.getManager().getCurrentVdbRequestQueue().add(request);
+
+        return requestFuture.get();
+
     }
 }

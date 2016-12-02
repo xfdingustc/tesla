@@ -151,5 +151,18 @@ public class SnipeApiRx {
 
     }
 
+    public static Observable<Clip> getClipInfo(final Clip clip) {
+        return Observable.defer(new Func0<Observable<Clip>>() {
+            @Override
+            public Observable<Clip> call() {
+                try {
+                    return Observable.just(SnipeApi.getClipInfo(clip));
+                } catch (ExecutionException | InterruptedException e) {
+                    return Observable.error(e);
+                }
+            }
+        });
+    }
+
 
 }
