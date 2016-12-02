@@ -22,20 +22,15 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.eventbus.events.ClipSelectEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
-import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
-import com.waylens.hachi.snipe.remix.AvrproClipInfo;
 import com.waylens.hachi.snipe.remix.AvrproFilter;
-import com.waylens.hachi.snipe.remix.AvrproSegmentInfo;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
 import com.waylens.hachi.snipe.utils.DateTime;
-import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.ClipSetManager;
 import com.waylens.hachi.snipe.vdb.ClipSetPos;
-import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
 import com.waylens.hachi.ui.clips.cliptrimmer.ClipSetProgressBar;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.player.RawDataLoader;
@@ -49,7 +44,6 @@ import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.List;
 

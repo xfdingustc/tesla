@@ -188,4 +188,15 @@ public class UploadAPI {
         }
 
     }
+
+    public UploadDataResponse uploadMp4Sync(RequestBody requestBody, long momentId, String sha1, long resolution, long duration) {
+        try {
+            Call<UploadDataResponse> uploadMp4Call = mRetrofit.create(UploadService.class)
+                    .uploadMp4(SessionManager.getInstance().getUserId(), momentId, sha1, "public", resolution, duration, requestBody);
+            return uploadMp4Call.execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

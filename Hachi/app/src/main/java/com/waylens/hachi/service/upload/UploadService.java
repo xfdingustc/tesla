@@ -62,5 +62,14 @@ public interface UploadService {
                                            @Query("access_level") String accessLevel,
                                            @Body RequestBody requestBody);
 
+    @PUT("/v.1.0/upload_resource/{userId}/android")
+    Call<UploadDataResponse> uploadMp4(@Path("userId") String userId,
+                                           @Query("moment_id") long momentId,
+                                           @Query("file_sha1") String fileSha1,
+                                           @Query("access_level") String accessLevel,
+                                           @Query("resolution") long resolution,
+                                           @Query("duration") long duration,
+                                           @Body RequestBody requestBody);
+
 
 }

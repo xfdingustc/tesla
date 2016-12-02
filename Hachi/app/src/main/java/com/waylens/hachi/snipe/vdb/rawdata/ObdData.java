@@ -164,7 +164,7 @@ public class ObdData implements Serializable {
         if (pid_33 > 0) {
             psi = (pid_0b - pid_33) / 6.895;
         } else {
-            psi = (pid_0b) / 6.895;
+            psi = (pid_0b) / 3.386;
             isIMP = true;
         }
 
