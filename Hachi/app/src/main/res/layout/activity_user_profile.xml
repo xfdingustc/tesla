@@ -17,8 +17,8 @@
         android:layout_height="match_parent"
         android:background="?attr/defaultBgColor"
         android:elevation="@dimen/z_card"
-        tools:visibility="gone"
-        android:transitionName="@string/transition_background"/>
+        android:transitionName="@string/transition_background"
+        tools:visibility="gone"/>
 
     <com.waylens.hachi.ui.views.AvatarView
         android:id="@+id/userAvatar"
@@ -29,8 +29,6 @@
         android:layout_marginTop="32dp"
         android:elevation="@dimen/z_card"
         android:transitionName="@string/trans_avatar"/>
-
-
 
 
     <LinearLayout
@@ -69,14 +67,13 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:drawablePadding="8dp"
                 android:drawableStart="@drawable/asl_follow"
                 android:paddingBottom="8dp"
                 android:paddingEnd="16dp"
-                android:layout_gravity="center_horizontal"
                 android:paddingStart="16dp"
                 android:text="@string/follow"
-                android:textColor="@android:color/white"
                 android:theme="@style/LightRippleOverlay"/>
 
             <Button
@@ -144,8 +141,8 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:elevation="@dimen/z_card"
-        android:visibility="gone"
         android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical"
+        android:visibility="gone"/>
 
 </com.waylens.hachi.view.ElasticDragDismissFrameLayout>

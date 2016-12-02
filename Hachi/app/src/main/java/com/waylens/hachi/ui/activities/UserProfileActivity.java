@@ -432,11 +432,13 @@ public class UserProfileActivity extends BaseActivity {
         followingCount.setText(getString(R.string.following_count, mUserInfoEx.followInfo.followings));
         if (!SessionManager.getInstance().isCurrentUserId(mUser.userID)) {
             if (mUserInfoEx.followInfo.isMyFollowing) {
-                mBtnFollow.setText(R.string.followed);
+                mBtnFollow.setText(R.string.following);
                 mBtnFollow.setActivated(true);
+                mBtnFollow.getBackground().setTint(getResources().getColor(R.color.material_grey_500));
             } else {
                 mBtnFollow.setText(R.string.follow);
                 mBtnFollow.setActivated(false);
+                mBtnFollow.getBackground().setTint(getResources().getColor(R.color.color_accent));
             }
         }
 
