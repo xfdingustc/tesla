@@ -1,5 +1,6 @@
 package com.waylens.hachi.ui.liveview;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,6 +11,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.transition.Transition;
@@ -232,11 +234,17 @@ public class LiveViewActivity extends BaseActivity {
         if (mDetailInfoPanel.getVisibility() != View.VISIBLE) {
             TransitionManager.beginDelayedTransition(rootContainer, mDetailedInfoPanelTransition);
             mDetailInfoPanel.setVisibility(View.VISIBLE);
-            mPull.setRotation(180);
+            ObjectAnimator dropDownAnimator = ObjectAnimator.ofFloat(mPull, View.ROTATION, 0, 180)
+                .setDuration(300);
+            dropDownAnimator.setInterpolator(new FastOutSlowInInterpolator());
+            dropDownAnimator.start();
         } else {
             TransitionManager.beginDelayedTransition(rootContainer, mDetailedInfoPanelTransition);
             mDetailInfoPanel.setVisibility(View.GONE);
-            mPull.setRotation(0);
+            ObjectAnimator dropDownAnimator = ObjectAnimator.ofFloat(mPull, View.ROTATION, 180, 0)
+                .setDuration(300);
+            dropDownAnimator.setInterpolator(new FastOutSlowInInterpolator());
+            dropDownAnimator.start();
 
         }
 
