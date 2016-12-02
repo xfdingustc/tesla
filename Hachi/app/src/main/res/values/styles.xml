@@ -4,7 +4,7 @@
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/material_deep_orange_500</item>
         <item name="colorPrimaryDark">@color/material_deep_orange_700</item>
-        <item name="colorAccent">@color/material_deep_purple_a200</item>
+        <item name="colorAccent">@color/color_accent</item>
         <item name="toolbarColor">@color/material_deep_orange_500</item>
         <item name="defaultBgColor">@color/windowBackgroundLight</item>
         <item name="android:windowBackground">@color/windowBackgroundLight</item>
