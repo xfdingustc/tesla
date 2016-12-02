@@ -183,9 +183,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
             if (mPlayerControl.isPlaying()) {
                 mPlayerControl.pause();
             } else {
-
                 mPlayerControl.start();
-
             }
         }
 
@@ -202,7 +200,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
     @OnClick(R.id.btn_fullscreen)
     public void onBtnFullScreenClicked() {
-        if (!isFullScreen()) {
+        if (!isFullScreen(getResources().getConfiguration())) {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         } else {
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -293,12 +291,12 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (isFullScreen()) {
+        if (isFullScreen(newConfig)) {
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen_exit);
         } else {
             mBtnFullScreen.setImageResource(R.drawable.ic_fullscreen);
         }
-        ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen());
+        ((BaseActivity) getActivity()).setImmersiveMode(isFullScreen(newConfig));
     }
 
 
@@ -404,9 +402,8 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
 
-    private boolean isFullScreen() {
-        int orientation = getActivity().getRequestedOrientation();
-        return orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+    private boolean isFullScreen(Configuration newConfig) {
+        return newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
 
