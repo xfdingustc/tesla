@@ -3,8 +3,6 @@ package com.waylens.hachi.ui.clips;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -58,7 +56,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -334,7 +331,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 if (mClipSetType == Clip.TYPE_MARKED) {
                     toPreview(clip, transitionView);
                 } else {
-                    launchFootageActivity(clip, transitionView);
+                    toFootage(clip, transitionView);
                 }
 
 
@@ -744,7 +741,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
     }
 
 
-    private void launchFootageActivity(final Clip clip, final View transitionView) {
+    private void toFootage(final Clip clip, final View transitionView) {
         if (mLoadToast != null) {
             return;
         }
@@ -772,7 +769,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     snackbar.setAction(R.string.retry, new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            launchFootageActivity(clip, transitionView);
+                            toFootage(clip, transitionView);
                         }
                     });
                     snackbar.show();

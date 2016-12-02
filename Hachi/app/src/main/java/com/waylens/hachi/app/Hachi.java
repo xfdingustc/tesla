@@ -67,9 +67,7 @@ public class Hachi extends MultiDexApplication {
 
     private void init() {
         mSharedContext = getApplicationContext();
-
 //        LeakCanary.install(this);
-
         initLogger();
 
         UploadManager uploadManager = UploadManager.getManager();
@@ -82,9 +80,7 @@ public class Hachi extends MultiDexApplication {
 
         initSessionInfo();
 
-
         initFacebookSDK();
-
 
 //        FIR.init(this);
 

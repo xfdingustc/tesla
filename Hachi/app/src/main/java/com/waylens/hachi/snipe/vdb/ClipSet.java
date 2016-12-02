@@ -61,6 +61,12 @@ public class ClipSet {
         mClipList.add(clip);
     }
 
+    public void addClip(int index, Clip clip) {
+        mClipList.add(index, clip);
+    }
+
+
+
     public void setLiveClipId(Clip.ID liveClipId) {
         this.liveClipId = liveClipId;
     }

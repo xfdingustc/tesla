@@ -56,9 +56,12 @@ public class ClipSetGroupHelper {
                 mClipSetGroup.put(clipDataString, oneClipSet);
             }
 
-            oneClipSet.addClip(clip);
+            oneClipSet.addClip(0, clip);
+
 
         }
+
+
     }
 
 
