@@ -60,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/white87"
+            android:textColor="@color/material_grey_300"
             android:textSize="12sp"
             tools:text="Subaru WRX 2015"/>
 
@@ -133,7 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/white87"
+            android:textColor="@color/material_grey_300"
             android:textSize="12sp"
             tools:text="Audi S3 2016"/>
 
@@ -206,7 +206,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:textColor="@color/white87"
+            android:textColor="@color/material_grey_300"
             android:textSize="12sp"
             tools:text="Audi S3 2016"/>
 
