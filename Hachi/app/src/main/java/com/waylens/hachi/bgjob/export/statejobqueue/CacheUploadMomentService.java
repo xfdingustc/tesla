@@ -102,8 +102,10 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
                 Job job = stateJobHolder.getJob();
                 if (job instanceof CacheUploadMomentJob ) {
                     ((CacheUploadMomentJob) job).setJobCallback(this);
-                } else if (job instanceof UploadMomentJob) {
+                } else if (job instanceof UploadPictureJob) {
                     ((UploadPictureJob) job).setJobCallback(this);
+                } else if (job instanceof UploadTimelapseJob) {
+                    ((UploadTimelapseJob) job).setJobCallback(this);
                 }
                 executor.execute(new Worker(job, stateJobHolder.getJobState()));
             } catch (Throwable throwable) {

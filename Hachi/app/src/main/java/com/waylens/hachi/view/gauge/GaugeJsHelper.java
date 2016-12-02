@@ -113,7 +113,7 @@ public class GaugeJsHelper {
                         if (!obdData.isIMP) {
                             state.put("psi", obdData.psi);
                         } else {
-                            state.put("psi", obdData.psi - mIioPressure / 3386000);
+                            state.put("psi", obdData.psi - mIioPressure / 3.386);
                         }
 //                    Logger.t(TAG).d(Double.toString(obdData.psi));
                         break;

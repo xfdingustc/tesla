@@ -110,6 +110,10 @@ public class MediaTranscoder {
         }
     }
 
+    private void doTimelaps() {
+
+    }
+
 
     public interface Listener {
         /**
