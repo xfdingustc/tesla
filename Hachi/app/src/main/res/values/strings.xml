@@ -205,7 +205,7 @@
     <string name="mic">Microphone</string>
     <string name="speaker">Speaker</string>
     <string name="sd">360P(%1$s)</string>
-    <string name="fullhd">1080P(%1$s)</string>
+    <string name="fullhd">Full-High Definition</string>
     <string name="connect_your_home_wifi">Connect to your preferred WiFi network</string>
     <string name="external_storage">External storage</string>
     <string name="manually_select_wifi_network"><u>Option 2: A More Manual Way to Connect</u></string>
@@ -553,9 +553,9 @@
     <string name="exit">exit</string>
     <string name="finished">Finished</string>
     <string name="export_clips">Export clips</string>
-    <string name="export_clips_tip">Now you can export clips with overlay.</string>
+    <string name="export_clips_tip">Now you can export clips with data overlay.</string>
     <string name="timestamp">Timestamp</string>
     <string name="advance">advanced</string>
-    <string name="tip_without_overlay">Only original stream with fast exporting speed.</string>
-    <string name="tip_with_overlay">Overlay is mixed into original streams and will cost much more time.</string>
+    <string name="tip_without_overlay">Original content(fast export).</string>
+    <string name="tip_with_overlay">Original content with data overlay(slower export).</string>
 </resources>
