@@ -47,12 +47,10 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,6 +58,7 @@
             android:orientation="vertical">
 
             <include layout="@layout/leaderboard_filter_result"/>
+
 
 
             <com.github.aakira.expandablelayout.ExpandableLinearLayout
@@ -91,6 +90,16 @@
                     android:background="?attr/separateColor"/>
             </com.github.aakira.expandablelayout.ExpandableLinearLayout>
 
+
+
+            <ProgressBar
+                android:id="@+id/load_progressbar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_margin="16dp"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -135,7 +144,7 @@
 
 
         </LinearLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </FrameLayout>
 
 
 </android.support.design.widget.CoordinatorLayout>

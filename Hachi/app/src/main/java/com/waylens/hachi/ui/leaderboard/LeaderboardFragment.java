@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -122,8 +123,11 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     @BindView(R.id.leaderboard_list_view)
     RecyclerViewExt mRvLeaderboardList;
 
-    @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
+//    @BindView(R.id.refresh_layout)
+//    SwipeRefreshLayout mRefreshLayout;
+
+    @BindView(R.id.load_progressbar)
+    ProgressBar mLoadingProgressbar;
 
 
     @BindView(R.id.layout_no_data)
@@ -275,11 +279,11 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     }
 
     private void setLeaderboardItemList() {
-        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
-            android.R.color.holo_orange_light, android.R.color.holo_red_light);
+//        mRefreshLayout.setColorSchemeResources(R.color.style_color_accent, android.R.color.holo_green_light,
+//            android.R.color.holo_orange_light, android.R.color.holo_red_light);
         mRvLeaderboardList.setAdapter(mAdapter);
         mRvLeaderboardList.setLayoutManager(mLinearLayoutManager);
-        mRefreshLayout.setOnRefreshListener(this);
+//        mRefreshLayout.setOnRefreshListener(this);
         mRvLeaderboardList.setOnLoadMoreListener(new RecyclerViewExt.OnLoadMoreListener() {
             @Override
             public void loadMore() {
@@ -363,7 +367,8 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     private void loadLeaderBoard(int cursor, final boolean isRefresh) {
         if (isRefresh) {
-            mRefreshLayout.setRefreshing(true);
+//            mRefreshLayout.setRefreshing(true);
+            mLoadingProgressbar.setVisibility(View.VISIBLE);
         }
 //        final RaceQueryBody raceQueryBody = new RaceQueryBody();
         int queryStart = getRaceMode();
@@ -400,13 +405,15 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             .subscribe(new SimpleSubscribe<RaceQueryResponse>() {
                 @Override
                 public void onNext(RaceQueryResponse raceQueryResponse) {
-                    mRefreshLayout.setRefreshing(false);
+//                    mRefreshLayout.setRefreshing(false);
+                    mLoadingProgressbar.setVisibility(View.GONE);
                     onHandleRaceQuery(raceQueryResponse, isRefresh);
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    mRefreshLayout.setRefreshing(false);
+//                    mRefreshLayout.setRefreshing(false);
+                    mLoadingProgressbar.setVisibility(View.GONE);
                     ServerErrorHelper.showErrorMessage(mRootView, e);
                 }
             });
@@ -605,9 +612,9 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     @Override
     public void enableRefresh(boolean enabled) {
-        if (mRefreshLayout != null) {
-            mRefreshLayout.setEnabled(enabled);
-        }
+//        if (mRefreshLayout != null) {
+//            mRefreshLayout.setEnabled(enabled);
+//        }
     }
 
 
