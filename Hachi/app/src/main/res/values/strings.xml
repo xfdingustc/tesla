@@ -204,8 +204,9 @@
     <string name="yesterday">Yesterday</string>
     <string name="mic">Microphone</string>
     <string name="speaker">Speaker</string>
-    <string name="sd">360P(%1$s)</string>
-    <string name="fullhd">Full-High Definition</string>
+    <string name="sd">Standard Definition(360p)</string>
+    <string name="hd">High Definition(720p)</string>
+    <string name="fullhd">Full-High Definition(1080p)</string>
     <string name="connect_your_home_wifi">Connect to your preferred WiFi network</string>
     <string name="external_storage">External storage</string>
     <string name="manually_select_wifi_network"><u>Option 2: A More Manual Way to Connect</u></string>
@@ -556,6 +557,6 @@
     <string name="export_clips_tip">Now you can export clips with data overlay.</string>
     <string name="timestamp">Timestamp</string>
     <string name="advance">advanced</string>
-    <string name="tip_without_overlay">Original content(fast export).</string>
+    <string name="tip_without_overlay">Original content without data overlay(fast export).</string>
     <string name="tip_with_overlay">Original content with data overlay(slower export).</string>
 </resources>

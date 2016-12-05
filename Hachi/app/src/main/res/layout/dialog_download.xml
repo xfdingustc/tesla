@@ -110,14 +110,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="Standard Definition"/>
+            android:text="@string/sd"/>
 
         <RadioButton
             android:id="@+id/hd_stream"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            android:text="High Definition"
+            android:text="@string/hd"
             android:visibility="gone"
             tools:visibility="visible"/>
 

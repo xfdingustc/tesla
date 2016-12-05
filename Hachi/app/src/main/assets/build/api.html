@@ -77,6 +77,12 @@
      * @param { {showMap: Boolean} }  use only for desktop
      * @param { {perUnit: String} } 转换公英制 value of acceptance:["kmh","mph"]
      *
+     * @param { {totalLaps: number} }
+     * @param { {bestLapTime: number} }
+     * @param { {topSpeedKmh: number} }
+     * @param { {lapTimeList: number} }
+     * @param { {gpsList: object} }
+     *
      * @example
      * setState({time: new Date('December 17, 1995 03:24:00')});
      * setState({time: numericMonthDate('12 17, 1995 03:24:00')});
@@ -84,9 +90,43 @@
      * setState({lng: 121});
      * setState({showMap: false});
      * setState({showCountDown:"S"});update()
+     * 
+     * setState( {gpsList: {
+     *  "captureTime": [0, 10000, 20000, 25000, 30000, 40000, 45000, 50000, 60000, 70000, 80000, 85000, 90000, 95000, 990000],
+     *  "coordinate": {
+     *    "coordinates": [[21, 51],[22, 50],[23, 51],[24, 54],[25, 35],[26, 21],[27, 29],[28, 30],[29, 41],[28, 51],[27, 55],[26, 57],[25, 58],[24, 52],[23, 51],[22, 52],[21, 34],[20, 43],]}
+     *    })
+     *
+     * setState({
+        lapTimeList: [
+            {
+              totalLapTime: 25000,
+              startOffsetMs: 0,
+              checkIntervalMs: 10000,
+              deltaMsToBest: [1000.1, 200.3]
+            },
+            {
+              totalLapTime: 25000,
+              startOffsetMs: 25000,
+              checkIntervalMs: 8000,
+              deltaMsToBest: [1000.1, 123, 999]
+            },
+            {
+              totalLapTime: 30000,
+              startOffsetMs: 50000,
+              checkIntervalMs: 10000,
+              deltaMsToBest: [1000.1, 123, 999]
+            },
+            {
+              totalLapTime: 19000,
+              startOffsetMs: 80000,
+              checkIntervalMs: 5000,
+              deltaMsToBest: [1000.1, 123, 999, 123, 45345]
+            }
+          ]})
+     *
      * @return {null}
      * @static
-     *
      */
     var setState = hachi.gauge.setBuffer.bind(hachi.gauge);
     /**
