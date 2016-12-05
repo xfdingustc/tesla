@@ -39,8 +39,6 @@
     <color name="style_color_accent">@color/hachi</color>
     <color name="style_color_tag">#AD3700</color>
 
-    <color name="color_accent">@color/material_deep_purple_a200</color>
-
     <color name="toolbar_color">#212121</color>
 
 

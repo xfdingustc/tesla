@@ -2,7 +2,6 @@ package com.waylens.hachi.ui.community.feed;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.ColorFilter;
 import android.graphics.Typeface;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +38,7 @@ import com.waylens.hachi.ui.community.MomentChangeEvent;
 import com.waylens.hachi.ui.community.MomentEditActivity;
 import com.waylens.hachi.ui.community.PhotoViewActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
+import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
@@ -259,19 +259,22 @@ public class FeedListAdapter extends AbsMomentListAdapter {
                         BgJobHelper.followUser(momentEx.owner.userID, false);
                         holder.follow.setText(R.string.follow);
                         holder.follow.setActivated(false);
-                        holder.follow.getBackground().setTint(mContext.getResources().getColor(R.color.color_accent));
                         isRecommendFollowed = false;
                     } else {
                         BgJobHelper.followUser(momentEx.owner.userID, true);
                         holder.follow.setText(R.string.following);
                         holder.follow.setActivated(true);
                         isRecommendFollowed = true;
-                        holder.follow.getBackground().setTint(mContext.getResources().getColor(R.color.material_grey_500));
                     }
                 }
             });
-
-            updateFollowButton(holder.follow, isRecommendFollowed);
+            if (!isRecommendFollowed) {
+                holder.follow.setActivated(false);
+                holder.follow.setText(R.string.follow);
+            } else {
+                holder.follow.setActivated(true);
+                holder.follow.setText(R.string.following);
+            }
 
 
         } else {
@@ -329,18 +332,6 @@ public class FeedListAdapter extends AbsMomentListAdapter {
         });
 
         holder.commentCount.setText(Integer.toString(moment.commentsCount));
-    }
-
-    private void updateFollowButton(Button button, boolean actived) {
-        if (!actived) {
-            button.setText(R.string.follow);
-            button.getBackground().setTint(mContext.getResources().getColor(R.color.color_accent));
-        } else {
-            button.setText(R.string.following);
-            button.getBackground().setTint(mContext.getResources().getColor(R.color.material_grey_500));
-        }
-
-        button.setActivated(actived);
     }
 
     private void bindMomentExtraInfo(MomentViewHolder holder, int position) {
