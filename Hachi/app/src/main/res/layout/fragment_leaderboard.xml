@@ -14,6 +14,7 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_fling_fix_behavior"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 
