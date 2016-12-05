@@ -17,12 +17,14 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.gcm.RegistrationIntentService;
 import com.waylens.hachi.ui.clips.ClipVideoFragment;
 import com.waylens.hachi.ui.community.CommunityFragment;
+import com.waylens.hachi.ui.fragments.ReSelectableTab;
 import com.waylens.hachi.ui.leaderboard.LeaderboardFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.LiveViewActivity;
 import com.waylens.hachi.ui.settings.AccountFragment;
 import com.waylens.hachi.view.bottombar.BottomBar;
 import com.waylens.hachi.view.bottombar.OnCenterTabClickListener;
+import com.waylens.hachi.view.bottombar.OnTabReselectListener;
 import com.waylens.hachi.view.bottombar.OnTabSelectListener;
 
 import java.util.HashMap;
@@ -109,44 +111,12 @@ public class MainActivity extends BaseActivity {
 
         RegistrationIntentService.launch(this);
 
-
-//        switchFragment(TAB_TAG_MOMENTS);
-
-//        if (VdtCameraManager.getManager().isConnected()) {
-//            LiveViewActivity.launch(MainActivity.this);
-//        }
     }
 
 
     private void initViews() {
         setContentView(R.layout.activity_main);
 
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.moments), R.drawable.ic_wheel));
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.leaderboard), R.drawable.ic_virtual_racing));
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.video), R.drawable.tab_video_n));
-//        spaceNavigationView.addSpaceItem(new SpaceItem(getResources().getString(R.string.account), R.drawable.ic_person));
-////        spaceNavigationView.addSpaceItem(new SpaceItem("ACCOUNT", R.drawable.account));
-//        spaceNavigationView.showIconOnly();
-//        spaceNavigationView.shouldShowFullBadgeText(true);
-//
-//
-//        spaceNavigationView.setCentreButtonIcon(R.drawable.tab_liveview_n);
-//        spaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
-//            @Override
-//            public void onCentreButtonClick() {
-//                LiveViewActivity.launch(MainActivity.this);
-//            }
-//
-//            @Override
-//            public void onItemClick(int itemIndex, String itemName) {
-//                switchFragment(itemIndex);
-//            }
-//
-//            @Override
-//            public void onItemReselected(int itemIndex, String itemName) {
-//
-//            }
-//        });
         bottomBar.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelected(@IdRes int tabId) {
@@ -163,6 +133,15 @@ public class MainActivity extends BaseActivity {
                     case R.id.leaderboard:
                         switchFragment(TAB_TAG_LEADERBOARD);
                         break;
+                }
+            }
+        });
+
+        bottomBar.setOnTabReselectListener(new OnTabReselectListener() {
+            @Override
+            public void onTabReSelected(@IdRes int tabId) {
+                if (mCurrentFragment instanceof ReSelectableTab) {
+                    ((ReSelectableTab)mCurrentFragment).onReSelected();
                 }
             }
         });

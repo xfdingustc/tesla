@@ -44,12 +44,15 @@ import com.waylens.hachi.ui.activities.UserProfileActivity;
 import com.waylens.hachi.ui.community.MomentActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
+import com.waylens.hachi.ui.fragments.ReSelectableTab;
 import com.waylens.hachi.ui.fragments.Refreshable;
 import com.waylens.hachi.ui.views.RecyclerViewExt;
 import com.waylens.hachi.utils.AvatarHelper;
 import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
+
+import net.steamcrafted.loadtoast.LoadToast;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -64,7 +67,7 @@ import rx.schedulers.Schedulers;
 
 
 public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener,
-    Refreshable, FragmentNavigator {
+    Refreshable, FragmentNavigator, ReSelectableTab {
     private static final String TAG = LeaderboardFragment.class.getSimpleName();
 
     private SparseArray<Transition> transitions = new SparseArray<>();
@@ -94,6 +97,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
     private List<Pair<Maker, Model>> mMakerModelList;
     private int mLeaderBoardItemCount;
 
+    private LoadToast mLoadToast;
 
     private long splitTime30[] = {0, 2000, 4000, 8000, 80000};
     private long splitTime60[] = {0, 3000, 3500, 4000, 5000, 7000, 10000, 100000};
@@ -122,13 +126,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     @BindView(R.id.leaderboard_list_view)
     RecyclerViewExt mRvLeaderboardList;
-
-//    @BindView(R.id.refresh_layout)
-//    SwipeRefreshLayout mRefreshLayout;
-
-    @BindView(R.id.load_progressbar)
-    ProgressBar mLoadingProgressbar;
-
 
     @BindView(R.id.layout_no_data)
     LinearLayout mNoDataLayout;
@@ -248,8 +245,15 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
 
         mMakerModelList = new ArrayList<>();
+        mLoadToast = new LoadToast(getActivity());
+//        mLoadToast.setText(getString(R.string.loading));
 
         return view;
+    }
+
+    @Override
+    public void onReSelected() {
+        loadLeaderBoard(mCurrentCursor, true);
     }
 
     private void setupExpandableFilter() {
@@ -367,8 +371,7 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     private void loadLeaderBoard(int cursor, final boolean isRefresh) {
         if (isRefresh) {
-//            mRefreshLayout.setRefreshing(true);
-            mLoadingProgressbar.setVisibility(View.VISIBLE);
+            mLoadToast.show();
         }
 //        final RaceQueryBody raceQueryBody = new RaceQueryBody();
         int queryStart = getRaceMode();
@@ -405,15 +408,13 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
             .subscribe(new SimpleSubscribe<RaceQueryResponse>() {
                 @Override
                 public void onNext(RaceQueryResponse raceQueryResponse) {
-//                    mRefreshLayout.setRefreshing(false);
-                    mLoadingProgressbar.setVisibility(View.GONE);
+                    mLoadToast.success();
                     onHandleRaceQuery(raceQueryResponse, isRefresh);
                 }
 
                 @Override
                 public void onError(Throwable e) {
-//                    mRefreshLayout.setRefreshing(false);
-                    mLoadingProgressbar.setVisibility(View.GONE);
+                    mLoadToast.error();
                     ServerErrorHelper.showErrorMessage(mRootView, e);
                 }
             });
