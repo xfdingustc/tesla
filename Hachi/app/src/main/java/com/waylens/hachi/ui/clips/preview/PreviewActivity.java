@@ -23,6 +23,7 @@ import com.waylens.hachi.snipe.VdbResponse;
 import com.waylens.hachi.snipe.toolbox.ClipDeleteRequest;
 import com.waylens.hachi.snipe.toolbox.ClipInfoRequest;
 import com.waylens.hachi.snipe.toolbox.ClipSetExRequest;
+import com.waylens.hachi.snipe.utils.RaceTimeParseUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
@@ -41,6 +42,7 @@ import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.StatusBarHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +65,7 @@ public class PreviewActivity extends ClipPlayActivity {
     private int raceType = -1;
 
     public static final String EXTRA_PLAYLIST_ID = "playListId";
+    public static final String EXTRA_CLIP = "clip";
 
 
     public static void launch(Activity activity, int playlistId, View transitionView) {
@@ -81,6 +84,19 @@ public class PreviewActivity extends ClipPlayActivity {
             (activity, transitionView, activity.getString(R.string.clip_cover));
         activity.startActivity(intent, options.toBundle());
     }
+
+    public static void lauch(Activity activity, Clip clip, View transitionView) {
+        Intent intent = new Intent(activity, PreviewActivity.class);
+        intent.putExtra(EXTRA_CLIP, (Serializable) clip);
+        MorphTransform.addExtras(intent,
+                ContextCompat.getColor(activity, R.color.hachi),
+                activity.getResources().getDimensionPixelSize(R.dimen.dialog_corners));
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
+                (activity, transitionView, activity.getString(R.string.clip_cover));
+        activity.startActivity(intent, options.toBundle());
+    }
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,6 +131,14 @@ public class PreviewActivity extends ClipPlayActivity {
                 public void onNext(List<Long> timeList) {
                     if (timeList != null && timeList.size() > 0) {
 //                        mClipPlayFragment.setRaceTimePoints(timeList);
+                        mTimeList = new ArrayList<Long>(6);
+                        for (int j = 0; j < timeList.size(); j++) {
+                            if (timeList.get(j) > 0) {
+                                mTimeList.add(j, timeList.get(j));
+                            } else {
+                                mTimeList.add(j, (long) -1);
+                            }
+                        }
                     }
                 }
             });
@@ -154,103 +178,17 @@ public class PreviewActivity extends ClipPlayActivity {
                 mVin = vin;
             }
             Logger.t(TAG).d("clip" + clip.cid.type);
-            Clip retClip = loadClipInfo(clip);
+            //Clip retClip = loadClipInfo(clip);
+            Clip retClip = clip;
             Logger.t(TAG).d("typeRace:" + retClip.typeRace);
             if ((retClip.typeRace & Clip.TYPE_RACE) > 0) {
                 raceType = retClip.typeRace;
-                Logger.t(TAG).d("duration:" + retClip.getDurationMs());
-                Logger.t(TAG).d(retClip.typeRace & Clip.MASK_RACE);
-                Logger.t(TAG).d("t1:" + retClip.raceTimingPoints.get(0));
-                Logger.t(TAG).d("t2:" + retClip.raceTimingPoints.get(1));
-                Logger.t(TAG).d("t3:" + retClip.raceTimingPoints.get(2));
-                Logger.t(TAG).d("t4:" + retClip.raceTimingPoints.get(3));
-                Logger.t(TAG).d("t5:" + retClip.raceTimingPoints.get(4));
-                Logger.t(TAG).d("t6:" + retClip.raceTimingPoints.get(5));
-
-                Logger.t(TAG).d("start loading ");
-                // First load raw data into memory
                 RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clip, RawDataItem.DATA_TYPE_GPS);
                 Logger.t(TAG).d("raw data size:" + rawDataBlock.getItemList().size());
- /*                       GpsData firstGpsData = (GpsData) rawDataBlock.getItemList().get(0).data;
-                        if (((long) firstGpsData.utc_time * 1000 + firstGpsData.reserved / 1000) >= clip.raceTimingPoints.get(0)) {
-                            Logger.t(TAG).d("find the corresponding video time:" + rawDataBlock.getItemList().get(0).getPtsMs());
-                            continue;
-                        }*/
-                int searchIndex = -1;
-                long searchResult = -1;
-                if ((retClip.typeRace & Clip.MASK_RACE) == Clip.TYPE_RACE_CD3T || (retClip.typeRace & Clip.MASK_RACE) == Clip.TYPE_RACE_CD6T) {
-                    searchIndex = 0;
-                } else {
-                    searchIndex = 1;
-                }
-                ArrayList<Long> timeList = new ArrayList<Long>(6);
-                long clipStartTime;
-                for (int i = 1; i < rawDataBlock.getItemList().size(); i++) {
-                    RawDataItem last = rawDataBlock.getItemList().get(i - 1);
-                    RawDataItem current = rawDataBlock.getItemList().get(i);
-                    GpsData lastGpsData = (GpsData) last.data;
-                    GpsData currentGpsData = (GpsData) current.data;
-                    long lastGpsTime = (long) lastGpsData.utc_time * 1000 + lastGpsData.reserved / 1000;
-                    long currentGpsTime = (long) currentGpsData.utc_time * 1000 + currentGpsData.reserved / 1000;
-                    if (lastGpsTime <= retClip.raceTimingPoints.get(searchIndex) && currentGpsTime >= retClip.raceTimingPoints.get(searchIndex)) {
-                        if (2 * retClip.raceTimingPoints.get(searchIndex) <= lastGpsTime + currentGpsTime) {
-                            Logger.t(TAG).d("gps utc time ms:" + ((long) lastGpsData.utc_time * 1000 + lastGpsData.reserved / 1000));
-                            Logger.t(TAG).d("find the corresponding video time:" + last.getPtsMs());
-                            searchResult = last.getPtsMs() + retClip.getClipDate();
-                        } else {
-                            Logger.t(TAG).d("gps utc time ms:" + ((long) currentGpsData.utc_time * 1000 + currentGpsData.reserved / 1000));
-                            Logger.t(TAG).d("find the corresponding video time:" + current.getPtsMs());
-                            searchResult = current.getPtsMs() + retClip.getClipDate();
-                        }
-                        clipStartTime = retClip.getStartTimeMs() + retClip.getClipDate();
-                        if (searchIndex == 0) {
-                            timeList.add(0, searchResult);
-                            timeList.add(1, retClip.raceTimingPoints.get(1) - retClip.raceTimingPoints.get(0) + searchResult);
-                            timeList.add(2, retClip.raceTimingPoints.get(2) - retClip.raceTimingPoints.get(0) + searchResult);
-                            timeList.add(3, retClip.raceTimingPoints.get(3) - retClip.raceTimingPoints.get(0) + searchResult);
-                            if (retClip.raceTimingPoints.get(4) > 0) {
-                                timeList.add(4, retClip.raceTimingPoints.get(4) - retClip.raceTimingPoints.get(0) + searchResult);
-                            } else {
-                                timeList.add(4, (long) -1);
-                            }
-                            if (retClip.raceTimingPoints.get(5) > 0) {
-                                timeList.add(5, retClip.raceTimingPoints.get(5) - retClip.raceTimingPoints.get(0) + searchResult);
-                            } else {
-                                timeList.add(5, (long) -1);
-                            }
-                        } else if (searchIndex == 1) {
-                            timeList.add(0, (long) -1);
-                            timeList.add(1, searchResult);
-                            timeList.add(2, retClip.raceTimingPoints.get(2) - retClip.raceTimingPoints.get(1) + searchResult);
-                            timeList.add(3, retClip.raceTimingPoints.get(3) - retClip.raceTimingPoints.get(1) + searchResult);
-                            if (retClip.raceTimingPoints.get(4) > 0) {
-                                timeList.add(4, retClip.raceTimingPoints.get(4) - retClip.raceTimingPoints.get(1) + searchResult);
-                            } else {
-                                timeList.add(4, (long) -1);
-                            }
-                            if (retClip.raceTimingPoints.get(5) > 0) {
-                                timeList.add(5, retClip.raceTimingPoints.get(5) - retClip.raceTimingPoints.get(1) + searchResult);
-                            } else {
-                                timeList.add(5, (long) -1);
-                            }
-                        }
-                        for (int j = 0; j < timeList.size(); j++) {
-                            timeList.set(j, timeList.get(j) - clipStartTime);
-                        }
-                        mTimeList = new ArrayList<Long>(6);
-                        for (int j = 0; j < timeList.size(); j++) {
-                            if (timeList.get(j) > 0) {
-                                mTimeList.add(j, timeList.get(j));
-                            } else {
-                                mTimeList.add(j, (long) -1);
-                            }
-                        }
-                        return timeList;
-                    }
-                }
+                return RaceTimeParseUtils.parseRaceTime(retClip, rawDataBlock);
+
             }
         }
-
         return null;
     }
 

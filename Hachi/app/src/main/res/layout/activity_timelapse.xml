@@ -1,6 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black87"
+    android:orientation="vertical">
 
-</LinearLayout>
+    <include layout="@layout/toolbar_default"/>
+
+    <com.xfdingustc.far.FixedAspectRatioFrameLayout
+        android:id="@+id/media_window"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/app_bar_layout"
+        app:farfl_xratio="16dp"
+        app:farfl_yratio="9dp">
+
+
+        <VideoView
+            android:id="@+id/vv_videoview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <ImageView
+            android:id="@+id/clipCover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:transitionName="@string/clip_cover"/>
+
+
+        <ProgressBar
+            android:id="@+id/progressLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/style_color_accent"
+            android:visibility="visible"/>
+
+    </com.xfdingustc.far.FixedAspectRatioFrameLayout>
+
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/black87"
+        android:layout_below="@id/media_window"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btnPlayPause"
+            style="@style/SelectableRippleButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_play_arrow"/>
+
+        <TextView
+            android:id="@+id/playProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0:00"
+            android:textSize="12sp"
+            android:textColor="@color/app_text_color_secondary"/>
+
+        <com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar
+            android:id="@+id/multiSegIndicator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:layout_gravity="center_vertical"
+            app:barHeight="4dp"
+            app:circleColor="@color/app_text_color_primary"
+            app:circleSize="4dp"
+            app:progressColor="@color/style_color_accent"/>
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0:32"
+            android:textSize="12sp"
+            android:textColor="@color/app_text_color_secondary"/>
+
+        <ImageButton
+            android:id="@+id/btnFullscreen"
+            style="@style/SelectableRippleButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_fullscreen"/>
+
+    </LinearLayout>
+
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_marginEnd="8dp"
+        android:layout_below="@id/control_panel"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/btn_15x"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/btn_timelapse_15x"
+            android:button="@android:color/transparent"
+            android:contentDescription="@null"/>
+
+        <RadioButton
+            android:id="@+id/btn_30x"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/btn_timelapse_30x"
+            android:button="@android:color/transparent"
+            android:contentDescription="@null"/>
+
+        <RadioButton
+            android:id="@+id/btn_60x"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/btn_timelapse_60x"
+            android:button="@android:color/transparent"
+            android:contentDescription="@null"/>
+
+        <RadioButton
+            android:id="@+id/btn_120x"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/gauge_size_large_bg"
+            android:button="@android:color/transparent"
+            android:visibility="gone"
+            android:contentDescription="@null"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_export"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/origin_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="00:00:32"
+            android:textSize="14sp"
+            android:textColor="@color/app_text_color_secondary"/>
+
+        <ImageButton
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/icon_to">
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/lapse_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="00:00:32"
+            android:textSize="14sp"
+            android:textColor="@color/app_text_color_secondary"/>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_export"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="?attr/actionButtonColor"
+        android:text="@string/export"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

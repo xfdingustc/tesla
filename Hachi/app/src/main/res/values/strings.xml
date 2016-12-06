@@ -557,6 +557,7 @@
     <string name="export_clips_tip">Now you can export clips with data overlay.</string>
     <string name="timestamp">Timestamp</string>
     <string name="advance">advanced</string>
-    <string name="tip_without_overlay">Original content without data overlay(fast export).</string>
-    <string name="tip_with_overlay">Original content with data overlay(slower export).</string>
+    <string name="tip_without_overlay">Only original stream with fast exporting speed.</string>
+    <string name="tip_with_overlay">Overlay is mixed into original streams and will cost much more time.</string>
+    <string name="export">Export</string>
 </resources>

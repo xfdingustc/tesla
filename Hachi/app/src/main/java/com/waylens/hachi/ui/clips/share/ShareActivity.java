@@ -36,6 +36,7 @@ import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
+import com.waylens.hachi.snipe.utils.RaceTimeParseUtils;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -59,6 +60,7 @@ import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindArray;
@@ -300,34 +302,7 @@ public class ShareActivity extends ClipPlayActivity {
         mPlaylistEditor.reconstruct();
 
         if (getClipSet().getCount() == 1) {
-            SnipeApiRx.getClipInfo(getClipSet().getClip(0))
-                .subscribeOn(Schedulers.io())
-                .subscribe(new SimpleSubscribe<Clip>() {
-                    @Override
-                    public void onNext(Clip clip) {
-                        switch (clip.typeRace & Clip.MASK_RACE) {
-                            case Clip.TYPE_RACE_AU3T:
-                                mMomentType = "RACING_AU3T";
-                                break;
-                            case Clip.TYPE_RACE_AU6T:
-                                mMomentType = "RACING_AU6T";
-                                break;
-                            case Clip.TYPE_RACE_CD3T:
-                                mMomentType = "RACING_CD3T";
-                                break;
-                            case Clip.TYPE_RACE_CD6T:
-                                mMomentType = "RACING_CD6T";
-                                break;
-                            default:
-                                break;
-                        }
-                        mTimingPoints = clip.raceTimingPoints;
-                        for (long time : mTimingPoints) {
-                            Logger.t(TAG).d(time);
-                        }
-                        Logger.t(TAG).d(clip.getStartTimeMs());
-                    }
-                });
+            checkForRaceType();
         }
 
         Observable.create(new Observable.OnSubscribe<Clip>() {
@@ -337,13 +312,7 @@ public class ShareActivity extends ClipPlayActivity {
                 ClipSet clipSet = null;
                 try {
                     clipSet = mPlaylistEditor.doGetPlaylistInfoDetailed();
-                    Clip clip = null;
-                    if (mRaceType >= 0 && clipSet.getCount() == 1) {
-                        clip = clipSet.getClip(0);
-                        clip.raceTimingPoints = mTimingPoints;
-                        clip.typeRace = mRaceType;
-                        subscriber.onNext(clip);
-                    } else {
+                    if (clipSet.getClipList().size() > 0) {
                         mVin = clipSet.getClip(0).getVin();
                     }
                 } catch (Exception e) {
@@ -364,7 +333,6 @@ public class ShareActivity extends ClipPlayActivity {
                             mVehicleMaker = vinQueryResponse.makerName;
                             mVehicleModel = vinQueryResponse.modelName;
                             mVehicleYear = vinQueryResponse.year;
-
                             Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
                         }
 
@@ -372,9 +340,11 @@ public class ShareActivity extends ClipPlayActivity {
                         Logger.t(TAG).d(e.getMessage());
                     }
                 }
+
                 RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId());
+                RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clipSet.getClip(0), RawDataItem.DATA_TYPE_GPS);
+
                 try {
-                    RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clipSet.getClip(0), RawDataItem.DATA_TYPE_GPS);
                     GpsData gpsData = (GpsData) rawDataBlock.getRawDataItem(0).data;
                     double lat = gpsData.coord.lat;
                     double lng = gpsData.coord.lng;
@@ -453,6 +423,47 @@ public class ShareActivity extends ClipPlayActivity {
 
 //        checkLinkedAccount();
         mUserName.requestFocus();
+    }
+
+    private void checkForRaceType() {
+        SnipeApiRx.getClipInfo(getClipSet().getClip(0))
+                .subscribeOn(Schedulers.io())
+                .subscribe(new SimpleSubscribe<Clip>() {
+                    @Override
+                    public void onNext(Clip clip) {
+                        switch (clip.typeRace & Clip.MASK_RACE) {
+                            case Clip.TYPE_RACE_AU3T:
+                                mMomentType = "RACING_AU3T";
+                                break;
+                            case Clip.TYPE_RACE_AU6T:
+                                mMomentType = "RACING_AU6T";
+                                break;
+                            case Clip.TYPE_RACE_CD3T:
+                                mMomentType = "RACING_CD3T";
+                                break;
+                            case Clip.TYPE_RACE_CD6T:
+                                mMomentType = "RACING_CD6T";
+                                break;
+                            default:
+                                break;
+                        }
+                        RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId());
+                        RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clip, RawDataItem.DATA_TYPE_GPS);
+                        Logger.t(TAG).d("raw data size:" + rawDataBlock.getItemList().size());
+                        List<Long> timeList = RaceTimeParseUtils.parseRaceTime(clip, rawDataBlock);
+                        mTimingPoints = new ArrayList<Long>(6);
+                        for (int j = 0; j < timeList.size(); j++) {
+                            if (timeList.get(j) > 0) {
+                                mTimingPoints.add(j, timeList.get(j));
+                            } else {
+                                mTimingPoints.add(j, (long) -1);
+                            }
+                        }
+                        for (long time : mTimingPoints) {
+                            Logger.t(TAG).d(time);
+                        }
+                    }
+                });
     }
 
 

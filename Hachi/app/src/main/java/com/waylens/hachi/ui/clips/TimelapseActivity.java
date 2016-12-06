@@ -11,12 +11,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.bgjob.export.event.ExportEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.settings.adapters.DownloadItemAdapter;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -36,6 +41,26 @@ public class TimelapseActivity extends BaseActivity {
 
     @BindView(R.id.root_switch)
     ViewSwitcher rootSwitch;
+
+    @BindView(R.id.btn_export)
+    Button mBtnExport;
+
+    @BindView(R.id.radio_group)
+    RadioGroup mTimelapseRadioGroup;
+
+    @BindView(R.id.btnPlayPause)
+    ImageButton mBtnPlayPause;
+
+    @BindView(R.id.multiSegIndicator)
+    MultiSegSeekbar mSeekbar;
+
+    @BindView(R.id.duration)
+    TextView mTvDuration;
+
+    @BindView(R.id.btn_fullscreen)
+    ImageButton mBtnFullScreen;
+
+
 
 
     public static void launch(Activity activity) {
@@ -85,7 +110,7 @@ public class TimelapseActivity extends BaseActivity {
     }
 
     private void initViews() {
-        setContentView(R.layout.activity_exported_video);
+        setContentView(R.layout.activity_timelapse);
         setupToolbar();
         setupDownloadFileList();
         if (mDownloadItemAdapter.getItemCount() == 0) {
