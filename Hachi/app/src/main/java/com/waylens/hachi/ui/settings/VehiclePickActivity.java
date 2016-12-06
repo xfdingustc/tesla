@@ -81,29 +81,6 @@ public class VehiclePickActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         init();
 
-
-//        mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                switch (mCurrentStep) {
-//                    case STEP_MAKER:
-//                        mMakerAdapter.getFilter().filter(newText);
-//                        break;
-//                    case STEP_MODEL:
-//                        mModelAdapter.getFilter().filter(newText);
-//                        break;
-//                    case STEP_YEAR:
-//                        mYearAdapter.getFilter().filter(newText);
-//                        break;
-//                }
-//                return true;
-//            }
-//        });
     }
 
     @Override
