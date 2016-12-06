@@ -222,7 +222,8 @@ public interface IHachiApi {
     @GET("/api/vehicle")
     Call<VinQueryResponse> queryByVin(@Query("vin") String vin);
 
-
+    @GET("/api/vehicle")
+    Observable<VinQueryResponse> queryByVinRx(@Query("vin") String vin);
 
     @GET("/api/moments/race")
     Observable<RaceQueryResponse> queryRaceRx(@Query("mode") int mode, @Query("start") int start,
@@ -233,15 +234,11 @@ public interface IHachiApi {
     @GET("/api/place")
     Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
 
-    @GET("api/vehicle/makers")
-    Call<MakerResponse> getAllMaker();
+    @GET("/api/place")
+    Observable<GeoInfoResponse> getGeoInfoRx(@Query("lon") double lon, @Query("lat") double lat);
 
     @GET("api/vehicle/makers")
     Observable<MakerResponse> getAllMarkerRx();
-
-
-    @GET("api/vehicle/models")
-    Call<ModelResponse> getModelByMaker(@Query("maker") long makerID);
 
 
     @GET("api/vehicle/models")

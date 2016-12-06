@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
@@ -47,7 +48,6 @@ import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
-import com.waylens.hachi.ui.clips.player.RawDataLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.ShareSettingActivity;
@@ -58,7 +58,6 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +65,6 @@ import java.util.Map;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Response;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -129,6 +123,9 @@ public class ShareActivity extends ClipPlayActivity {
 
     private boolean mAutoDetected;
 
+
+    private RawDataBlock mRawDataBlock;
+
     @BindView(R.id.user_vehicle_info)
     TextView mTvUserVehicleInfo;
 
@@ -178,6 +175,18 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.btn_youtube)
     ImageView mBtnYoutube;
+
+    @BindView(R.id.tv_place)
+    TextView tvPlaceInfo;
+
+    @BindView(R.id.switch_show_place)
+    Switch switchShowPlace;
+
+    @BindView(R.id.tv_vehicle_info)
+    TextView tvVehicleInfo;
+
+    @BindView(R.id.switch_upload_vehicle)
+    Switch switchUploadVehicle;
 
     @OnClick(R.id.info_edit)
     public void onBtnInfoEditClicked() {
@@ -301,102 +310,22 @@ public class ShareActivity extends ClipPlayActivity {
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
 
-        if (getClipSet().getCount() == 1) {
-            checkForRaceType();
-        }
 
-        Observable.create(new Observable.OnSubscribe<Clip>() {
-            @Override
-            public void call(Subscriber<? super Clip> subscriber) {
-                Logger.t(TAG).d("init views");
-                ClipSet clipSet = null;
-                try {
-                    clipSet = mPlaylistEditor.doGetPlaylistInfoDetailed();
-                    if (clipSet.getClipList().size() > 0) {
-                        mVin = clipSet.getClip(0).getVin();
-                    }
-                } catch (Exception e) {
-                    Logger.t(TAG).d(e.getMessage());
-                    subscriber.onError(e);
-                }
-
-                if (mVin != null) {
-                    String vin = mVin.substring(0, 8) + mVin.substring(9, 11);
-                    try {
-                        Logger.t(TAG).d(vin);
-                        Call<VinQueryResponse> vinQueryResponseCall = mHachi.queryByVin(vin);
-                        Response<VinQueryResponse> response = vinQueryResponseCall.execute();
-                        VinQueryResponse vinQueryResponse = response.body();
-                        Logger.t(TAG).d(response.code() + response.message());
-                        if (vinQueryResponse != null) {
-                            mAutoDetected = true;
-                            mVehicleMaker = vinQueryResponse.makerName;
-                            mVehicleModel = vinQueryResponse.modelName;
-                            mVehicleYear = vinQueryResponse.year;
-                            Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
-                        }
-
-                    } catch (IOException e) {
-                        Logger.t(TAG).d(e.getMessage());
-                    }
-                }
-
-                RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId());
-                RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clipSet.getClip(0), RawDataItem.DATA_TYPE_GPS);
-
-                try {
-                    GpsData gpsData = (GpsData) rawDataBlock.getRawDataItem(0).data;
-                    double lat = gpsData.coord.lat;
-                    double lng = gpsData.coord.lng;
-                    mGeoInfo.latitude = lat;
-                    mGeoInfo.longitude = lng;
-                    Call<GeoInfoResponse> geoInfoResponseCall = mHachi.getGeoInfo(lng, lat);
-                    Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
-                    if (response.isSuccessful()) {
-                        mLocation = response.body().getLocationString();
-                        mGeoInfo.city = response.body().city;
-                        mGeoInfo.country = response.body().country;
-                        mGeoInfo.region = response.body().region;
-                    }
-                } catch (NullPointerException e) {
-                    Logger.t(TAG).d(e.getMessage());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io())
+        SnipeApiRx.getRawDataBlockRx(getClipSet().getClip(0), RawDataItem.DATA_TYPE_GPS)
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<Clip>() {
+            .subscribe(new SimpleSubscribe<RawDataBlock>() {
+                @Override
+                public void onNext(RawDataBlock rawDataBlock) {
+                    mRawDataBlock = rawDataBlock;
+                }
+
                 @Override
                 public void onCompleted() {
-                    if (mVehicleMaker != null) {
-                        mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
-                    }
-                    if (mLocation != null) {
-                        mTvGeoInfo.setText(mLocation);
-                    }
-                    if (!TextUtils.isEmpty(mTvVehicleInfo.getText()) && !TextUtils.isEmpty(mTvGeoInfo.getText())) {
-                        mInfoSeparator.setVisibility(View.VISIBLE);
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Logger.t(TAG).d(e.getMessage());
-
-                }
-
-                @Override
-                public void onNext(Clip clip) {
-                    Logger.t(TAG).d("typeRace:" + clip.typeRace);
-                    Logger.t(TAG).d("clip raceTimingPoints:" + clip.raceTimingPoints.get(0));
-                    //mRaceLayout.setVisibility(View.VISIBLE);
-
-
+                    getClipInfo();
                 }
             });
+
 
         embedVideoPlayFragment();
         setupSocialPolicy();
@@ -415,55 +344,119 @@ public class ShareActivity extends ClipPlayActivity {
 
 
         Logger.t(TAG).d("is linked with facebook: " + sessionManager.getIsLinked());
-//        if (sessionManager.isLinked()) {
-//            mBtnFaceBook.setVisibility(View.VISIBLE);
-//        } else {
-//            mBtnFaceBook.setVisibility(View.GONE);
-//        }
 
-//        checkLinkedAccount();
         mUserName.requestFocus();
     }
 
+    private void getClipInfo() {
+        if (getClipSet().getCount() == 1) {
+            checkForRaceType();
+        }
+
+        fetchGeoInfo();
+        getClipVinNumber();
+    }
+
+    private void fetchGeoInfo() {
+        GpsData gpsData = (GpsData) mRawDataBlock.getRawDataItem(0).data;
+        double lat = gpsData.coord.lat;
+        double lng = gpsData.coord.lng;
+        mGeoInfo.latitude = lat;
+        mGeoInfo.longitude = lng;
+        mHachi.getGeoInfoRx(lng, lat)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<GeoInfoResponse>() {
+                @Override
+                public void onNext(GeoInfoResponse geoInfoResponse) {
+                    mLocation = geoInfoResponse.getLocationString();
+                    mGeoInfo.city = geoInfoResponse.city;
+                    mGeoInfo.country = geoInfoResponse.country;
+                    mGeoInfo.region = geoInfoResponse.region;
+                    tvPlaceInfo.setText(mLocation);
+                    tvPlaceInfo.setVisibility(View.VISIBLE);
+                    switchShowPlace.setChecked(true);
+                }
+            });
+
+    }
+
+
+    private void getClipVinNumber() {
+        mPlaylistEditor.doGetPlaylistInfoDetailedRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ClipSet>() {
+                @Override
+                public void onNext(ClipSet clipSet) {
+                    if (clipSet.getClipList().size() > 0) {
+                        mVin = clipSet.getClip(0).getVin();
+                        String vin = mVin.substring(0, 8) + mVin.substring(9, 11);
+                        fetchVehicleInfo(vin);
+                    }
+                }
+            });
+    }
+
+    private void fetchVehicleInfo(String vin) {
+        mHachi.queryByVinRx(vin)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<VinQueryResponse>() {
+                @Override
+                public void onNext(VinQueryResponse vinQueryResponse) {
+                    mAutoDetected = true;
+                    mVehicleMaker = vinQueryResponse.makerName;
+                    mVehicleModel = vinQueryResponse.modelName;
+                    mVehicleYear = vinQueryResponse.year;
+                    tvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+                    tvVehicleInfo.setVisibility(View.VISIBLE);
+                    switchUploadVehicle.setChecked(true);
+                    Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
+                }
+            });
+
+    }
+
+
     private void checkForRaceType() {
         SnipeApiRx.getClipInfo(getClipSet().getClip(0))
-                .subscribeOn(Schedulers.io())
-                .subscribe(new SimpleSubscribe<Clip>() {
-                    @Override
-                    public void onNext(Clip clip) {
-                        switch (clip.typeRace & Clip.MASK_RACE) {
-                            case Clip.TYPE_RACE_AU3T:
-                                mMomentType = "RACING_AU3T";
-                                break;
-                            case Clip.TYPE_RACE_AU6T:
-                                mMomentType = "RACING_AU6T";
-                                break;
-                            case Clip.TYPE_RACE_CD3T:
-                                mMomentType = "RACING_CD3T";
-                                break;
-                            case Clip.TYPE_RACE_CD6T:
-                                mMomentType = "RACING_CD6T";
-                                break;
-                            default:
-                                break;
-                        }
-                        RawDataLoader mRawDataLoader = new RawDataLoader(mPlaylistEditor.getPlaylistId());
-                        RawDataBlock rawDataBlock = mRawDataLoader.loadRawData(clip, RawDataItem.DATA_TYPE_GPS);
-                        Logger.t(TAG).d("raw data size:" + rawDataBlock.getItemList().size());
-                        List<Long> timeList = RaceTimeParseUtils.parseRaceTime(clip, rawDataBlock);
-                        mTimingPoints = new ArrayList<Long>(6);
-                        for (int j = 0; j < timeList.size(); j++) {
-                            if (timeList.get(j) > 0) {
-                                mTimingPoints.add(j, timeList.get(j));
-                            } else {
-                                mTimingPoints.add(j, (long) -1);
-                            }
-                        }
-                        for (long time : mTimingPoints) {
-                            Logger.t(TAG).d(time);
+            .subscribeOn(Schedulers.io())
+            .subscribe(new SimpleSubscribe<Clip>() {
+                @Override
+                public void onNext(Clip clip) {
+                    switch (clip.typeRace & Clip.MASK_RACE) {
+                        case Clip.TYPE_RACE_AU3T:
+                            mMomentType = "RACING_AU3T";
+                            break;
+                        case Clip.TYPE_RACE_AU6T:
+                            mMomentType = "RACING_AU6T";
+                            break;
+                        case Clip.TYPE_RACE_CD3T:
+                            mMomentType = "RACING_CD3T";
+                            break;
+                        case Clip.TYPE_RACE_CD6T:
+                            mMomentType = "RACING_CD6T";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    Logger.t(TAG).d("raw data size:" + mRawDataBlock.getItemList().size());
+                    List<Long> timeList = RaceTimeParseUtils.parseRaceTime(clip, mRawDataBlock);
+                    mTimingPoints = new ArrayList<Long>(6);
+                    for (int j = 0; j < timeList.size(); j++) {
+                        if (timeList.get(j) > 0) {
+                            mTimingPoints.add(j, timeList.get(j));
+                        } else {
+                            mTimingPoints.add(j, (long) -1);
                         }
                     }
-                });
+//                    for (long time : mTimingPoints) {
+//                        Logger.t(TAG).d(time);
+//                    }
+                }
+            });
     }
 
 

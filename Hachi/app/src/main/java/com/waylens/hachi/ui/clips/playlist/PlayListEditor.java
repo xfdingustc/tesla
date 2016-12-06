@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutionException;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.schedulers.Schedulers;
 
 
@@ -176,6 +177,19 @@ public class PlayListEditor {
 
         ClipSet clipSet = vdbRequestFuture.get();
         return clipSet;
+    }
+
+    public Observable<ClipSet> doGetPlaylistInfoDetailedRx() {
+        return Observable.defer(new Func0<Observable<ClipSet>>() {
+            @Override
+            public Observable<ClipSet> call() {
+                try {
+                    return Observable.just(doGetPlaylistInfoDetailed());
+                } catch (ExecutionException | InterruptedException e) {
+                    return Observable.error(e);
+                }
+            }
+        });
     }
 
     private void adjustClipSet(ClipSet clipSet) {

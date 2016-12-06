@@ -1,7 +1,6 @@
 package com.waylens.hachi.bgjob.export.statejobqueue;
 
 import android.app.Activity;
-import android.app.Service;
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
@@ -9,11 +8,9 @@ import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.export.statejobqueue.UploadMomentJob.JobCallback;
-import com.waylens.hachi.jobqueue.JobHolder;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -22,7 +19,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Created by lshw on 16/11/22.
  */
 
-public class CacheUploadMomentService extends JobService implements JobCallback{
+public class CacheUploadMomentService extends JobService implements JobCallback {
     private static final String TAG = CacheUploadMomentService.class.getSimpleName();
     private static final int JOB_ID = 0x1000;
 
@@ -35,9 +32,9 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
 
     public static void scheduleJob(Context context) {
         ComponentName jobService = new ComponentName(context.getApplicationContext().getPackageName(),
-                CacheUploadMomentService.class.getCanonicalName());
+            CacheUploadMomentService.class.getCanonicalName());
         JobInfo jobInfo = new JobInfo.Builder(JOB_ID, jobService).setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                .setPeriodic(10000).build();
+            .setPeriodic(10000).build();
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         int scheduledId = jobScheduler.schedule(jobInfo);
         Logger.t(TAG).d(scheduledId > 0 ? "schedule successfully" : "schedule failed");
@@ -100,7 +97,7 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
             running = true;
             try {
                 Job job = stateJobHolder.getJob();
-                if (job instanceof CacheUploadMomentJob ) {
+                if (job instanceof CacheUploadMomentJob) {
                     ((CacheUploadMomentJob) job).setJobCallback(this);
                 } else if (job instanceof UploadPictureJob) {
                     ((UploadPictureJob) job).setJobCallback(this);
@@ -160,9 +157,10 @@ public class CacheUploadMomentService extends JobService implements JobCallback{
         queue.updateJobProgress(jobHolder);
     }
 
-    public class Worker implements Runnable{
+    public class Worker implements Runnable {
         int state;
         Job job;
+
         public Worker(Job job, int state) {
             this.job = job;
             this.state = state;
