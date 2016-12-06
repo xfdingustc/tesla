@@ -57,57 +57,26 @@
                         android:layout_height="wrap_content"
                         tools:text="xfding"/>
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/user_email"
+                        style="@style/HachiTextViewSubHeader"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/appTextColorSecondary"
+                        android:textSize="14sp"
+                        tools:text="xfdingustc@gmail.com"/>
 
-                        <TextView
-                            android:id="@+id/user_vehicle_info"
-                            style="@style/HachiTextViewSubHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="?attr/appTextColorSecondary"
-                            android:textSize="14sp"
-                            tools:text="BMW v5"/>
 
-                        <View
-                            android:id="@+id/info_separator"
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginEnd="8dp"
-                            android:layout_marginStart="8dp"
-                            android:background="?attr/separateColor"
-                            android:visibility="gone"
-                            tools:visibility="visible"
-                            />
-
-                        <TextView
-                            android:id="@+id/geo_info"
-                            style="@style/HachiTextViewSubHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="?attr/appTextColorSecondary"
-                            android:textSize="14sp"
-                            tools:text="Shanghai"/>
-
-                    </LinearLayout>
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/info_edit"
-                    style="@style/HachiTextViewSubHeader"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_create"/>
+
 
             </LinearLayout>
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/separateColor"/>
             <LinearLayout
                 android:id="@+id/place_info"
                 android:layout_width="match_parent"

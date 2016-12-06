@@ -126,15 +126,6 @@ public class ShareActivity extends ClipPlayActivity {
 
     private RawDataBlock mRawDataBlock;
 
-    @BindView(R.id.user_vehicle_info)
-    TextView mTvUserVehicleInfo;
-
-
-    @BindView(R.id.info_separator)
-    View mInfoSeparator;
-
-    @BindView(R.id.geo_info)
-    TextView mTvGeoInfo;
 
     @BindView(R.id.race_layout)
     LinearLayout mRaceLayout;
@@ -150,7 +141,7 @@ public class ShareActivity extends ClipPlayActivity {
     AvatarView mUserAvatar;
 
     @BindView(R.id.user_name)
-    TextView mUserName;
+    TextView tvUserName;
 
     @BindView(R.id.root_scroll_view)
     ScrollView mRootScrollView;
@@ -160,6 +151,9 @@ public class ShareActivity extends ClipPlayActivity {
 
 //    @BindView(R.id.moment_description)
 //    TextInputEditText mEtMomentDescription;
+
+    @BindView(R.id.user_email)
+    TextView tvUserEmail;
 
     @BindArray(R.array.social_privacy_text)
     CharSequence[] mPrivacyText;
@@ -188,11 +182,11 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.switch_upload_vehicle)
     Switch switchUploadVehicle;
 
-    @OnClick(R.id.info_edit)
-    public void onBtnInfoEditClicked() {
-        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, mAutoDetected, REQUEST_SHARE_SETTING);
-
-    }
+//    @OnClick(R.id.info_edit)
+//    public void onBtnInfoEditClicked() {
+//        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, mAutoDetected, REQUEST_SHARE_SETTING);
+//
+//    }
 
     @OnClick(R.id.btn_facebook)
     public void onBtnFackBookChecked() {
@@ -266,22 +260,22 @@ public class ShareActivity extends ClipPlayActivity {
                     Logger.t(TAG).d("isLocation:" + mIsLocationChecked + "isVehicle:" + mIsVehicleInfoChecked);
                     if (!mIsLocationChecked) {
                         mLocation = null;
-                        mTvGeoInfo.setVisibility(View.GONE);
-                        mInfoSeparator.setVisibility(View.GONE);
+//                        mTvGeoInfo.setVisibility(View.GONE);
+//                        mInfoSeparator.setVisibility(View.GONE);
                     }
 
                     if (mIsVehicleInfoChecked) {
                         if (mVehicleMaker != null) {
-                            mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+//                            mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
                         }
                     } else {
                         mTvVehicleInfo.setVisibility(View.GONE);
-                        mInfoSeparator.setVisibility(View.GONE);
+//                        mInfoSeparator.setVisibility(View.GONE);
                     }
                     if (!TextUtils.isEmpty(mVehicleMaker) && !TextUtils.isEmpty(mLocation)) {
-                        mInfoSeparator.setVisibility(View.VISIBLE);
+//                        mInfoSeparator.setVisibility(View.VISIBLE);
                     } else {
-                        mInfoSeparator.setVisibility(View.GONE);
+//                        mInfoSeparator.setVisibility(View.GONE);
                     }
                     Logger.t(TAG).d("maker:" + mVehicleMaker + mVehicleModel + mVehicleYear);
                 }
@@ -340,12 +334,13 @@ public class ShareActivity extends ClipPlayActivity {
         SessionManager sessionManager = SessionManager.getInstance();
 
         mUserAvatar.loadAvatar(sessionManager.getAvatarUrl(), sessionManager.getUserName());
-        mUserName.setText(sessionManager.getUserName());
+        tvUserName.setText(sessionManager.getUserName());
+        tvUserEmail.setText(sessionManager.getEmail());
 
 
         Logger.t(TAG).d("is linked with facebook: " + sessionManager.getIsLinked());
 
-        mUserName.requestFocus();
+        tvUserName.requestFocus();
     }
 
     private void getClipInfo() {
