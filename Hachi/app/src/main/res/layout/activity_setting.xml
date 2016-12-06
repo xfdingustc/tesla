@@ -52,7 +52,7 @@
             android:layout_margin="16dp"
             android:text="@string/gauge_setting"
             android:textColor="?attr/appTextColorPrimary"
-            android:textSize="16sp"/>
+            android:textSize="18sp"/>
 
 
     </LinearLayout>
