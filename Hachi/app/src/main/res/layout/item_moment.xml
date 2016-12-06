@@ -25,7 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/video_cover"
         android:layout_alignLeft="@id/video_cover"
-        android:layout_margin="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
         android:alpha="0.8"
         android:orientation="horizontal">
 
@@ -33,6 +34,7 @@
             android:id="@+id/car_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:background="@drawable/race_info_bg">
 
             <ImageView

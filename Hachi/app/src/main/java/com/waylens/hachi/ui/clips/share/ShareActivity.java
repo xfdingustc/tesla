@@ -51,6 +51,8 @@ import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.ShareSettingActivity;
+import com.waylens.hachi.ui.settings.ShareSettingFragment;
+import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.utils.VersionHelper;
@@ -79,6 +81,7 @@ public class ShareActivity extends ClipPlayActivity {
     private static final int REQUEST_CODE_FACEBOOK = 0x100;
     private static final int REQUEST_CODE_YOUTUBE = 0x101;
     private static final int REQUEST_SHARE_SETTING = 0x102;
+    private static final int REQUEST_PICKCAR = 0x103;
 
     private String mSocialPrivacy;
 
@@ -110,10 +113,6 @@ public class ShareActivity extends ClipPlayActivity {
     private boolean mIsFacebookShareChecked = false;
 
     private boolean mIsYoutubeShareChecked = false;
-
-    private boolean mIsLocationChecked = true;
-
-    private boolean mIsVehicleInfoChecked = true;
 
     private LinkedAccounts mLinkedAccounts;
 
@@ -187,6 +186,10 @@ public class ShareActivity extends ClipPlayActivity {
 //        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, mAutoDetected, REQUEST_SHARE_SETTING);
 //
 //    }
+    @OnClick(R.id.tv_vehicle_title)
+    public void onVehicleTitleClicked() {
+        VehiclePickActivity.launch(this, REQUEST_PICKCAR);
+    }
 
     @OnClick(R.id.btn_facebook)
     public void onBtnFackBookChecked() {
@@ -249,37 +252,16 @@ public class ShareActivity extends ClipPlayActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case REQUEST_SHARE_SETTING:
+            case REQUEST_PICKCAR:
                 if (resultCode == Activity.RESULT_OK) {
-                    mIsLocationChecked = data.getBooleanExtra(ShareSettingActivity.LOCATION_CHECKED, true);
-                    mIsVehicleInfoChecked = data.getBooleanExtra(ShareSettingActivity.VEHICLE_CHECKED, true);
-                    mVehicleMaker = data.getStringExtra(ShareSettingActivity.VEHICLE_MAKER);
-                    mVehicleModel = data.getStringExtra(ShareSettingActivity.VEHICLE_MODEL);
-                    mVehicleYear = data.getIntExtra(ShareSettingActivity.VEHICLE_YEAR, -1);
+                    mVehicleMaker = data.getStringExtra(VehiclePickActivity.VEHICLE_MAKER);
+                    mVehicleModel = data.getStringExtra(VehiclePickActivity.VEHICLE_MODEL);
+                    mVehicleYear = data.getIntExtra(VehiclePickActivity.VEHICLE_YEAR, 0);
+                    tvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+                    tvVehicleInfo.setVisibility(View.VISIBLE);
+                    switchUploadVehicle.setChecked(true);
 
-                    Logger.t(TAG).d("isLocation:" + mIsLocationChecked + "isVehicle:" + mIsVehicleInfoChecked);
-                    if (!mIsLocationChecked) {
-                        mLocation = null;
-//                        mTvGeoInfo.setVisibility(View.GONE);
-//                        mInfoSeparator.setVisibility(View.GONE);
-                    }
-
-                    if (mIsVehicleInfoChecked) {
-                        if (mVehicleMaker != null) {
-//                            mTvUserVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
-                        }
-                    } else {
-                        mTvVehicleInfo.setVisibility(View.GONE);
-//                        mInfoSeparator.setVisibility(View.GONE);
-                    }
-                    if (!TextUtils.isEmpty(mVehicleMaker) && !TextUtils.isEmpty(mLocation)) {
-//                        mInfoSeparator.setVisibility(View.VISIBLE);
-                    } else {
-//                        mInfoSeparator.setVisibility(View.GONE);
-                    }
-                    Logger.t(TAG).d("maker:" + mVehicleMaker + mVehicleModel + mVehicleYear);
                 }
-                break;
             default:
                 break;
         }
@@ -566,7 +548,7 @@ public class ShareActivity extends ClipPlayActivity {
                 localMoment.momentType = "NORMAL_SINGLE";
             }
         }
-        if (mIsVehicleInfoChecked) {
+        if (switchUploadVehicle.isChecked()) {
             localMoment.withCarInfo = true;
             localMoment.mVehicleMaker = mVehicleMaker;
             localMoment.mVehicleModel = mVehicleModel;
@@ -577,7 +559,7 @@ public class ShareActivity extends ClipPlayActivity {
         } else {
             localMoment.withCarInfo = false;
         }
-        if (mIsLocationChecked) {
+        if (switchShowPlace.isChecked()) {
             localMoment.withGeoTag = true;
             localMoment.geoInfo = mGeoInfo;
         } else {
