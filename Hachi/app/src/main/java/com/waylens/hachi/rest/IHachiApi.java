@@ -233,6 +233,9 @@ public interface IHachiApi {
     @GET("/api/place")
     Call<GeoInfoResponse> getGeoInfo(@Query("lon") double lon, @Query("lat") double lat);
 
+    @GET("/api/place")
+    Observable<GeoInfoResponse> getGeoInfoRx(@Query("lon") double lon, @Query("lat") double lat);
+
     @GET("api/vehicle/makers")
     Call<MakerResponse> getAllMaker();
 

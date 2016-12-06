@@ -791,7 +791,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 return;
             }
             mLoadToast = new LoadToast(getActivity());
-            mLoadToast.setText(getString(R.string.loading));
+//            mLoadToast.setText(getString(R.string.loading));
             mLoadToast.show();
             Logger.t(TAG).d("selected list size: " + selectedList.size());
 
