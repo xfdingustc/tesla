@@ -50,8 +50,6 @@ import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.ui.settings.ShareSettingActivity;
-import com.waylens.hachi.ui.settings.ShareSettingFragment;
 import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
