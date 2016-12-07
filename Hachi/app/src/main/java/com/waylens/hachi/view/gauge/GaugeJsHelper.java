@@ -83,8 +83,8 @@ public class GaugeJsHelper {
                         IioData iioData = (IioData) item.data;
                         state.put("roll", iioData.euler_roll);
                         state.put("pitch", iioData.euler_pitch);
-                        state.put("gforceBA", iioData.accX);
-                        state.put("gforceLR", iioData.accZ);
+                        state.put("gforceBA", iioData.accZ);
+                        state.put("gforceLR", iioData.accX);
                         mIioPressure = iioData.pressure;
                         pts = item.getPtsMs();
                         break;

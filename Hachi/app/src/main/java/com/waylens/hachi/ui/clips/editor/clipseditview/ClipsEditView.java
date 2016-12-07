@@ -60,6 +60,10 @@ public class ClipsEditView extends LinearLayout {
 
     public final static int POSITION_UNKNOWN = -1;
 
+    public final static int EDIT_MODE_OTHER = 0x0000;
+    public final static int EDIT_MODE_LAPTIMER = 0x0001;
+
+
     @BindView(R.id.clip_list_view)
     RecyclerView mRecyclerView;
 
@@ -77,7 +81,7 @@ public class ClipsEditView extends LinearLayout {
 
     private LinearLayoutManager mLayoutManager;
     private int mClipSetIndex;
-
+    private int mEditMode = EDIT_MODE_OTHER;
     private ClipCoverViewAdapter mClipCoverGridAdapter;
     private ItemTouchHelper mItemTouchHelper;
     private OnClipEditListener mOnClipEditListener;
@@ -187,6 +191,20 @@ public class ClipsEditView extends LinearLayout {
         if (mVdtCamera != null) {
             mVdbRequestQueue = mVdtCamera.getRequestQueue();//Snipe.newRequestQueue(getActivity(), mVdtCamera);
         }
+    }
+
+    public void setEditMode(int mode) {
+        switch (mode) {
+            case EDIT_MODE_OTHER:
+                mEditMode = EDIT_MODE_OTHER;
+                break;
+            case EDIT_MODE_LAPTIMER:
+                mEditMode = EDIT_MODE_LAPTIMER;
+                break;
+            default:
+                break;
+        }
+        mClipCoverGridAdapter.notifyDataSetChanged();
     }
 
     private RangeBar.OnRangeBarChangeListener mRangeBarchangeListener = new RangeBar.OnRangeBarChangeListener() {
@@ -401,7 +419,7 @@ public class ClipsEditView extends LinearLayout {
                     if (mSelectedPosition == holder.getAdapterPosition()) {
                         holder.selectMask.setVisibility(GONE);
                         holder.btnDelete.setVisibility(GONE);
-//                        layoutTransition(holder, false);
+//                      layoutTransition(holder, false);
                         internalOnExitEditing();
                         return;
                     }
@@ -423,7 +441,9 @@ public class ClipsEditView extends LinearLayout {
                     holder.btnDelete.setVisibility(VISIBLE);
 //                    layoutTransition(holder, true);
                     mSelectedPosition = holder.getAdapterPosition();
-                    internalOnSelectClip(mSelectedPosition, clip);
+                    if (mEditMode != EDIT_MODE_LAPTIMER) {
+                        internalOnSelectClip(mSelectedPosition, clip);
+                    }
                 }
             });
 
@@ -468,9 +488,9 @@ public class ClipsEditView extends LinearLayout {
         @Override
         public int getItemCount() {
             if (getClipSet() == null) {
-                return 1;
+                return mEditMode == EDIT_MODE_OTHER ? 1 : 0;
             } else {
-                return getClipSet().getCount() + 1;
+                return getClipSet().getCount() + (mEditMode == EDIT_MODE_OTHER ? 1 : 0);
             }
         }
 
@@ -579,7 +599,6 @@ public class ClipsEditView extends LinearLayout {
         void onClipRemoved(int clipCount);
 
         void onExitEditing();
-
 
         void onStopTrimming(Clip clip);
     }

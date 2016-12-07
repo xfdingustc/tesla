@@ -327,8 +327,9 @@ public class ShareActivity extends ClipPlayActivity {
         if (getClipSet().getCount() == 1) {
             checkForRaceType();
         }
-
-        fetchGeoInfo();
+        if (mRawDataBlock != null) {
+            fetchGeoInfo();
+        }
         getClipVinNumber();
     }
 
@@ -400,6 +401,9 @@ public class ShareActivity extends ClipPlayActivity {
             .subscribe(new SimpleSubscribe<Clip>() {
                 @Override
                 public void onNext(Clip clip) {
+                    if ((clip.typeRace & Clip.TYPE_RACE) <= 0) {
+                        return;
+                    }
                     switch (clip.typeRace & Clip.MASK_RACE) {
                         case Clip.TYPE_RACE_AU3T:
                             mMomentType = "RACING_AU3T";
