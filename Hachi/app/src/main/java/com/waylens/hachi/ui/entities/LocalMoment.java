@@ -70,6 +70,8 @@ public class LocalMoment implements Serializable {
 
     public GeoInfo geoInfo;
 
+    public int streamId;
+
     public LocalMoment(String title, String momentType) {
         this.title = title;
         this.momentType = momentType;
@@ -77,7 +79,7 @@ public class LocalMoment implements Serializable {
 
     public LocalMoment(int playlistId, String title, String description, String[] tags,
                        String accessLevel, int audioID, Map<String, String> gaugeSettings,
-                       boolean isFbShare, boolean isYoutubeShare, boolean cache) {
+                       boolean isFbShare, boolean isYoutubeShare, boolean cache, int streamId) {
         this.playlistId = playlistId;
         this.title = title;
         this.description = description;
@@ -88,6 +90,7 @@ public class LocalMoment implements Serializable {
         this.isFbShare = isFbShare;
         this.isYoutubeShare = isYoutubeShare;
         this.cache = cache;
+        this.streamId = streamId;
     }
 
     public void setFragments(ArrayList<Segment> segments, String thumbnailPath) {

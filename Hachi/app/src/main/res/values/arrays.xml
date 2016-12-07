@@ -7,6 +7,11 @@
         <item>@string/off</item>
     </string-array>
 
+    <string-array name="upload_resolution_list" translatable="false">
+        <item>360P</item>
+        <item>1080P</item>
+    </string-array>
+
     <string-array name="resolution_list" translatable="false">
         <item>720P</item>
         <item>1080P</item>

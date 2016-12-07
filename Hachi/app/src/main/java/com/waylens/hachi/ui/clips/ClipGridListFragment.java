@@ -703,7 +703,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             return;
         }
         mLoadToast = new LoadToast(getActivity());
-        mLoadToast.setText(getString(R.string.loading));
         mLoadToast.show();
 
         final int playlistId = 0x100;
@@ -746,7 +745,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
             return;
         }
         mLoadToast = new LoadToast(getActivity());
-        mLoadToast.setText(getString(R.string.loading));
         mLoadToast.show();
 
         final int playlistId = 0x100;
@@ -842,7 +840,6 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                 return;
             }
             mLoadToast = new LoadToast(getActivity());
-            mLoadToast.setText(getString(R.string.loading));
             mLoadToast.show();
             ArrayList<Clip> selectedList = mAdapter.getSelectedClipList();
 

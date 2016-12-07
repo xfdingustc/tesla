@@ -185,6 +185,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="?attr/separateColor"/>
+            
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/resolution"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"/>
+
+            <Spinner
+                android:id="@+id/spinner_upload_resolution"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:entries="@array/upload_resolution_list"></Spinner>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/separateColor"/>
+
 
             <android.support.design.widget.TextInputLayout
                 style="@style/TextAppearance.AppCompat.Body2"

@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 import com.orhanobut.logger.Logger;
@@ -17,9 +15,7 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.HachiAuthorizationHelper;
 import com.waylens.hachi.bgjob.upload.event.UploadMomentEvent;
 import com.waylens.hachi.camera.VdtCameraManager;
-import com.waylens.hachi.jobqueue.CancelReason;
 import com.waylens.hachi.jobqueue.Params;
-import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.body.CreateMomentBody;
@@ -29,7 +25,6 @@ import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.service.download.DownloadAPI;
 import com.waylens.hachi.service.download.DownloadProgressListener;
-import com.waylens.hachi.service.download.Downloadable;
 import com.waylens.hachi.service.upload.UploadAPI;
 import com.waylens.hachi.service.upload.UploadProgressListener;
 import com.waylens.hachi.service.upload.UploadProgressRequestBody;
@@ -74,7 +69,8 @@ public class CacheUploadMomentJob extends UploadMomentJob {
     private static final int VIDIT_RAW_DATA = 1;
     private static final int VIDIT_VIDEO_DATA_LOW = 64;
 
-    private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
+    private static final int DEFAULT_DATA_TYPE_SD = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
+    private static final int DEFAULT_DATA_TYPE_FULLHD = VdbCommand.Factory.UPLOAD_GET_V0 | VdbCommand.Factory.UPLOAD_GET_RAW;
     private static final int DEFAULT_DATA_TYPE_CLOUD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
 
     private transient JobCallback mJobCallback;
@@ -163,7 +159,11 @@ public class CacheUploadMomentJob extends UploadMomentJob {
             parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
             parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, clip.getStartTimeMs());
             parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, clip.getDurationMs());
-            parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_CAM);
+            if (mLocalMoment.streamId == 0) {
+                parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_SD);
+            } else {
+                parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_FULLHD);
+            }
             ClipUploadUrlRequest uploadUrlRequest = new ClipUploadUrlRequest(clip.cid, parameters, uploadUrlRequestFuture, uploadUrlRequestFuture);
             mVdbRequestQueue.add(uploadUrlRequest);
 

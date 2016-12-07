@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -118,10 +117,9 @@ public class ShareActivity extends ClipPlayActivity {
 
     private SessionManager mSessionManager = SessionManager.getInstance();
 
-    private boolean mAutoDetected;
-
-
     private RawDataBlock mRawDataBlock;
+
+    private int mStreamId = 0;
 
 
     @BindView(R.id.race_layout)
@@ -179,11 +177,9 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.switch_upload_vehicle)
     Switch switchUploadVehicle;
 
-//    @OnClick(R.id.info_edit)
-//    public void onBtnInfoEditClicked() {
-//        ShareSettingActivity.launch(this, mLocation, mVehicleMaker, mVehicleModel, mVehicleYear, mAutoDetected, REQUEST_SHARE_SETTING);
-//
-//    }
+    @BindView(R.id.spinner_upload_resolution)
+    Spinner spUploadResolution;
+
     @OnClick(R.id.tv_vehicle_title)
     public void onVehicleTitleClicked() {
         VehiclePickActivity.launch(this, REQUEST_PICKCAR);
@@ -320,7 +316,19 @@ public class ShareActivity extends ClipPlayActivity {
 
         Logger.t(TAG).d("is linked with facebook: " + sessionManager.getIsLinked());
 
-        tvUserName.requestFocus();
+        spUploadResolution.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                mStreamId = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                mStreamId = 0;
+            }
+        });
+
+
     }
 
     private void getClipInfo() {
@@ -381,7 +389,6 @@ public class ShareActivity extends ClipPlayActivity {
             .subscribe(new SimpleSubscribe<VinQueryResponse>() {
                 @Override
                 public void onNext(VinQueryResponse vinQueryResponse) {
-                    mAutoDetected = true;
                     mVehicleMaker = vinQueryResponse.makerName;
                     mVehicleModel = vinQueryResponse.modelName;
                     mVehicleYear = vinQueryResponse.year;
@@ -535,7 +542,9 @@ public class ShareActivity extends ClipPlayActivity {
         Logger.t(TAG).d("share name: " + title);
 
         LocalMoment localMoment = new LocalMoment(mPlaylistEditor.getPlaylistId(), title, descrption,
-            tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked, mIsYoutubeShareChecked, cache);
+            tags, mSocialPrivacy, mAudioId, gaugeSettings, mIsFacebookShareChecked,
+            mIsYoutubeShareChecked, cache, mStreamId);
+
         if (mMomentType != null && mMomentType.startsWith("RACING")) {
             Logger.t(TAG).d(mMomentType);
             String vehicleDescription = mVehicleDesc.getEditableText().toString();
