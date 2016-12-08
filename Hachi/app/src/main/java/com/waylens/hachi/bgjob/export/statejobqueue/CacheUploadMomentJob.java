@@ -68,10 +68,12 @@ public class CacheUploadMomentJob extends UploadMomentJob {
 
     private static final int VIDIT_RAW_DATA = 1;
     private static final int VIDIT_VIDEO_DATA_LOW = 64;
+    private static final int VIDIT_VIDEO_DATA_HIGH = 2;
 
     private static final int DEFAULT_DATA_TYPE_SD = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
     private static final int DEFAULT_DATA_TYPE_FULLHD = VdbCommand.Factory.UPLOAD_GET_V0 | VdbCommand.Factory.UPLOAD_GET_RAW;
-    private static final int DEFAULT_DATA_TYPE_CLOUD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
+    private static final int DEFAULT_DATA_TYPE_CLOUD_SD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
+    private static final int DEFAULT_DATA_TYPE_CLOUD_FULLHD = VIDIT_VIDEO_DATA_HIGH | VIDIT_RAW_DATA;
 
     private transient JobCallback mJobCallback;
 
@@ -169,7 +171,8 @@ public class CacheUploadMomentJob extends UploadMomentJob {
 
             UploadUrl uploadUrl = uploadUrlRequestFuture.get();
             Logger.t(TAG).d("Got clip upload url: " + uploadUrl.url);
-            LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
+            int dataType = mLocalMoment.streamId == 0 ? DEFAULT_DATA_TYPE_CLOUD_SD : DEFAULT_DATA_TYPE_CLOUD_FULLHD;
+            LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, dataType);
             mLocalMoment.mSegments.add(segment);
 
         }

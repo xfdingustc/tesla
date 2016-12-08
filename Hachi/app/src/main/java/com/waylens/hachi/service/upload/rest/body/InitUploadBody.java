@@ -40,8 +40,8 @@ public class InitUploadBody {
             fragment.duration = segment.uploadURL.lengthMs;
             fragment.frame_rate = new double[2];
             fragment.resolution = new int[2];
-            fragment.resolution[0] = 0;
-            fragment.resolution[1] = (segment.clip.streams[1].video_width << 16) + segment.clip.streams[1].video_height;
+            int clipStreamIndex = moment.streamId == 0 ? 1 : 0;
+            fragment.resolution[clipStreamIndex] = (segment.clip.streams[clipStreamIndex].video_width << 16) + segment.clip.streams[clipStreamIndex].video_height;
             fragment.data_type = segment.dataType;
 
             uploadBody.fragments.add(fragment);
