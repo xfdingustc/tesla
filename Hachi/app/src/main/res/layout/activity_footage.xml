@@ -4,14 +4,23 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/windowBackground">
+              android:background="@color/windowBackground"
+              xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar_default"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1D1D1D"
+            app:elevation="@dimen/default_elevation"
+            app:layout_scrollFlags="scroll"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
         <FrameLayout
             android:id="@+id/player_fragment_content"

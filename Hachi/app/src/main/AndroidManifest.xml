@@ -107,7 +107,8 @@
         <activity
             android:name=".ui.clips.FootageActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/LightTheme.Translucent.Footage"/>
 
         <activity
             android:name=".ui.activities.WebViewActivity"

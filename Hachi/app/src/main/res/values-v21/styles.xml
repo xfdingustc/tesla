@@ -179,7 +179,10 @@
 
     <style name="LightTheme.Translucent.Enhance">
         <item name="android:statusBarColor">#1D1D1D</item>
+    </style>
 
+    <style name="LightTheme.Translucent.Footage">
+        <item name="android:statusBarColor">#1D1D1D</item>
     </style>
 
 
