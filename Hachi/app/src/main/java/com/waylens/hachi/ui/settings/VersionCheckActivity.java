@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
@@ -27,6 +28,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.ui.activities.BaseActivity;
+import com.waylens.hachi.utils.DebugHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 import org.json.JSONObject;
@@ -67,31 +69,21 @@ public class VersionCheckActivity extends BaseActivity {
     @BindView(R.id.btn_update_now)
     View mBtnUpdateNow;
 
+    @BindView(R.id.debug_menu)
+    Button btnDebugMenu;
+
     @OnClick(R.id.waylens_logo)
     public void onWaylensLogoClicked() {
-
         mClickCount--;
         if (mClickCount == 0) {
-            MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .positiveText(R.string.ok)
-                .negativeText(R.string.cancel)
-                .items(R.array.server_list)
-                .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
-                    @Override
-                    public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
-                        return false;
-                    }
-                })
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        Logger.t(TAG).d("select index: " + getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
-                        PreferenceUtils.putString("server", getResources().getStringArray(R.array.server_list)[dialog.getSelectedIndex()]);
-                        PreferenceUtils.putBoolean("debug", true);
-                    }
-                })
-                .show();
+            DebugHelper.setDebugMode(true);
+            btnDebugMenu.setVisibility(View.VISIBLE);
         }
+    }
+
+    @OnClick(R.id.debug_menu)
+    public void onDebugMenuClicked() {
+        DebugMenuActivity.launch(this);
     }
 
 
@@ -137,6 +129,9 @@ public class VersionCheckActivity extends BaseActivity {
         setupToolbar();
         mCurrentVersionView.setText(getString(R.string.current_version) + BuildConfig.VERSION_NAME);
         mViewAnimator.setDisplayedChild(2);
+        if (DebugHelper.isInDebugMode()) {
+            btnDebugMenu.setVisibility(View.VISIBLE);
+        }
     }
 
 

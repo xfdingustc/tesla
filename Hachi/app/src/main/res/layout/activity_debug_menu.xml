@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <include layout="@layout/toolbar_default"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:text="Host Server"
+        android:textColor="?attr/colorAccent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"/>
+
+    <RadioGroup
+        android:id="@+id/host_server_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp">
+
+        <RadioButton
+            android:id="@+id/server_97"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="97 server"/>
+
+        <RadioButton
+            android:id="@+id/server_singapore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Singapore server"/>
+
+        <RadioButton
+            android:id="@+id/server_aws"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AWS"/>
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:text="Show moment source"
+            android:textColor="?attr/appTextColorPrimary"
+            android:textSize="16sp"/>
+
+
+        <Switch
+            android:id="@+id/switch_show_moment_source"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginRight="16dp"
+            android:checked="false"
+            android:paddingLeft="16dp"/>
+    </LinearLayout>
+
+</LinearLayout>

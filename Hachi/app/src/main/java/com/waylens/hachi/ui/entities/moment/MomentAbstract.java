@@ -40,6 +40,7 @@ public class MomentAbstract implements Serializable {
     public boolean isRecommended;
 
     public String momentType;
+    public String deviceType;
 
     public VehicleInfo momentVehicleInfo;
 

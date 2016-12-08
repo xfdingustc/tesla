@@ -35,6 +35,7 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.DebugHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -50,8 +51,6 @@ import butterknife.ButterKnife;
 
 public class MomentsListAdapter extends AbsMomentListAdapter {
     private static final String TAG = MomentsListAdapter.class.getSimpleName();
-
-
 
 
     private final Context mContext;
@@ -244,6 +243,13 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
             }
         });
 
+        if (DebugHelper.showMomentSource()) {
+            holder.tvMomentSource.setVisibility(View.VISIBLE);
+            holder.tvMomentSource.setText(momentAbstract.deviceType);
+        } else {
+            holder.tvMomentSource.setVisibility(View.GONE);
+        }
+
     }
 
 
@@ -330,6 +336,9 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
 
         @BindView(R.id.image_moment)
         ImageView imageMoment;
+
+        @BindView(R.id.moment_source)
+        TextView tvMomentSource;
 
         public MomentViewHolder(View itemView) {
             super(itemView);

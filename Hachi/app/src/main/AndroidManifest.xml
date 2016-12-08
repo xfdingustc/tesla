@@ -149,8 +149,8 @@
 
         <activity
             android:name=".ui.liveview.LiveViewSettingActivity"
-            android:screenOrientation="portrait"
-            android:noHistory="true"/>
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".ui.manualsetup.ManualSetupActivity"
@@ -162,6 +162,10 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.clips.RemixActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.settings.DebugMenuActivity"
             android:screenOrientation="portrait"/>
 
         <activity
@@ -376,7 +380,8 @@
             android:name=".bgjob.BgJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
-        <service android:name=".bgjob.export.statejobqueue.CacheUploadMomentService"
+        <service
+            android:name=".bgjob.export.statejobqueue.CacheUploadMomentService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
 
