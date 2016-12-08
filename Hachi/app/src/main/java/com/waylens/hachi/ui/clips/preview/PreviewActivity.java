@@ -71,18 +71,14 @@ public class PreviewActivity extends ClipPlayActivity {
     public static void launch(Activity activity, int playlistId, View transitionView) {
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
-//        final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
-//            false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
-//        ActivityOptionsCompat options = ActivityOptionsCompat
-//            .makeSceneTransitionAnimation(activity, pairs);
-//        ActivityCompat.startActivity(activity, intent, options.toBundle());
 
-        MorphTransform.addExtras(intent,
-            ContextCompat.getColor(activity, R.color.hachi),
-            activity.getResources().getDimensionPixelSize(R.dimen.dialog_corners));
+//        MorphTransform.addExtras(intent,
+//            ContextCompat.getColor(activity, R.color.hachi),
+//            activity.getResources().getDimensionPixelSize(R.dimen.dialog_corners));
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
             (activity, transitionView, activity.getString(R.string.clip_cover));
-        activity.startActivity(intent, options.toBundle());
+//        activity.startActivity(intent, options.toBundle());
+        activity.startActivity(intent);
     }
 
     public static void lauch(Activity activity, Clip clip, View transitionView) {

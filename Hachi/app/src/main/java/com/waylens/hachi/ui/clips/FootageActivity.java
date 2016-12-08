@@ -151,7 +151,8 @@ public class FootageActivity extends ClipPlayActivity {
         final Pair<View, String>[] pairs = TransitionHelper.createSafeTransitionParticipants(activity,
             false, new Pair<>(transitionView, activity.getString(R.string.clip_cover)));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pairs);
-        ActivityCompat.startActivity(activity, intent, options.toBundle());
+//        ActivityCompat.startActivity(activity, intent, options.toBundle());
+        activity.startActivity(intent);
     }
 
     @Override
