@@ -116,7 +116,7 @@ public class PreviewActivity extends ClipPlayActivity {
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlaylistId);
         mPlaylistEditor.reconstruct();
         embedVideoPlayFragment(true);
-        getRaceTimeInfo();
+//        getRaceTimeInfo();
     }
 
     public void getRaceTimeInfo() {
@@ -188,19 +188,7 @@ public class PreviewActivity extends ClipPlayActivity {
         return null;
     }
 
-    private Clip loadClipInfo(Clip clip) {
-        VdbRequestFuture<Clip> requestFuture = VdbRequestFuture.newFuture();
-        ClipInfoRequest request = new ClipInfoRequest(clip.cid, ClipSetExRequest.FLAG_CLIP_EXTRA | ClipSetExRequest.FLAG_CLIP_DESC | ClipSetExRequest.FLAG_CLIP_SCENE_DATA,
-            clip.cid.type, 0, requestFuture, requestFuture);
-        mVdbRequestQueue.add(request);
-        try {
-            Clip retClip = requestFuture.get();
-            return retClip;
-        } catch (Exception e) {
-            Logger.t(TAG).e("Load raw data: " + e.getMessage());
-            return null;
-        }
-    }
+
 
 
     @Override
