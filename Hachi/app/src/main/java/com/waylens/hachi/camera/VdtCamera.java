@@ -40,6 +40,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -997,9 +998,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
     }
 
     public void syncTimezone() {
-        long timeMillis = System.currentTimeMillis() + TimeZone.getDefault().getDSTSavings();
+        Date time = new Date(System.currentTimeMillis());
         int timeZone = TimeZone.getDefault().getRawOffset();
-        mCommunicationBus.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (timeMillis / 1000)).toString(),
+        mCommunicationBus.sendCommand(CMD_NETWORK_SYNCTIME, ((Long) (time.getTime() / 1000)).toString(),
             ((Integer) (timeZone / (3600 * 1000))).toString());
     }
 
