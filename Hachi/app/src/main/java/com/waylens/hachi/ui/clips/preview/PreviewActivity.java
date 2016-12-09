@@ -11,11 +11,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbRequestFuture;
@@ -32,11 +36,13 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipModifyActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
+import com.waylens.hachi.ui.clips.TranscodingActivity;
 import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.player.RawDataLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
+import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.ui.transitions.MorphTransform;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.StatusBarHelper;
@@ -55,6 +61,8 @@ import rx.schedulers.Schedulers;
  */
 public class PreviewActivity extends ClipPlayActivity {
     public static String TAG = PreviewActivity.class.getSimpleName();
+    public static final String EXTRA_PLAYLIST_ID = "playListId";
+    public static final String EXTRA_CLIP = "clip";
 
     private int mPlaylistId = 0;
 
@@ -64,20 +72,18 @@ public class PreviewActivity extends ClipPlayActivity {
 
     private int raceType = -1;
 
-    public static final String EXTRA_PLAYLIST_ID = "playListId";
-    public static final String EXTRA_CLIP = "clip";
+    private RadioButton btnSd, btnHd, btnFullHd;
+    private View mUnselectMaskWithOverlay, mSelectorWithOverlay;
+    private View mUnselectMaskWithoutOverlay, mSelectorWithoutOverlay;
+    private TextView mExportTip;
 
 
     public static void launch(Activity activity, int playlistId, View transitionView) {
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playlistId);
 
-//        MorphTransform.addExtras(intent,
-//            ContextCompat.getColor(activity, R.color.hachi),
-//            activity.getResources().getDimensionPixelSize(R.dimen.dialog_corners));
         ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
             (activity, transitionView, activity.getString(R.string.clip_cover));
-//        activity.startActivity(intent, options.toBundle());
         activity.startActivity(intent);
     }
 
@@ -199,6 +205,7 @@ public class PreviewActivity extends ClipPlayActivity {
                         finish();
                         break;
                     case R.id.menu_to_download:
+                        showExportDetailDialog();
                         break;
                     case R.id.menu_to_enhance:
                         EnhanceActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());
@@ -265,4 +272,70 @@ public class PreviewActivity extends ClipPlayActivity {
         mVdbRequestQueue.add(request);
     }
 
+
+    private void showExportDetailDialog() {
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+            .title(R.string.download)
+            .customView(R.layout.dialog_download, true)
+            .canceledOnTouchOutside(false)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    int streamIndex = Clip.STREAM_MAIN;
+                    if (btnSd.isChecked()) {
+                        streamIndex = Clip.STREAM_SUB;
+                    }
+                    boolean withOverlay = mSelectorWithOverlay.getVisibility() == View.VISIBLE;
+                    if (withOverlay) {
+                        int qualityIndex = 0;
+                        if (btnHd.isChecked()) {
+                            qualityIndex = 1;
+                        } else if (btnFullHd.isChecked()) {
+                            qualityIndex = 2;
+                        }
+                        TranscodingActivity.launch(PreviewActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], streamIndex, qualityIndex);
+                    } else {
+                        ExportedVideoActivity.launch(PreviewActivity.this);
+                        BgJobHelper.downloadStream(mPlaylistId, getClipSet().getTotalLengthMs(), getClipSet().getClip(0), getClipSet().getClip(0).streams[0], streamIndex);
+                    }
+                }
+            })
+            .show();
+
+        btnSd = (RadioButton) dialog.findViewById(R.id.sd_stream);
+        btnHd = (RadioButton) dialog.findViewById(R.id.hd_stream);
+        btnFullHd = (RadioButton) dialog.findViewById(R.id.full_hd_stream);
+        mExportTip = (TextView) dialog.findViewById(R.id.download_tip);
+        FrameLayout layoutWithOverlay = (FrameLayout) dialog.findViewById(R.id.layout_with_overlay);
+        FrameLayout layoutWithoutOverlay = (FrameLayout) dialog.findViewById(R.id.layout_without_overlay);
+        mUnselectMaskWithOverlay = dialog.findViewById(R.id.unselect_mask_with_overlay);
+        mUnselectMaskWithoutOverlay = dialog.findViewById(R.id.unselect_mask_without_overlay);
+        mSelectorWithOverlay = dialog.findViewById(R.id.select_mask_with_overlay);
+        mSelectorWithoutOverlay = dialog.findViewById(R.id.select_mask_without_overlay);
+        layoutWithOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUnselectMaskWithOverlay.setVisibility(View.GONE);
+                mUnselectMaskWithoutOverlay.setVisibility(View.VISIBLE);
+                mSelectorWithOverlay.setVisibility(View.VISIBLE);
+                mSelectorWithoutOverlay.setVisibility(View.GONE);
+                btnHd.setVisibility(View.VISIBLE);
+                mExportTip.setText(R.string.tip_with_overlay);
+            }
+        });
+        layoutWithoutOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mUnselectMaskWithOverlay.setVisibility(View.VISIBLE);
+                mUnselectMaskWithoutOverlay.setVisibility(View.GONE);
+                mSelectorWithOverlay.setVisibility(View.GONE);
+                mSelectorWithoutOverlay.setVisibility(View.VISIBLE);
+                btnHd.setVisibility(View.GONE);
+                mExportTip.setText(R.string.tip_without_overlay);
+            }
+        });
+        btnSd.setChecked(true);
+    }
 }
