@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
  * Created by Xiaofei on 2016/10/11.
  */
 
-class SnipeApi {
+public class SnipeApi {
     public static ClipSet getClipSet(int type, int flag, int attr) throws ExecutionException, InterruptedException {
         VdbRequestFuture<ClipSet> future = VdbRequestFuture.newFuture();
         ClipSetExRequest request = new ClipSetExRequest(type, flag, attr, future, future);

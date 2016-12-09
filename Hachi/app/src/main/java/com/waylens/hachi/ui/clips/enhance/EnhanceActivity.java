@@ -367,37 +367,10 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
     private void getClipSetDownloadInfo() {
-        if (mLoadToast != null) {
-            return;
-        }
-
-        mLoadToast = new LoadToast(this);
-        mLoadToast.setText(getString(R.string.loading));
-        mLoadToast.show();
-
-        Clip.ID cid = new Clip.ID(PLAYLIST_INDEX, 0, null);
-        SnipeApiRx.getClipDownloadInfoRx(cid, 0, getClipSet().getTotalLengthMs())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
-                @Override
-                public void onNext(ClipDownloadInfo clipDownloadInfo) {
-                    mLoadToast.success();
-                    mLoadToast = null;
-                    showExportDetailDialog(clipDownloadInfo);
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    mLoadToast.error();
-                    mLoadToast = null;
-                    super.onError(e);
-                }
-            });
-
+        showExportDetailDialog();
     }
 
-    private void showExportDetailDialog(final ClipDownloadInfo clipDownloadInfo) {
+    private void showExportDetailDialog() {
         MaterialDialog dialog = new MaterialDialog.Builder(EnhanceActivity.this)
             .title(R.string.download)
             .customView(R.layout.dialog_download, true)
@@ -407,9 +380,9 @@ public class EnhanceActivity extends ClipPlayActivity {
             .onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    mDownloadInfo = clipDownloadInfo.main;
+                    int streamIndex = Clip.STREAM_MAIN;
                     if (btnSd.isChecked()) {
-                        mDownloadInfo = clipDownloadInfo.sub;
+                        streamIndex = Clip.STREAM_SUB;
                     }
                     boolean withOverlay = mSelectorWithOverlay.getVisibility() == View.VISIBLE;
                     if (withOverlay) {
@@ -419,11 +392,10 @@ public class EnhanceActivity extends ClipPlayActivity {
                         } else if (btnFullHd.isChecked()) {
                             qualityIndex = 2;
                         }
-                        TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo, qualityIndex);
+                        TranscodingActivity.launch(EnhanceActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], streamIndex, qualityIndex);
                     } else {
-
                         ExportedVideoActivity.launch(EnhanceActivity.this);
-                        BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
+                        BgJobHelper.downloadStream(mPlaylistId, getClipSet().getTotalLengthMs(), getClipSet().getClip(0), getClipSet().getClip(0).streams[0], streamIndex);
                     }
                 }
             })

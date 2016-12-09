@@ -9,11 +9,6 @@ import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.Toolbar;
-import android.transition.TransitionManager;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -21,6 +16,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -59,17 +55,18 @@ public class TranscodingActivity extends BaseActivity {
     private static final String TAG = TranscodingActivity.class.getSimpleName();
     private static final String EXTRA_PLAYLIST_ID = "playlist.id";
     private static final String EXTRA_STREAM_INFO = "stream.info";
-    private static final String EXTRA_STREAM_DOWNLOAD_INFO = "stream.download.info";
+    private static final String EXTRA_STREAM_INDEX = "stream.index";
     private static final String EXTRA_QUALITY_INDEX = "quality.index";
 
     private static final int TRANS_STATE_ERROR = -1;
-    private static final int TRANS_STATE_LOAD_RAW_DATA = 0;
+    private static final int TRANS_STATE_PREPARING = 0;
     private static final int TRANS_STATE_DOWNLOAD_CLIP = 1;
     private static final int TRANS_STATE_TRANCODING = 2;
     private static final int TRANS_STATE_FINISHED = 3;
 
     private int mPlaylistId;
     private Clip.StreamInfo mStreamInfo;
+    private int mStreamIndex;
     private ClipDownloadInfo.StreamDownloadInfo mStreamDownloadInfo;
 
     private String mDownloadFile;
@@ -81,13 +78,13 @@ public class TranscodingActivity extends BaseActivity {
 
     private OverlayProvider mOverlayProvider;
 
-    private int mState = TRANS_STATE_LOAD_RAW_DATA;
+    private int mState = TRANS_STATE_PREPARING;
 
-    public static void launch(Activity activity, int playListId, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo, int qualityIndex) {
+    public static void launch(Activity activity, int playListId, Clip.StreamInfo streamInfo, int streamIndex, int qualityIndex) {
         Intent intent = new Intent(activity, TranscodingActivity.class);
         intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
         intent.putExtra(EXTRA_STREAM_INFO, streamInfo);
-        intent.putExtra(EXTRA_STREAM_DOWNLOAD_INFO, downloadInfo);
+        intent.putExtra(EXTRA_STREAM_INDEX, streamIndex);
         intent.putExtra(EXTRA_QUALITY_INDEX, qualityIndex);
         activity.startActivity(intent);
     }
@@ -156,7 +153,7 @@ public class TranscodingActivity extends BaseActivity {
         Intent intent = getIntent();
         mPlaylistId = intent.getIntExtra(EXTRA_PLAYLIST_ID, -1);
         mStreamInfo = (Clip.StreamInfo) intent.getSerializableExtra(EXTRA_STREAM_INFO);
-        mStreamDownloadInfo = (ClipDownloadInfo.StreamDownloadInfo) intent.getSerializableExtra(EXTRA_STREAM_DOWNLOAD_INFO);
+        mStreamIndex = intent.getIntExtra(EXTRA_STREAM_INDEX, Clip.STREAM_SUB);
         mQualityIndex = intent.getIntExtra(EXTRA_QUALITY_INDEX, 0);
         initViews();
     }
@@ -175,6 +172,27 @@ public class TranscodingActivity extends BaseActivity {
         int totalLengthMs = getClipSet().getTotalLengthMs();
         mGaugeView.setTail(totalLengthMs - 1000);
         mDownloadView.startIntro();
+
+        Clip.ID cid = new Clip.ID(mPlaylistId, 0, null);
+        SnipeApiRx.getClipDownloadInfoRx(cid, 0, getClipSet().getTotalLengthMs())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
+                @Override
+                public void onNext(ClipDownloadInfo clipDownloadInfo) {
+                    if (mStreamIndex == Clip.STREAM_MAIN) {
+                        mStreamDownloadInfo = clipDownloadInfo.main;
+                    } else {
+                        mStreamDownloadInfo = clipDownloadInfo.sub;
+                    }
+                    loadRawData();
+                }
+            });
+
+
+    }
+
+    private void loadRawData() {
         mRawDataLoader = new RawDataLoader(mPlaylistId);
         mRawDataLoader.loadRawDataRx()
             .subscribeOn(Schedulers.io())
@@ -194,8 +212,6 @@ public class TranscodingActivity extends BaseActivity {
                     downloadClipEsData();
                 }
             });
-
-
     }
 
     private void downloadClipEsData() {

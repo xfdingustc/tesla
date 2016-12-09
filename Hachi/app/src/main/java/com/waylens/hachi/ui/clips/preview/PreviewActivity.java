@@ -81,19 +81,6 @@ public class PreviewActivity extends ClipPlayActivity {
         activity.startActivity(intent);
     }
 
-    public static void lauch(Activity activity, Clip clip, View transitionView) {
-        Intent intent = new Intent(activity, PreviewActivity.class);
-        intent.putExtra(EXTRA_CLIP, (Serializable) clip);
-        MorphTransform.addExtras(intent,
-                ContextCompat.getColor(activity, R.color.hachi),
-                activity.getResources().getDimensionPixelSize(R.dimen.dialog_corners));
-        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation
-                (activity, transitionView, activity.getString(R.string.clip_cover));
-        activity.startActivity(intent, options.toBundle());
-    }
-
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,7 +197,8 @@ public class PreviewActivity extends ClipPlayActivity {
                         }
                         ShareActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId(), -1, mVin, mTimeList, raceType);
                         finish();
-
+                        break;
+                    case R.id.menu_to_download:
                         break;
                     case R.id.menu_to_enhance:
                         EnhanceActivity.launch(PreviewActivity.this, mPlaylistEditor.getPlaylistId());

@@ -1,28 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_to_share"
         android:icon="@drawable/ic_cloud_upload"
         android:title="@string/share"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/menu_to_enhance"
         android:icon="@drawable/ic_enhance"
         android:title="@string/enhance"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_to_download"
+        android:icon="@drawable/ic_file_download"
+        android:title="@string/download"
+        app:showAsAction="always"/>
 
     <item
         android:id="@+id/menu_to_modify"
         android:icon="@drawable/btn_edit_action_crop"
         android:title="@string/modify"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
     <item
         android:id="@+id/menu_to_delete"
         android:icon="@drawable/ic_delete"
         android:title="@string/delete"
-        app:showAsAction="never" />
+        app:showAsAction="never"/>
 
 </menu>

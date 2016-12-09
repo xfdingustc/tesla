@@ -407,11 +407,11 @@ public class LapTimerActivity extends ClipPlayActivity {
                             } else if (btnFullHd.isChecked()) {
                                 qualityIndex = 2;
                             }
-                            TranscodingActivity.launch(LapTimerActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo, qualityIndex);
+//                            TranscodingActivity.launch(LapTimerActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo, qualityIndex);
                         } else {
 
                             ExportedVideoActivity.launch(LapTimerActivity.this);
-                            BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
+//                            BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
                         }
                     }
                 })

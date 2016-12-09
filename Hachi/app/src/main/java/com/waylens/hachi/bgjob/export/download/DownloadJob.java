@@ -8,6 +8,8 @@ import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.jobqueue.Params;
 import com.waylens.hachi.jobqueue.RetryConstraint;
+import com.waylens.hachi.snipe.reative.SnipeApi;
+import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
@@ -15,16 +17,21 @@ import com.waylens.hachi.utils.ClipDownloadHelper;
 import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
+import java.util.concurrent.ExecutionException;
+
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/4.
  */
 public class DownloadJob extends ExportableJob {
     private static final String TAG = DownloadJob.class.getSimpleName();
-    private boolean mWithOverlay;
+    private int mStreamIndex;
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
+    private int mPlayListId;
+    private int mDuration;
     private Clip mClip;
     private Clip.StreamInfo mStreamInfo;
 
@@ -33,12 +40,13 @@ public class DownloadJob extends ExportableJob {
     private String mDownloadFilePath;
 
 
-    public DownloadJob(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo, boolean withOverlay) {
+    public DownloadJob(int playListId, int duration, Clip clip, Clip.StreamInfo streamInfo, int streamIndex) {
         super(new Params(0).requireNetwork().setPersistent(false));
+        this.mPlayListId = playListId;
+        this.mDuration = duration;
         this.mClip = clip;
         this.mStreamInfo = streamInfo;
-        this.mDownloadInfo = downloadInfo;
-        this.mWithOverlay = withOverlay;
+        this.mStreamIndex = streamIndex;
     }
 
     @Override
@@ -61,7 +69,16 @@ public class DownloadJob extends ExportableJob {
         return new RetryConstraint(false);
     }
 
-    private void downloadVideoSync() throws InterruptedException {
+    private void downloadVideoSync() throws InterruptedException, ExecutionException {
+        Clip.ID cid = new Clip.ID(mPlayListId, 0, null);
+        ClipDownloadInfo clipDownloadInfo = SnipeApi.getClipDownloadInfo(cid, 0, mDuration);
+        if (mStreamIndex == Clip.STREAM_MAIN) {
+            mDownloadInfo = clipDownloadInfo.main;
+        } else {
+            mDownloadInfo = clipDownloadInfo.sub;
+        }
+
+
         ClipDownloadHelper downloadHelper = new ClipDownloadHelper(mStreamInfo, mDownloadInfo);
 
         mDownloadFilePath = FileUtils.genDownloadFileName(mDownloadInfo.clipDate, mDownloadInfo.clipTimeMs);

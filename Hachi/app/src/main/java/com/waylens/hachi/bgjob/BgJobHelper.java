@@ -2,13 +2,13 @@ package com.waylens.hachi.bgjob;
 
 
 import com.waylens.hachi.bgjob.export.download.DownloadJob;
+import com.waylens.hachi.bgjob.export.timelapse.TimeLapseJob;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
 import com.waylens.hachi.bgjob.social.DeleteMomentJob;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
-import com.waylens.hachi.bgjob.export.timelapse.TimeLapseJob;
 import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.PictureUploadJob;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
@@ -18,7 +18,6 @@ import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.snipe.vdb.Clip;
-import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.ui.entities.LocalMoment;
 
 
@@ -118,9 +117,9 @@ public class BgJobHelper {
         jobManager.addJobInBackground(job);
     }
 
-    public static void downloadStream(Clip clip, Clip.StreamInfo streamInfo, ClipDownloadInfo.StreamDownloadInfo downloadInfo, boolean withOverlay) {
+    public static void downloadStream(int playListId, int duration, Clip clip, Clip.StreamInfo streamInfo, int streamIndex) {
         JobManager jobManager = BgJobManager.getManager();
-        DownloadJob job = new DownloadJob(clip, streamInfo, downloadInfo, withOverlay);
+        DownloadJob job = new DownloadJob(playListId, duration, clip, streamInfo, streamIndex);
         jobManager.addJobInBackground(job);
     }
 }

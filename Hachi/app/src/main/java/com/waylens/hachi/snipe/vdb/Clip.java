@@ -26,6 +26,9 @@ public class Clip implements Parcelable, Serializable {
 
     public static final int TYPE_TEMP = 0x108;
 
+    public static final int STREAM_MAIN = 0;
+    public static final int STREAM_SUB = 1;
+
     public static final int CLIP_ATTR_LIVE = (1 << 0);    // live clip
     public static final int CLIP_ATTR_AUTO = (1 << 1);    // auto generated clip
     public static final int CLIP_ATTR_MANUALLY = (1 << 2);    // manually generated clip
