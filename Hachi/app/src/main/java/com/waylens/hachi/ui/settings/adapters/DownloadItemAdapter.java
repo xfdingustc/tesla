@@ -38,6 +38,7 @@ import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,7 +52,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private ExportManager mDownloadManager = ExportManager.getManager();
 
-    private File[] mDownloadedFileList;
+    private List<File> mDownloadedFileList;
 
     private int mDownloadingCount = 0;
 
@@ -131,7 +132,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         final DownloadVideoItemViewHolder viewHolder = (DownloadVideoItemViewHolder) holder;
 
-        final File oneDownloadedFile = mDownloadedFileList[position];
+        final File oneDownloadedFile = mDownloadedFileList.get(position);
 
         Glide.with(mActivity)
             .loadFromMediaStore(Uri.fromFile(oneDownloadedFile))
@@ -208,7 +209,7 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         mDownloadingCount = mDownloadManager.getCount();
-        return mDownloadingCount + mDownloadedFileList.length;
+        return mDownloadingCount + mDownloadedFileList.size();
     }
 
 

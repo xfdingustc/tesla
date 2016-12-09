@@ -12,6 +12,11 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by Xiaofei on 2016/9/2.
@@ -37,7 +42,7 @@ public class FileUtils {
     }
 
 
-    public static File[] getExportedFileList() {
+    public static List<File> getExportedFileList() {
         File downloadDir = new File(getVideoExportPath());
         File[] fileList = downloadDir.listFiles(new FilenameFilter() {
             @Override
@@ -53,13 +58,20 @@ public class FileUtils {
                 return true;
             }
         });
+        List<File> exportFileList = Arrays.asList(fileList);
+        Collections.sort(exportFileList, new Comparator<File>() {
+            @Override
+            public int compare(File left, File right) {
+                if (left.lastModified() < right.lastModified()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
 
-        File[] decFileList = new File[fileList.length];
-        for (int i = 0; i < fileList.length; i++) {
-            decFileList[i] = fileList[fileList.length - i - 1];
-        }
+            }
+        });
 
-        return decFileList;
+        return exportFileList;
     }
 
 

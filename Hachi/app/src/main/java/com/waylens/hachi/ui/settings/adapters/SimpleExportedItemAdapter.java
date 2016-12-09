@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,7 +41,7 @@ public class SimpleExportedItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     private ExportManager mDownloadManager = ExportManager.getManager();
 
-    private File[] mDownloadedFileList;
+    private List<File> mDownloadedFileList;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHandleExportJobEvent(ExportEvent event) {
@@ -109,11 +110,12 @@ public class SimpleExportedItemAdapter extends RecyclerView.Adapter<RecyclerView
 
         final SimpleExportedVideoItemViewHolder viewHolder = (SimpleExportedVideoItemViewHolder) holder;
 
-        final File oneDownloadedFile = mDownloadedFileList[position];
+        final File oneDownloadedFile = mDownloadedFileList.get(position);
 
         Glide.with(mActivity)
             .loadFromMediaStore(Uri.fromFile(oneDownloadedFile))
             .crossFade()
+            .placeholder(R.color.placeholder_bg_color)
             .into(viewHolder.videoCover);
 
 
@@ -134,7 +136,7 @@ public class SimpleExportedItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public int getItemCount() {
-        return Math.min(mDownloadManager.getCount() + mDownloadedFileList.length, 4);
+        return Math.min(mDownloadManager.getCount() + mDownloadedFileList.size(), 4);
     }
 
 
