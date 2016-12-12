@@ -1077,7 +1077,6 @@ public class LiveViewActivity extends BaseActivity {
             mWifiMode = (ImageView) view.findViewById(R.id.wifiMode);
             mWifiModeDescription = (TextView) view.findViewById(R.id.wifi_mode_description);
             mDetailRemote = (ImageView) view.findViewById(R.id.detail_remote);
-            mObd = (ImageView) view.findViewById(R.id.detail_obd);
             ivDetailGps = (ImageView) view.findViewById(R.id.detail_gps);
             mDetailObd = (ImageView) view.findViewById(R.id.detail_obd);
         }
