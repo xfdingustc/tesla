@@ -560,4 +560,5 @@
     <string name="tip_without_overlay">Only original stream with fast exporting speed.</string>
     <string name="tip_with_overlay">Overlay is mixed into original streams and will cost much more time.</string>
     <string name="export">Export</string>
+    <string name="refresh_leaderboard_tip">Click again to refresh</string>
 </resources>

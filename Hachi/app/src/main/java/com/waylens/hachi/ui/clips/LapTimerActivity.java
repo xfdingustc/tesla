@@ -13,14 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
@@ -35,13 +33,12 @@ import com.waylens.hachi.snipe.vdb.ClipSetPos;
 import com.waylens.hachi.ui.adapters.GaugeListAdapter;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
 import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
-import com.waylens.hachi.ui.clips.music.MusicListSelectActivity;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
-import com.waylens.hachi.utils.TapTargetHelper;
+import com.waylens.hachi.utils.TooltipHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeInfoItem;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
@@ -56,7 +53,6 @@ import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
-import butterknife.OnClick;
 import it.sephiroth.android.library.tooltip.Tooltip;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -244,7 +240,7 @@ public class LapTimerActivity extends ClipPlayActivity {
     }
 
     private void showTagTagetView() {
-        if (TapTargetHelper.shouldShowExportTapTarget()) {
+        if (TooltipHelper.shouldShowExportTapTarget()) {
             Tooltip.make(this, new Tooltip.Builder()
                     .anchor(getToolbar().findViewById(R.id.menu_to_download), Tooltip.Gravity.BOTTOM)
                     .closePolicy(Tooltip.ClosePolicy.TOUCH_ANYWHERE_CONSUME, -1)
@@ -267,7 +263,7 @@ public class LapTimerActivity extends ClipPlayActivity {
 
                         @Override
                         public void onTooltipShown(Tooltip.TooltipView tooltipView) {
-                            TapTargetHelper.onShowExportTargetTaped();
+                            TooltipHelper.onShowExportTargetTaped();
                         }
 
                         @Override

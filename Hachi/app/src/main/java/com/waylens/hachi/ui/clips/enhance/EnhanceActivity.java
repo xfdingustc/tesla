@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
@@ -26,7 +25,6 @@ import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
 import com.waylens.hachi.session.SessionManager;
-import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -44,7 +42,7 @@ import com.waylens.hachi.ui.clips.share.ShareActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.entities.MusicItem;
 import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
-import com.waylens.hachi.utils.TapTargetHelper;
+import com.waylens.hachi.utils.TooltipHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeInfoItem;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
@@ -61,8 +59,6 @@ import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 import it.sephiroth.android.library.tooltip.Tooltip;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -295,7 +291,7 @@ public class EnhanceActivity extends ClipPlayActivity {
     }
 
     private void showTagTagetView() {
-        if (TapTargetHelper.shouldShowExportTapTarget()) {
+        if (TooltipHelper.shouldShowExportTapTarget()) {
             Tooltip.make(this, new Tooltip.Builder()
                 .anchor(getToolbar().findViewById(R.id.menu_to_download), Tooltip.Gravity.BOTTOM)
                 .closePolicy(Tooltip.ClosePolicy.TOUCH_ANYWHERE_CONSUME, -1)
@@ -318,7 +314,7 @@ public class EnhanceActivity extends ClipPlayActivity {
 
                     @Override
                     public void onTooltipShown(Tooltip.TooltipView tooltipView) {
-                        TapTargetHelper.onShowExportTargetTaped();
+                        TooltipHelper.onShowExportTargetTaped();
                     }
 
                     @Override

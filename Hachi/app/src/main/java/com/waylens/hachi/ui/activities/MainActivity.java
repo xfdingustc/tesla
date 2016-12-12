@@ -22,6 +22,7 @@ import com.waylens.hachi.ui.leaderboard.LeaderboardFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.ui.liveview.LiveViewActivity;
 import com.waylens.hachi.ui.settings.AccountFragment;
+import com.waylens.hachi.utils.TooltipHelper;
 import com.waylens.hachi.view.bottombar.BottomBar;
 import com.waylens.hachi.view.bottombar.OnCenterTabClickListener;
 import com.waylens.hachi.view.bottombar.OnTabReselectListener;
@@ -30,7 +31,9 @@ import com.waylens.hachi.view.bottombar.OnTabSelectListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.BindString;
 import butterknife.BindView;
+import it.sephiroth.android.library.tooltip.Tooltip;
 
 
 /**
@@ -38,8 +41,12 @@ import butterknife.BindView;
  */
 public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-//    private ActionBarDrawerToggle mDrawerToggle;
 
+    private boolean mIsRestored;
+
+    private Snackbar mReturnSnackBar;
+
+    private Fragment mCurrentFragment = null;
 
     public static final int TAB_TAG_MOMENTS = 0;
     public static final int TAB_TAG_LEADERBOARD = 1;
@@ -60,16 +67,16 @@ public class MainActivity extends BaseActivity {
 
     };
 
-    private Fragment mCurrentFragment = null;
+
 
 
     @BindView(R.id.bottomBar)
     BottomBar bottomBar;
 
+    @BindString(R.string.refresh_leaderboard_tip)
+    String strReclickTip;
 
-    private boolean mIsRestored;
 
-    private Snackbar mReturnSnackBar;
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, MainActivity.class);
@@ -132,6 +139,38 @@ public class MainActivity extends BaseActivity {
                         break;
                     case R.id.leaderboard:
                         switchFragment(TAB_TAG_LEADERBOARD);
+                        if (TooltipHelper.shouldShowLeaderboardRefresh()) {
+                            Tooltip.make(MainActivity.this, new Tooltip.Builder()
+                                .anchor(bottomBar.getTabWithId(R.id.leaderboard), Tooltip.Gravity.TOP)
+                                .closePolicy(Tooltip.ClosePolicy.TOUCH_ANYWHERE_CONSUME, -1)
+                                .text(strReclickTip)
+                                .withArrow(true)
+                                .withOverlay(true)
+                                .maxWidth(getResources().getDisplayMetrics().widthPixels / 2)
+                                .withStyleId(R.style.ToolTipLayoutDefaultStyle_Custom1)
+                                .floatingAnimation(Tooltip.AnimationBuilder.DEFAULT)
+                                .withCallback(new Tooltip.Callback() {
+                                    @Override
+                                    public void onTooltipClose(Tooltip.TooltipView tooltipView, boolean b, boolean b1) {
+
+                                    }
+
+                                    @Override
+                                    public void onTooltipFailed(Tooltip.TooltipView tooltipView) {
+
+                                    }
+
+                                    @Override
+                                    public void onTooltipShown(Tooltip.TooltipView tooltipView) {
+                                        TooltipHelper.onShowLeaderboardRefreshTaped();
+                                    }
+
+                                    @Override
+                                    public void onTooltipHidden(Tooltip.TooltipView tooltipView) {
+
+                                    }
+                                })).show();
+                        }
                         break;
                 }
             }
