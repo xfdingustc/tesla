@@ -200,6 +200,17 @@ public class FootageActivity extends ClipPlayActivity {
         mEventBus.unregister(mClipSetProgressBar);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPlaylistEditor.clearRx()
+            .subscribe(new SimpleSubscribe<Void>() {
+                @Override
+                public void onNext(Void aVoid) {
+
+                }
+            });
+    }
 
     @Override
     public void setupToolbar() {

@@ -101,6 +101,13 @@ public class PlayListEditor {
         return rebuildPlayListRx();
     }
 
+
+    public Observable<Void> clearRx() {
+        mClipSet.clear();
+        ClipSetManager.getManager().updateClipSet(mPlayListId, mClipSet);
+        return rebuildPlayListRx();
+    }
+
     public Observable<Void> addRx(List<Clip> clipList) {
         for (Clip clip : clipList) {
             mClipSet.addClip(clip);
