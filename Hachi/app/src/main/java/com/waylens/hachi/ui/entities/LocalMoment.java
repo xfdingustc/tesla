@@ -3,6 +3,7 @@ package com.waylens.hachi.ui.entities;
 
 import com.waylens.hachi.bgjob.upload.UploadServer;
 import com.waylens.hachi.rest.body.GeoInfo;
+import com.waylens.hachi.rest.body.LapInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.snipe.utils.DateTime;
 import com.waylens.hachi.snipe.vdb.Clip;
@@ -47,7 +48,6 @@ public class LocalMoment implements Serializable {
 
     public String momentType = null;
 
-
     public UploadServer cloudInfo;
 
     public long momentID;
@@ -69,6 +69,8 @@ public class LocalMoment implements Serializable {
     public boolean withCarInfo;
 
     public GeoInfo geoInfo;
+
+    public LapInfo lapInfo;
 
     public int streamId;
 

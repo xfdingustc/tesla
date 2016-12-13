@@ -18,15 +18,15 @@ import com.waylens.hachi.snipe.remix.AvrproGpsParsedData;
 import com.waylens.hachi.snipe.remix.AvrproLapData;
 import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
 import com.waylens.hachi.snipe.remix.AvrproLapsHeader;
+import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.ui.entities.moment.Gps;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
-
 import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,6 +49,7 @@ public class GaugeView extends FrameLayout {
     private static final int PENDING_ACTION_RESIZE_MAP = 0x1006;
     private static final int PENDING_ACTION_TAIL = 0x1007;
     private static final int PENDING_ACTION_LAPTIMER_SETTING = 0x1008;
+    private static final int PENDING_ACTION_LAPINFO_SETTING = 0x1009;
 
     public static final int MODE_CAMERA = 0;
 
@@ -129,6 +130,11 @@ public class GaugeView extends FrameLayout {
                     break;
                 case PENDING_ACTION_LAPTIMER_SETTING:
                     doLapTimerSetting((AvrproLapTimerResult) item.param1, (AvrproClipInfo) item.param2);
+                    break;
+                case PENDING_ACTION_LAPINFO_SETTING:
+                    if (item.param1 != null && item.param2 != null) {
+                        doLapInfoSetting((JSONObject) item.param1, (List<RawDataItem>) item.param2);
+                    }
                     break;
                 default:
                     break;
@@ -411,7 +417,7 @@ public class GaugeView extends FrameLayout {
             for (AvrproGpsParsedData gpsParsedData : result.gpsList) {
                 long inClipOffset = 0;
                 if (gpsParsedData.clip_time_ms > (long)(clipInfo.start_time_hi << 32 + clipInfo.start_time_lo)) {
-                    inClipOffset = gpsParsedData.clip_time_ms - (long)(clipInfo.start_time_hi << 32 + clipInfo.start_time_lo);
+                    inClipOffset = gpsParsedData.clip_time_ms - (long)((clipInfo.start_time_hi << 32) + clipInfo.start_time_lo);
                 }
                 captureTimes.append(inClipOffset+",");
                 coordinate.append("[" + gpsParsedData.latitude + "," + gpsParsedData.longitude + "],");
@@ -425,6 +431,31 @@ public class GaugeView extends FrameLayout {
         } catch (JSONException e) {
             Logger.t(TAG).d(e.getMessage());
         }
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+    }
+
+    public void setLapInfo(JSONObject lapInfo, List<RawDataItem> gpsList) {
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_LAPINFO_SETTING, lapInfo, gpsList));
+        RxBus.getDefault().post(new EventPendingActionAdded());
+    }
+
+    public void doLapInfoSetting(JSONObject lapInfo, List<RawDataItem> gpsList) {
+        changeGaugeTheme("rifle");
+        mWebView.loadUrl("javascript:setState(" + lapInfo.toString() + ")");
+
+        StringBuilder captureTimes = new StringBuilder("\"captureTime\":[");
+        StringBuilder coordinate = new StringBuilder("\"coordinate\":{\"coordinates\":[");
+        for (RawDataItem rawDataItem: gpsList) {
+            GpsData gpsData = (GpsData) rawDataItem.data;
+            captureTimes.append(rawDataItem.getPtsMs() + ",");
+            coordinate.append("[" + gpsData.coord.lat + "," + gpsData.coord.lng + "],");
+        }
+        captureTimes.setLength(captureTimes.length() - 1);
+        coordinate.setLength(coordinate.length() - 1);
+        captureTimes.append("],");
+        coordinate.append("]}");
+        mWebView.loadUrl("javascript:setState({gpsList:{" + captureTimes.toString() + coordinate.toString() +
+                "}})");
         mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 

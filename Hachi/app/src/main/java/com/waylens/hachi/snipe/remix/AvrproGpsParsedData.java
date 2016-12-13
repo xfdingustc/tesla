@@ -1,11 +1,12 @@
 package com.waylens.hachi.snipe.remix;
 
+import java.io.Serializable;
 
 /**
  * Created by lshw on 16/12/8.
  */
 
-public class AvrproGpsParsedData {
+public class AvrproGpsParsedData implements Serializable{
     public long clip_time_ms;
     public float speed;
     public double latitude;

@@ -1,10 +1,12 @@
 package com.waylens.hachi.snipe.remix;
 
+import java.io.Serializable;
+
 /**
- * Created by laina on 16/12/6.
+ * Created by lshw on 16/12/6.
  */
 
-public class AvrproLapsHeader {
+public class AvrproLapsHeader implements Serializable{
     public int total_laps;
     public int best_lap_time_ms;
     public int top_speed_kph;

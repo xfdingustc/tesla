@@ -674,7 +674,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         });
     }
 
-    private void enterFastPreview() {
+    public void enterFastPreview() {
         if (mPlayerControl != null && mPlayerControl.isPlaying()) {
             releasePlayer();
         }

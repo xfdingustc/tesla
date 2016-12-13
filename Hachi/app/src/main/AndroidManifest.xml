@@ -186,7 +186,6 @@
             android:screenOrientation="portrait"/>
 
 
-
         <activity
             android:name=".ui.clips.enhance.EnhanceActivity"
             android:configChanges="orientation|screenSize"

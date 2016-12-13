@@ -11,6 +11,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.eventbus.events.ClipSetChangeEvent;
 import com.waylens.hachi.eventbus.events.ClipSetPosChangeEvent;
 import com.waylens.hachi.session.SessionManager;
@@ -31,6 +35,7 @@ import com.waylens.hachi.snipe.remix.AvrproFilter;
 import com.waylens.hachi.snipe.remix.AvrproGpsParsedData;
 import com.waylens.hachi.snipe.remix.AvrproLapData;
 import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
+import com.waylens.hachi.snipe.remix.AvrproLapsHeader;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -38,7 +43,6 @@ import com.waylens.hachi.snipe.vdb.ClipSetManager;
 import com.waylens.hachi.snipe.vdb.ClipSetPos;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.ui.authorization.AuthorizeActivity;
-import com.waylens.hachi.ui.clips.editor.clipseditview.ClipsEditView;
 import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
 import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.RawDataLoader;
@@ -51,7 +55,6 @@ import com.waylens.hachi.ui.settings.myvideo.ExportedVideoActivity;
 import com.waylens.hachi.utils.TooltipHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import net.steamcrafted.loadtoast.LoadToast;
-
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -103,6 +106,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
     private LapListAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private int mMode;
+    private ActionMode mActionMode;
 
     private ClipDownloadInfo.StreamDownloadInfo mDownloadInfo;
 
@@ -166,14 +170,8 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
 
     @Override
     public void onBackPressed() {
-        DialogHelper.showLeaveEnhanceConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
-            @Override
-            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                LapTimerActivity.super.onBackPressed();
-                LapTimerActivity.this.finish();
-            }
-        });
-
+        LapTimerActivity.super.onBackPressed();
+        finish();
     }
 
     @Override
@@ -224,9 +222,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         mAdapter = new LapListAdapter(this, this);
         rvLapData.setLayoutManager(new LinearLayoutManager(this));
         rvLapData.setAdapter(mAdapter);
-        //initLaptimerPlaylist();
         embedVideoPlayFragment();
-        //configEnhanceView();
     }
 
     private void initViews() {
@@ -292,13 +288,22 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
-                        toShare();
+                        mMode = SHARE_MODE;
+                        if (mActionMode == null) {
+                            mActionMode = startActionMode(mCallback);
+                            updateActionMode();
+                        }
                         break;
                     case R.id.menu_to_download:
-                        getClipSetDownloadInfo();
+                        mMode = EXPORT_MODE;
+                        if (mActionMode == null) {
+                            mActionMode = startActionMode(mCallback);
+                            updateActionMode();
+                        }
                         break;
                 }
                 return true;
+
             }
         });
     }
@@ -348,9 +353,6 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
             @Override
             public void onNext(AvrproLapTimerResult result) {
                 Logger.t(TAG).d("total laps = " + result.lapsHeader.total_laps);
-                for (AvrproGpsParsedData data : result.gpsList) {
-                    data.clip_time_ms = data.clip_time_ms - mOriginClip.getStartTimeMs();
-                }
                 mAdapter.setLapDataList(Arrays.asList(result.lapList));
                 mClipPlayFragment.getGaugeView().setLapTimerData(result, mAvrproFilter.getClipInfo());
                 mLapTimerResult = result;
@@ -358,44 +360,6 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         });
     }
 
-    private void initLaptimerPlaylist() {
-
-        List<AvrproLapData> lapDataList = new ArrayList<>();
-        List<Clip> newClipList = new ArrayList<>();
-        for (AvrproLapData data : lapDataList) {
-            Clip clip = getClipSet().getClip(0);
-            if (clip != null) {
-                Clip newClip = new Clip(clip);
-                newClip.editInfo.selectedStartValue = newClip.getStartTimeMs() + data.inclip_start_offset_ms;
-                newClip.editInfo.selectedEndValue = newClip.editInfo.selectedStartValue + data.lap_time_ms;
-                newClipList.add(newClip);
-                Logger.t(TAG).d("clip start value:" + newClip.getStartTimeMs());
-                Logger.t(TAG).d("clip end value:" + (newClip.getStartTimeMs() + newClip.getDurationMs()));
-                Logger.t(TAG).d("edit start value:" + newClip.editInfo.selectedStartValue);
-                Logger.t(TAG).d("edit end value:" + newClip.editInfo.selectedEndValue);
-            }
-        }
-        mPlaylistEditor.buildRx(newClipList)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Void>() {
-                    @Override
-                    public void onCompleted() {
-                        Logger.t(TAG).d("play list size:" + ClipSetManager.getManager().getClipSet(mPlaylistEditor.getPlaylistId()).getClipList().size());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Void aVoid) {
-
-                    }
-                });
-
-    }
 
     @Override
     protected void embedVideoPlayFragment() {
@@ -411,7 +375,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
 
-    private void getClipSetDownloadInfo() {
+    private void getClipSetDownloadInfo(final int lapId) {
         if (mLoadToast != null) {
             return;
         }
@@ -429,7 +393,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
                     public void onNext(ClipDownloadInfo clipDownloadInfo) {
                         mLoadToast.success();
                         mLoadToast = null;
-                        showExportDetailDialog(clipDownloadInfo);
+                        showExportDetailDialog(clipDownloadInfo, lapId);
                     }
 
                     @Override
@@ -442,34 +406,56 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
 
     }
 
-    private void showExportDetailDialog(final ClipDownloadInfo clipDownloadInfo) {
+    private void showExportDetailDialog(final ClipDownloadInfo clipDownloadInfo, final int lapId) {
         MaterialDialog dialog = new MaterialDialog.Builder(LapTimerActivity.this)
-                .title(R.string.download)
-                .customView(R.layout.dialog_download, true)
-                .canceledOnTouchOutside(false)
-                .positiveText(R.string.ok)
-                .negativeText(R.string.cancel)
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        mDownloadInfo = clipDownloadInfo.main;
-                        if (btnSd.isChecked()) {
-                            mDownloadInfo = clipDownloadInfo.sub;
-                        }
-                        boolean withOverlay = mSelectorWithOverlay.getVisibility() == View.VISIBLE;
-                        if (withOverlay) {
-                            int qualityIndex = 0;
-                            if (btnHd.isChecked()) {
-                                qualityIndex = 1;
-                            } else if (btnFullHd.isChecked()) {
-                                qualityIndex = 2;
+            .title(R.string.download)
+            .customView(R.layout.dialog_download, true)
+            .canceledOnTouchOutside(false)
+            .positiveText(R.string.ok)
+            .negativeText(R.string.cancel)
+            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    AvrproLapData data = mLapTimerResult.lapList[lapId];
+                    Clip newClip = new Clip(mOriginClip);
+                    newClip.editInfo.selectedStartValue = newClip.getStartTimeMs() + data.inclip_start_offset_ms;
+                    newClip.editInfo.selectedEndValue = newClip.editInfo.selectedStartValue + data.lap_time_ms;
+                    mPlaylistEditor.buildRx(newClip)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(new Subscriber<Void>() {
+                            @Override
+                            public void onCompleted() {
+                                int streamIndex = Clip.STREAM_MAIN;
+                                if (btnSd.isChecked()) {
+                                    streamIndex = Clip.STREAM_SUB;
+                                }
+                                boolean withOverlay = mSelectorWithOverlay.getVisibility() == View.VISIBLE;
+                                if (withOverlay) {
+                                    int qualityIndex = 0;
+                                    if (btnHd.isChecked()) {
+                                        qualityIndex = 1;
+                                    } else if (btnFullHd.isChecked()) {
+                                        qualityIndex = 2;
+                                    }
+                                    AvrproLapTimerResult result = getLapInfoByLapId(lapId);
+                                    TranscodingActivity.launch(LapTimerActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], streamIndex, qualityIndex, result);
+                                } else {
+                                    ExportedVideoActivity.launch(LapTimerActivity.this);
+                                    Clip clip = getClipSet().getClip(0);
+                                    BgJobHelper.downloadStream(mPlaylistId, clip.editInfo.getSelectedLength(), clip, clip.streams[0], streamIndex);;
+                                }
                             }
-//                            TranscodingActivity.launch(LapTimerActivity.this, mPlaylistId, getClipSet().getClip(0).streams[0], mDownloadInfo, qualityIndex);
-                        } else {
 
-                            ExportedVideoActivity.launch(LapTimerActivity.this);
-//                            BgJobHelper.downloadStream(getClipSet().getClip(0), getClipSet().getClip(0).streams[0], mDownloadInfo, withOverlay);
-                        }
+                            @Override
+                            public void onError(Throwable e) {
+                            }
+
+                            @Override
+                            public void onNext(Void aVoid) {
+
+                            }
+                        });
                     }
                 })
                 .show();
@@ -484,7 +470,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         mUnselectMaskWithoutOverlay = dialog.findViewById(R.id.unselect_mask_without_overlay);
         mSelectorWithOverlay = dialog.findViewById(R.id.select_mask_with_overlay);
         mSelectorWithoutOverlay = dialog.findViewById(R.id.select_mask_without_overlay);
-        layoutWithOverlay.setOnClickListener(new View.OnClickListener() {
+                layoutWithOverlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mUnselectMaskWithOverlay.setVisibility(View.GONE);
@@ -527,13 +513,65 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         }
     }
 
-    private void toExport(int lapId) {
+    private void toShare(final int lapId) {
+        if (!SessionManager.getInstance().isLoggedIn()) {
+            AuthorizeActivity.launch(LapTimerActivity.this);
+            return;
+        } else if (!SessionManager.checkUserVerified(LapTimerActivity.this)) {
+            return;
+        } else if (lapId < mLapTimerResult.lapList.length){
+            AvrproLapData data = mLapTimerResult.lapList[lapId];
+            Clip newClip = new Clip(mOriginClip);
+            newClip.editInfo.selectedStartValue = newClip.getStartTimeMs() + data.inclip_start_offset_ms;
+            newClip.editInfo.selectedEndValue = newClip.editInfo.selectedStartValue + data.lap_time_ms;
+            Logger.t(TAG).d("clip start value:" + newClip.getStartTimeMs());
+            Logger.t(TAG).d("clip end value:" + (newClip.getStartTimeMs() + newClip.getDurationMs()));
+            Logger.t(TAG).d("edit start value:" + newClip.editInfo.selectedStartValue);
+            Logger.t(TAG).d("edit end value:" + newClip.editInfo.selectedEndValue);
+            mPlaylistEditor.buildRx(newClip)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<Void>() {
+                        @Override
+                        public void onCompleted() {
+                            Clip clip = getClipSet().getClip(0);
+                            AvrproLapData selectedLap = mLapTimerResult.lapList[lapId];
+                            int lapOffset = 0;
+                            AvrproLapData newLap = new AvrproLapData(selectedLap.lap_time_ms, lapOffset, selectedLap.check_interval_ms);
+                            AvrproLapsHeader lapsHeader = new AvrproLapsHeader(1, selectedLap.lap_time_ms, 0);
+                            ArrayList<AvrproGpsParsedData> gpsList = new ArrayList<>();
+                            for(AvrproGpsParsedData data : mLapTimerResult.gpsList) {
+                                if ((data.clip_time_ms >= clip.editInfo.selectedStartValue) && (data.clip_time_ms <= clip.editInfo.selectedEndValue)) {
+                                    gpsList.add(data);
+                                }
+                            }
+                            Logger.t(TAG).d("origin clip startTimeMs:" + mOriginClip.getStartTimeMs());
+                            AvrproLapTimerResult result = new AvrproLapTimerResult(lapsHeader, new AvrproLapData[]{newLap},
+                                    gpsList.toArray(new AvrproGpsParsedData[gpsList.size()]));
+                            ShareActivity.launch(LapTimerActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID(), result);
+                        }
 
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(Void aVoid) {
+
+                        }
+                    });
+        }
+    }
+
+    private void toExport(int lapId) {
+        getClipSetDownloadInfo(lapId);
     }
 
     private void toSeek(int lapId) {
         AvrproLapData lapData = Arrays.asList(mLapTimerResult.lapList).get(lapId);
         ClipSetPos newClipSetPos= getClipSet().getClipSetPosByTimeOffset(lapData.inclip_start_offset_ms);
+        mClipPlayFragment.enterFastPreview();
         mClipPlayFragment.setClipSetPos(newClipSetPos, true);
         mEventBus.post(new ClipSetPosChangeEvent(newClipSetPos, ClipPlayFragment.class.getSimpleName()));
         mClipPlayFragment.startPreparingClip(newClipSetPos, false);
@@ -571,7 +609,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
                 toSeek(lapId);
                 break;
             case SHARE_MODE:
-                toShare();
+                toShare(lapId);
                 break;
             case EXPORT_MODE:
                 toExport(lapId);
@@ -580,4 +618,53 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
                 break;
         }
     }
+
+    private AvrproLapTimerResult getLapInfoByLapId(int lapId) {
+        Clip clip = getClipSet().getClip(0);
+        AvrproLapData selectedLap = mLapTimerResult.lapList[lapId];
+        int lapOffset = 0;
+        AvrproLapData newLap = new AvrproLapData(selectedLap.lap_time_ms, lapOffset, selectedLap.check_interval_ms);
+        AvrproLapsHeader lapsHeader = new AvrproLapsHeader(1, selectedLap.lap_time_ms, 0);
+        ArrayList<AvrproGpsParsedData> gpsList = new ArrayList<>();
+        for(AvrproGpsParsedData data : mLapTimerResult.gpsList) {
+            if ((data.clip_time_ms >= clip.editInfo.selectedStartValue) && (data.clip_time_ms <= clip.editInfo.selectedEndValue)) {
+                gpsList.add(data);
+            }
+        }
+        Logger.t(TAG).d("origin clip startTimeMs:" + mOriginClip.getStartTimeMs());
+        AvrproLapTimerResult result = new AvrproLapTimerResult(lapsHeader, new AvrproLapData[]{newLap},
+                gpsList.toArray(new AvrproGpsParsedData[gpsList.size()]));
+        return result;
+    }
+
+
+    private ActionMode.Callback mCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
+            return true;
+
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+            mMode = NORMAL_MODE;
+        }
+    };
+
+
+    private void updateActionMode() {
+        mActionMode.setTitle("Select a Lap");
+    }
+
 }

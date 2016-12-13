@@ -48,6 +48,8 @@ public class CreateMomentBody {
 
     public GeoInfo geoInfo;
 
+    public LapInfo lapInfo;
+
     public CreateMomentBody() {
 
     }
@@ -70,6 +72,9 @@ public class CreateMomentBody {
             timingPoints.t4 = localMoment.mTimingPoints.get(3);
             timingPoints.t5 = localMoment.mTimingPoints.get(4);
             timingPoints.t6 = localMoment.mTimingPoints.get(5);
+        } else if (!TextUtils.isEmpty(localMoment.momentType) && localMoment.momentType.equals("LAP_TIMER")) {
+            momentType = localMoment.momentType;
+            lapInfo = localMoment.lapInfo;
         } else {
             if (localMoment.mSegments.size() > 1) {
                 momentType = "NORMAL_MULTI";
@@ -89,7 +94,7 @@ public class CreateMomentBody {
             geoInfo = localMoment.geoInfo;
         }
 
-//        Logger.d("after overlay setting");
+//      Logger.d("after overlay setting");
 
         if (localMoment.audioID > 0) {
             this.audioType = 1;

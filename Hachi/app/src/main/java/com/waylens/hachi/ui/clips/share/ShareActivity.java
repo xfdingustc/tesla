@@ -6,12 +6,14 @@ import android.content.res.TypedArray;
 import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
+import android.transition.ChangeBounds;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -36,11 +38,15 @@ import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.body.GeoInfo;
+import com.waylens.hachi.rest.body.LapInfo;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
+import com.waylens.hachi.snipe.remix.AvrproClipInfo;
+import com.waylens.hachi.snipe.remix.AvrproLapData;
+import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
 import com.waylens.hachi.snipe.utils.RaceTimeParseUtils;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
@@ -52,6 +58,9 @@ import com.waylens.hachi.ui.adapters.IconSpinnerAdapter;
 import com.waylens.hachi.ui.authorization.FacebookAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.clips.ClipPlayActivity;
+import com.waylens.hachi.ui.clips.player.ClipPlayFragment;
+import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
+import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.VehiclePickActivity;
@@ -64,6 +73,7 @@ import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +97,7 @@ public class ShareActivity extends ClipPlayActivity {
     private static final String TAG = ShareActivity.class.getSimpleName();
     private static final String EXTRA_PLAYLIST_ID = "playlist_id";
     private static final String EXTRA_AUDIO_ID = "audio_id";
+    private static final String EXTRA_LAP_RESULT = "lap_result";
 
     private static final int REQUEST_CODE_FACEBOOK = 0x100;
     private static final int REQUEST_CODE_YOUTUBE = 0x101;
@@ -117,6 +128,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     public String mMomentType = null;
 
+    private AvrproLapTimerResult mLapTimerResult;
 
     private String[] mSupportedPrivacy;
 
@@ -145,7 +157,6 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.vehicle_desc)
     TextInputEditText mVehicleDesc;
-
 
     @BindView(R.id.user_avatar)
     AvatarView mUserAvatar;
@@ -235,6 +246,14 @@ public class ShareActivity extends ClipPlayActivity {
         activity.startActivity(intent);
     }
 
+    public static void launch(Activity activity, int playListId, int audioId, AvrproLapTimerResult lapTimerResult) {
+        Intent intent = new Intent(activity, ShareActivity.class);
+        intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
+        intent.putExtra(EXTRA_AUDIO_ID, audioId);
+        intent.putExtra(EXTRA_LAP_RESULT, lapTimerResult);
+        activity.startActivity(intent);
+    }
+
 
     public static void launch(Activity activity, int playListId, int audioId, String vin, ArrayList<Long> timingPoints, int raceType) {
         Intent intent = new Intent(activity, ShareActivity.class);
@@ -282,8 +301,7 @@ public class ShareActivity extends ClipPlayActivity {
         mPlayListId = getIntent().getIntExtra(EXTRA_PLAYLIST_ID, -1);
         mAudioId = getIntent().getIntExtra(EXTRA_AUDIO_ID, -1);
         mVin = getIntent().getStringExtra("vin");
-//        mTimingPoints = (ArrayList<Long>) getIntent().getSerializableExtra("mTimingPoints");
-//        mRaceType = getIntent().getIntExtra("raceType", -1);
+        mLapTimerResult = (AvrproLapTimerResult) getIntent().getSerializableExtra(EXTRA_LAP_RESULT);
         initViews();
     }
 
@@ -307,11 +325,18 @@ public class ShareActivity extends ClipPlayActivity {
                 @Override
                 public void onCompleted() {
                     getClipInfo();
+                    if (mLapTimerResult != null) {
+                        Clip clip = getClipSet().getClip(0);
+                        Logger.t(TAG).d("share clip startTimeMs:" + clip.editInfo.selectedStartValue);
+                        AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type,
+                                (int) (clip.editInfo.selectedStartValue), (int) (clip.editInfo.selectedStartValue >> 32), clip.editInfo.getSelectedLength());
+                        mClipPlayFragment.getGaugeView().setLapTimerData(mLapTimerResult, clipInfo);
+                        mMomentType = "LAP_TIMER";
+                    }
                 }
             });
 
-
-        embedVideoPlayFragment();
+        embedVideoPlayFragment(false);
         setupSocialPolicy();
         mPlayerContainer.post(new Runnable() {
             @Override
@@ -452,9 +477,6 @@ public class ShareActivity extends ClipPlayActivity {
                             mTimingPoints.add(j, (long) -1);
                         }
                     }
-//                    for (long time : mTimingPoints) {
-//                        Logger.t(TAG).d(time);
-//                    }
                 }
             });
     }
@@ -484,6 +506,28 @@ public class ShareActivity extends ClipPlayActivity {
                 mSocialPrivacy = mSupportedPrivacy[0];
             }
         });
+    }
+
+    @Override
+    protected void embedVideoPlayFragment(boolean transition) {
+
+        UrlProvider vdtUriProvider = new PlaylistUrlProvider(mPlaylistEditor.getPlaylistId());
+
+        if (mLapTimerResult != null) {
+            mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mPlaylistEditor.getPlaylistId(),
+                    vdtUriProvider, ClipPlayFragment.ClipMode.MULTI, ClipPlayFragment.CoverMode.NORMAL, ClipPlayFragment.VIDEO_TYPE_LAPTIMER);
+        } else {
+            mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mPlaylistEditor.getPlaylistId(),
+                    vdtUriProvider, ClipPlayFragment.ClipMode.MULTI, ClipPlayFragment.CoverMode.NORMAL);
+        }
+
+        if (transition) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mClipPlayFragment.setSharedElementEnterTransition(new ChangeBounds());
+            }
+        }
+
+        getFragmentManager().beginTransaction().replace(R.id.player_fragment_content, mClipPlayFragment).commit();
     }
 
 
@@ -565,6 +609,28 @@ public class ShareActivity extends ClipPlayActivity {
             localMoment.momentType = mMomentType;
             localMoment.mVehicleDesc = vehicleDescription;
             localMoment.mTimingPoints = mTimingPoints;
+        } else if (mMomentType != null && mMomentType.equals("LAP_TIMER")) {
+            localMoment.momentType = mMomentType;
+            localMoment.gaugeSettings.put("theme", "rifle");
+            LapInfo.LapTimer lapTimerHeader = new LapInfo.LapTimer();
+            lapTimerHeader.totalLaps = mLapTimerResult.lapsHeader.total_laps;
+            lapTimerHeader.bestLapTime = mLapTimerResult.lapsHeader.best_lap_time_ms;
+            lapTimerHeader.bestLapSpeed = mLapTimerResult.lapsHeader.top_speed_kph;
+            lapTimerHeader.checkPoints = 1000;
+            Clip clip = getClipSet().getClip(0);
+            ArrayList<LapInfo.LapData> lapDatas = new ArrayList<>();
+            for (AvrproLapData lapData : mLapTimerResult.lapList) {
+                LapInfo.LapData perLap = new LapInfo.LapData();
+                perLap.totalLapTime = lapData.lap_time_ms;
+                perLap.checkIntervalMs = lapData.check_interval_ms;
+                perLap.startOffsetMs = lapData.inclip_start_offset_ms;
+                perLap.deltaMsToBest = new ArrayList<>();
+                for(int i = 0; i < lapTimerHeader.bestLapTime / lapData.check_interval_ms; i++) {
+                    perLap.deltaMsToBest.add(lapData.delta_ms_to_best[i]);
+                }
+                lapDatas.add(perLap);
+            }
+            localMoment.lapInfo = new LapInfo(lapTimerHeader, lapDatas);
         } else {
             ClipSet clipSet = getClipSet();
             if (clipSet.getCount() > 1) {

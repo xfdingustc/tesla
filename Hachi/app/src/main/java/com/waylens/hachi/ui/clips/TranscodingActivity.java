@@ -17,6 +17,8 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
+import com.waylens.hachi.snipe.remix.AvrproClipInfo;
+import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -57,6 +59,7 @@ public class TranscodingActivity extends BaseActivity {
     private static final String EXTRA_STREAM_INFO = "stream.info";
     private static final String EXTRA_STREAM_INDEX = "stream.index";
     private static final String EXTRA_QUALITY_INDEX = "quality.index";
+    private static final String EXTRA_LAPTIMER_DATA = "laptimer.data";
 
     private static final int TRANS_STATE_ERROR = -1;
     private static final int TRANS_STATE_PREPARING = 0;
@@ -76,6 +79,7 @@ public class TranscodingActivity extends BaseActivity {
     private ClipRawDataAdapter mAdapter;
     private int mQualityIndex;
 
+    private AvrproLapTimerResult mLapInfo;
     private OverlayProvider mOverlayProvider;
 
     private int mState = TRANS_STATE_PREPARING;
@@ -89,16 +93,24 @@ public class TranscodingActivity extends BaseActivity {
         activity.startActivity(intent);
     }
 
+    public static void launch(Activity activity, int playListId, Clip.StreamInfo streamInfo, int streamIndex, int qualityIndex, AvrproLapTimerResult result) {
+        Intent intent = new Intent(activity, TranscodingActivity.class);
+        intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
+        intent.putExtra(EXTRA_STREAM_INFO, streamInfo);
+        intent.putExtra(EXTRA_STREAM_INDEX, streamIndex);
+        intent.putExtra(EXTRA_QUALITY_INDEX, qualityIndex);
+        intent.putExtra(EXTRA_LAPTIMER_DATA, result);
+        activity.startActivity(intent);
+    }
+
     @BindView(R.id.export_status)
     TextView exportStatus;
 
     @BindView(R.id.container)
     ViewGroup container;
 
-
     @BindView(R.id.gauge_view)
     GaugeView mGaugeView;
-
 
     @BindView(R.id.elastic_download_view)
     ElasticDownloadView mDownloadView;
@@ -107,9 +119,6 @@ public class TranscodingActivity extends BaseActivity {
     public void onBtnCloseClicked() {
         onBackPressed();
     }
-
-
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -155,6 +164,7 @@ public class TranscodingActivity extends BaseActivity {
         mStreamInfo = (Clip.StreamInfo) intent.getSerializableExtra(EXTRA_STREAM_INFO);
         mStreamIndex = intent.getIntExtra(EXTRA_STREAM_INDEX, Clip.STREAM_SUB);
         mQualityIndex = intent.getIntExtra(EXTRA_QUALITY_INDEX, 0);
+        mLapInfo = (AvrproLapTimerResult) intent.getSerializableExtra(EXTRA_LAPTIMER_DATA);
         initViews();
     }
 
@@ -167,7 +177,11 @@ public class TranscodingActivity extends BaseActivity {
         OptionView.setColorFail(R.color.white);
         setContentView(R.layout.activity_transcoding);
         mGaugeView.setGaugeMode(GaugeView.MODE_MOMENT);
-        mGaugeView.initGaugeViewBySetting();
+        if (mLapInfo != null) {
+            mGaugeView.initGaugeViewBySetting("rifle");
+        } else {
+            mGaugeView.initGaugeViewBySetting();
+        }
         mGaugeView.showGauge(true, true);
         int totalLengthMs = getClipSet().getTotalLengthMs();
         mGaugeView.setTail(totalLengthMs - 1000);
@@ -188,8 +202,6 @@ public class TranscodingActivity extends BaseActivity {
                     loadRawData();
                 }
             });
-
-
     }
 
     private void loadRawData() {
@@ -206,6 +218,13 @@ public class TranscodingActivity extends BaseActivity {
                 @Override
                 public void onCompleted() {
                     super.onCompleted();
+                    if (mLapInfo != null) {
+                        Clip clip = getClipSet().getClip(0);
+                        Logger.t(TAG).d("share clip startTimeMs:" + clip.editInfo.selectedStartValue);
+                        AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type,
+                                (int) (clip.editInfo.selectedStartValue), (int) (clip.editInfo.selectedStartValue >> 32), clip.editInfo.getSelectedLength());
+                        mGaugeView.setLapTimerData(mLapInfo, clipInfo);
+                    }
                     mAdapter = new ClipRawDataAdapter(getClipSet());
                     mAdapter.setRawDataLoader(mRawDataLoader);
                     mGaugeView.setAdapter(mAdapter);
