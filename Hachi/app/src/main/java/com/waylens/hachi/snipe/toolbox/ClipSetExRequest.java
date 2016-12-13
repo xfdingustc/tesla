@@ -282,6 +282,14 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                     clip.raceTimingPoints.add(3, usec_offset_50kmh / 1000 + utc_msec_move_begin);
                     clip.raceTimingPoints.add(4, (long)-1);
                     clip.raceTimingPoints.add(5, (long)-1);
+                } else if (fcc == (('L' << 24) + ('A' << 16) + ('P' << 8) + 'T')) {
+                    int datasize = response.readi32();
+                    double latitude = response.readLEDouble();
+                    double longtitude = response.readLEDouble();
+                    long utc_time = response.readui32();
+                    long utc_time_usec = response.readui32();
+                    clip.lapTimerData = new Clip.LapTimerData(latitude, longtitude, utc_time, utc_time_usec);
+                    Logger.t(TAG).d("lapTimer" + clip.lapTimerData.toString());
                 }
             }
 

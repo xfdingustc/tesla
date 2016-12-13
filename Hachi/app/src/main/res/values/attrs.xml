@@ -146,4 +146,13 @@
         <attr name="bb_showShadow" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="GaugeView">
+        <attr name="video_type">
+            <enum name="ordinary" value="0x01"/>
+            <enum name="lap_timer" value="0x02"/>
+            <enum name="moment" value="0x03"/>
+        </attr>
+
+    </declare-styleable>
+
 </resources>

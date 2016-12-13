@@ -122,6 +122,22 @@ public class VdbAcknowledge {
         return Float.intBitsToFloat(i);
     }
 
+    public double readLEDouble() {
+        long firstByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long secondByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long thirdByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long fourthByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long fifthByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long sixthByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long seventhByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+        long eighthByte = (0x000000FF & mReceiveBuffer[mMsgIndex++]);
+
+        long longBitLow = (firstByte | secondByte << 8 | thirdByte << 16 | fourthByte << 24);
+        long longBitHigh = (fifthByte << 32 | sixthByte << 40 | seventhByte << 48 | eighthByte << 56);
+
+        return Double.longBitsToDouble(longBitLow|longBitHigh);
+    }
+
     public byte readi8() {
         byte result = mReceiveBuffer[mMsgIndex];
         mMsgIndex++;

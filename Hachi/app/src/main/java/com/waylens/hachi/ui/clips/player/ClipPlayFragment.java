@@ -79,6 +79,9 @@ import rx.schedulers.Schedulers;
  */
 public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Callback, HachiPlayer.Listener {
     private static final String TAG = ClipPlayFragment.class.getSimpleName();
+    public static final String VIDEO_TYPE_ARG = "video.type";
+    public static final int VIDEO_TYPE_ORIDINARY = 0x0001;
+    public static final int VIDEO_TYPE_LAPTIMER = 0x0002;
 
     private static final int FADE_OUT = 5;
 
@@ -95,7 +98,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private VdbUrl mVdbUrl;
 
     private RawDataLoader mInitDataLoader;
-//    private RawDataLoader mRawDataLoader;
+//  private RawDataLoader mRawDataLoader;
 
     private Timer mTimer;
     private UpdatePlayTimeTask mUpdatePlayTimeTask;
@@ -103,11 +106,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private ClipPos mPreviousShownClipPos;
     private long mPreviousShowThumbnailRequestTime;
 
-
     private PositionAdjuster mPositionAdjuster;
 
     private EventBus mEventBus = EventBus.getDefault();
-
 
     private Handler mHandler;
 
@@ -116,6 +117,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     private boolean playerNeedsPrepare;
 
     private boolean mNeedSendPlayCompleteEvent = false;
+
+    private int mVideoType = VIDEO_TYPE_ORIDINARY;
 
     @BindView(R.id.surface_view)
     SurfaceView mSurfaceView;
@@ -332,6 +335,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         updateControls(playWhenReady, playbackState);
     }
 
+    public GaugeView getGaugeView() {
+        return mWvGauge;
+    }
+
     public void onBackPressed() {
         mSurfaceView.setVisibility(View.GONE);
         mWvGauge.setVisibility(View.GONE);
@@ -434,6 +441,19 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         return fragment;
     }
 
+    public static ClipPlayFragment newInstance(VdtCamera camera, int clipSetIndex, UrlProvider urlProvider, ClipMode clipMode, CoverMode coverMode, int videoType) {
+        ClipPlayFragment fragment = new ClipPlayFragment();
+        fragment.mVdtCamera = camera;
+        fragment.mClipSetIndex = clipSetIndex;
+        fragment.mUrlProvider = urlProvider;
+        fragment.mClipMode = clipMode;
+        fragment.mCoverMode = coverMode;
+        Bundle args = new Bundle();
+        args.putInt(VIDEO_TYPE_ARG, videoType);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     protected String getRequestTag() {
         return TAG;
@@ -453,6 +473,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         View view = inflater.inflate(R.layout.fragment_clip_play, container, false);
         ButterKnife.bind(this, view);
         mWvGauge.setGaugeMode(GaugeView.MODE_MOMENT);
+        mWvGauge.clearPendingActions();
         mHandler = new ControlPanelHandler(this);
         initViews();
         return view;
@@ -472,7 +493,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);
-        mWvGauge.initGaugeViewBySetting();
         //mWvGauge.setEnhanceMode();
         mEventBus.register(this);
         mEventBus.register(mMultiSegSeekbar);
@@ -528,7 +548,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                     mRawDataAdapter = new ClipRawDataAdapter(getClipSet());
                     mRawDataAdapter.setRawDataLoader(mInitDataLoader);
                     mWvGauge.setAdapter(mRawDataAdapter);
-//                    Logger.t(TAG).d("init gauge view!");
+//                  Logger.t(TAG).d("init gauge view!");
                     startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
                 }
             });
@@ -537,6 +557,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
     private void init() {
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mVideoType = arguments.getInt(VIDEO_TYPE_ARG, VIDEO_TYPE_ORIDINARY);
+        }
         initVdtCamera();
         setRetainInstance(true);
     }
@@ -546,11 +570,9 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         if (getClipSet() == null) {
             return;
         }
-
         mWvGauge.setVisibility(View.INVISIBLE);
 
         ClipPos clipPos = new ClipPos(getClipSet().getClip(0));
-
 
         Glide.with(this)
             .using(new SnipeGlideLoader(mVdbRequestQueue))
@@ -561,11 +583,18 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
 
         setupMultiSegSeekBar();
-
         mSurfaceView.getHolder().addCallback(this);
-
         updateProgressTextView(0, getClipSet().getTotalSelectedLengthMs());
-
+        switch (mVideoType) {
+            case VIDEO_TYPE_ORIDINARY:
+                mWvGauge.initGaugeViewBySetting();
+                break;
+            case VIDEO_TYPE_LAPTIMER:
+                mWvGauge.initGaugeViewBySetting("rifle");
+                break;
+            default:
+                break;
+        }
     }
 
 
@@ -753,9 +782,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
                 }
             });
-
     }
-
 
     public void setAudioUrl(String audioUrl) {
         Logger.t(TAG).d("audio url: " + audioUrl);

@@ -254,7 +254,6 @@ public class ShareActivity extends ClipPlayActivity {
                     tvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
                     tvVehicleInfo.setVisibility(View.VISIBLE);
                     switchUploadVehicle.setChecked(true);
-
                 }
             default:
                 break;

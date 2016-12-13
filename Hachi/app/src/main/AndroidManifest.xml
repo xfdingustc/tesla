@@ -182,8 +182,8 @@
         <activity
             android:name=".ui.clips.preview.PreviewActivity"
             android:configChanges="orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:theme="@style/LightTheme.Translucent.Preview"/>
+            android:screenOrientation="portrait"/>
+          <!--  android:theme="@style/LightTheme.Translucent.Preview"-->
 
 
         <activity
@@ -192,6 +192,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/LightTheme.Translucent.Enhance"/>
 
+        <activity
+            android:name=".ui.clips.LapTimerActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/LightTheme.Translucent.Enhance"/>
 
         <activity
             android:name=".ui.clips.share.ShareActivity"

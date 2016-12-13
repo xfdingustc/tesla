@@ -56,11 +56,19 @@ struct DynamicArray
         return true;
     }
 
-    DT *_At(int index) {
+    DT *_At(uint32_t index) {
         if (index >= count) {
             return NULL;
         }
         return &(elems[index]);
+    }
+
+    DT * _Tail() {
+        if (count == 0) {
+            return NULL;
+        } else {
+            return &(elems[count - 1]);
+        }
     }
 
     int _Size() {

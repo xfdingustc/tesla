@@ -165,6 +165,25 @@ public class Clip implements Parcelable, Serializable {
         }
     }
 
+    public static class LapTimerData implements Serializable{
+        public double latitude;
+        public double longitude;
+        public long utcTime;
+        public long utcTimeUsec;
+
+        public LapTimerData(double latitude, double longitude, long utcTime, long utcTimeUsec) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.utcTime = utcTime;
+            this.utcTimeUsec = utcTimeUsec;
+        }
+
+        @Override
+        public String toString() {
+            return ToStringUtils.getString(this);
+        }
+    }
+
     public ID cid;
 
     public ID realCid;
@@ -172,7 +191,6 @@ public class Clip implements Parcelable, Serializable {
     public StreamInfo[] streams;
 
     public int index;
-
 
     private int mClipDate;
 
@@ -190,6 +208,7 @@ public class Clip implements Parcelable, Serializable {
 
     public ArrayList<Long> raceTimingPoints = null;
 
+    public LapTimerData lapTimerData;
 
     public boolean bDeleting;
 

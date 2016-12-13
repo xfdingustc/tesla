@@ -77,4 +77,5 @@
         android:textColor="?attr/appTextColorSecondary"
         android:textSize="12sp"
         tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
+
 </RelativeLayout>

@@ -26,7 +26,7 @@ JNIEXPORT jboolean JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_nativ
 /*
  * Class:     com_waylens_hachi_snipe_remix_AvrproFilter
  * Method:    native_avrpro_smart_filter_feed_data
- * Signature: (I[BI)I
+ * Signature: (I[BII)I
  */
 JNIEXPORT jint JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1smart_1filter_1feed_1data
   (JNIEnv *, jobject, jint, jbyteArray, jint, jint);
@@ -45,6 +45,46 @@ JNIEXPORT jobject JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1smart_1filter_1deint
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_waylens_hachi_snipe_remix_AvrproFilter
+ * Method:    native_avrpro_lap_timer_filter_init
+ * Signature: (Lcom/waylens/hachi/snipe/remix/AvrproClipInfo;)I
+ */
+JNIEXPORT jint JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1lap_1timer_1filter_1init
+  (JNIEnv *, jobject, jobject);
+
+/*
+ * Class:     com_waylens_hachi_snipe_remix_AvrproFilter
+ * Method:    native_avrpro_lap_timer_set_start
+ * Signature: (ILcom/waylens/hachi/snipe/remix/AvrproGpsParsedData;)I
+ */
+JNIEXPORT jint JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1lap_1timer_1set_1start
+  (JNIEnv *, jobject, jint, jobject);
+
+/*
+ * Class:     com_waylens_hachi_snipe_remix_AvrproFilter
+ * Method:    native_avrpro_lap_timer_feed_gps_data
+ * Signature: (I[BII)I
+ */
+JNIEXPORT jint JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1lap_1timer_1feed_1gps_1data
+  (JNIEnv *, jobject, jint, jbyteArray, jint, jint);
+
+/*
+ * Class:     com_waylens_hachi_snipe_remix_AvrproFilter
+ * Method:    native_avrpro_lap_timer_read_results
+ * Signature: (I)Lcom/waylens/hachi/snipe/remix/AvrproLapTimerResult;
+ */
+JNIEXPORT jobject JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1lap_1timer_1read_1results
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_waylens_hachi_snipe_remix_AvrproFilter
+ * Method:    native_avrpro_lap_timer_deinit
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_com_waylens_hachi_snipe_remix_AvrproFilter_native_1avrpro_1lap_1timer_1deinit
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus

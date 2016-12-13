@@ -24,8 +24,8 @@
 
 #define C_NONE
 
-#define C_BLACK 
-#define C_WHITE 
+#define C_BLACK
+#define C_WHITE
 
 #define C_GRAY
 #define C_LIGHT_GRAY
@@ -221,9 +221,9 @@ extern int (*avrpro_printf)(const char *fmt, ...);
 //
 //-----------------------------------------------------------------------
 static inline uint32_t avrpro_read_be_32(uint8_t *ptr) {
-    return (uint32_t)(ptr[0] << 24) | 
-            (uint32_t)(ptr[1] << 16) | 
-            (uint32_t)(ptr[2] << 8) | 
+    return (uint32_t)(ptr[0] << 24) |
+            (uint32_t)(ptr[1] << 16) |
+            (uint32_t)(ptr[2] << 8) |
             (uint32_t)ptr[3];
 }
 

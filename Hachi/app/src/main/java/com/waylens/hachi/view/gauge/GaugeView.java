@@ -13,15 +13,22 @@ import android.widget.FrameLayout;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.eventbus.events.GaugeEvent;
+import com.waylens.hachi.snipe.remix.AvrproClipInfo;
+import com.waylens.hachi.snipe.remix.AvrproGpsParsedData;
+import com.waylens.hachi.snipe.remix.AvrproLapData;
+import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
+import com.waylens.hachi.snipe.remix.AvrproLapsHeader;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -41,6 +48,7 @@ public class GaugeView extends FrameLayout {
     private static final int PENDING_ACTION_SHOW_DEFAULT_GAUGE = 0x1005;
     private static final int PENDING_ACTION_RESIZE_MAP = 0x1006;
     private static final int PENDING_ACTION_TAIL = 0x1007;
+    private static final int PENDING_ACTION_LAPTIMER_SETTING = 0x1008;
 
     public static final int MODE_CAMERA = 0;
 
@@ -68,6 +76,10 @@ public class GaugeView extends FrameLayout {
         init(context);
     }
 
+    public void clearPendingActions() {
+        mPendingActions.clear();
+    }
+
 
     private void hanldePendingActionItems() {
         for (PendingActionItem item : mPendingActions) {
@@ -78,7 +90,11 @@ public class GaugeView extends FrameLayout {
                     for (GaugeInfoItem gaugeInfoItem : itemList) {
                         updateGaugeSetting(gaugeInfoItem);
                     }
-                    changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
+                    if (item.param1 != null) {
+                        changeGaugeTheme("rifle");
+                    } else {
+                        changeGaugeTheme(GaugeSettingManager.getManager().getTheme());
+                    }
                     break;
                 case PENDING_ACTION_ROTATE:
                     mWebView.loadUrl(GaugeJsHelper.jsSetRotate((Boolean) item.param1));
@@ -110,6 +126,9 @@ public class GaugeView extends FrameLayout {
                 case PENDING_ACTION_TAIL:
                     mWebView.loadUrl(GaugeJsHelper.jsSetTail((int)item.param1));
                     mWebView.loadUrl(GaugeJsHelper.jsUpdate());
+                    break;
+                case PENDING_ACTION_LAPTIMER_SETTING:
+                    doLapTimerSetting((AvrproLapTimerResult) item.param1, (AvrproClipInfo) item.param2);
                     break;
                 default:
                     break;
@@ -208,12 +227,15 @@ public class GaugeView extends FrameLayout {
                 updateGaugeSetting((GaugeInfoItem) event.getExtra());
                 break;
         }
-
     }
-
 
     public void initGaugeViewBySetting() {
         mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, null));
+        RxBus.getDefault().post(new EventPendingActionAdded());
+    }
+
+    public void initGaugeViewBySetting(String theme) {
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_INIT_GAUGE_BY_SETTING, theme));
         RxBus.getDefault().post(new EventPendingActionAdded());
     }
 
@@ -277,8 +299,6 @@ public class GaugeView extends FrameLayout {
 
     }
 
-
-
     public void changeGaugeSetting(final Map<String, String> overlaySetting, final ArrayList<Long> timePoints) {
         mPendingActions.add(new PendingActionItem(PENDING_ACTION_MOMENT_SETTING, overlaySetting, timePoints));
         RxBus.getDefault().post(new EventPendingActionAdded());
@@ -330,9 +350,10 @@ public class GaugeView extends FrameLayout {
         } catch (JSONException e) {
             Logger.t(TAG).d(e.getMessage());
         }
-        final String jsApi = "javascript:setTimePoints(" + timePoints.toString() + ")";
+        final String jsApi = "javascript:setState({countTimePoints:" + timePoints.toString() + "})";
         Logger.t(TAG).d(jsApi);
         mWebView.loadUrl(jsApi);
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
     public void setPlayTime(int msecs) {
@@ -342,6 +363,69 @@ public class GaugeView extends FrameLayout {
 
     public void updateRawDateItem(List<RawDataItem> itemList) {
         mWebView.loadUrl(GaugeJsHelper.jsUpdateRawData(itemList, mGaugeMode));
+    }
+
+    public void setLapTimerData(AvrproLapTimerResult result, AvrproClipInfo clipInfo) {
+        mPendingActions.add(new PendingActionItem(PENDING_ACTION_LAPTIMER_SETTING, result, clipInfo));
+        RxBus.getDefault().post(new EventPendingActionAdded());
+    }
+
+    public void doLapTimerSetting(AvrproLapTimerResult result, AvrproClipInfo clipInfo) {
+        changeGaugeTheme("rifle");
+        StringBuilder sb = new StringBuilder();
+        sb.append("javascript:setState({" + "totalLaps:" + result.lapsHeader.total_laps + "})");
+        mWebView.loadUrl(sb.toString());
+        sb.setLength(0);
+        sb.append("javascript:setState({" + "bestLapTime:" + result.lapsHeader.best_lap_time_ms + "})");
+        mWebView.loadUrl(sb.toString());
+        sb.setLength(0);
+        sb.append("javascript:setState({" + "topSpeedKmh:" + result.lapsHeader.top_speed_kph + "})");
+        mWebView.loadUrl(sb.toString());
+        JSONArray lapTimerList = new JSONArray();
+        sb.setLength(0);
+        try {
+            for (AvrproLapData lapData : result.lapList) {
+                JSONObject jsonObject = new JSONObject();
+
+                jsonObject.put("totalLapTime", lapData.lap_time_ms);
+                jsonObject.put("startOffsetMs", lapData.inclip_start_offset_ms);
+                jsonObject.put("checkIntervalMs", lapData.check_interval_ms);
+                JSONArray deltaArray = new JSONArray(Arrays.asList(lapData.delta_ms_to_best));
+                Logger.t(TAG).d("delta array = " + deltaArray.toString());
+                //jsonObject.put("deltaMsToBest", deltaArray);
+                for (int j = 0; j < 1000; j++) {
+                    jsonObject.accumulate("deltaMsToBest", lapData.delta_ms_to_best[j]);
+                }
+                lapTimerList.put(jsonObject);
+                sb.append(String.format("{totalLapTime:%1$d, startOffsetMs:%2$d, checkIntervalMs:%3$d, deltaMsToBest:[", lapData.lap_time_ms,
+                        lapData.inclip_start_offset_ms, lapData.check_interval_ms));
+                for (int j = 0; j < 1000; j++) {
+                    sb.append(String.format("%1$d,",lapData.delta_ms_to_best[j]));
+                }
+                sb.append("]},");
+            }
+            Logger.t(TAG).d("javascript:setState({" + "lapTimeList:" + lapTimerList.toString() + "})");
+            mWebView.loadUrl("javascript:setState({" + "lapTimeList:" + lapTimerList.toString() + "})");
+            StringBuilder captureTimes = new StringBuilder("\"captureTime\":[");
+            StringBuilder coordinate = new StringBuilder("\"coordinate\":{\"coordinates\":[");
+            for (AvrproGpsParsedData gpsParsedData : result.gpsList) {
+                long inClipOffset = 0;
+                if (gpsParsedData.clip_time_ms > (long)(clipInfo.start_time_hi << 32 + clipInfo.start_time_lo)) {
+                    inClipOffset = gpsParsedData.clip_time_ms - (long)(clipInfo.start_time_hi << 32 + clipInfo.start_time_lo);
+                }
+                captureTimes.append(inClipOffset+",");
+                coordinate.append("[" + gpsParsedData.latitude + "," + gpsParsedData.longitude + "],");
+            }
+            captureTimes.setLength(captureTimes.length() - 1);
+            coordinate.setLength(coordinate.length() - 1);
+            captureTimes.append("],");
+            coordinate.append("]}");
+            mWebView.loadUrl("javascript:setState({gpsList:{" + captureTimes.toString() + coordinate.toString() +
+                                "}})");
+        } catch (JSONException e) {
+            Logger.t(TAG).d(e.getMessage());
+        }
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
 
@@ -359,6 +443,7 @@ public class GaugeView extends FrameLayout {
         int type;
         Object param1;
         Object param2;
+        Object param3;
 
         PendingActionItem(int type, Object param1) {
             this.type = type;
@@ -369,6 +454,13 @@ public class GaugeView extends FrameLayout {
             this.type = type;
             this.param1 = param1;
             this.param2 = param2;
+        }
+
+        PendingActionItem(int type, Object param1, Object param2, Object param3) {
+            this.type = type;
+            this.param1 = param1;
+            this.param2 = param2;
+            this.param3 = param3;
         }
     }
 

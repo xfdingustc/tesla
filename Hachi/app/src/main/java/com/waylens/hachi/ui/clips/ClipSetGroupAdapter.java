@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -195,8 +196,8 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             .into(viewHolder.ivClipCover);
 
         if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
-            viewHolder.performanceIcon.setVisibility(View.VISIBLE);
-            viewHolder.performance.setVisibility(View.VISIBLE);
+            viewHolder.vaVideoTag.setVisibility(View.VISIBLE);
+            viewHolder.vaVideoTag.setDisplayedChild(0);
 
             if (clip.getRaceTime060() > 0) {
                 viewHolder.performanceIcon.setText("60");
@@ -208,9 +209,11 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 viewHolder.performanceIcon.setVisibility(View.GONE);
                 viewHolder.performance.setVisibility(View.GONE);
             }
+        } else if(clip.lapTimerData != null) {
+            viewHolder.vaVideoTag.setVisibility(View.VISIBLE);
+            viewHolder.vaVideoTag.setDisplayedChild(1);
         } else {
-            viewHolder.performanceIcon.setVisibility(View.GONE);
-            viewHolder.performance.setVisibility(View.GONE);
+                viewHolder.vaVideoTag.setVisibility(View.INVISIBLE);
         }
 
         if (viewHolder.mBtnSelect != null) {
@@ -389,6 +392,9 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         @BindView(R.id.performance_icon)
         TextView performanceIcon;
+
+        @BindView(R.id.tag_view_animator)
+        ViewAnimator vaVideoTag;
 
         @BindView(R.id.performance)
         TextView performance;

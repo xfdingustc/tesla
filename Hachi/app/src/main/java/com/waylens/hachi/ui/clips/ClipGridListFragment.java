@@ -714,7 +714,11 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     mLoadToast.success();
                     mLoadToast = null;
                     Logger.t(TAG).d("type race:" + clip.typeRace);
-                    PreviewActivity.launch(getActivity(), playlistId, transitionView);
+                    if (clip.lapTimerData != null) {
+                        LapTimerActivity.launch(getActivity(), playlistId, transitionView);
+                    } else {
+                        PreviewActivity.launch(getActivity(), playlistId, transitionView);
+                    }
                 }
 
                 @Override

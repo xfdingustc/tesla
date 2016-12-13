@@ -21,7 +21,7 @@ add_library( # Specifies the name of the library.
              src/main/cpp/source/base/sqlite3.c
              src/main/cpp/source/filters/avrpro_filter_if.cpp
              src/main/cpp/source/filters/avrpro_filter_manager.cpp
-             src/main/cpp/source/filters/avrprofilter.cpp)
+             src/main/cpp/source/filters/avrpro_filter_jni.cpp)
 #add_library(lib_sqlite SHARED IMPORTED)
 #set_target_properties(lib_sqlite PROPERTIES IMPORTED_LOCATION
 #    ${CMAKE_SOURCE_DIR}/src/main/jniLibs/armeabi/libsqlite.so)
@@ -38,7 +38,7 @@ set_target_properties(avrpro-lib
 # Specifies a path to native header files.
 include_directories(
     ${CMAKE_SOURCE_DIR}/src/main/cpp/include
-    ${CMAKE_SOURCE_DIR}/src/main/source/include)
+    ${CMAKE_SOURCE_DIR}/src/main/cpp/source/include)
 
 
 target_link_libraries(

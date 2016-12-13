@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
-#include "../include/avrpro_malloc.h"
+#include "avrpro_malloc.h"
 
 void *__avrpro_malloc(size_t size, const char *file, size_t line)
 {

@@ -35,14 +35,22 @@ extern "C" {
 #define CREATECLIPINFO "create table CLIPINFO(ID integer PRIMARY KEY, GUID text, CLIPTYPE integer, \
         CLIPID integer, DURATION integer, STTL integer, STTH integer)"
 #define CREATESEGMENTINFO "create table SEGMENTINFO(ID integer PRIMARY KEY, CLIPINDEX integer, \
-        FILTERTYPE integer, STARTOFFSET integer, DURATION integer, MAXSPEED integer)"
+        FILTERTYPE integer, STARTOFFSET integer, DURATION integer, MAXSPEED integer)"        
 
 #define MIN(a,b)    a < b ? a : b
 #define MAX(a,b)    a > b ? a : b
 
+// about 30 meters:
+#define LALTITUDE_STEP_IN_RANGE   (0.0002)
+#define LONGITUDE_STEP_IN_RANGE   (0.0002)
+
+#define PI  3.1415926535898
+
 typedef struct {
     uint32_t inbound_speed_kph;
     uint32_t outbound_speed_kph;
+    uint32_t inbound_rpm;
+    uint32_t outbound_rpm;
     uint32_t inbound_bf_gforce_mg;
     uint32_t outbound_bf_gforce_mg;
     uint32_t inbound_lr_gforce_mg;
@@ -54,15 +62,21 @@ typedef struct {
     uint32_t min_seg_duration;
     uint32_t max_seg_duration;
 } filterParams;
+
+typedef struct {
+    float accumDistance;
+    float distanceToStart;
+} distanceInfo;
 //-----------------------------------------------------------------------
 //
 // FilterManager
 //
 //-----------------------------------------------------------------------
 class FilterManager {
-public:
+public:   
     explicit FilterManager(SMART_FILTER_TYPE type, const char * path, uint32_t length);
     ~FilterManager();
+    static float getDistance(double lon1, double lat1, double lon2, double lat2);
     int addGPSNode(avrpro_gps_parsed_data_t * data);
     int addOBDNode(avrpro_obd_parsed_data_t * data);
     int addIIONode(avrpro_iio_parsed_data_t * data);
@@ -70,11 +84,16 @@ public:
     void resetManager(bool clearFiltered = false);
     bool isClipInfoChanged(avrpro_clip_info_t * ci);
     bool isTypeFilteredAndCached();
-
+    void setFilterIOThreshold(SMART_FILTER_TYPE type, uint32_t inbound, uint32_t outbound);
+    void updateLapTimerStartPosition(avrpro_gps_parsed_data_t node);
+    void getAllLapsInfo(avrpro_laps_data_t * laps, avrpro_lap_data_t ** laplist,
+                        avrpro_gps_parsed_data_t ** gpslist, uint32_t * gps_num);
+    avrpro_gps_parsed_data_t * getGPSByTime(uint64_t time_ms);
+    static float earth_radius;
 private:
     static int loadSegmentInfo(void * para, int n_column,
-                               char ** column_value, char ** column_name);
-    sqlite3 * pSQLSFDB_;
+                       char ** column_value, char ** column_name);
+    sqlite3 * pSQLSFDB_;   
     char sfdb_path_[1024];
     char sql_cmds_[1024];
     char current_sfdb_version_[8];
@@ -86,19 +105,28 @@ private:
     SMART_FILTER_TYPE filter_type_;
     avrpro_segment_info_t seg_in_proc_[SMART_MAX_INDEX];
     avrpro_clip_info_t * current_clip_info_;
+    avrpro_gps_parsed_data_t start_node_;
+    avrpro_laps_data_t laps_info_;
+    int pass_start_index_;
     bool current_clip_reviewed_;
     filterParams params_;
     DynamicArray<avrpro_clip_info_t *> clipInfoList_;
     DynamicArray<avrpro_gps_parsed_data_t> gpsDataList_;
     DynamicArray<avrpro_obd_parsed_data_t> obdDataList_;
     DynamicArray<avrpro_iio_parsed_data_t> iioDataList_;
-    DynamicArray<avrpro_segment_info_t> segCandidatesList_;
+    DynamicArray<avrpro_segment_info_t> segCandidatesList_; 
     DynamicArray<avrpro_segment_info_t> filteredSegList_;
+    DynamicArray<distanceInfo> accumulatedDistanceList_;
+    DynamicArray<avrpro_lap_data_t> lap_list_;
     int openSFDB();
     int initSFDB();
     int updateSFDB(uint32_t start_idx);
     static int loadDBVersion(void * para, int n_column, char ** column_value, char ** column_name);
     int reviewSegCandidates();
-    int generateCandidates(int type, uint64_t clip_time_ms, int32_t param);
+    int generateCandidates(int type, uint64_t clip_time_ms, uint32_t param);
+    static double rad(double d) {
+        return d * PI / 180.0;
+    }
+    int getClosestGPSNodeIndex(uint64_t clip_time, int start_index);
 };
 #endif

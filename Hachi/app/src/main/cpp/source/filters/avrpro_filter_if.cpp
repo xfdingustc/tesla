@@ -4,11 +4,11 @@
 #include "avf_error_code.h"
 #include "vdb_local.h"
 #include "vdb_cmd.h"
-#include "../include/avrpro_array.h"
-#include "../include/avrpro_malloc.h"
-#include "../include/avrpro_common.h"
+#include "avrpro_array.h"
+#include "avrpro_malloc.h"
+#include "avrpro_common.h"
 #include "avrpro_std_data.h"
-#include "../include/avrpro_filter_manager.h"
+#include "avrpro_filter_manager.h"
 
 uint32_t g_avrpro_log_flag = ALL_LOGS;
 
@@ -140,7 +140,91 @@ int avrpro_smart_filter_deinit(avrpro_smart_filter filter)
 {
     FilterManager * mgr = (FilterManager *)filter;
     if (filter) {
-        AVRPRO_LOGE("delete smart filter");
+        delete mgr;
+    }
+    return 0;
+}
+
+avrpro_smart_filter avrpro_lap_timer_filter_init(avrpro_clip_info_t * ci)
+{
+    FilterManager * mgr = new FilterManager(SMART_MAX_INDEX, NULL, 0);
+    mgr->isClipInfoChanged(ci);
+    return (avrpro_smart_filter)mgr;
+}
+
+int avrpro_lap_timer_set_start(avrpro_smart_filter filter, gps_parsed_data_s startNode)
+{
+    FilterManager * mgr = (FilterManager *)filter;
+    if (!mgr) {
+        AVRPRO_LOGE("NULL smart filter manager");
+        return -1;
+    }
+    mgr->updateLapTimerStartPosition(startNode);
+
+    return 0;
+}
+
+int avrpro_lap_timer_feed_gps_data(avrpro_smart_filter filter, uint8_t * data_buf,
+                                   uint32_t size, RAW_DATA_SOURCE_TYPE source)
+{
+    FilterManager * mgr = (FilterManager *)filter;
+    if (!mgr) {
+        AVRPRO_LOGE("cannot feed because null smart filter manager.");
+        return -1;
+    }
+
+    if (!data_buf || size == 0) {
+        AVRPRO_LOGW("wrong raw data block!");
+        return -1;
+    }
+
+    switch (source) {
+        case DEVICE_AVF: {
+            parseRawDataBlock(mgr, data_buf, size);
+        }
+            break;
+        case DEVICE_IOS: {
+            parseRawDataFromIOSBlock(mgr, data_buf, size);
+        }
+            break;
+        case DEVICE_ANDROID: {
+            parseRawDataFromAndroidBlock(mgr, data_buf, size);
+        }
+            break;
+        default:
+            break;
+    }
+
+    return 0;
+}
+
+void avrpro_lap_timer_read_results(avrpro_smart_filter filter, avrpro_laps_data_t * laps, avrpro_lap_data_t ** laplist,
+                                   avrpro_gps_parsed_data_t ** gpslist, uint32_t * gps_num)
+{
+    FilterManager * mgr = (FilterManager *)filter;
+    if (!mgr) {
+        AVRPRO_LOGE("NULL smart filter manager");
+        return;
+    }
+    mgr->getAllLapsInfo(laps, laplist, gpslist, gps_num);
+    return;
+}
+
+avrpro_gps_parsed_data_t * avrpro_lap_timer_get_gps_by_time(avrpro_smart_filter filter, uint64_t clip_time_ms)
+{
+    FilterManager * mgr = (FilterManager *)filter;
+    if (!mgr) {
+        AVRPRO_LOGE("NULL smart filter manager");
+        return NULL;
+    }
+
+    return mgr->getGPSByTime(clip_time_ms);
+}
+
+int avrpro_lap_timer_deinit(avrpro_smart_filter filter)
+{
+    FilterManager * mgr = (FilterManager *)filter;
+    if (filter) {
         delete mgr;
     }
     return 0;
@@ -233,7 +317,6 @@ void parseRawDataBlock(FilterManager * manager, uint8_t * data_buf, uint32_t siz
         uint32_t time_ms_lo = *(uint32_t *)(data_buf + parsed);
         parsed += 4;
         uint32_t time_ms_hi = *(uint32_t *)(data_buf + parsed);
-        AVRPRO_LOGD("time_ms_low: %d, time_ms_high: %d", time_ms_lo, time_ms_hi);
         parsed += 4;
         time_ms = (uint64_t)((uint64_t)(time_ms_hi) << 32);
         time_ms += (uint64_t)time_ms_lo;
