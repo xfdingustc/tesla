@@ -24,7 +24,7 @@ android {
         multiDexEnabled true
 
 //        ndk {
-//            moduleName "HttpRemuxer"A
+0//            moduleName "HttpRemuxer"A
 //            ldLibs "log"
 //            abiFilters "armeabi", "armeabi-v7a"
 //        }
