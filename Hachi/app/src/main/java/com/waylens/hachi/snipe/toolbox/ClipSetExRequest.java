@@ -116,7 +116,7 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                 }
             }
             response.readi32(); //int clipType
-            int extraSize = response.readi32(); //int extraSize
+            int extraSize1 = response.readi32(); //int extraSize
 
             int offsetSize = 0;
 
@@ -140,7 +140,7 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                 offsetSize += response.readStringAlignedReturnSize(extraString);
 
                 clip.cid.setExtra(extraString);
-                response.skip(extraSize - offsetSize);
+                response.skip(offsetSize);
             }
 
             if ((flag & FLAG_CLIP_DESC) > 0) {
@@ -297,7 +297,7 @@ public class ClipSetExRequest extends VdbRequest<ClipSet> {
                 clipSet.addClip(clip);
             }
 
-            response.skip(extraSize - offsetSize);
+            //response.skip(extraSize - offsetSize);
         }
         return VdbResponse.success(clipSet);
     }
