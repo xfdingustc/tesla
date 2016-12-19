@@ -118,6 +118,7 @@ public interface VdtCameraCmdConsts {
     int CMD_SET_CLIP_VIN_STYLE          = 91;
     int CMD_SET_SCREEN_SAVER_STYLE      = 93;
     int CMD_GET_SCREEN_SAVER_STYLE      = 94;
+    int CMD_IMAGE_RECOGNITION_RESULT    = 97;
 
 
     // oliver

@@ -65,6 +65,11 @@
                 android:layout_height="match_parent">
             </com.waylens.hachi.view.gauge.GaugeView>
 
+            <com.waylens.hachi.ui.views.RectListView
+                android:id="@+id/rect_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
 
         </com.xfdingustc.far.FixedAspectRatioFrameLayout>
 

@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +40,7 @@ import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.camera.events.CameraStateChangeEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
+import com.waylens.hachi.camera.events.RectListEvent;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbResponse;
@@ -53,6 +55,7 @@ import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.manualsetup.StartupActivity;
 import com.waylens.hachi.ui.views.AnimationProgressBar;
+import com.waylens.hachi.ui.views.RectListView;
 import com.waylens.hachi.utils.FirmwareUpgradeHelper;
 import com.waylens.hachi.utils.StringUtils;
 import com.waylens.hachi.utils.rxjava.RxBus;
@@ -190,6 +193,9 @@ public class LiveViewActivity extends BaseActivity {
     @BindView(R.id.tvErrorIndicator)
     TextView mTvErrorIndicator;
 
+    @BindView(R.id.rect_list_view)
+    RectListView rectListView;
+
 
     @BindView(R.id.btnBookmark)
     ImageButton mBtnBookmark;
@@ -318,6 +324,11 @@ public class LiveViewActivity extends BaseActivity {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventRectList(RectListEvent event) {
+        rectListView.showRects(event.rectList, event.sourceRect);
+    }
+
 
     public void onHandleCameraStateChangeEvent(CameraStateChangeEvent event) {
         if (event.getWhat() == CameraStateChangeEvent.CAMERA_STATE_INFO) {
@@ -421,6 +432,12 @@ public class LiveViewActivity extends BaseActivity {
             }
         });
         mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
+
+
+//        Rect jpegRect = new Rect(0, 0, 1024, 768);
+//        List<Rect> rectList = new ArrayList<>();
+//        rectList.add(new Rect(512, 384, 612, 484));
+//        rectListView.showRects(rectList, jpegRect);
 
     }
 

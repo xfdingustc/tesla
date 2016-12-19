@@ -1,6 +1,7 @@
 package com.waylens.hachi.camera;
 
 
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
@@ -9,6 +10,7 @@ import com.waylens.hachi.camera.events.BluetoothEvent;
 import com.waylens.hachi.camera.events.CameraStateChangeEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.camera.events.NetworkEvent;
+import com.waylens.hachi.camera.events.RectListEvent;
 import com.waylens.hachi.snipe.BasicVdbSocket;
 import com.waylens.hachi.snipe.SnipeError;
 import com.waylens.hachi.snipe.VdbCommand;
@@ -1606,11 +1608,42 @@ public class VdtCamera implements VdtCameraCmdConsts {
             case CMD_REC_GET_ROTATE_MODE:
                 handleAckRecGetRotateMode(p1, p2);
                 break;
+            case CMD_IMAGE_RECOGNITION_RESULT:
+                handleAckRecognitionResult(p1, p2);
+                break;
             default:
-                //Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
+                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
 
         }
+    }
+
+    private void handleAckRecognitionResult(String p1, String p2) {
+        Logger.t(TAG).d("handleAckRecognitionResult p1=" + p1 + ", p2=" + p2);
+        try {
+            JSONObject root = new JSONObject(p1);
+            JSONArray array = root.getJSONArray("results");
+            List<Rect> rectList = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject oneRect = array.getJSONObject(i);
+                Rect rect = new Rect();
+                rect.left = oneRect.getInt("left");
+                rect.top = oneRect.getInt("top");
+                rect.right = oneRect.getInt("right");
+                rect.bottom = oneRect.getInt("bottom");
+                rectList.add(rect);
+            }
+
+
+            Rect sourceRect = new Rect(0, 0, root.getInt("width"), root.getInt("height"));
+            mEventBus.post(new RectListEvent(rectList, sourceRect));
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void handleAckRecGetRotateMode(String p1, String p2) {

@@ -29,7 +29,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/text_camera_info"
+                    android:textColor="@color/white"
+                    android:background="@drawable/camera_status_bg"
                     android:textSize="16sp"
                     tools:text="Continuous Recording"/>
 
