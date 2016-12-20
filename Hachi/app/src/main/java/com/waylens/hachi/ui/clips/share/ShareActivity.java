@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
+import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
 import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
 import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
@@ -576,13 +577,12 @@ public class ShareActivity extends ClipPlayActivity {
             localMoment.withGeoTag = false;
         }
         ToStringUtils.getString(localMoment);
-        //BgJobHelper.uploadMoment(localMoment);
-        CacheUploadMomentService.scheduleJob(getApplicationContext());
+        BgJobHelper.uploadMoment(localMoment);
+/*        CacheUploadMomentService.scheduleJob(getApplicationContext());
         CacheUploadMomentJob cacheUploadMomentJob = new CacheUploadMomentJob(localMoment);
         StateJobHolder stateJobHolder = new StateJobHolder(cacheUploadMomentJob.getId(), StateJobHolder.INITIAL_STATE, null, cacheUploadMomentJob);
         PersistentQueue.getPersistentQueue().insert(stateJobHolder);
-        CacheUploadMomentService.launch(this);
-        //PersistentQueue.create();
+        CacheUploadMomentService.launch(this);*/
         UploadingMomentActivity.launch(this);
         finish();
 //

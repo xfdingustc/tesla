@@ -110,12 +110,12 @@ public class GaugeJsHelper {
                         state.put("obdSpeed", obdData.speed);
                         state.put("throttle", obdData.throttle);
                         //state.put("mph", obdData.speed); deprecated in new version of svg
-                        if (!obdData.isIMP) {
+                        if (!obdData.isIMP || (obdData.psi == 0)) {
                             state.put("psi", obdData.psi);
                         } else {
                             state.put("psi", obdData.psi - mIioPressure / 3.386);
                         }
-//                    Logger.t(TAG).d(Double.toString(obdData.psi));
+                        Logger.t(TAG).d("boost:" + Double.toString(obdData.psi));
                         break;
                     case RawDataItem.DATA_TYPE_WEATHER:
                         //Logger.t(TAG).d("Weather data");

@@ -769,6 +769,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             .subscribe(new Subscriber() {
                 @Override
                 public void onCompleted() {
+                    Logger.t(TAG).d("load raw data finished");
+                    if (getActivity() == null || getActivity().isDestroyed()) {
+                        Logger.t(TAG).d("destroyed");
+                        return;
+                    }
                     preparePlayer(true);
                 }
 

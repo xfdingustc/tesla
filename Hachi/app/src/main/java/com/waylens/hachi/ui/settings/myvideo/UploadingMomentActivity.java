@@ -49,6 +49,7 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
     @BindView(R.id.root_switch)
     ViewAnimator rootAnimator;
 
+/*
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHandleUploadJobEvent(UploadMomentEvent event) {
         Logger.t(TAG).d("event type" + event.getWhat());
@@ -56,6 +57,7 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
             mUploadingItemAdapter.handleEvent(event);
         }
     }
+*/
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, UploadingMomentActivity.class);
@@ -72,7 +74,7 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        EventBus.getDefault().register(UploadingMomentActivity.this);
+        //EventBus.getDefault().register(UploadingMomentActivity.this);
     }
 
     @Override
@@ -109,35 +111,37 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
     private void initViews() {
         setContentView(R.layout.activity_uploading);
         setupToolbar();
-        List<StateJobHolder> uploadJobList = PersistentQueue.getPersistentQueue().getAllJobs();
+
+/*        List<StateJobHolder> uploadJobList = PersistentQueue.getPersistentQueue().getAllJobs();
         Logger.t(TAG).d("uploadJobList size = " + uploadJobList.size());
         for (StateJobHolder jobHolder : uploadJobList) {
             Logger.t(TAG).d("insertId = " + jobHolder.getInsertId());
             Logger.t(TAG).d("jobId = " + jobHolder.getJobId());
             Logger.t(TAG).d("jobState = " + jobHolder.getJobState());
             //Logger.t(TAG).d("moment first segment url = " + ((CacheUploadMomentJob)jobHolder.getJob()).getLocalMoment().mSegments.get(0).uploadURL.url);
-        }
+        }*/
+
         mRvUploadingList.setLayoutManager(new LinearLayoutManager(this));
-/*        mUploadItemAdapter = new UploadItemAdapter(this);
+        mUploadItemAdapter = new UploadItemAdapter(this);
         mRvUploadingList.setAdapter(mUploadItemAdapter);
 
         if (mUploadItemAdapter.getItemCount() == 0) {
             rootAnimator.setDisplayedChild(1);
-        }*/
-        mUploadingItemAdapter = new UploadingItemAdapter(this);
+        }
+/*        mUploadingItemAdapter = new UploadingItemAdapter(this);
         mRvUploadingList.setAdapter(mUploadingItemAdapter);
 
         if (mUploadingItemAdapter.getItemCount() == 0) {
             rootAnimator.setDisplayedChild(1);
         } else {
             CacheUploadMomentService.launch(this);
-        }
+        }*/
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
+        //EventBus.getDefault().unregister(this);
     }
 
 
