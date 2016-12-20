@@ -153,9 +153,9 @@ public class GaugeJsHelper {
 
     public static String jsSetMetric() {
         if (SettingHelper.isMetricUnit()) {
-            return "javascript:setState({perUnit: 'kmh'})";
+            return "javascript:setState({isMetric: true})";
         } else {
-            return "javascript:setState({perUnit: 'mph'})";
+            return "javascript:setState({isMetric: false})";
         }
 
     }
