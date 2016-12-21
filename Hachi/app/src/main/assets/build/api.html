@@ -3,38 +3,18 @@
 <head>
     <title>React Transform Boilerplate</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <style>
-        body {
-            overflow: hidden;
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -o-user-select: none;
-
-        }
-        body, #root, .hachi-ban {
-            background: transparent;
-        }
-
-        .hachi-ban {
-            height: 100vh;
-            width: 100vw;
-        }
-    </style>
 </head>
 <body unselectable="on">
-<div id="root" style="width: 100vw" class="hachi-ban">
+<div id="root" class="hachi-ban">
 </div>
-
 <script type="text/javascript" src="prefix.js"></script><script type="text/javascript" src="api.js"></script></body>
-
 <script>
     // For on-the-fly (e.g. live view) usage ONLY
     /**
      * @method set the overlay params to the buffer, not take effect immediately
      * @param { json }
-     * @param { {theme: "neo"} } -change the theme to neo, value of acceptance:["neo","default","rifle","None"]
+     *
+     * @param { {theme: "neo"} } -change the theme , value of acceptance:["neo","default","rifle","None"]
      *
      * @param { {rpm: number} } -set the value of RPM gauge
      * @param { {psi: number} } -set the value of BOOST gauge, Unit of acceptance: inHg
@@ -45,8 +25,8 @@
      * @param { {obdSpeed: number} } -set the value of speed gauge, Unit of acceptance: km/h
      * @param { {mph: number} } -deprecated set the value of speed gauge, unit of acceptance:mph
      *
-     * @param { {gforceBA: number} } -set the value of beforeAfter of Gforce gauge, range of acceptance :0~1000
-     * @param { {gforceLR: number} } -set the value of LeftRight of Gforce gauge, range of acceptance :0~1000
+     * @param { {gforceBA: number} } -set the value of beforeAfter of Gforce gauge
+     * @param { {gforceLR: number} } -set the value of LeftRight of Gforce gauge
      *
      * @param { {lat: number} } -set latitude for GPS
      * @param { {lng: number} } -set longitude for GPS
@@ -60,22 +40,17 @@
      * playTime will influence the opacity of tail,countDown gauge, and LapTimer gauge
      *
      * @param { {time: Date} }
-     * @example
-     * setState({time: new Date('December 17, 1995 03:24:00')});
-     * setState({time: numericMonthDate('12 17, 1995 03:24:00')});
-     *
      * @param { {ambient: {tempF: number,windSpeedMiles: number, pressure: number,humidity: number,weatherCode: number} } }
-     * @description unit of tempF: ℉, windSpeedMiles:mph, pressure: inHg
+     * unit of tempF: ℉, windSpeedMiles:mph, pressure: inHg
      * @example
-     * setState({tempF: 0, windSpeedMiles: 0, pressure: 88.8, humidity: 0, weatherCode: 88})
+     * setState({ambient:{tempF: 0, windSpeedMiles: 0, pressure: 88.8, humidity: 0, weatherCode: 88}})
      *
      * @param { {countTimePoints: {t1: number,t2: number ,t3: number,t4: number,t5: number,t6: number} }} -unit of number: Millisecond
-     * @example
-     * setState({countTimePoints:{t1:1000,t2:2000,t3:3000,t4:4000,t5:5000,t6:6000}})
      *
      * @param { {ifRotate: Boolean} } -this should set true when the camera is upside down
      * @param { {showMap: Boolean} }  -use only for desktop
-     * @param { {perUnit: String} } -转换公英制 value of acceptance:["kmh","mph"]
+     * @param { {isMetric: String} } -转换公英制 value of acceptance:["kmh","mph"]
+     * @param { {perUnit: String} }  -@deprecated we should replace it by isMetric
      *
      * @param { {totalLaps: number} }
      * @param { {bestLapTime: number} }
@@ -83,14 +58,34 @@
      * @param { {lapTimeList: number} }
      * @param { {gpsList: object} }
      *
-     * @example
+     * @example common method to change the properties of dashboard
+     * setState({ name : value })
+     *
+     * @example setTime
      * setState({time: new Date('December 17, 1995 03:24:00')});
      * setState({time: numericMonthDate('12 17, 1995 03:24:00')});
-     * setState({rpm: 2000});
-     * setState({lng: 121});
-     * setState({showMap: false});
-     * setState({showCountDown:"S"});update()
      *
+     * @example set Count Down
+     * setState({countTimePoints:{t1:1000,t2:2000,t3:3000,t4:4000,t5:5000,t6:6000}})
+     * setState({playTime: 1});
+     *
+     * @example set Tail time of video
+     * setState({startTail: 100000});
+     * setState({playTime: 1});
+     *
+     * @example change the lay out of theme
+     * setState({showMap: false}); //used for desktop to hide the map
+     * setState({showSpeedThrottle:"L"});update()
+     * setState({showCountDown:"L"});update()
+     * setState({showAmbient:"L"});update()
+     * setState({showTimeDate:"S"});update()
+     * setState({showGforce:"L"});update()
+     * setState({showRollPitch:"L"});update()
+     * setState({showGps:"M"});update()
+     * setState({showPsi:"M"});update()
+     * setState({showCountDown:"L"});update()
+     *
+     * @example  how to set the lap Timer info
      * setState( {gpsList: {
      *  "captureTime": [0, 10000, 20000, 25000, 30000, 40000, 45000, 50000, 60000, 70000, 80000, 85000, 90000, 95000, 990000],
      *  "coordinate": {
@@ -150,7 +145,7 @@
      * following command will hide all gauge expect rpm gauge
      * setRawData({rpm: 88.8})
      * 等价于:
-     * setState({rpm: 88.8, mph: null, throttle: null, psi: null, gforceBA: null, gforceLR: null, lat:null, lng:null, latLngList:null, roll:null, pitch: null, ambient:null, time:null, gpsSpeed: null, obdSpeed: null})
+     * setState({rpm: 88.8, mph: null, throttle: null, psi: null, gforceBA: null, gforceLR: null, lat:null, lng:null, roll:null, pitch: null, ambient:null, time:null, gpsSpeed: null, obdSpeed: null})
      * @example
      * setRawData({
                             rpm: 88.8,
@@ -162,7 +157,6 @@
                             gforceLR: 88.8,
                             lat: 8.8,
                             lng: 8.8,
-                            latLngList: [[42.360701, 21], [42.460701, 29], [41.360701, 27], [40.360701, 21]],
                             roll: 88.8,
                             pitch: 88.8,
                             ambient: {
@@ -256,6 +250,7 @@
      * @static
      */
     var setTimePoints = hachi.gauge.setTimePoints.bind(hachi.gauge);
+
     /**
      * @description 返回 是否显示了地图，注意这里的地图不是指GPS gauge
      * @return { Boolean }
@@ -264,6 +259,7 @@
     var isShowMap = function () {
         return !!document.getElementsByClassName('map-core')[0]
     }
+
     /**
      * @description 取得地图的位置和大小
      * @return { {bottom:Number, height:Number, left:Number, right:Number, top:Number, width: Number} }
@@ -320,5 +316,16 @@
     var isMapLoaded = hachi.gauge.isMapLoaded.bind(hachi.gauge);
     var isThemeLoaded = hachi.gauge.isThemeLoaded.bind(hachi.gauge)
     var numericMonthDate = hachi.numericMonthDate;
+    var getHachiVersion = hachi.getHachiVersion
+    var swapLatlngForGpsList = function (gpsList) {
+        if (!gpsList.coordinate.coordinates) {
+            console.log("The gps Format is incorrect!")
+            return null
+        }
+        gpsList.coordinate.coordinates = gpsList.coordinate.coordinates.map(function (o) {
+            return [o[1], o[0]]
+        })
+        return gpsList
+    }
 </script>
 </html>
