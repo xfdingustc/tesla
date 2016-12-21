@@ -7,6 +7,7 @@ import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.FacebookSdk;
+import com.github.piasy.cameracompat.CameraCompat;
 import com.google.android.exoplayer.ExoPlayerLibraryInfo;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
@@ -89,7 +90,7 @@ public class Hachi extends MultiDexApplication {
         VdtCameraConnectivityManager.getManager().startSearchCamera();
         mUserAgent = initUserAgent(getString(R.string.app_name));
 
-
+        CameraCompat.init(getApplicationContext());
     }
 
     private void initSessionInfo() {

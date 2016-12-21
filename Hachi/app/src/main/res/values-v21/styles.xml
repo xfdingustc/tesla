@@ -136,6 +136,11 @@
         <item name="android:searchViewStyle">@style/Widget.Hachi.SearchView</item>
     </style>
 
+
+    <style name="LightTheme.TranslucentStatusbar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="LightTheme.Translucent">
         <item name="android:windowBackground">@color/scrim</item>
         <item name="android:colorBackgroundCacheHint">@null</item>

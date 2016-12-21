@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <FrameLayout
+        android:id="@+id/preview_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:alpha="0.8"
+        tools:background="@android:color/black"
+        />
+
+    <com.github.piasy.rxqrcode.view.HoleContainer
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:outside_color="#b2000000"
+        >
+
+        <com.github.piasy.rxqrcode.view.WeChatQrScannerView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            app:bar_height="2dp"
+            app:bar_margin="10dp"
+            app:bar_width="230dp"
+            app:moving_bar="@drawable/scan_line"
+            app:moving_speed="5"
+            app:side_bg="@drawable/side_bg"
+            />
+    </com.github.piasy.rxqrcode.view.HoleContainer>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="64dp"
+            android:src="@drawable/setup_setp1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:text="@string/scan_qr_code_hint"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="28dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/please_open_your_camera"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/how_to_find_camera_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="80dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:text="@string/how_to_find_the_camera_wifi"
+        android:textColor="@color/white"
+        android:textSize="14sp"/>
+
+</FrameLayout>

@@ -34,7 +34,7 @@ public class StartupActivity extends BaseActivity {
     public void onBtnGetStartedClicked() {
         if (checkIfCameraIsGranted()) {
             Logger.t(TAG).d("Camera permission is granted");
-            ScanQrCodeActivity.launch(StartupActivity.this);
+            ScanQrCodeActivity2.launch(StartupActivity.this);
         } else {
             Logger.t(TAG).d("Camera permission is not granted");
             MaterialDialog dialog = new MaterialDialog.Builder(this)
@@ -65,7 +65,7 @@ public class StartupActivity extends BaseActivity {
             case PERMISSION_REQUEST_CAMERA:
                 if (checkIfCameraIsGranted()) {
                     Logger.t(TAG).d("Grant camera permission successfully");
-                    ScanQrCodeActivity.launch(StartupActivity.this);
+                    ScanQrCodeActivity2.launch(StartupActivity.this);
                 } else {
                     Logger.t(TAG).d("Grant camera permission failed");
 //                    ManualSetupActivity.launch(StartupActivity.this);
