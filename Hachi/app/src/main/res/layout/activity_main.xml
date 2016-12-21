@@ -23,6 +23,7 @@
         app:bb_activeTabColor="@color/style_color_accent"
         app:bb_inActiveTabColor="@color/material_grey_500"
         app:bb_tabXmlResource="@xml/bottombar_tabs"
+        android:elevation="2dp"
         android:layout_gravity="bottom"/>
 
 

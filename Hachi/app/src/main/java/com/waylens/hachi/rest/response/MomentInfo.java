@@ -24,6 +24,8 @@ public class MomentInfo implements Serializable {
     public ArrayList<RawDataUrl> rawDataurl;
 
     public static class MomentBasicInfo implements Serializable {
+        public static final long INVALID_MOMENT_ID = -1;
+
         public long id;
 
         public String title;

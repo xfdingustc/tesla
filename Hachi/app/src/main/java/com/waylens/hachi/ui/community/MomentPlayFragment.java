@@ -46,7 +46,6 @@ import com.waylens.hachi.snipe.vdb.rawdata.ObdData;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.fragments.BaseFragment;
 import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
@@ -568,7 +567,7 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
     }
 
     private void getMomentPlayInfo() {
-        if (mMomentId == Moment.INVALID_MOMENT_ID) {
+        if (mMomentId == MomentInfo.MomentBasicInfo.INVALID_MOMENT_ID) {
             return;
         }
 

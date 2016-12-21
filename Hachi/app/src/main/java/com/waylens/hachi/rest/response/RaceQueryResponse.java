@@ -1,13 +1,8 @@
 package com.waylens.hachi.rest.response;
 
 import com.waylens.hachi.rest.bean.LeaderBoardItem;
-import com.waylens.hachi.rest.bean.User;
 import com.waylens.hachi.rest.bean.VehicleInfo;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
-import com.waylens.hachi.ui.entities.Moment;
-import com.waylens.hachi.ui.entities.UserDeprecated;
-import com.waylens.hachi.ui.entities.moment.MomentAbstract;
-import com.waylens.hachi.ui.entities.moment.MomentEx;
 
 
 import java.util.List;

@@ -1,9 +1,5 @@
 package com.waylens.hachi.ui.community;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -27,10 +23,7 @@ import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -71,7 +64,6 @@ import com.waylens.hachi.ui.authorization.GoogleAuthorizeActivity;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.ui.community.comment.CommentsAdapter;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.views.AvatarView;
 import com.waylens.hachi.ui.views.SendCommentButton;
 import com.waylens.hachi.utils.AnimUtils;
@@ -723,7 +715,7 @@ public class MomentActivity extends BaseActivity {
 
     private void loadComments(int cursor, final boolean isRefresh) {
 //        Logger.t(TAG).d("loadcomment  " + mMomentInfo + " moment id: " + mMomentInfo.moment.id);
-        if (mMomentInfo == null || mMomentInfo.moment.id == Moment.INVALID_MOMENT_ID) {
+        if (mMomentInfo == null || mMomentInfo.moment.id == MomentInfo.MomentBasicInfo.INVALID_MOMENT_ID) {
             Logger.t(TAG).d("null");
             return;
         }

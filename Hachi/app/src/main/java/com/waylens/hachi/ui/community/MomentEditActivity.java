@@ -23,9 +23,7 @@ import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.entities.Moment;
 import com.waylens.hachi.ui.entities.MomentPicture;
-import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.utils.TransitionHelper;
 

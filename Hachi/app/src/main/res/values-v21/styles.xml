@@ -137,6 +137,10 @@
     </style>
 
 
+    <style name="LightTheme.TransparentBackground">
+        <item name="android:windowBackground">@null</item>
+    </style>
+
     <style name="LightTheme.TranslucentStatusbar">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
