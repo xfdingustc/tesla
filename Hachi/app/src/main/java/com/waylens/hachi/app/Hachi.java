@@ -10,6 +10,7 @@ import com.facebook.FacebookSdk;
 import com.github.piasy.cameracompat.CameraCompat;
 import com.google.android.exoplayer.ExoPlayerLibraryInfo;
 import com.orhanobut.logger.Logger;
+import com.squareup.leakcanary.LeakCanary;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.export.ExportManager;
@@ -68,6 +69,12 @@ public class Hachi extends MultiDexApplication {
 
     private void init() {
         mSharedContext = getApplicationContext();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
 //        LeakCanary.install(this);
         initLogger();
 

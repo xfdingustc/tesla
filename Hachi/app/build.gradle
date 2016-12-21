@@ -143,9 +143,10 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.github.piasy:RxQrCode:1.3.0'
 
-    //    compile 'com.github.bumptech.glide:volley-integration:1.4.0'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-    //    compile 'cn.aigestudio.downloader:Downloader:1.4.3'
 
     //    debugCompile 'com.github.moduth:blockcanary-android:1.2.1'
 
@@ -165,7 +166,7 @@ dependencies {
     compile 'com.l4digital.fastscroll:fastscroll:1.0.1'
     compile 'com.lzy.widget:view-core:0.1.9'
     compile 'it.michelelacorte.elasticprogressbar:library:1.0.5@aar'
-    compile 'com.getkeepsafe.taptargetview:taptargetview:1.5.3'
+    //compile 'com.getkeepsafe.taptargetview:taptargetview:1.5.3'
     compile 'com.github.aakira:expandable-layout:1.6.0@aar'
     compile 'it.sephiroth.android.library.targettooltip:target-tooltip-library:1.3.15'
     compile 'net.steamcrafted:load-toast:1.0.10'
