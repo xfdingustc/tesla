@@ -21,9 +21,6 @@ public class Constants {
     public static final String API_AUTH_FACEBOOK = HOST_URL + "api/authenticate/facebook?accessToken=";
 
 
-    public static final String API_REPORT = HOST_URL + "api/reports";
-
-    public static final String API_BLOCK = HOST_URL + "api/friends/block";
 
     public static final String PARAM_SORT_UPLOAD_TIME = "uploadtime_desc";
 
