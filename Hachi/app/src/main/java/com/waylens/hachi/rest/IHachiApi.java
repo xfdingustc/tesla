@@ -307,4 +307,7 @@ public interface IHachiApi {
     @POST("api/events/mark_read")
     Observable<SimpleBoolResponse> markReadRx(@Body MarkReadBody markReadBody);
 
+
+    @GET("api/authenticate/facebook")
+    Observable<AuthorizeResponse> authenticateFbRx(@Query("accessToken") String token);
 }

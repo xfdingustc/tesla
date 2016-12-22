@@ -9,10 +9,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -21,17 +17,15 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.app.Constants;
-import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.utils.ConnectivityHelper;
-import com.waylens.hachi.utils.ServerMessage;
+import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
-
 
 import org.json.JSONObject;
 
@@ -69,7 +63,6 @@ public class AuthorizeActivity extends BaseActivity {
 
     @BindView(R.id.login_button)
     LoginButton mFBLoginButton;
-
 
 
     @Override
@@ -146,16 +139,13 @@ public class AuthorizeActivity extends BaseActivity {
     }
 
 
-
-
-
     @Override
     public void setupToolbar() {
         getToolbar().setNavigationIcon(R.drawable.ic_close);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               onBackPressed();
+                onBackPressed();
             }
         });
         getToolbar().getMenu().clear();
@@ -185,8 +175,6 @@ public class AuthorizeActivity extends BaseActivity {
         }
 
 
-
-
     }
 
     public void switchStep(int stepSignUp) {
@@ -198,7 +186,12 @@ public class AuthorizeActivity extends BaseActivity {
     }
 
 
-    void onSignInSuccessful(JSONObject response) {
+    private void onSignInSuccessful(JSONObject response) {
+        SessionManager.getInstance().saveLoginInfo(response);
+        doDeviceLogin();
+    }
+
+    private void onSignInSuccessful(AuthorizeResponse response) {
         SessionManager.getInstance().saveLoginInfo(response);
         doDeviceLogin();
     }
@@ -218,8 +211,6 @@ public class AuthorizeActivity extends BaseActivity {
                 }
             });
     }
-
-
 
 
     private void requestPublishPermission() {
@@ -254,31 +245,26 @@ public class AuthorizeActivity extends BaseActivity {
     }
 
 
-
     private void sendFbToken2Server() {
         Logger.t(TAG).d("Send Facebook token: " + mFaceBookLoginResult.getAccessToken().getToken());
-        mRequestQueue.add(new JsonObjectRequest(Request.Method.GET, Constants.API_AUTH_FACEBOOK + mFaceBookLoginResult.getAccessToken().getToken(),
-            new Response.Listener<JSONObject>() {
+
+        HachiService.createHachiApiService().authenticateFbRx(mFaceBookLoginResult.getAccessToken().getToken())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
                 @Override
-                public void onResponse(JSONObject response) {
-                    Logger.t(TAG).d("Response: " + response);
-//                    sendFbPublishToken2Server();
+                public void onNext(AuthorizeResponse authorizeResponse) {
                     hideDialog();
-                    onSignInSuccessful(response);
-
+                    onSignInSuccessful(authorizeResponse);
                 }
-            }
 
-            , new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                ServerMessage.ErrorMsg errorInfo = ServerMessage.parseServerError(error);
-                Snackbar.make(mFBLoginButton, errorInfo.msgResID, Snackbar.LENGTH_SHORT).show();
-                hideDialog();
-            }
-        }
-
-        ));
+                @Override
+                public void onError(Throwable e) {
+                    super.onError(e);
+                    ServerErrorHelper.showErrorMessage(mFBLoginButton, e);
+                    hideDialog();
+                }
+            });
 
 
         showDialog(getString(R.string.sign_in));
