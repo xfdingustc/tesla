@@ -247,7 +247,7 @@ public class NotificationActivity extends BaseActivity {
     }
 
     void markRead() {
-        JSONArray ids = new JSONArray();
+        /*JSONArray ids = new JSONArray();
         JSONArray types = new JSONArray();
         JSONObject params = new JSONObject();
         final ArrayList<Long> markReadIDs = new ArrayList<>();
@@ -280,7 +280,7 @@ public class NotificationActivity extends BaseActivity {
                 public void onErrorResponse(VolleyError error) {
                     ServerMessage.ErrorMsg errorMsg = ServerMessage.parseServerError(error);
                 }
-            }));
+            }));*/
     }
 
     public class NotiEvent {

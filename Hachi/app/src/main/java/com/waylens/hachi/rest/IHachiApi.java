@@ -12,6 +12,7 @@ import com.waylens.hachi.rest.body.DeviceLoginBody;
 import com.waylens.hachi.rest.body.FinishUploadBody;
 import com.waylens.hachi.rest.body.FollowPostBody;
 import com.waylens.hachi.rest.body.LikePostBody;
+import com.waylens.hachi.rest.body.MarkReadBody;
 import com.waylens.hachi.rest.body.MomentUpdateBody;
 import com.waylens.hachi.rest.body.PublishCommentBody;
 import com.waylens.hachi.rest.body.ReportCommentBody;
@@ -302,5 +303,8 @@ public interface IHachiApi {
 
     @POST("api/moments/views")
     Observable<SimpleBoolResponse> addViewCount(@Body AddMomentViewCountBody viewCountBody);
+
+    @POST("api/events/mark_read")
+    Observable<SimpleBoolResponse> markReadRx(@Body MarkReadBody markReadBody);
 
 }

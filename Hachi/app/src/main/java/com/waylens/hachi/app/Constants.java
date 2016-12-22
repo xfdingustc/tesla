@@ -30,7 +30,6 @@ public class Constants {
 
 
 
-    public static final String API_COMMENTS_MARK_READ = HOST_URL + "api/events/mark_read";
 
 
     public enum EventType {FOLLOW_USER, COMMENT_MOMENT, LIKE_MOMENT, REFER_USER, PUBLISH_NEWS}
