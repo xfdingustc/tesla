@@ -50,6 +50,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -362,9 +365,15 @@ public class FeedListAdapter extends AbsMomentListAdapter {
         holder.place.setText(stringBuilder.toString());
 
         if (moment.isRacingMoment()) {
+            holder.tagsViewAnimator.setVisibility(View.VISIBLE);
+            holder.tagsViewAnimator.setDisplayedChild(0);
             holder.racingInfo.setVisibility(View.VISIBLE);
             holder.raceType.setTitleText(moment.getRaceType());
             holder.raceTime.setText(moment.getRaceTime());
+        } else if (moment.isLapTimerMoment() && moment.lapTimer != null) {
+            holder.tagsViewAnimator.setVisibility(View.VISIBLE);
+            holder.tagsViewAnimator.setDisplayedChild(1);
+            holder.bestLapTime.setText(formatLapTime((int)moment.lapTimer.bestLapTime) + "s");
         } else {
             holder.racingInfo.setVisibility(View.GONE);
         }
@@ -414,6 +423,10 @@ public class FeedListAdapter extends AbsMomentListAdapter {
         MomentEditActivity.launch((Activity) mContext, moment, holder.videoCover);
     }
 
+    private String formatLapTime(int timeMs) {
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        return DateUtils.formatElapsedTime(timeMs / 1000) + formatter.format((double)timeMs % 1000 / 1000).substring(1);
+    }
 
     @Override
     public int getItemCount() {
@@ -423,17 +436,20 @@ public class FeedListAdapter extends AbsMomentListAdapter {
 
     public static class MomentViewHolder extends RecyclerView.ViewHolder {
 
-
         @BindView(R.id.avatar_view)
         AvatarView avatarView;
 
         @BindView(R.id.follow)
         Button follow;
 
-
         @BindView(R.id.title)
         TextView title;
 
+        @BindView(R.id.va_tags)
+        ViewAnimator tagsViewAnimator;
+
+        @BindView(R.id.best_lap_time)
+        TextView bestLapTime;
 
         @BindView(R.id.video_duration)
         TextView videoDuration;
@@ -453,7 +469,6 @@ public class FeedListAdapter extends AbsMomentListAdapter {
         @BindView(R.id.place)
         TextView place;
 
-
         @BindView(R.id.comment_user1)
         TextView commentUser1;
 
@@ -462,7 +477,6 @@ public class FeedListAdapter extends AbsMomentListAdapter {
 
         @BindView(R.id.comment_user3)
         TextView commentUser3;
-
 
         @BindView(R.id.btn_like)
         CheckableButton btnLike;

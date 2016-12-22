@@ -3,6 +3,7 @@ package com.waylens.hachi.rest;
 import android.os.Build;
 import android.text.TextUtils;
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Constants;
 import com.waylens.hachi.session.SessionManager;
 import java.io.IOException;
@@ -52,7 +53,9 @@ public class HachiService {
                                 newReqBuilder.addHeader("X-Auth-Token", token);
                             }
 
-                            return chain.proceed(newReqBuilder.build());
+                            Response response = chain.proceed(newReqBuilder.build());
+                            //Logger.t(TAG).d("response:" + response.body().string());
+                            return response;
                         }
                     })
                         .readTimeout(TIME_OUT_MILLI_SEC, TimeUnit.MILLISECONDS)

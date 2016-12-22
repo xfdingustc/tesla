@@ -42,6 +42,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -148,9 +150,15 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
         }
 
         if (momentAbstract.isRacingMoment()) {
+            holder.tagsViewAnimator.setVisibility(View.VISIBLE);
+            holder.tagsViewAnimator.setDisplayedChild(0);
             holder.racingInfo.setVisibility(View.VISIBLE);
             holder.raceType.setTitleText(momentAbstract.getRaceType());
             holder.raceTime.setText(momentAbstract.getRaceTime());
+        } else if (momentAbstract.isLapTimerMoment() && momentAbstract.lapTimer != null) {
+            holder.tagsViewAnimator.setVisibility(View.VISIBLE);
+            holder.tagsViewAnimator.setDisplayedChild(1);
+            holder.bestLapTime.setText(formatLapTime((int)momentAbstract.lapTimer.bestLapTime) + "s");
         } else {
             holder.racingInfo.setVisibility(View.GONE);
         }
@@ -252,6 +260,11 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
 
     }
 
+    private String formatLapTime(int timeMs) {
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        return DateUtils.formatElapsedTime(timeMs / 1000) + formatter.format((double)timeMs % 1000 / 1000).substring(1);
+    }
+
 
     private void onBindLoadingViewHolder(LoadingViewHolder holder, int position) {
         if (mHasMore) {
@@ -305,6 +318,11 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
         @BindView(R.id.title)
         TextView title;
 
+        @BindView(R.id.va_tags)
+        ViewAnimator tagsViewAnimator;
+
+        @BindView(R.id.best_lap_time)
+        TextView bestLapTime;
 
         @BindView(R.id.video_duration)
         TextView videoDuration;
@@ -317,7 +335,6 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
 
         @BindView(R.id.user_name)
         TextView userName;
-
 
         @BindView(R.id.car_info)
         View carInfo;

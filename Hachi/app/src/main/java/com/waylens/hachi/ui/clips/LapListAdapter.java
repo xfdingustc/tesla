@@ -13,6 +13,9 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.remix.AvrproLapData;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +122,7 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         AvrproLapData lapData = mLapDataList.get(position);
         holder.lapPbDuration.setProgress((lapData.lap_time_ms * 100) / longestLapTime);
         holder.lapTitle.setText("Lap " + (position + 1));
-        holder.lapTvDuration.setText(DateUtils.formatElapsedTime(lapData.lap_time_ms / 1000));
+        holder.lapTvDuration.setText(formatLapTime(lapData.lap_time_ms));
     }
 
 
@@ -127,7 +130,12 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         AvrproLapData lapData = mLapDataList.get(position);
         holder.lapPbDuration.setProgress((lapData.lap_time_ms * 100) / longestLapTime);
         holder.lapTitle.setText("Lap " + (position + 1));
-        holder.lapTvDuration.setText(DateUtils.formatElapsedTime(lapData.lap_time_ms / 1000));
+        holder.lapTvDuration.setText(formatLapTime(lapData.lap_time_ms));
+    }
+
+    private String formatLapTime(int timeMs) {
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        return DateUtils.formatElapsedTime(timeMs / 1000) + formatter.format((double)timeMs % 1000 / 1000).substring(1);
     }
 
     @Override

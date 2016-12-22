@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:ellipsize="end"
-                android:maxEms="16"
+                android:maxEms="15"
                 android:maxLines="1"
                 android:paddingLeft="32dp"
                 android:paddingRight="8dp"
@@ -68,36 +68,73 @@
             android:layout_toRightOf="@id/car_info"
             android:orientation="horizontal">
 
-
-            <FrameLayout
-                android:id="@+id/racing_info"
+            <ViewAnimator
+                android:id="@+id/va_tags"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:alpha="0.8"
-                android:background="@drawable/race_info_bg">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/race_time"
+                <FrameLayout
+                    android:id="@+id/racing_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="32dp"
-                    android:paddingRight="8dp"
-                    android:textColor="?attr/tagTextColor"
+                    android:layout_marginLeft="8dp"
+                    android:alpha="0.8"
+                    android:background="@drawable/race_info_bg">
 
-                    tools:text="0.96s"/>
+                    <TextView
+                        android:id="@+id/race_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="32dp"
+                        android:paddingRight="8dp"
+                        android:textColor="?attr/tagTextColor"
 
-                <com.github.pavlospt.roundedletterview.RoundedLetterView
-                    android:id="@+id/race_type"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    app:rlv_backgroundColorValue="@color/style_color_tag"
-                    app:rlv_titleColor="@android:color/white"
-                    app:rlv_titleSize="14dp"
-                    tools:rlv_titleText="60"/>
+                        tools:text="0.96s"/>
 
-            </FrameLayout>
+                    <com.github.pavlospt.roundedletterview.RoundedLetterView
+                        android:id="@+id/race_type"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:rlv_backgroundColorValue="@color/style_color_tag"
+                        app:rlv_titleColor="@android:color/white"
+                        app:rlv_titleSize="14dp"
+                        app:rlv_titleText="A"
+                        tools:rlv_titleText="60"/>
+
+                </FrameLayout>
+
+
+                <FrameLayout
+                    android:id="@+id/lap_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.8"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/race_info_bg">
+
+                    <TextView
+                        android:id="@+id/best_lap_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:paddingStart="32dp"
+                        android:paddingEnd="8dp"
+                        android:textColor="?attr/tagTextColor"
+                        tools:text="00:58.00"/>
+
+                    <com.github.pavlospt.roundedletterview.RoundedLetterView
+                        android:id="@+id/lap_timer_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:rlv_backgroundColorValue="@color/style_color_tag"
+                        app:rlv_titleColor="@android:color/white"
+                        app:rlv_titleSize="10dp"
+                        app:rlv_titleText="LAP" />
+
+                </FrameLayout>
+
+            </ViewAnimator>
 
 
         </LinearLayout>
@@ -116,6 +153,7 @@
         android:background="@drawable/round_rectangle_background"
         android:textColor="@color/white87"
         android:textSize="12sp"
+        tools:visibility="invisible"
         tools:text="01:08"/>
 
     <ImageView
