@@ -7,6 +7,7 @@ import android.graphics.Outline;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +23,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobHelper;
@@ -53,6 +56,7 @@ import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.utils.LocalMomentDownloadHelper;
 import com.waylens.hachi.utils.VersionHelper;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
@@ -65,8 +69,14 @@ import java.util.Map;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_GET_VIDEO_COVER;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_GET_VIDEO_URL;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_STORE_VIDEO_COVER;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS;
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -121,6 +131,8 @@ public class ShareActivity extends ClipPlayActivity {
     private RawDataBlock mRawDataBlock;
 
     private int mStreamId = 0;
+
+    private MaterialDialog mDownloadDialog;
 
 
     @BindView(R.id.race_layout)
@@ -577,15 +589,68 @@ public class ShareActivity extends ClipPlayActivity {
             localMoment.withGeoTag = false;
         }
         ToStringUtils.getString(localMoment);
-        BgJobHelper.uploadMoment(localMoment);
+        showDownloadDialog(localMoment);
+        //BgJobHelper.uploadMoment(localMoment);
 /*        CacheUploadMomentService.scheduleJob(getApplicationContext());
         CacheUploadMomentJob cacheUploadMomentJob = new CacheUploadMomentJob(localMoment);
         StateJobHolder stateJobHolder = new StateJobHolder(cacheUploadMomentJob.getId(), StateJobHolder.INITIAL_STATE, null, cacheUploadMomentJob);
         PersistentQueue.getPersistentQueue().insert(stateJobHolder);
         CacheUploadMomentService.launch(this);*/
-        UploadingMomentActivity.launch(this);
-        finish();
+        //UploadingMomentActivity.launch(this);
+        //finish();
 //
+    }
+
+    private void showDownloadDialog(final LocalMoment localMoment) {
+        LocalMomentDownloadHelper.downloadLocalMomentRx(localMoment)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<LocalMomentDownloadHelper.DownloadLocalMomentStatus>() {
+                @Override
+                public void onCompleted() {
+                    if (mDownloadDialog != null && mDownloadDialog.isShowing()) {
+                        mDownloadDialog.dismiss();
+                    }
+                    BgJobHelper.uploadCachedMoment(localMoment);
+                    UploadingMomentActivity.launch(ShareActivity.this);
+                    finish();
+
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(LocalMomentDownloadHelper.DownloadLocalMomentStatus downloadLocalMomentStatus) {
+                    switch (downloadLocalMomentStatus.status) {
+                        case DOWNLOAD_STATUS_GET_VIDEO_URL:
+                            break;
+                        case DOWNLOAD_STATUS_GET_VIDEO_COVER:
+                            break;
+                        case DOWNLOAD_STATUS_STORE_VIDEO_COVER:
+                            break;
+                        case DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS:
+                            mDownloadDialog.setProgress(downloadLocalMomentStatus.progress);
+                            break;
+                    }
+                }
+            });
+
+        mDownloadDialog = new MaterialDialog.Builder(this)
+            .title(R.string.download)
+            .progress(false, 100)
+            .negativeText(R.string.cancel)
+            .canceledOnTouchOutside(false)
+            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                }
+            })
+            .show();
+
     }
 
 
