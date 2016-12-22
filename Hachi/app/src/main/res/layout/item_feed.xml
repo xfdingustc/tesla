@@ -118,8 +118,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:background="@drawable/chip_icon"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_directions_car"/>
+                    android:padding="2dp"
+                    android:src="@drawable/ic_race_car"/>
 
                 <TextView
                     android:id="@+id/car_model"
