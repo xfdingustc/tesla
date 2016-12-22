@@ -313,9 +313,10 @@
         }
     }
     // Utils
-    var isMapLoaded = hachi.gauge.isMapLoaded.bind(hachi.gauge);
+    var isMapLoaded = hachi.gauge.isMapLoaded.bind(hachi.gauge)
     var isThemeLoaded = hachi.gauge.isThemeLoaded.bind(hachi.gauge)
-    var numericMonthDate = hachi.numericMonthDate;
+    var clearAllState = hachi.gauge.clearAllState.bind(hachi.gauge)
+    var numericMonthDate = hachi.numericMonthDate
     var getHachiVersion = hachi.getHachiVersion
     var swapLatlngForGpsList = function (gpsList) {
         if (!gpsList.coordinate.coordinates) {
