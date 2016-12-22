@@ -1,5 +1,6 @@
 package com.waylens.hachi.rest;
 
+import com.google.android.gms.signin.internal.SignInResponse;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.Firmware;
 import com.waylens.hachi.rest.bean.MomentAmount;
@@ -166,8 +167,6 @@ public interface IHachiApi {
     @GET("/api/users/check_account")
     Call<SimpleBoolResponse> checkEmail(@Query("e") String email);
 
-//    @POST("/api/devices/login")
-//    Call<SignInResponse> deviceLogin(@Body DeviceLoginBody deviceLoginBody);
 
     @GET("/api/friends/{follow}")
     Observable<FriendList> getFriendListRx(@Path("follow") String follow, @Query("u") String userId);

@@ -35,10 +35,14 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.AuthorizedJsonRequest;
 import com.waylens.hachi.app.Constants;
+import com.waylens.hachi.rest.HachiService;
+import com.waylens.hachi.rest.body.DeviceLoginBody;
+import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.PushUtils;
 import com.waylens.hachi.utils.VolleyUtil;
+import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,38 +103,29 @@ public class RegistrationIntentService extends IntentService {
             return;
         }
 
-        RequestQueue requestQueue = VolleyUtil.newVolleyRequestQueue(this);
-        JSONObject params = new JSONObject();
-        try {
-            params.put("deviceType", Constants.DEVICE_TYPE);
-            params.put("deviceID", token);
-        } catch (JSONException e) {
-            Log.e(TAG, "", e);
-        }
-        Logger.t(TAG).d("send registration to server!");
-        requestQueue.add(new AuthorizedJsonRequest(Request.Method.POST, Constants.API_DEVICE_ACTIVATION, params,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Logger.t(TAG).d("response: " + response);
-                        String waylensToken = response.optString("token");
-                        if (!TextUtils.isEmpty(waylensToken)) {
-                            PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, token);
-                            SessionManager.getInstance().setToken(waylensToken);
-                            Logger.t(TAG).d("GCM registration is successful.");
-                        } else {
-                            notifyRegistrationFailure();
-                            Logger.t(TAG).d("GCM registration fails.");
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Logger.t(TAG).d("GCM registration fails.");
+
+        HachiService.createHachiApiService().deviceLoginRx(new DeviceLoginBody(Constants.DEVICE_TYPE, token))
+            .subscribe(new SimpleSubscribe<AuthorizeResponse>() {
+                @Override
+                public void onNext(AuthorizeResponse authorizeResponse) {
+                    String waylensToken = authorizeResponse.token;
+                    if (!TextUtils.isEmpty(waylensToken)) {
+                        PreferenceUtils.putString(PreferenceUtils.SEND_GCM_TOKEN_SERVER, token);
+                        SessionManager.getInstance().setToken(waylensToken);
+                        Logger.t(TAG).d("GCM registration is successful.");
+                    } else {
                         notifyRegistrationFailure();
+                        Logger.t(TAG).d("GCM registration fails.");
                     }
-                }));
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    super.onError(e);
+                    Logger.t(TAG).d("GCM registration fails.");
+                    notifyRegistrationFailure();
+                }
+            });
     }
 
     void notifyRegistrationFailure() {
