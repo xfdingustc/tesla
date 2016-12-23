@@ -303,7 +303,7 @@ public class MomentActivity extends BaseActivity {
                 String provider = (String) event.getExtra();
                 if (event.getResponse().result) {
                     Logger.t(TAG).d("status: " + event.getResponse().status);
-                    Snackbar.make(mBtnRepost, getString(R.string.repost_success) + " " + provider, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mBtnRepost, String.format(getString(R.string.repost_success), provider), Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(mBtnRepost, R.string.repost_failed, Snackbar.LENGTH_SHORT).show();
                 }

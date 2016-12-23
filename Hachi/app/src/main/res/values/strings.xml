@@ -227,7 +227,7 @@
     <string name="block">Block</string>
     <string name="country">Country</string>
     <string name="city">City</string>
-    <string name="wifi_mode">Wi-fi Mode</string>
+    <string name="wifi_mode">Wi-Fi Mode</string>
     <string name="choose_wifi">Choose a Wi-Fi network</string>
     <string name="access_point">Hotspot</string>
     <string name="client">Client</string>
@@ -349,7 +349,7 @@
     <string name="send_facebook_token">Sending Facebook token to Waylens server</string>
     <string name="send_google_code">Sending Google authorize code to Waylens server</string>
     <string name="repost">Repost</string>
-    <string name="repost_success">Moment has been successfully repost to </string>
+    <string name="repost_success">Reposting your moment to %1$s, Please wait for a while</string>
     <string name="repost_failed">Repost failed</string>
     <string name="start_up_text_line1">"Establishing a connection between your phone and Waylens camera is very straightforward - simply have you phone join the camera's built-in Wi-Fi hotspot through System Settings"</string>
     <string name="start_up_text_option1">"Option 1(Recommanded): Start by scanning the QR code"</string>
@@ -357,9 +357,9 @@
     <string name="scan_qr_code">Scan the QR code</string>
     <string name="start_up_text_line3">"You will manually select the camera's hotspot and type in the password through system settings"</string>
     <string name="connect">connect</string>
-    <string name="wifi_status_open_wifi">Open wifi</string>
+    <string name="wifi_status_open_wifi">Open Wi-Fi</string>
     <string name="wifi_status_scan_wifi">Scanning</string>
-    <string name="wifi_status_wifi_openned">Wifi is openned</string>
+    <string name="wifi_status_wifi_openned">Wi-Fi is openned</string>
     <string name="wifi_status_disable_network">Disconnect from previous Wi-Fi</string>
     <string name="wifi_status_reconnect_to_network">Reconnecting to new Wi-Fi</string>
     <string name="wifi_status_connected">Already connected to camera Wi-Fi</string>
@@ -447,7 +447,7 @@
     <string name="delete_highlight">Delete highlights</string>
     <string name="enhance_leave">Leave enhance</string>
     <string name="upload_moment">Upload moment</string>
-    <string name="upload_in_ap">Since your camera is working in hotspots mode, we cannot upload moments directly to waylens cloud. We will cache moments in your phone. Once the phone is connected to wifi, it will automatically upload cached moments to waylens cloud. </string>
+    <string name="upload_in_ap">Since your camera is working in hotspots mode, we cannot upload moments directly to waylens cloud. We will cache moments in your phone. Once the phone is connected to Wi-Fi, it will automatically upload cached moments to waylens cloud. </string>
     <string name="detected_performance_test">Detected this is a performance test moment.</string>
     <string name="vehicle_information">Vehicle Information</string>
     <string name="vehicle_description">Vehicle Description</string>

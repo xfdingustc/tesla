@@ -160,7 +160,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
             holder.tagsViewAnimator.setDisplayedChild(1);
             holder.bestLapTime.setText(formatLapTime((int)momentAbstract.lapTimer.bestLapTime) + "s");
         } else {
-            holder.racingInfo.setVisibility(View.GONE);
+            holder.tagsViewAnimator.setVisibility(View.GONE);
         }
 
         holder.videoDuration.setText(DateUtils.formatElapsedTime(momentAbstract.duration / 1000l));

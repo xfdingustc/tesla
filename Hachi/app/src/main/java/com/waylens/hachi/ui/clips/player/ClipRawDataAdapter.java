@@ -23,7 +23,11 @@ public class ClipRawDataAdapter extends GaugeView.GaugeViewAdapter {
 
     public void setRawDataLoader(RawDataLoader loader) {
         this.mRawDataLoader = loader;
-        ClipSetPos clipSetPos = new ClipSetPos(0, mClipSet.getClip(0).editInfo.selectedStartValue);
+        long startMs = mClipSet.getClip(0).getStartTimeMs();
+        if (mClipSet.getClip(0).editInfo != null) {
+            startMs = mClipSet.getClip(0).editInfo.selectedStartValue;
+        }
+        ClipSetPos clipSetPos = new ClipSetPos(0, startMs);
         if (mRawDataLoader != null) {
             List<RawDataItem> rawDataItemList = mRawDataLoader.getRawDataItemList(clipSetPos);
             if (rawDataItemList != null && !rawDataItemList.isEmpty()) {
