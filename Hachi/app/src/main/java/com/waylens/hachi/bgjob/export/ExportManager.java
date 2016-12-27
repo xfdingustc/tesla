@@ -34,7 +34,6 @@ public class ExportManager {
                 }
             }
         }
-
         return mSharedManager;
     }
 

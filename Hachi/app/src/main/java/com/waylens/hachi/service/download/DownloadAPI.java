@@ -34,6 +34,7 @@ public class DownloadAPI {
         OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(interceptor)
             .retryOnConnectionFailure(true)
+            .readTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
             .build();
 

@@ -3,6 +3,9 @@ package com.waylens.hachi.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by Xiaofei on 2015/8/6.
  */
@@ -73,6 +76,14 @@ public class PreferenceUtils {
 
     public static boolean getBoolean(String key, boolean defValue) {
         return mShare.getBoolean(key, defValue);
+    }
+
+    public static Set<String> getStringSet(String key, Set<String> defValue) {
+        return mShare.getStringSet(key, defValue);
+    }
+
+    public static void putStringSet(String key, Set<String> value) {
+        mEditor.putStringSet(key, value);
     }
 
     public static int getInt(String key, int defValue) {

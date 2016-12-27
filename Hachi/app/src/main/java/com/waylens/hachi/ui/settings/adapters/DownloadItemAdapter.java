@@ -175,15 +175,14 @@ public class DownloadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                                     }
                                 });
                                 break;
-                            case R.id.upload:
-
+/*                            case R.id.upload:
                                 UploadTimelapseJob uploadTimelapseJob = new UploadTimelapseJob("time lapse", oneDownloadedFile.getAbsolutePath());
                                 Logger.t(TAG).d("file path = " + oneDownloadedFile.getAbsolutePath());
                                 StateJobHolder stateJobHolder = new StateJobHolder(uploadTimelapseJob.getId(), StateJobHolder.INITIAL_STATE, null, uploadTimelapseJob);
                                 PersistentQueue.getPersistentQueue().insert(stateJobHolder);
                                 CacheUploadMomentService.launch(mActivity);
                                 UploadingMomentActivity.launch(mActivity);
-                                break;
+                                break;*/
                         }
                         return true;
                     }

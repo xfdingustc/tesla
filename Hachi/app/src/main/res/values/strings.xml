@@ -563,4 +563,7 @@
     <string name="refresh_leaderboard_tip">Click again to refresh</string>
     <string name="lap">lap</string>
     <string name="download_clip_error">Error occur when downloading clips</string>
+    <string name="select_one_car">Select one from your cars</string>
+    <string name="or_a_new_car">Or a new car</string>
+    <string name="add_new_car">Add new car</string>
 </resources>

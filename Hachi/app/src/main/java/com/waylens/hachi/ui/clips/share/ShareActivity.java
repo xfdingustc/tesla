@@ -14,11 +14,14 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -35,14 +38,17 @@ import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
 import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
 import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
 import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
+import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
+import com.waylens.hachi.rest.bean.Vehicle;
 import com.waylens.hachi.rest.body.GeoInfo;
 import com.waylens.hachi.rest.body.LapInfo;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
 import com.waylens.hachi.rest.response.VinQueryResponse;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.snipe.reative.SnipeApi;
 import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.remix.AvrproClipInfo;
 import com.waylens.hachi.snipe.remix.AvrproLapData;
@@ -50,6 +56,7 @@ import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
 import com.waylens.hachi.snipe.utils.RaceTimeParseUtils;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.Clip;
+import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.rawdata.GpsData;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataBlock;
@@ -63,6 +70,7 @@ import com.waylens.hachi.ui.clips.player.PlaylistUrlProvider;
 import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.ui.settings.ShareSettingActivity;
 import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
@@ -72,14 +80,17 @@ import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -114,11 +125,7 @@ public class ShareActivity extends ClipPlayActivity {
 
     private int mRaceType;
 
-    public String mVehicleMaker = null;
-
-    public String mVehicleModel = null;
-
-    public int mVehicleYear;
+    private Vehicle mVehicle;
 
     private String mLocation;
 
@@ -148,12 +155,14 @@ public class ShareActivity extends ClipPlayActivity {
 
     private MaterialDialog mDownloadDialog;
 
+    private List<String> resolutionList = new ArrayList<>();
+
+    private List<String> sizeList = new ArrayList<>();
+
+    private MenuItem shareMenuItem;
 
     @BindView(R.id.race_layout)
     LinearLayout mRaceLayout;
-
-    @BindView(R.id.tv_vehicleInfo)
-    TextView mTvVehicleInfo;
 
     @BindView(R.id.vehicle_desc)
     TextInputEditText mVehicleDesc;
@@ -169,9 +178,6 @@ public class ShareActivity extends ClipPlayActivity {
 
     @BindView(R.id.moment_title)
     TextInputEditText mEtMomentTitle;
-
-//    @BindView(R.id.moment_description)
-//    TextInputEditText mEtMomentDescription;
 
     @BindView(R.id.user_email)
     TextView tvUserEmail;
@@ -203,12 +209,19 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.switch_upload_vehicle)
     Switch switchUploadVehicle;
 
+    @BindView(R.id.moment_size)
+    TextView tvMomentSize;
+
     @BindView(R.id.spinner_upload_resolution)
     Spinner spUploadResolution;
 
+    @BindView(R.id.ll_resolution)
+    LinearLayout llResolution;
+
     @OnClick(R.id.tv_vehicle_title)
     public void onVehicleTitleClicked() {
-        VehiclePickActivity.launch(this, REQUEST_PICKCAR);
+        //VehiclePickActivity.launch(this, REQUEST_PICKCAR);
+        ShareSettingActivity.launch(this, mVehicle, REQUEST_PICKCAR);
     }
 
     @OnClick(R.id.btn_facebook)
@@ -282,12 +295,13 @@ public class ShareActivity extends ClipPlayActivity {
         switch (requestCode) {
             case REQUEST_PICKCAR:
                 if (resultCode == Activity.RESULT_OK) {
-                    mVehicleMaker = data.getStringExtra(VehiclePickActivity.VEHICLE_MAKER);
-                    mVehicleModel = data.getStringExtra(VehiclePickActivity.VEHICLE_MODEL);
-                    mVehicleYear = data.getIntExtra(VehiclePickActivity.VEHICLE_YEAR, 0);
-                    tvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
-                    tvVehicleInfo.setVisibility(View.VISIBLE);
-                    switchUploadVehicle.setChecked(true);
+                    Vehicle vehicle = (Vehicle) data.getSerializableExtra(ShareSettingActivity.EXTRA_VEHICLE);
+                    if (vehicle != null) {
+                        mVehicle = vehicle;
+                        tvVehicleInfo.setText(mVehicle.maker + " " + mVehicle.model + " " + mVehicle.year);
+                        tvVehicleInfo.setVisibility(View.VISIBLE);
+                        switchUploadVehicle.setChecked(true);
+                    }
                 }
             default:
                 break;
@@ -309,10 +323,16 @@ public class ShareActivity extends ClipPlayActivity {
     private void initViews() {
         setContentView(R.layout.activity_share);
         setupToolbar();
+        switchUploadVehicle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                Logger.t(TAG).d("status" + b);
+                tvVehicleInfo.setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+            }
+        });
         mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, mPlayListId);
         mPlaylistEditor.reconstruct();
-
-
+        fetchDownloadInfo();
         SnipeApiRx.getRawDataBlockRx(getClipSet().getClip(0), RawDataItem.DATA_TYPE_GPS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -336,6 +356,7 @@ public class ShareActivity extends ClipPlayActivity {
                 }
             });
 
+
         embedVideoPlayFragment(false);
         setupSocialPolicy();
         mPlayerContainer.post(new Runnable() {
@@ -344,7 +365,6 @@ public class ShareActivity extends ClipPlayActivity {
                 setupParallex();
             }
         });
-
 
         SessionManager sessionManager = SessionManager.getInstance();
 
@@ -359,6 +379,8 @@ public class ShareActivity extends ClipPlayActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 mStreamId = position;
+                tvMomentSize.setText(sizeList.get(position));
+                shareMenuItem.setEnabled(true);
             }
 
             @Override
@@ -366,8 +388,51 @@ public class ShareActivity extends ClipPlayActivity {
                 mStreamId = 0;
             }
         });
+    }
 
-
+    private void fetchDownloadInfo() {
+        Observable.create(new Observable.OnSubscribe<ClipDownloadInfo>() {
+            @Override
+            public void call(Subscriber<? super ClipDownloadInfo> subscriber) {
+                try {
+                    Clip.ID cid = new Clip.ID(mPlayListId, 0, null);
+                    ClipDownloadInfo clipDownloadInfo = SnipeApi.getClipDownloadInfo(cid, 0, getClipSet().getTotalLengthMs());
+                    subscriber.onNext(clipDownloadInfo);
+                } catch (InterruptedException | ExecutionException e) {
+                        Logger.t(TAG).d("failed");
+                }
+            }
+        }).subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
+            @Override
+            public void onNext(ClipDownloadInfo clipDownloadInfo) {
+                ArrayList<Clip> clipList = getClipSet().getClipList();
+                //resolutionList.add(0, clipList.get(0).streams[1].video_height + "P");
+                resolutionList.add(0, 360 + "P");
+                Logger.t(TAG).d(clipList.get(0).streams[1].video_height + "P");
+                Logger.t(TAG).d(clipList.get(0).streams[0].video_height + "P");
+                sizeList.add(0, clipDownloadInfo.sub.size / (1000 * 1000) + " MB");
+                Short highResolution = clipList.get(0).streams[0].video_height;
+                for (int i = 1; i < clipList.size(); i++) {
+                    if (clipList.get(i).streams[0].video_height != highResolution) {
+                        highResolution = -1;
+                    }
+                    Logger.t(TAG).d("stream 0 " + clipList.get(i).streams[0].video_height);
+                }
+                if (highResolution > 0) {
+                    resolutionList.add(1, clipList.get(0).streams[0].video_height + "P");
+                    sizeList.add(clipDownloadInfo.main.size / (1000 * 1000) + " MB");
+                }
+                ArrayAdapter adapter = new ArrayAdapter<>(ShareActivity.this, android.R.layout.simple_spinner_item, resolutionList);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spUploadResolution.setAdapter(adapter);
+                llResolution.setVisibility(View.VISIBLE);
+                if (shareMenuItem != null) {
+                    shareMenuItem.setEnabled(true);
+                }
+            }
+        });
     }
 
     private void getClipInfo() {
@@ -428,10 +493,13 @@ public class ShareActivity extends ClipPlayActivity {
             .subscribe(new SimpleSubscribe<VinQueryResponse>() {
                 @Override
                 public void onNext(VinQueryResponse vinQueryResponse) {
-                    mVehicleMaker = vinQueryResponse.makerName;
-                    mVehicleModel = vinQueryResponse.modelName;
-                    mVehicleYear = vinQueryResponse.year;
-                    tvVehicleInfo.setText(mVehicleMaker + " " + mVehicleModel + " " + mVehicleYear);
+                    Vehicle vehicle = new Vehicle();
+                    vehicle.maker = vinQueryResponse.makerName;
+                    vehicle.model = vinQueryResponse.modelName;
+                    vehicle.year = vinQueryResponse.year;
+                    vehicle.modelYearID = vinQueryResponse.yearID;
+                    mVehicle = vehicle;
+                    tvVehicleInfo.setText(mVehicle.maker + " " + mVehicle.model + " " + mVehicle.year);
                     tvVehicleInfo.setVisibility(View.VISIBLE);
                     switchUploadVehicle.setChecked(true);
                     Logger.t(TAG).d("vin query response:" + vinQueryResponse.makerName + vinQueryResponse.modelName + vinQueryResponse.year);
@@ -541,7 +609,6 @@ public class ShareActivity extends ClipPlayActivity {
                 finish();
             }
         });
-
         getToolbar().inflateMenu(R.menu.menu_share);
         getToolbar().setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -554,6 +621,10 @@ public class ShareActivity extends ClipPlayActivity {
                 return true;
             }
         });
+        shareMenuItem = getToolbar().getMenu().getItem(0);
+        if (shareMenuItem != null) {
+            shareMenuItem.setEnabled(false);
+        }
     }
 
 
@@ -577,11 +648,9 @@ public class ShareActivity extends ClipPlayActivity {
                             outline.setRect(rect);
                         }
                     });
-
                 }
             });
         }
-
     }
 
     private void doShareMoment(boolean cache) {
@@ -639,11 +708,11 @@ public class ShareActivity extends ClipPlayActivity {
                 localMoment.momentType = "NORMAL_SINGLE";
             }
         }
-        if (switchUploadVehicle.isChecked()) {
+        if (switchUploadVehicle.isChecked() && mVehicle != null) {
             localMoment.withCarInfo = true;
-            localMoment.mVehicleMaker = mVehicleMaker;
-            localMoment.mVehicleModel = mVehicleModel;
-            localMoment.mVehicleYear = mVehicleYear;
+            localMoment.mVehicleMaker = mVehicle.maker;
+            localMoment.mVehicleModel = mVehicle.model;
+            localMoment.mVehicleYear = mVehicle.year;
             if (mVin != null) {
                 localMoment.vin = mVin.substring(0, 8) + mVin.substring(9, 11);
             }
@@ -726,8 +795,5 @@ public class ShareActivity extends ClipPlayActivity {
                 }
             })
             .show();
-
     }
-
-
 }

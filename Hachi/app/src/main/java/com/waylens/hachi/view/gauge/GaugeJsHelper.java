@@ -113,9 +113,10 @@ public class GaugeJsHelper {
                         if (!obdData.isIMP || (obdData.psi == 0)) {
                             state.put("psi", obdData.psi);
                         } else {
-                            state.put("psi", obdData.psi - mIioPressure / 3.386);
+                            state.put("psi", obdData.psi - mIioPressure / 3386000);
                         }
-                        Logger.t(TAG).d("boost:" + Double.toString(obdData.psi));
+                        Logger.t(TAG).d(Double.toString(obdData.psi));
+                        Logger.t(TAG).d(mIioPressure);
                         break;
                     case RawDataItem.DATA_TYPE_WEATHER:
                         //Logger.t(TAG).d("Weather data");

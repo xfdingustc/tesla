@@ -44,6 +44,7 @@ public class VehiclePickActivity extends BaseActivity {
     public static final String VEHICLE_MAKER = "vehicleMaker";
     public static final String VEHICLE_MODEL = "vehicleModel";
     public static final String VEHICLE_YEAR = "vehicleYear";
+    public static final String VEHICLE_MODEL_YEAR_ID = "vehicleModelYearId";
 
 
     private int mCurrentStep = STEP_MAKER;
@@ -204,7 +205,7 @@ public class VehiclePickActivity extends BaseActivity {
         mRvContentList.setAdapter(mYearAdapter);
     }
 
-    public void addVehicle(long modelYearID) {
+    public void addVehicle(final long modelYearID) {
         AddVehicleBody addVehicleBody = new AddVehicleBody();
         addVehicleBody.modelYearID = modelYearID;
         HachiService.createHachiApiService().addUserVehicle(addVehicleBody)
@@ -217,6 +218,7 @@ public class VehiclePickActivity extends BaseActivity {
                     intent.putExtra(VEHICLE_MAKER, vehicleMaker);
                     intent.putExtra(VEHICLE_MODEL, vehicleModel);
                     intent.putExtra(VEHICLE_YEAR, vehicleYear);
+                    intent.putExtra(VEHICLE_MODEL_YEAR_ID, modelYearID);
                     setResult(RESULT_OK, intent);
                     Logger.t(TAG).d("set result");
                     Logger.t(TAG).d(vehicleMaker + vehicleModel + vehicleYear);
@@ -229,6 +231,7 @@ public class VehiclePickActivity extends BaseActivity {
                     intent.putExtra(VEHICLE_MAKER, vehicleMaker);
                     intent.putExtra(VEHICLE_MODEL, vehicleModel);
                     intent.putExtra(VEHICLE_YEAR, vehicleYear);
+                    intent.putExtra(VEHICLE_MODEL_YEAR_ID, modelYearID);
                     setResult(RESULT_OK, intent);
                     Logger.t(TAG).d("set result");
                     Logger.t(TAG).d(vehicleMaker + vehicleModel + vehicleYear);

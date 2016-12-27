@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/list_item_bg"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/tv_car_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:text="Bentley Azure T 2010"
+        android:textColor="?attr/appTextColorPrimary"
+        android:textSize="16sp"/>
+
+    <ImageView
+        android:id="@+id/iv_checked"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_height="24dp"
+        android:layout_width="24dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_checked"
+        android:visibility="visible"
+        tools:visibility="invisible"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_height="1dp"
+        android:layout_alignParentStart="true"
+        android:background="?attr/separateColor" />
+</RelativeLayout>
+

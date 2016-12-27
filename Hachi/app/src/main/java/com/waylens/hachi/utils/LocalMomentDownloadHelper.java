@@ -48,7 +48,8 @@ public class LocalMomentDownloadHelper {
     private static final int VIDIT_RAW_DATA = 1;
 
     private static final int VIDIT_VIDEO_DATA_LOW = 64;
-    private static final int DEFAULT_DATA_TYPE_CAM = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
+    private static final int DEFAULT_DATA_TYPE_SD = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
+    private static final int DEFAULT_DATA_TYPE_FULLHD = VdbCommand.Factory.UPLOAD_GET_V0 | VdbCommand.Factory.UPLOAD_GET_RAW;
     private static final int DEFAULT_DATA_TYPE_CLOUD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
 
 
@@ -78,9 +79,6 @@ public class LocalMomentDownloadHelper {
         Logger.t(TAG).d("Play list info got, clip set size:  " + playlistClipSet.getCount());
 
 
-        // checkIfCancelled();
-
-
         // Step2: get upload url info:
         for (int i = 0; i < playlistClipSet.getCount(); i++) {
             Logger.t(TAG).d("Try to get upload url, index: " + i);
@@ -91,7 +89,11 @@ public class LocalMomentDownloadHelper {
             parameters.putBoolean(ClipUploadUrlRequest.PARAM_IS_PLAY_LIST, false);
             parameters.putLong(ClipUploadUrlRequest.PARAM_CLIP_TIME_MS, clip.getStartTimeMs());
             parameters.putInt(ClipUploadUrlRequest.PARAM_CLIP_LENGTH_MS, clip.getDurationMs());
-            parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_CAM);
+            if (localMoment.streamId == 0) {
+                parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_SD);
+            } else {
+                parameters.putInt(ClipUploadUrlRequest.PARAM_UPLOAD_OPT, DEFAULT_DATA_TYPE_FULLHD);
+            }
             ClipUploadUrlRequest uploadUrlRequest = new ClipUploadUrlRequest(clip.cid, parameters, uploadUrlRequestFuture, uploadUrlRequestFuture);
             requestQueue.add(uploadUrlRequest);
 
@@ -145,12 +147,12 @@ public class LocalMomentDownloadHelper {
         DownloadProgressListener listener = new DownloadProgressListener() {
             @Override
             public void update(long bytesRead, long contentLength, boolean done) {
-                Downloadable downloadable = new Downloadable();
+/*                Downloadable downloadable = new Downloadable();
                 downloadable.setTotalFileSize(contentLength);
                 downloadable.setCurrentFileSize(bytesRead);
-                int progress = (int) ((bytesRead * 100) / contentLength);
-                downloadable.setProgress(progress);
+                downloadable.setProgress(progress);*/
 
+                int progress = (int) ((bytesRead * 100) / contentLength);
                 int percentageInThisClip = progress / totalSegments;
                 int percentage = index * 100 / totalSegments + percentageInThisClip;
                 subscriber.onNext(new DownloadLocalMomentStatus(DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS, percentage));

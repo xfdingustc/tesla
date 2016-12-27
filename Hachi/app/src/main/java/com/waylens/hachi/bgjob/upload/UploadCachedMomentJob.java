@@ -200,7 +200,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
             File file = new File(mLocalMoment.thumbnailPath);
             file.delete();
             EventBus.getDefault().post(new UploadEvent(UploadEvent.UPLOAD_JOB_REMOVED, this));
-            fireNotification(getApplicationContext().getString(R.string.upload_success));
+            //fireNotification(getApplicationContext().getString(R.string.upload_success));
             Toast.makeText(Hachi.getContext(), R.string.upload_success, Toast.LENGTH_LONG).show();
         } else {
             fireNotification(getApplicationContext().getString(R.string.upload_failed));

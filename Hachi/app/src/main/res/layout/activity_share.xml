@@ -170,7 +170,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|end"
-                    android:layout_marginRight="16dp"
+                    android:layout_marginEnd="16dp"
                     android:paddingLeft="16dp"
                     android:checked="false"/>
 
@@ -181,28 +181,51 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="?attr/separateColor"/>
-            
-            
-            <TextView
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:id="@+id/ll_resolution"
                 android:layout_height="wrap_content"
-                android:text="@string/resolution"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"/>
-
-            <Spinner
-                android:id="@+id/spinner_upload_resolution"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:entries="@array/upload_resolution_list"></Spinner>
+                android:visibility="gone"
+                android:orientation="vertical">
+            
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/resolution"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"/>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/separateColor"/>
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinner_upload_resolution"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="16dp" />
+
+                    <TextView
+                        android:id="@+id/moment_size"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        tools:text="400 MB"/>
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/separateColor"/>
+
+            </LinearLayout>
 
 
             <android.support.design.widget.TextInputLayout

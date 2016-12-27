@@ -28,13 +28,12 @@ android {
 //            ldLibs "log"
 //            abiFilters "armeabi", "armeabi-v7a"
 //        }
-//        ndk {
-//            设置支持的SO库架构
-//            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
-//        }
+        ndk {
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
         externalNativeBuild {
             cmake {
-                abiFilters 'armeabi', 'armeabi-v7a'
+                abiFilters 'armeabi'
                 cppFlags ""
                 arguments '-DANDROID_PLATFORM=android-13',
                         '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'

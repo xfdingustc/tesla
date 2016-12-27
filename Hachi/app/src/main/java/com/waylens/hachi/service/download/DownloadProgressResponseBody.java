@@ -1,7 +1,8 @@
 package com.waylens.hachi.service.download;
 
-import java.io.IOException;
+import com.orhanobut.logger.Logger;
 
+import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import okio.Buffer;
@@ -48,15 +49,17 @@ public class DownloadProgressResponseBody extends ResponseBody {
         return new ForwardingSource(source) {
 
             long totalBytesRead = 0L;
+            double percentage = 0.0;
 
             @Override
             public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
 
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
-
-                if (mProgressListener != null) {
+                double newPercentage = (double)totalBytesRead / mResponseBody.contentLength();
+                if (mProgressListener != null && (newPercentage - percentage) > 0.01) {
                     mProgressListener.update(totalBytesRead, mResponseBody.contentLength(), bytesRead == -1);
+                    percentage = newPercentage;
                 }
 
                 return bytesRead;

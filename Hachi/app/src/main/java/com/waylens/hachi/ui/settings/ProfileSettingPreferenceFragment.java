@@ -127,6 +127,7 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
     @Override
     public void onResume() {
         super.onResume();
+        renderVehicle(mSessionManager.getVehicles());
         updateVehicle();
     }
 
@@ -139,7 +140,6 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
         mRegion = findPreference("region");
         mVehicle = (PreferenceCategory) findPreference("vehicle");
         mAddCar = findPreference("add_car");
-
 
         setupSocialMedia();
 
@@ -413,22 +413,27 @@ public class ProfileSettingPreferenceFragment extends PreferenceFragment {
 
     private void updateVehicle() {
         Logger.t(TAG).d("update Vehicle!");
+
         HachiService.createHachiApiService().getUserVehicleListRx(SessionManager.getInstance().getUserId())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SimpleSubscribe<VehicleListResponse>() {
                 @Override
                 public void onNext(VehicleListResponse vehicleListResponse) {
-                    renderVehicle(vehicleListResponse);
+                    List<Vehicle> localVehicles = mSessionManager.getVehicles();
+                    if (localVehicles.size() != vehicleListResponse.vehicles.size() || !localVehicles.containsAll(vehicleListResponse.vehicles)) {
+                        mSessionManager.updateVehicles(vehicleListResponse.vehicles);
+                        renderVehicle(vehicleListResponse.vehicles);
+                    }
                 }
             });
     }
 
-    public void renderVehicle(VehicleListResponse response) {
+    public void renderVehicle(List<Vehicle> vehicles) {
         Logger.t(TAG).d("render vehicle");
         mVehicleList.clear();
-        for (int i = 0; i < response.vehicles.size(); i++) {
-            Vehicle oneVehicle = response.vehicles.get(i);
+        for (int i = 0; i < vehicles.size(); i++) {
+            Vehicle oneVehicle = vehicles.get(i);
             Logger.t(TAG).d("add one vehicle: " + oneVehicle.toString());
             Preference oneCar = new Preference(this.getActivity());
             oneCar.setKey(String.valueOf(oneVehicle.modelYearID));

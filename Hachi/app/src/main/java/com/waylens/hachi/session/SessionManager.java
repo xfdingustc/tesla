@@ -8,12 +8,15 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.app.JsonKey;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.User;
+import com.waylens.hachi.rest.bean.Vehicle;
 import com.waylens.hachi.rest.body.SocialProvider;
 import com.waylens.hachi.rest.response.AuthorizeResponse;
 import com.waylens.hachi.rest.response.LinkedAccounts;
@@ -22,11 +25,10 @@ import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.ui.authorization.VerifyEmailActivity;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
-
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.ArrayList;
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,7 +54,6 @@ public class SessionManager {
     private SessionManager() {
 
     }
-
 
     public void reloadVerifyInfo() {
         IHachiApi hachiApi = HachiService.createHachiApiService();
@@ -153,12 +154,41 @@ public class SessionManager {
         return PreferenceUtils.getString(PreferenceUtils.BIRTHDAY, null);
     }
 
-    public void setVehicle(String vehicle) {
-        PreferenceUtils.putString(PreferenceUtils.VEHICLE, vehicle);
+    public void addVehicle(Vehicle vehicle) {
+        String vehiclesJson = PreferenceUtils.getString(PreferenceUtils.VEHICLE, new String());
+        Gson gson = new Gson();
+        List<Vehicle> vehicles = gson.fromJson(vehiclesJson, new TypeToken<List<Vehicle>>() {}.getType());
+        if (!vehicles.contains(vehicle)) {
+            vehicles.add(vehicle);
+        }
+        String newVehicleJson = gson.toJson(vehicles);
+        PreferenceUtils.putString(PreferenceUtils.VEHICLE, newVehicleJson);
     }
 
-    public String getVehicle() {
-        return PreferenceUtils.getString(PreferenceUtils.VEHICLE, null);
+    public void deleteVehicle(Vehicle vehicle) {
+        String vehiclesJson = PreferenceUtils.getString(PreferenceUtils.VEHICLE, new String());
+        Gson gson = new Gson();
+        List<Vehicle> vehicles = gson.fromJson(vehiclesJson, new TypeToken<List<Vehicle>>() {}.getType());
+        if (vehicles.contains(vehicle)) {
+            vehicles.remove(vehicle);
+            String newVehicleJson = gson.toJson(vehicles);
+            PreferenceUtils.putString(PreferenceUtils.VEHICLE, newVehicleJson);
+        }
+    }
+
+    public void updateVehicles(List<Vehicle> vehicles) {
+        Gson gson = new Gson();
+        String newVehicleJson = gson.toJson(vehicles);
+        Logger.t(TAG).d("Vehicle Json" + newVehicleJson);
+        PreferenceUtils.putString(PreferenceUtils.VEHICLE, newVehicleJson);
+    }
+
+    public List<Vehicle> getVehicles() {
+        String vehiclesJson = PreferenceUtils.getString(PreferenceUtils.VEHICLE, new String());
+        Logger.t(TAG).d("Vehicle Json" + vehiclesJson);
+        Gson gson = new Gson();
+        List<Vehicle> vehicles =  gson.fromJson(vehiclesJson, new TypeToken<List<Vehicle>>() {}.getType());
+        return vehicles != null ? vehicles : new ArrayList<Vehicle>();
     }
 
     public boolean isLoggedIn() {
