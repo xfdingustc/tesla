@@ -14,16 +14,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
-import com.waylens.hachi.bgjob.upload.CacheMomentJob;
-import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.export.statejobqueue.UploadMomentJob;
 import com.waylens.hachi.bgjob.upload.event.UploadMomentEvent;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,13 +89,13 @@ public class UploadingItemAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         if (!TextUtils.isEmpty(uploadable.getThumbnail())) {
             Glide.with(mActivity)
-                    .load(uploadable.getThumbnail())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .dontAnimate()
-                    .placeholder(videoItemViewHolder.videoCover.getDrawable())
-                    .into(videoItemViewHolder.videoCover);
+                .load(uploadable.getThumbnail())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
+                .placeholder(videoItemViewHolder.videoCover.getDrawable())
+                .into(videoItemViewHolder.videoCover);
         }
-        if (uploadable.getState() == CacheMomentJob.UPLOAD_STATE_FINISHED) {
+        if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
             videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
         } else {
@@ -118,7 +116,7 @@ public class UploadingItemAdapter extends RecyclerView.Adapter<RecyclerView.View
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
-                if (uploadable.getState() == CacheMomentJob.UPLOAD_STATE_FINISHED) {
+                if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
                     popupMenu.getMenu().removeItem(R.id.cancel);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

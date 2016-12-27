@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 
@@ -69,7 +68,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .placeholder(videoItemViewHolder.videoCover.getDrawable())
                 .into(videoItemViewHolder.videoCover);
         }
-        if (uploadable.getState() == CacheMomentJob.UPLOAD_STATE_FINISHED) {
+        if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
             videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
         } else {
@@ -90,7 +89,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
-                if (uploadable.getState() == CacheMomentJob.UPLOAD_STATE_FINISHED) {
+                if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
                     popupMenu.getMenu().removeItem(R.id.cancel);
                 }
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

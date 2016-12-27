@@ -117,7 +117,7 @@ public class PictureUploadJob extends UploadMomentJob {
                 public void update(long bytesWritten, long contentLength, boolean done) {
                     int progress = (int) ((bytesWritten * 100) / contentLength);
 
-                    setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, progress);
+                    setUploadState(UploadMomentJob.UPLOAD_STATE_PROGRESS, progress);
                 }
             });
 

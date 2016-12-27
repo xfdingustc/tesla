@@ -6,9 +6,6 @@ import android.os.Bundle;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
-import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.bgjob.upload.CacheMomentJob;
-import com.waylens.hachi.bgjob.upload.MomentUploadCacher;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.service.download.DownloadAPI;
 import com.waylens.hachi.service.download.DownloadProgressListener;
@@ -35,10 +32,6 @@ import java.util.concurrent.ExecutionException;
 import rx.Observable;
 import rx.Subscriber;
 
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_GET_VIDEO_COVER;
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_GET_VIDEO_URL;
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_STORE_VIDEO_COVER;
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS;
 
 /**
  * Created by Xiaofei on 2016/12/22.
@@ -46,6 +39,11 @@ import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMom
 
 public class LocalMomentDownloadHelper {
     private static final String TAG = LocalMomentDownloadHelper.class.getSimpleName();
+
+    public static final int DOWNLOAD_STATUS_GET_VIDEO_URL = 0;
+    public static final int DOWNLOAD_STATUS_GET_VIDEO_COVER = 1;
+    public static final int DOWNLOAD_STATUS_STORE_VIDEO_COVER = 2;
+    public static final int DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS = 3;
 
     private static final int VIDIT_RAW_DATA = 1;
 
@@ -181,10 +179,7 @@ public class LocalMomentDownloadHelper {
 
     public static class DownloadLocalMomentStatus {
 
-        public static final int DOWNLOAD_STATUS_GET_VIDEO_URL = 0;
-        public static final int DOWNLOAD_STATUS_GET_VIDEO_COVER = 1;
-        public static final int DOWNLOAD_STATUS_STORE_VIDEO_COVER = 2;
-        public static final int DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS = 3;
+
 
         public int status;
         public int progress;

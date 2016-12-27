@@ -562,4 +562,5 @@
     <string name="export">Export</string>
     <string name="refresh_leaderboard_tip">Click again to refresh</string>
     <string name="lap">lap</string>
+    <string name="download_clip_error">Error occur when downloading clips</string>
 </resources>

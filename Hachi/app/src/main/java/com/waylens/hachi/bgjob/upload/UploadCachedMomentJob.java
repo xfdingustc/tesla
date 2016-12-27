@@ -270,7 +270,7 @@ public class UploadCachedMomentJob extends UploadMomentJob {
 
         int percentageInThisClip = progress / totalSegment;
         int percentage = index * 100 / totalSegment + percentageInThisClip;
-        setUploadState(CacheMomentJob.UPLOAD_STATE_PROGRESS, percentage);
+        setUploadState(UploadMomentJob.UPLOAD_STATE_PROGRESS, percentage);
     }
 
     private void fireNotification(String msg) {

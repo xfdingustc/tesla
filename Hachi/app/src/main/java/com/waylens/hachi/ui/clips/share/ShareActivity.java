@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -73,10 +74,11 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_GET_VIDEO_COVER;
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_GET_VIDEO_URL;
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_STORE_VIDEO_COVER;
-import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DownloadLocalMomentStatus.DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DOWNLOAD_STATUS_GET_VIDEO_COVER;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DOWNLOAD_STATUS_GET_VIDEO_URL;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DOWNLOAD_STATUS_STORE_VIDEO_COVER;
+import static com.waylens.hachi.utils.LocalMomentDownloadHelper.DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS;
+
 
 /**
  * Created by Xiaofei on 2016/6/16.
@@ -619,19 +621,27 @@ public class ShareActivity extends ClipPlayActivity {
 
                 @Override
                 public void onError(Throwable e) {
+                    if (mDownloadDialog != null && mDownloadDialog.isShowing()) {
+                        mDownloadDialog.dismiss();
+                    }
 
+                    Snackbar.make(mRootScrollView, R.string.download_clip_error, Snackbar.LENGTH_LONG).show();
                 }
 
                 @Override
                 public void onNext(LocalMomentDownloadHelper.DownloadLocalMomentStatus downloadLocalMomentStatus) {
                     switch (downloadLocalMomentStatus.status) {
                         case DOWNLOAD_STATUS_GET_VIDEO_URL:
+                            mDownloadDialog.setTitle(R.string.upload_get_url_info);
                             break;
                         case DOWNLOAD_STATUS_GET_VIDEO_COVER:
+                            mDownloadDialog.setTitle(R.string.upload_get_video_cover);
                             break;
                         case DOWNLOAD_STATUS_STORE_VIDEO_COVER:
+                            mDownloadDialog.setTitle(R.string.upload_store_video_cover);
                             break;
                         case DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS:
+                            mDownloadDialog.setTitle(R.string.cache_start);
                             mDownloadDialog.setProgress(downloadLocalMomentStatus.progress);
                             break;
                     }

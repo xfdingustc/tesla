@@ -9,7 +9,6 @@ import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
-import com.waylens.hachi.bgjob.upload.CacheMomentJob;
 import com.waylens.hachi.bgjob.upload.PictureUploadJob;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
 import com.waylens.hachi.bgjob.upload.UploadCachedMomentJob;
@@ -78,11 +77,6 @@ public class BgJobHelper {
 
     }
 
-    public static void uploadMoment(LocalMoment moment) {
-        JobManager jobManager = BgJobManager.getManager();
-        CacheMomentJob uploadMomentJob = new CacheMomentJob(moment);
-        jobManager.addJobInBackground(uploadMomentJob);
-    }
 
     public static void uploadCachedMoment(LocalMoment moment) {
         JobManager jobManager = BgJobManager.getManager();
