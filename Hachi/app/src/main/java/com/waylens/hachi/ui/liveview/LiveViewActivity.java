@@ -39,6 +39,7 @@ import com.waylens.hachi.camera.VdtCamera;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.camera.events.CameraConnectionEvent;
 import com.waylens.hachi.camera.events.CameraStateChangeEvent;
+import com.waylens.hachi.camera.events.LineListEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.camera.events.RectListEvent;
 import com.waylens.hachi.rest.bean.Firmware;
@@ -327,6 +328,11 @@ public class LiveViewActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventRectList(RectListEvent event) {
         rectListView.showRects(event.rectList, event.sourceRect);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventLineList(LineListEvent event) {
+        rectListView.showLines(event.lineList, event.sourceRect);
     }
 
 

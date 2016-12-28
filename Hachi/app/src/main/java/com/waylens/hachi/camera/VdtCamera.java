@@ -2,12 +2,14 @@ package com.waylens.hachi.camera;
 
 
 import android.graphics.Rect;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.camera.entities.NetworkItemBean;
 import com.waylens.hachi.camera.events.BluetoothEvent;
 import com.waylens.hachi.camera.events.CameraStateChangeEvent;
+import com.waylens.hachi.camera.events.LineListEvent;
 import com.waylens.hachi.camera.events.MarkLiveMsgEvent;
 import com.waylens.hachi.camera.events.NetworkEvent;
 import com.waylens.hachi.camera.events.RectListEvent;
@@ -27,6 +29,7 @@ import com.waylens.hachi.snipe.utils.ToStringUtils;
 import com.waylens.hachi.snipe.vdb.ClipActionInfo;
 import com.waylens.hachi.snipe.vdb.VdbReadyInfo;
 import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
+import com.waylens.hachi.ui.views.RectListView;
 import com.waylens.hachi.utils.rxjava.RxBus;
 
 
@@ -1622,21 +1625,65 @@ public class VdtCamera implements VdtCameraCmdConsts {
         Logger.t(TAG).d("handleAckRecognitionResult p1=" + p1 + ", p2=" + p2);
         try {
             JSONObject root = new JSONObject(p1);
-            JSONArray array = root.getJSONArray("results");
-            List<Rect> rectList = new ArrayList<>();
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject oneRect = array.getJSONObject(i);
-                Rect rect = new Rect();
-                rect.left = oneRect.getInt("left");
-                rect.top = oneRect.getInt("top");
-                rect.right = oneRect.getInt("right");
-                rect.bottom = oneRect.getInt("bottom");
-                rectList.add(rect);
+            String type = root.optString("TYPE");
+            if (!TextUtils.isEmpty(type) && type.equals("LANE")) {
+                JSONArray array = root.getJSONArray("results");
+                List<RectListView.Line> lineList = new ArrayList<>();
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject oneLine = array.getJSONObject(i);
+                    RectListView.Line line = new RectListView.Line();
+                    line.startX = oneLine.getInt("x0");
+                    line.startY = oneLine.getInt("y0");
+                    line.stopX = oneLine.getInt("x1");
+                    line.stopY = oneLine.getInt("y1");
+
+                    float dx = line.stopX - line.startX;
+                    float dy = line.stopY - line.startY;
+                    double angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+                    if (Math.abs(angle) < 10) {
+                        continue;
+                    }
+
+
+                    float midX = (line.startX + line.stopX) / 2;
+                    if (midX < 320) {
+                        if (angle < 0 && angle > -80) {
+                            lineList.add(line);
+                        }
+                    } else {
+                        if (angle > 0 && angle < 80) {
+                            lineList.add(line);
+                        }
+                    }
+
+
+
+
+
+                }
+
+                Rect sourceRect = new Rect(0, 0, root.getInt("width"), root.getInt("height"));
+                mEventBus.post(new LineListEvent(lineList, sourceRect));
+            } else {
+                JSONArray array = root.getJSONArray("results");
+                List<Rect> rectList = new ArrayList<>();
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject oneRect = array.getJSONObject(i);
+                    Rect rect = new Rect();
+                    rect.left = oneRect.getInt("left");
+                    rect.top = oneRect.getInt("top");
+                    rect.right = oneRect.getInt("right");
+                    rect.bottom = oneRect.getInt("bottom");
+                    rectList.add(rect);
+                }
+                Rect sourceRect = new Rect(0, 0, root.getInt("width"), root.getInt("height"));
+                mEventBus.post(new RectListEvent(rectList, sourceRect));
             }
 
 
-            Rect sourceRect = new Rect(0, 0, root.getInt("width"), root.getInt("height"));
-            mEventBus.post(new RectListEvent(rectList, sourceRect));
+
+
 
 
 
