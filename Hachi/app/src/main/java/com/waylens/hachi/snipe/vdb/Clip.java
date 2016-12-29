@@ -215,7 +215,7 @@ public class Clip implements Parcelable, Serializable {
     public EditInfo editInfo;
 
     public Clip(Clip clip) {
-        this(clip.cid.type, clip.cid.subType, clip.cid.extra, clip.mClipDate, clip.mStartTimeMs, clip.mDurationMs);
+        this(clip.cid.type, clip.cid.subType, clip.cid.extra, clip.streams.length, clip.mClipDate, clip.mStartTimeMs, clip.mDurationMs, clip.streams);
     }
 
 
@@ -229,13 +229,32 @@ public class Clip implements Parcelable, Serializable {
         for (int i = 0; i < numStreams; i++) {
             streams[i] = new StreamInfo();
         }
-
         this.mClipDate = clipDate;
         this.mStartTimeMs = statTimeMs;
         this.mDurationMs = duration;
         this.editInfo = new EditInfo();
     }
 
+    public Clip(int type, int subType, String extra, int numStreams, int clipDate, long statTimeMs, int duration, Clip.StreamInfo[] streamInfo) {
+        this.cid = new ID(type, subType, extra);
+        streams = new StreamInfo[numStreams];
+        for (int i = 0; i < numStreams; i++) {
+            streams[i] = new StreamInfo();
+            streams[i].version = streamInfo[i].version;
+            streams[i].video_coding = streamInfo[i].video_coding;
+            streams[i].video_framerate = streamInfo[i].video_framerate;
+            streams[i].video_width = streamInfo[i].video_width;
+            streams[i].video_height = streamInfo[i].video_height;
+            streams[i].audio_coding = streamInfo[i].audio_coding;
+            streams[i].audio_num_channels = streamInfo[i].audio_num_channels;
+            streams[i].audio_sampling_freq = streamInfo[i].audio_sampling_freq;
+        }
+
+        this.mClipDate = clipDate;
+        this.mStartTimeMs = statTimeMs;
+        this.mDurationMs = duration;
+        this.editInfo = new EditInfo();
+    }
 
     public int getDurationMs() {
         return mDurationMs;

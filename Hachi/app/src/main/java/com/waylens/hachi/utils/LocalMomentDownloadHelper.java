@@ -21,6 +21,7 @@ import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.snipe.vdb.ClipSet;
 import com.waylens.hachi.snipe.vdb.urls.UploadUrl;
 import com.waylens.hachi.ui.entities.LocalMoment;
+import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,11 +47,19 @@ public class LocalMomentDownloadHelper {
     public static final int DOWNLOAD_STATUS_UPLOAD_UPLOAD_PROGRESS = 3;
 
     private static final int VIDIT_RAW_DATA = 1;
-
+    private static final int VIDIT_VIDEO_DATA_HIGH = 2;
+    private static final int VIDIT_PICTURE_DATA = 4;
+    private static final int VIDIT_RAW_GPS = 8;
+    private static final int VIDIT_RAW_OBD = 16;
+    private static final int VIDIT_RAW_ACC = 32;
     private static final int VIDIT_VIDEO_DATA_LOW = 64;
+    private static final int VIDIT_VIDEO_DATA_TRANSFER = 128;
+    private static final int VIDIT_THUMBNAIL_JPG = 256;
+
     private static final int DEFAULT_DATA_TYPE_SD = VdbCommand.Factory.UPLOAD_GET_V1 | VdbCommand.Factory.UPLOAD_GET_RAW;
     private static final int DEFAULT_DATA_TYPE_FULLHD = VdbCommand.Factory.UPLOAD_GET_V0 | VdbCommand.Factory.UPLOAD_GET_RAW;
-    private static final int DEFAULT_DATA_TYPE_CLOUD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
+    private static final int DEFAULT_DATA_TYPE_CLOUD_SD = VIDIT_VIDEO_DATA_LOW | VIDIT_RAW_DATA;
+    private static final int DEFAULT_DATA_TYPE_CLOUD_FULLHD = VIDIT_VIDEO_DATA_HIGH | VIDIT_RAW_DATA;
 
 
     public static Observable<DownloadLocalMomentStatus> downloadLocalMomentRx(final LocalMoment localMoment) {
@@ -80,6 +89,9 @@ public class LocalMomentDownloadHelper {
 
 
         // Step2: get upload url info:
+        String gpsGauge = GaugeSettingManager.getManager().getGaugeSettingMap().get("showGps");
+        boolean uploadGps = (gpsGauge != null && gpsGauge.length() != 0) ;
+        Logger.t(TAG).d("uploadGps = " + uploadGps);
         for (int i = 0; i < playlistClipSet.getCount(); i++) {
             Logger.t(TAG).d("Try to get upload url, index: " + i);
             VdbRequestFuture<UploadUrl> uploadUrlRequestFuture = VdbRequestFuture.newFuture();
@@ -99,7 +111,8 @@ public class LocalMomentDownloadHelper {
 
             UploadUrl uploadUrl = uploadUrlRequestFuture.get();
             Logger.t(TAG).d("Got clip upload url: " + uploadUrl.url);
-            LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, DEFAULT_DATA_TYPE_CLOUD);
+            int dataType = (localMoment.streamId == 0 ? VIDIT_VIDEO_DATA_LOW :VIDIT_VIDEO_DATA_HIGH) | (uploadGps ? VIDIT_RAW_DATA : (VIDIT_RAW_ACC | VIDIT_RAW_OBD));
+            LocalMoment.Segment segment = new LocalMoment.Segment(clip, uploadUrl, dataType);
             localMoment.mSegments.add(segment);
             //checkIfCancelled();
         }
