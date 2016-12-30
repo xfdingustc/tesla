@@ -30,35 +30,13 @@
         android:alpha="0.8"
         android:orientation="horizontal">
 
-        <FrameLayout
-            android:id="@+id/car_info"
+
+
+        <com.waylens.hachi.ui.views.CarTagView
+            android:id="@+id/car_tag_view"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:background="@drawable/race_info_bg">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/chip_icon"
-                android:padding="2dp"
-                android:src="@drawable/ic_race_car"/>
-
-            <TextView
-                android:id="@+id/car_model"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:ellipsize="end"
-                android:maxEms="15"
-                android:maxLines="1"
-                android:paddingLeft="32dp"
-                android:paddingRight="8dp"
-                android:textColor="?attr/tagTextColor"
-                android:textSize="12sp"
-                tools:text="Mercedes-Benz SLS AMG GT Final Edition 2015"/>
-
-        </FrameLayout>
+            android:layout_height="24dp"
+            android:layout_marginLeft="8dp"></com.waylens.hachi.ui.views.CarTagView>
 
         <LinearLayout
             android:layout_width="match_parent"

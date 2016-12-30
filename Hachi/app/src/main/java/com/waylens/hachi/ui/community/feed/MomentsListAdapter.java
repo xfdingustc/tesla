@@ -35,6 +35,7 @@ import com.waylens.hachi.ui.entities.MomentPicture;
 import com.waylens.hachi.ui.entities.moment.MomentAbstract;
 import com.waylens.hachi.ui.entities.moment.MomentEx;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.ui.views.CarTagView;
 import com.waylens.hachi.utils.DebugHelper;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
@@ -143,10 +144,13 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
 
         if (momentAbstract.momentVehicleInfo != null && !TextUtils.isEmpty(momentAbstract.momentVehicleInfo.vehicleModel)) {
             VehicleInfo vehicleInfo = momentAbstract.momentVehicleInfo;
-            holder.carInfo.setVisibility(View.VISIBLE);
-            holder.carModel.setText(vehicleInfo.toString());
+            //holder.carInfo.setVisibility(View.VISIBLE);
+            holder.carTagView.setVisibility(View.VISIBLE);
+            holder.carTagView.load(vehicleInfo);
+            //holder.carModel.setText(vehicleInfo.toString());
         } else {
-            holder.carInfo.setVisibility(View.GONE);
+            //holder.carInfo.setVisibility(View.GONE);
+            holder.carTagView.setVisibility(View.GONE);
         }
 
         if (momentAbstract.isRacingMoment()) {
@@ -318,6 +322,9 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
         @BindView(R.id.title)
         TextView title;
 
+        @BindView(R.id.car_tag_view)
+        CarTagView carTagView;
+
         @BindView(R.id.va_tags)
         ViewAnimator tagsViewAnimator;
 
@@ -336,11 +343,11 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
         @BindView(R.id.user_name)
         TextView userName;
 
-        @BindView(R.id.car_info)
-        View carInfo;
-
-        @BindView(R.id.car_model)
-        TextView carModel;
+//        @BindView(R.id.car_info)
+//        View carInfo;
+//
+//        @BindView(R.id.car_model)
+//        TextView carModel;
 
         @BindView(R.id.racing_info)
         View racingInfo;

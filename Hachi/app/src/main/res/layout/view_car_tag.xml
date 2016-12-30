@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="24dp"
+    tools:layout_margin="32dp">
+
+    <ImageView
+        android:id="@+id/car_mark"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/chip_icon"
+        android:padding="2dp"
+        tools:src="@drawable/ic_dodge"
+        />
+
+    <TextView
+        android:id="@+id/car_model"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:ellipsize="end"
+        android:maxEms="16"
+        android:maxLines="1"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+
+        android:textColor="?attr/tagTextColor"
+        android:textSize="12sp"
+
+        tools:text="SLS AMG GT Final Edition 2015"/>
+
+</merge>
