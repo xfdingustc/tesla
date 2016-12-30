@@ -566,4 +566,7 @@
     <string name="select_one_car">Select one from your cars</string>
     <string name="or_a_new_car">Or a new car</string>
     <string name="add_new_car">Add new car</string>
+    <string name="error_msg_unable_to_upload_file">Unable to upload file</string>
+    <string name="error_msg_network_not_reachable">Signal strength low or no connectivity. Please try again when network coverage is better.</string>
+    <string name="error_msg_storage_full"/>
 </resources>

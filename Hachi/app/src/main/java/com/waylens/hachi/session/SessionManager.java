@@ -109,7 +109,7 @@ public class SessionManager {
     }
 
     public String getUserId() {
-        return PreferenceUtils.getString(PreferenceUtils.USER_ID, null);
+        return PreferenceUtils.getString(PreferenceUtils.USER_ID, PreferenceUtils.ANONYMOUS);
     }
 
     public void setToken(String token) {

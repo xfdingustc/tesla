@@ -15,7 +15,7 @@ import retrofit2.http.Query;
 /**
  * Created by Xiaofei on 2016/9/7.
  */
-public interface UploadService {
+public interface IUploadService {
     @PUT("/v.1.0/upload_videos/{userId}/android")
     Call<InitUploadResponse> initUpload(@Path("userId") String userId,
                                         @Query("upload_phase") String uploadPhase,

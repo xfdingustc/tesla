@@ -14,9 +14,10 @@ import java.util.List;
 /**
  * Created by Xiaofei on 2016/7/13.
  */
-public class UploadManager {
-    private static final String TAG = UploadManager.class.getSimpleName();
-    private static UploadManager mSharedUploadManager = new UploadManager();
+@Deprecated
+public class UploadManager2 {
+    private static final String TAG = UploadManager2.class.getSimpleName();
+    private static UploadManager2 mSharedUploadManager2 = new UploadManager2();
     private final List<UploadMomentJob> mUploadables;
 
     private EventBus mEventBus = EventBus.getDefault();
@@ -40,14 +41,14 @@ public class UploadManager {
         }
     }
 
-    private UploadManager() {
+    private UploadManager2() {
         this.mUploadables = new ArrayList<>();
         mListenerList = new ArrayList<>();
         mEventBus.register(this);
     }
 
-    public static UploadManager getManager() {
-        return mSharedUploadManager;
+    public static UploadManager2 getManager() {
+        return mSharedUploadManager2;
     }
 
     public void addOnUploadJobStateChangedListener(OnUploadJobStateChangeListener listener) {

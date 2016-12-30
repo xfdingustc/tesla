@@ -9,6 +9,14 @@ import com.waylens.hachi.snipe.utils.DateTime;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.urls.UploadUrl;
 
+import org.greenrobot.greendao.converter.PropertyConverter;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +58,7 @@ public class LocalMoment implements Serializable {
 
     public UploadServer cloudInfo;
 
-    public long momentID;
+    public long momentID = -1;
 
     public String thumbnailPath;
 
@@ -104,6 +112,7 @@ public class LocalMoment implements Serializable {
         this.momentID = response.momentID;
         UploadServer uploadServer = response.uploadServer;
         this.cloudInfo = new UploadServer(uploadServer.ip, uploadServer.port, uploadServer.privateKey);
+        this.cloudInfo.url = uploadServer.url;
     }
 
     public void updateUploadInfo(long momentID, String address, int port, String privateKey) {
@@ -139,4 +148,48 @@ public class LocalMoment implements Serializable {
             return DateTime.toString(clip.getClipDate() + TimeZone.getDefault().getRawOffset(), offset);
         }
     }
+
+    public static class LocalMomentConverter implements PropertyConverter<LocalMoment, byte[]> {
+
+
+        @Override
+        public LocalMoment convertToEntityProperty(byte[] databaseValue) {
+            if (databaseValue == null || databaseValue.length == 0) {
+                return null;
+            }
+            ObjectInputStream in = null;
+            LocalMoment localMoment = null;
+            try {
+                in = new ObjectInputStream(new ByteArrayInputStream(databaseValue));
+                localMoment = (LocalMoment) in.readObject();
+                in.close();
+            } catch (IOException | ClassNotFoundException e) {
+
+            }
+
+            return localMoment;
+        }
+
+        @Override
+        public byte[] convertToDatabaseValue(LocalMoment entityProperty) {
+            if (entityProperty == null) {
+                return null;
+            }
+            ByteArrayOutputStream bos = null;
+            byte[] serializer = null;
+            try {
+                bos = new ByteArrayOutputStream();
+                ObjectOutput out = new ObjectOutputStream(bos);
+                out.writeObject(entityProperty);
+                // Get the bytes of the serialized object
+                serializer = bos.toByteArray();
+                bos.close();
+            } catch (IOException e) {
+
+            }
+            return serializer;
+        }
+    }
+
+
 }

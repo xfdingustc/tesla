@@ -1615,7 +1615,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 handleAckRecognitionResult(p1, p2);
                 break;
             default:
-                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
+//                Logger.t(TAG).d("ack " + cmd + " not handled, p1=" + p1 + ", p2=" + p2);
                 break;
 
         }
