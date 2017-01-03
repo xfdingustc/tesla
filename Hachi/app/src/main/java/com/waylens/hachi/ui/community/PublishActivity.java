@@ -84,8 +84,8 @@ public class PublishActivity extends BaseActivity {
                         //StateJobHolder stateJobHolder = new StateJobHolder(uploadPictureJob.getId(), StateJobHolder.INITIAL_STATE, null, uploadPictureJob);
                         //PersistentQueue.getPersistentQueue().insert(stateJobHolder);
                         //CacheUploadMomentService.launch(PublishActivity.this);
-                        showUploadPictureDialog();
 
+                        showUploadPictureDialog();
                         break;
                 }
 

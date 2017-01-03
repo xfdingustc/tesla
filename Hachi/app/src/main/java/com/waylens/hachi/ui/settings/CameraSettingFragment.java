@@ -56,15 +56,13 @@ public class CameraSettingFragment extends PreferenceFragment {
     private Preference mBattery;
     private ListPreference mAutoPowerOffTime;
 
-
     private NumberPicker mBeforeNumber;
     private NumberPicker mAfterNumber;
 
-    private static final int MAX_BOOKMARK_LENGHT = 30;
-
+    private static final int MAX_BEFORE_BOOKMARK_LENGTH = 30;
+    private static final int MAX_AFTER_BOOKMARK_LENGTH = 90;
 
     private RequestQueue mRequestQueue;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -337,6 +335,12 @@ public class CameraSettingFragment extends PreferenceFragment {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             String nameCameraName = dialog.getInputEditText().getText().toString();
+                            for (int i = 0; i < nameCameraName.length(); i ++) {
+                                if ((int)nameCameraName.charAt(i) > 127) {
+                                    Snackbar.make(CameraSettingFragment.this.getView(), "Camera can only support ASCII name", Snackbar.LENGTH_SHORT).show();
+                                    return;
+                                }
+                            }
                             mCameraName.setSummary(nameCameraName);
                             mVdtCamera.setName(nameCameraName);
                         }
@@ -389,20 +393,15 @@ public class CameraSettingFragment extends PreferenceFragment {
                 mAfterNumber = (NumberPicker) dialog.getCustomView().findViewById(R.id.npAfter);
                 mBeforeNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
                 mAfterNumber.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-                mBeforeNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
-                mAfterNumber.setMaxValue(MAX_BOOKMARK_LENGHT);
-                mBeforeNumber.setMinValue(0);
-                mAfterNumber.setMinValue(0);
+                mBeforeNumber.setMaxValue(MAX_BEFORE_BOOKMARK_LENGTH);
+                mBeforeNumber.setMinValue(1);
+                mAfterNumber.setMaxValue(MAX_AFTER_BOOKMARK_LENGTH);
+                mAfterNumber.setMinValue(1);
                 mBeforeNumber.setValue(mVdtCamera.getMarkBeforeTime());
                 mAfterNumber.setValue(mVdtCamera.getMarkAfterTime());
-
-                
-
                 return true;
 
             }
         });
     }
-
-
 }

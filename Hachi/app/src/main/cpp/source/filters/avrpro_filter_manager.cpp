@@ -444,26 +444,28 @@ void FilterManager::getAllLapsInfo(avrpro_laps_data_t * laps, avrpro_lap_data_t 
                                             - lap_list_._At(i)->inclip_start_offset_ms;
             if (i == 0) {
                 laps_info_.best_lap_time_ms = lap_list_._At(i)->lap_time_ms;
-                best_lap_index = i;
             } else {
                 if (lap_list_._At(i)->lap_time_ms < laps_info_.best_lap_time_ms) {
                     laps_info_.best_lap_time_ms = lap_list_._At(i)->lap_time_ms;
-                    best_lap_index = i;
                 }
             }
         }
-        // remove the last lap info because it is incomplete
-        lap_list_._Remove(lap_list_._Size() - 1);
-        laps_info_.total_laps = lap_list_._Size();
+
+        laps_info_.total_laps = lap_list_._Size() - 1;
         uint32_t check_interval = laps_info_.best_lap_time_ms / TOTAL_CHECK_POINTS;
         if (check_interval < 1000) {
             check_interval = 1000;
         }
-        AVRPRO_LOGD("lap count: %d", lap_list_._Size());
-        for (int i = 0; i < lap_list_._Size(); i++) {
+        AVRPRO_LOGD("lap count: %d", lap_list_._Size() - 1);
+        for (int i = 0; i < lap_list_._Size() - 1; i++) {
+            for (int j = 0; j < i; j++) {
+                if (lap_list_._At(j)->lap_time_ms < lap_list_._At(best_lap_index)->lap_time_ms) {
+                    best_lap_index = j;
+                }
+            }
             lap_list_._At(i)->check_interval_ms = check_interval;
             int32_t * delta_header = lap_list_._At(i)->delta_ms_to_best;
-            AVRPRO_LOGD("lap %d: %d", i, lap_list_._At(i)->lap_time_ms);
+            AVRPRO_LOGD("lap %d: %d, prev best %d", i, lap_list_._At(i)->lap_time_ms, best_lap_index);
             if (i == best_lap_index) {
                 memset(delta_header, 0, sizeof(int32_t) * TOTAL_CHECK_POINTS);
                 continue;
@@ -481,9 +483,10 @@ void FilterManager::getAllLapsInfo(avrpro_laps_data_t * laps, avrpro_lap_data_t 
 
             int gps_cur_lap_start_index = getClosestGPSNodeIndex(cur_clip_time, 0);
             int gps_cur_lap_end_index = getClosestGPSNodeIndex(cur_clip_time + lap_list_._At(i)->lap_time_ms, 0);
-            float average_cur_lap_speed = 3600 * (accumulatedDistanceList_._At(gps_cur_lap_end_index)->accumDistance -
+            float average_cur_lap_speed = 1000 * (accumulatedDistanceList_._At(gps_cur_lap_end_index)->accumDistance -
                                            accumulatedDistanceList_._At(gps_cur_lap_start_index)->accumDistance) /
                                            lap_list_._At(i)->lap_time_ms;
+            AVRPRO_LOGD("average cur lap speed: %f", average_cur_lap_speed);
             int gps_best_lap_start_index = getClosestGPSNodeIndex(best_clip_time, 0);
             float deltaD = 0.0;
 
@@ -499,7 +502,7 @@ void FilterManager::getAllLapsInfo(avrpro_laps_data_t * laps, avrpro_lap_data_t 
                     gps_best_lap_index = getClosestGPSNodeIndex(best_clip_time, gps_best_lap_index);
                     deltaD = (accumulatedDistanceList_._At(gps_best_lap_index)->accumDistance - accumulatedDistanceList_._At(gps_best_lap_start_index)->accumDistance)
                                    - (accumulatedDistanceList_._At(gps_cur_lap_index)->accumDistance - accumulatedDistanceList_._At(gps_cur_lap_start_index)->accumDistance);
-                    lap_list_._At(i)->delta_ms_to_best[j] = (int32_t)(deltaD * 3600 / average_cur_lap_speed);
+                    lap_list_._At(i)->delta_ms_to_best[j] = (int32_t)(deltaD * 1000 / average_cur_lap_speed);
                 } else {
                     gps_cur_lap_index = getClosestGPSNodeIndex(cur_clip_time, gps_cur_lap_index);
                     int64_t rest = gpsDataList_._At(gps_cur_lap_end_index)->clip_time_ms -
@@ -508,12 +511,14 @@ void FilterManager::getAllLapsInfo(avrpro_laps_data_t * laps, avrpro_lap_data_t 
                         lap_list_._At(i)->delta_ms_to_best[j] = lap_list_._At(i)->lap_time_ms - lap_list_._At(best_lap_index)->lap_time_ms;
                     } else {
                         lap_list_._At(i)->delta_ms_to_best[j] = check_interval * j - lap_list_._At(best_lap_index)->lap_time_ms;
-                        lap_list_._At(i)->delta_ms_to_best[j] += 3600 * (accumulatedDistanceList_._At(gps_cur_lap_end_index)->accumDistance -
+                        lap_list_._At(i)->delta_ms_to_best[j] += 1000 * (accumulatedDistanceList_._At(gps_cur_lap_end_index)->accumDistance -
                                                                          accumulatedDistanceList_._At(gps_cur_lap_index)->accumDistance) / average_cur_lap_speed;
                     }
                 }
             }
         }
+        // remove the last lap info because it is incomplete
+        //lap_list_._Remove(lap_list_._Size() - 1);
     }
     *laps = laps_info_;
     *laplist = lap_list_._At(0);

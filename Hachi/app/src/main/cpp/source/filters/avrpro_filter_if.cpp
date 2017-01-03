@@ -86,6 +86,10 @@ avrpro_smart_filter avrpro_smart_filter_init(enum SMART_FILTER_TYPE type, const 
 bool avrpro_smart_filter_is_data_parsed(avrpro_smart_filter filter, avrpro_clip_info_t * ci, uint32_t offset,
                                         uint32_t duration)
 {
+    if (duration == 0) {
+        AVRPRO_LOGE("duration is zero, offset: %d", offset);
+        return false;
+    }
     FilterManager * mgr = (FilterManager *)filter;
     if (mgr->isClipInfoChanged(ci)) {
         mgr->resetManager();

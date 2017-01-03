@@ -58,10 +58,12 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.OnClick;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -414,8 +416,17 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
                 @Override
                 public void onError(Throwable e) {
+                    Logger.t(TAG).d("load error");
                     mLoadToast.error();
                     ServerErrorHelper.showErrorMessage(mRootView, e);
+                }
+            });
+        Observable.timer(5, TimeUnit.SECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<Long>() {
+                @Override
+                public void onNext(Long aLong) {
+                    mLoadToast.error();
                 }
             });
 
