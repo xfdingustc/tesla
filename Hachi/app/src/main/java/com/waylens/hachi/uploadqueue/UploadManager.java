@@ -76,6 +76,9 @@ public class UploadManager {
         }
 
         switch (status) {
+            case DELETED:
+                deleteUploadRequest(itemToBeRemove, context);
+                break;
             case COMPLETED:
                 itemToBeRemove.setStatus(UploadStatus.COMPLETED);
                 uploadedRequestCompleted(context, itemToBeRemove);
@@ -146,23 +149,38 @@ public class UploadManager {
 
     }
 
+    public boolean stopUploading(Context context, String key) {
+        UploadRequest itemToBeStop = getItem(key);
+        if (itemToBeStop == null || itemToBeStop.getStatus() == UploadStatus.DELETE_REQUEST || itemToBeStop.getStatus() == UploadStatus.DELETED) {
+            return true;
+        }
+
+        itemToBeStop.setStatus(UploadStatus.DELETE_REQUEST);
+        updateUploadStatus(itemToBeStop);
+        startUploadQueueService(context, UploadQueueActions.DELETE_ITEM);
+        return true;
+    }
+
     public List<UploadRequest> getQueuedItemList() {
         return mUploadQueue;
     }
 
 
-    public boolean isAnyUploadingInProgressPending() {
+
+
+    public boolean isThereAnyItemWithStatus(UploadStatus status) {
 
         boolean flag = false;
         for (int s = 0; s < mUploadQueue.size(); s++) {
-            UploadRequest request = mUploadQueue.get(s);
-            if (request != null && request.getStatus() == UploadStatus.UPLOADING) {
+            UploadRequest temp = mUploadQueue.get(s);
+            if (temp != null && (temp.getStatus() == status)) {
                 flag = true;
                 break;
             }
         }
         return flag;
     }
+
 
     public boolean updateUploadStatus(UploadRequest request) {
         String userId = SessionManager.getInstance().getUserId();
@@ -224,7 +242,7 @@ public class UploadManager {
     }
 
 
-    private UploadRequest getItemWithStatus(UploadStatus status) {
+    public UploadRequest getItemWithStatus(UploadStatus status) {
         if (mUploadQueue == null || mUploadQueue.isEmpty()) {
             return null;
         }

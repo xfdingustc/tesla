@@ -47,6 +47,7 @@ public class UploadService extends Service {
         UploadQueueActions action = UploadQueueActions.get(intent.getIntExtra("action", 0));
 
         UploadManager uploadManager = UploadManager.getManager(this);
+        Logger.t(TAG).d("service action: " + action);
         switch (action) {
             case START_UPLOAD:
                 startUpload(uploadManager);
@@ -60,6 +61,7 @@ public class UploadService extends Service {
             case PAUSE_ITEM:
                 break;
             case DELETE_ITEM:
+                deleteItem(uploadManager);
                 break;
             case REMOVE_ITEM:
                 break;
@@ -67,7 +69,7 @@ public class UploadService extends Service {
     }
 
 
-    public void startUpload(UploadManager uploadManager) {
+    private void startUpload(UploadManager uploadManager) {
         Logger.t(TAG).d("start upload");
         if (uploadManager.canUploadFurthurItems(this)) {
             Logger.t(TAG).d("can upload futher item");
@@ -81,6 +83,7 @@ public class UploadService extends Service {
                     UploadQueueUploader uploader = new UploadQueueUploader(this, request, mUploadListener);
                     uploader.start();
                     mUploadQueueKeysRequestMap.put(request.getKey(), request);
+                    mUploadThreadMap.put(request.getKey(), uploader);
                     request.setStatus(UploadStatus.UPLOADING);
                     uploadManager.updateUploadStatus(request);
                     uploadManager.updateManagerAndNotify(request.getKey(), request);
@@ -92,6 +95,28 @@ public class UploadService extends Service {
 
 
             }
+
+        }
+    }
+
+    private void deleteItem(UploadManager uploadManager) {
+        while (uploadManager.isThereAnyItemWithStatus(UploadStatus.DELETE_REQUEST)) {
+            UploadRequest request = uploadManager.getItemWithStatus(UploadStatus.DELETE_REQUEST);
+            request.setStatus(UploadStatus.DELETED);
+            uploadManager.updateUploadStatus(request);
+            uploadManager.updateDBandQueue(mContext, request.getKey(), UploadStatus.DELETED);
+            
+            if (mUploadQueueKeysRequestMap.containsKey(request.getKey())) {
+                UploadQueueUploader uploader = mUploadThreadMap.get(request.getKey());
+                if (uploader != null) {
+                    uploader.cancel();
+                }
+                mUploadQueueKeysRequestMap.remove(request.getKey());
+                mUploadThreadMap.remove(request.getKey());
+            } else {
+                mUploadListener.onComplete(request.getKey());
+            }
+
 
         }
     }
@@ -115,7 +140,9 @@ public class UploadService extends Service {
             UploadResponseHolder.getHolder().updateProgress(key, progress);
             UploadManager uploadManager = UploadManager.getManager(UploadService.this);
             UploadRequest request = uploadManager.getItem(key);
-            request.setProgress(progress);
+            if (request != null) {
+                request.setProgress(progress);
+            }
 
         }
 
@@ -129,7 +156,7 @@ public class UploadService extends Service {
             }
             manager.updateDBandQueue(mContext, key, UploadStatus.COMPLETED);
             if (!UploadQueueUtilityNetwork.isNetworkAvailable(mContext)) {
-                if (!manager.isAnyUploadingInProgressPending()) {
+                if (!manager.isThereAnyItemWithStatus(UploadStatus.UPLOADING)) {
                     stopSelf();
                 }
             } else if (UploadQueueUtilityNetwork.isNetworkAvailable(mContext) && manager.canUploadFurthurItems(mContext) == false) {

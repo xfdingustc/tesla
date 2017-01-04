@@ -3,11 +3,14 @@ package com.waylens.hachi.ui.settings.adapters;
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -45,7 +48,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
-        UploadRequest request = mUploadManager.getQueuedItemList().get(position);
+        final UploadRequest request = mUploadManager.getQueuedItemList().get(position);
         if (TextUtils.isEmpty(request.getTitle())) {
             videoItemViewHolder.momentTitle.setText(R.string.no_title);
         } else {
@@ -84,6 +87,31 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 break;
         }
 
+        videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
+                if (request.getStatus() != UploadStatus.FAILED) {
+                    popupMenu.getMenu().removeItem(R.id.retry);
+                }
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.cancel:
+                                mUploadManager.stopUploading(mActivity, request.getKey());
+                                break;
+                            case R.id.retry:
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+
         /*
 
 
@@ -103,28 +131,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         videoItemViewHolder.btnMore.setVisibility(View.GONE);
 
-        videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mActivity, videoItemViewHolder.btnMore, Gravity.END);
-                popupMenu.getMenuInflater().inflate(R.menu.menu_upload, popupMenu.getMenu());
-                if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
-                    popupMenu.getMenu().removeItem(R.id.cancel);
-                }
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.cancel:
-                                uploadable.cancelUpload();
-                                break;
-                        }
-                        return true;
-                    }
-                });
-                popupMenu.show();
-            }
-        });*/
+        */
 
 
     }

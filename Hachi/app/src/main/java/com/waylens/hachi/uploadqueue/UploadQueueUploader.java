@@ -49,6 +49,8 @@ public class UploadQueueUploader extends Thread {
 
     private boolean mResult = false;
 
+    private boolean mStopUploading = false;
+
     public UploadQueueUploader(Context context, UploadRequest request, UploadResponseListener listener) {
         this.mContext = context;
         this.mRequest = request;
@@ -81,16 +83,22 @@ public class UploadQueueUploader extends Thread {
             e.printStackTrace();
             mResult = false;
             uploadError = UploadError.CONNECTION_TIMEOUT;
-        } finally {
-            onPostExecute(mResult, localMoment);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            mResult = false;
         }
 
+        onPostExecute(mResult, localMoment);
+    }
 
+    public void cancel() {
+        mStopUploading = true;
 
     }
 
 
-    private boolean checkCloudStorageAvailable(LocalMoment localMoment) throws IOException {
+    private boolean checkCloudStorageAvailable(LocalMoment localMoment) throws IOException, InterruptedException {
+        checkIfStopped();
         IHachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
         Call<CloudStorageInfo> createMomentResponseCall = hachiApi.getCloudStorageInfo();
         CloudStorageInfo cloudStorageInfo = createMomentResponseCall.execute().body();
@@ -109,8 +117,9 @@ public class UploadQueueUploader extends Thread {
 
     }
 
-    private void doUploadLocalMoment(LocalMoment localMoment) throws IOException {
+    private void doUploadLocalMoment(LocalMoment localMoment) throws IOException, InterruptedException {
         Logger.t(TAG).d("do upload local moment");
+        checkIfStopped();
         UploadQueueDBAdapter dbAdapter = UploadQueueDBAdapter.getInstance();
         IHachiApi hachiApi = HachiService.createHachiApiService();
         if (localMoment.withCarInfo && localMoment.vin != null && localMoment.mVehicleMaker == null) {
@@ -129,6 +138,7 @@ public class UploadQueueUploader extends Thread {
             }
         }
 
+        checkIfStopped();
         if (localMoment.withGeoTag && localMoment.geoInfo.country == null) {
             Call<GeoInfoResponse> geoInfoResponseCall = hachiApi.getGeoInfo(localMoment.geoInfo.longitude, localMoment.geoInfo.latitude);
             Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
@@ -140,8 +150,7 @@ public class UploadQueueUploader extends Thread {
             }
         }
 
-
-
+        checkIfStopped();
         if (localMoment.cloudInfo == null) {
             CreateMomentResponse response = createMoment(localMoment);
             Logger.t(TAG).d("upload server: " + response.uploadServer.toString());
@@ -158,6 +167,7 @@ public class UploadQueueUploader extends Thread {
         String server = StringUtils.getHostNameWithoutPrefix(localMoment.cloudInfo.url);
         Logger.t(TAG).d("server: " + server);
 
+        checkIfStopped();
         final String authorization = HachiAuthorizationHelper.getAuthoriztion(server,
             SessionManager.getInstance().getUserId() + "/android",
             localMoment.momentID,
@@ -166,6 +176,8 @@ public class UploadQueueUploader extends Thread {
 
         UploadAPI uploadAPI = new UploadAPI(localMoment.cloudInfo.url + "/", date, authorization, -1);
 
+
+        checkIfStopped();
         // Step 1: init upload;
         InitUploadResponse initUploadResponse = uploadAPI.initUploadSync(localMoment.momentID, InitUploadBody.fromLocalMoment(localMoment));
 
@@ -188,7 +200,7 @@ public class UploadQueueUploader extends Thread {
             URI uri = URI.create(segment.uploadURL.url);
             File file = new File(uri);
 
-
+            checkIfStopped();
             UploadProgressRequestBody newRequest = UploadProgressRequestBody.newInstance(file, new UploadProgressListener() {
                 @Override
                 public void update(long bytesWritten, long contentLength, boolean done) {
@@ -202,6 +214,7 @@ public class UploadQueueUploader extends Thread {
         }
 
         // Step3: upload videoThumbnail;
+        checkIfStopped();
         UploadProgressRequestBody newRequest = UploadProgressRequestBody.newInstance(new File(localMoment.thumbnailPath), new UploadProgressListener() {
             @Override
             public void update(long bytesWritten, long contentLength, boolean done) {
@@ -225,6 +238,13 @@ public class UploadQueueUploader extends Thread {
         } */
         mResult = true;
 
+    }
+
+    private void checkIfStopped() throws InterruptedException {
+        if (mStopUploading) {
+            mReponseListener.onComplete(mRequest.getKey());
+            throw new InterruptedException();
+        }
     }
 
     private void updateUploadProgress(long byteWritten, long contentLength, int index, int totalSegment) {
@@ -263,7 +283,7 @@ public class UploadQueueUploader extends Thread {
     private void onPostExecute(boolean uploadComplete, LocalMoment localMoment) {
         mRequest.setUploading(false);
 
-        if (uploadComplete) {
+        if (uploadComplete || mStopUploading) {
             mReponseListener.onComplete(mRequest.getKey());
             for (LocalMoment.Segment segment : localMoment.mSegments) {
                 URI uri = URI.create(segment.uploadURL.url);
