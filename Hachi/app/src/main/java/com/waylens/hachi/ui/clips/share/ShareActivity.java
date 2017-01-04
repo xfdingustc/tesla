@@ -788,5 +788,6 @@ public class ShareActivity extends ClipPlayActivity {
                 }
             })
             .show();
+        mClipPlayFragment.pause();
     }
 }

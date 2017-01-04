@@ -514,9 +514,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onPause() {
         super.onPause();
-        if (mMediaPlayer != null && mPlayerControl != null) {
-            mPlayerControl.pause();
-        }
+        pause();
     }
 
     @Override
@@ -639,6 +637,15 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 //        mMultiSegSeekbar.reset();
         mNeedSendPlayCompleteEvent = true;
 
+    }
+
+    public void pause() {
+        if (mMediaPlayer != null && mPlayerControl != null) {
+            mPlayerControl.pause();
+        }
+        if (mAudioPlayer != null) {
+            mAudioPlayer.pause();
+        }
     }
 
 
