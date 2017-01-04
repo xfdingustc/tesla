@@ -570,4 +570,10 @@
     <string name="error_msg_network_not_reachable">Signal strength low or no connectivity. Please try again when network coverage is better.</string>
     <string name="error_msg_storage_full">Storage full</string>
     <string name="error_msg_connection_timeout">Connection timeout</string>
+    <string name="upload_des_check_cloud">Check if cloud storage available</string>
+    <string name="update_des_fetch_vehicle_info">Fetching vehicle info</string>
+    <string name="update_des_fetch_geo_info">Fetching geo info</string>
+    <string name="update_des_connect_to_server">Connecting to server</string>
+    <string name="update_des_upload_thumbnail">Uploading moment cover</string>
+    <string name="update_des_finish_upload">Finish uploading</string>
 </resources>

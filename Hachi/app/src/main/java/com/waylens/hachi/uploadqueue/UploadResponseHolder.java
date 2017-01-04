@@ -47,11 +47,7 @@ public class UploadResponseHolder {
         }
     }
 
-    public void onUploadStart(String key, int totalSize) {
-        for (UploadResponseListener listener : mListenerList) {
-            listener.onUploadStart(key, totalSize);
-        }
-    }
+
 
     public void updateProgress(String key, int progress) {
         for (UploadResponseListener listener : mListenerList) {
@@ -68,6 +64,12 @@ public class UploadResponseHolder {
     public void onError(String key, UploadError error) {
         for (UploadResponseListener listener : mListenerList) {
             listener.onError(key, error);
+        }
+    }
+
+    public void updateDescription(String key) {
+        for (UploadResponseListener listener : mListenerList) {
+            listener.updateDescription(key);
         }
     }
 }

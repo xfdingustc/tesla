@@ -42,9 +42,7 @@ public class UploadManager {
             startUploadQueueService(context, UploadQueueActions.START_UPLOAD);
         }
 
-        if (mSharedUploadManager.mUploadQueue.isEmpty()) {
-            mSharedUploadManager.getDataFromDatabase(context);
-        }
+
 
         return mSharedUploadManager;
     }

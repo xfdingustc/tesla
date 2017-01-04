@@ -117,17 +117,7 @@ public class UploadingMomentActivity extends BaseActivity {
 
         }
 
-        @Override
-        public void onUploadStart(String key, int totalSize) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    rootAnimator.setDisplayedChild(0);
-                    mUploadItemAdapter.notifyDataSetChanged();
-                }
-            });
 
-        }
 
         @Override
         public void updateProgress(final String key, int progress) {
@@ -138,6 +128,16 @@ public class UploadingMomentActivity extends BaseActivity {
                 }
             });
 
+        }
+
+        @Override
+        public void updateDescription(final String key) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUploadItemAdapter.notifyItemChanged(UploadManager.getManager(UploadingMomentActivity.this).getItemPosition(key));
+                }
+            });
         }
 
         @Override

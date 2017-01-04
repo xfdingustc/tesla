@@ -102,10 +102,8 @@ public class UploadService extends Service {
     private void deleteItem(UploadManager uploadManager) {
         while (uploadManager.isThereAnyItemWithStatus(UploadStatus.DELETE_REQUEST)) {
             UploadRequest request = uploadManager.getItemWithStatus(UploadStatus.DELETE_REQUEST);
-            request.setStatus(UploadStatus.DELETED);
-            uploadManager.updateUploadStatus(request);
-            uploadManager.updateDBandQueue(mContext, request.getKey(), UploadStatus.DELETED);
-            
+
+
             if (mUploadQueueKeysRequestMap.containsKey(request.getKey())) {
                 UploadQueueUploader uploader = mUploadThreadMap.get(request.getKey());
                 if (uploader != null) {
@@ -113,9 +111,12 @@ public class UploadService extends Service {
                 }
                 mUploadQueueKeysRequestMap.remove(request.getKey());
                 mUploadThreadMap.remove(request.getKey());
-            } else {
-                mUploadListener.onComplete(request.getKey());
             }
+
+            request.setStatus(UploadStatus.DELETED);
+            uploadManager.updateUploadStatus(request);
+            uploadManager.updateDBandQueue(mContext, request.getKey(), UploadStatus.DELETED);
+            mUploadListener.onComplete(request.getKey());
 
 
         }
@@ -129,11 +130,6 @@ public class UploadService extends Service {
             UploadManager.getManager(UploadService.this).updateManagerAndNotify(key);
         }
 
-        @Override
-        public void onUploadStart(String key, int totalSize) {
-            UploadResponseHolder.getHolder().onUploadStart(key, totalSize);
-            UploadManager.getManager(UploadService.this).updateManagerAndNotify(key);
-        }
 
         @Override
         public void updateProgress(String key, int progress) {
@@ -144,6 +140,11 @@ public class UploadService extends Service {
                 request.setProgress(progress);
             }
 
+        }
+
+        @Override
+        public void updateDescription(String key) {
+            UploadResponseHolder.getHolder().updateDescription(key);
         }
 
         @Override
