@@ -7,7 +7,6 @@ import org.greenrobot.greendao.converter.PropertyConverter;
  */
 
 public enum UploadStatus {
-
     UPLOADING("Uploading", "Uploading..."),
     PAUSED("Paused", "Paused"),
     WAITING("Waiting", "Queued"),

@@ -8,27 +8,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ViewAnimator;
 
-import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.UploadManager2;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.adapters.UploadItemAdapter;
-import com.waylens.hachi.ui.settings.adapters.UploadingItemAdapter;
 import com.waylens.hachi.uploadqueue.UploadManager;
 import com.waylens.hachi.uploadqueue.UploadResponseHolder;
 import com.waylens.hachi.uploadqueue.interfaces.UploadResponseListener;
+import com.waylens.hachi.uploadqueue.model.UploadError;
 
 import butterknife.BindView;
 
 /**
  * Created by Xiaofei on 2016/9/12.
  */
-public class UploadingMomentActivity extends BaseActivity implements UploadManager2.OnUploadJobStateChangeListener {
+public class UploadingMomentActivity extends BaseActivity {
     private static final String TAG = UploadingMomentActivity.class.getSimpleName();
     private UploadItemAdapter mUploadItemAdapter;
-
-    private UploadingItemAdapter mUploadingItemAdapter;
 
     private static final String EXTRA_AUTO_EXIT = "extra.auto.exit";
 
@@ -39,16 +35,6 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
 
     @BindView(R.id.root_switch)
     ViewAnimator rootAnimator;
-
-/*
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onHandleUploadJobEvent(UploadMomentEvent event) {
-        Logger.t(TAG).d("event type" + event.getWhat());
-        if (mUploadingItemAdapter != null) {
-            mUploadingItemAdapter.handleEvent(event);
-        }
-    }
-*/
 
     public static void launch(Activity activity) {
         Intent intent = new Intent(activity, UploadingMomentActivity.class);
@@ -84,32 +70,9 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
     protected void init() {
         super.init();
         mAutoExit = getIntent().getBooleanExtra(EXTRA_AUTO_EXIT, false);
-        UploadManager2.getManager().addOnUploadJobStateChangedListener(this);
         initViews();
     }
 
-    @Override
-    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-
-    }
-
-    @Override
-    public void onUploadJobAdded() {
-        rootAnimator.setDisplayedChild(0);
-        Logger.t(TAG).d("onUploadJobAdded auto exit: " + mAutoExit + " count: " + mUploadItemAdapter.getItemCount());
-    }
-
-    @Override
-    public void onUploadJobRemoved() {
-        Logger.t(TAG).d("auto exit: " + mAutoExit + " count: " + mUploadItemAdapter.getItemCount());
-        if (mUploadItemAdapter.getItemCount() == 0) {
-            if (mAutoExit) {
-                finish();
-            } else {
-                rootAnimator.setDisplayedChild(1);
-            }
-        }
-    }
 
     private void initViews() {
         setContentView(R.layout.activity_uploading);
@@ -147,6 +110,7 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    rootAnimator.setDisplayedChild(0);
                     mUploadItemAdapter.notifyDataSetChanged();
                 }
             });
@@ -158,6 +122,7 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    rootAnimator.setDisplayedChild(0);
                     mUploadItemAdapter.notifyDataSetChanged();
                 }
             });
@@ -177,10 +142,32 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
 
         @Override
         public void onComplete(String key) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUploadItemAdapter.notifyDataSetChanged();
 
+                    if (mUploadItemAdapter.getItemCount() == 0) {
+                        if (mAutoExit) {
+                            finish();
+                        } else {
+                            rootAnimator.setDisplayedChild(1);
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onError(final String key, UploadError error) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUploadItemAdapter.notifyItemChanged(UploadManager.getManager(UploadingMomentActivity.this).getItemPosition(key));
+                }
+            });
         }
     };
-
 
 
     @Override

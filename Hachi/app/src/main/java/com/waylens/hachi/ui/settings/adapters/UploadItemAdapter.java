@@ -1,12 +1,9 @@
 package com.waylens.hachi.ui.settings.adapters;
 
 import android.app.Activity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -20,11 +17,9 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.UploadManager2;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.uploadqueue.UploadManager;
-import com.waylens.hachi.uploadqueue.UploadResponseHolder;
-import com.waylens.hachi.uploadqueue.interfaces.UploadResponseListener;
+import com.waylens.hachi.uploadqueue.model.UploadError;
 import com.waylens.hachi.uploadqueue.model.UploadRequest;
-
-import java.util.List;
+import com.waylens.hachi.uploadqueue.model.UploadStatus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,9 +33,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public UploadItemAdapter(Activity activity) {
         this.mActivity = activity;
-        //mUploadManager.addOnUploadJobStateChangedListener(this);
         mUploadManager = UploadManager.getManager(activity);
-
     }
 
     @Override
@@ -73,10 +66,24 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 .placeholder(videoItemViewHolder.videoCover.getDrawable())
                 .into(videoItemViewHolder.videoCover);
         }
+
         videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadStatus.setText(request.getStatus().message());
         videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
         videoItemViewHolder.uploadProgress.setProgress(request.getProgress());
+        videoItemViewHolder.videoDuration.setVisibility(View.INVISIBLE);
+
+        switch (request.getStatus()) {
+            case UPLOADING:
+                break;
+            case FAILED:
+                videoItemViewHolder.description.setVisibility(View.VISIBLE);
+                if (request.getCurrentError() != UploadError.NO_ERROR) {
+                    videoItemViewHolder.description.setText(request.getCurrentError().getValue());
+                }
+                break;
+        }
+
         /*
 
 

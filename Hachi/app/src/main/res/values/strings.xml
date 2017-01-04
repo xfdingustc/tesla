@@ -568,5 +568,6 @@
     <string name="add_new_car">Add new car</string>
     <string name="error_msg_unable_to_upload_file">Unable to upload file</string>
     <string name="error_msg_network_not_reachable">Signal strength low or no connectivity. Please try again when network coverage is better.</string>
-    <string name="error_msg_storage_full"/>
+    <string name="error_msg_storage_full">Storage full</string>
+    <string name="error_msg_connection_timeout">Connection timeout</string>
 </resources>

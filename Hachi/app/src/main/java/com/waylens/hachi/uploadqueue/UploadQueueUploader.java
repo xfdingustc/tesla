@@ -7,6 +7,7 @@ import com.waylens.hachi.bgjob.upload.HachiAuthorizationHelper;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.body.CreateMomentBody;
+import com.waylens.hachi.rest.response.CloudStorageInfo;
 import com.waylens.hachi.rest.response.CreateMomentResponse;
 import com.waylens.hachi.rest.response.GeoInfoResponse;
 import com.waylens.hachi.rest.response.VinQueryResponse;
@@ -68,8 +69,6 @@ public class UploadQueueUploader extends Thread {
 
         mRequest.setUploading(true);
 
-        boolean loadSuccess = false;
-        boolean append = false;
 
         LocalMoment localMoment = mRequest.getLocalMoment();
 
@@ -80,15 +79,18 @@ public class UploadQueueUploader extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            mResult = false;
+            uploadError = UploadError.CONNECTION_TIMEOUT;
+        } finally {
+            onPostExecute(mResult, localMoment);
         }
+
 
 
     }
 
 
     private boolean checkCloudStorageAvailable(LocalMoment localMoment) throws IOException {
-
-        /*
         IHachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
         Call<CloudStorageInfo> createMomentResponseCall = hachiApi.getCloudStorageInfo();
         CloudStorageInfo cloudStorageInfo = createMomentResponseCall.execute().body();
@@ -101,7 +103,7 @@ public class UploadQueueUploader extends Thread {
         if (cloudStorageInfo.current.durationUsed + clipLength > cloudStorageInfo.current.plan.durationQuota) {
             uploadError = UploadError.CLOUD_STORAGE_NOT_AVAILABLE;
             return false;
-        }*/
+        }
 
         return true;
 
@@ -177,7 +179,7 @@ public class UploadQueueUploader extends Thread {
 
         Logger.t(TAG).d("initUploadResponse: " + initUploadResponse.toString());
 
-        final int totalSegments = localMoment.mSegments.size() + 1;
+        final int totalSegments = localMoment.mSegments.size();
 
         for (int i = 0; i < localMoment.mSegments.size(); i++) {
             LocalMoment.Segment segment = localMoment.mSegments.get(i);
@@ -203,7 +205,7 @@ public class UploadQueueUploader extends Thread {
         UploadProgressRequestBody newRequest = UploadProgressRequestBody.newInstance(new File(localMoment.thumbnailPath), new UploadProgressListener() {
             @Override
             public void update(long bytesWritten, long contentLength, boolean done) {
-                updateUploadProgress(bytesWritten, contentLength, totalSegments - 1, totalSegments);
+                updateUploadProgress(bytesWritten, contentLength, totalSegments, totalSegments);
             }
         });
         UploadDataResponse uploadDataResponse = uploadAPI.uploadThumbnail(newRequest, localMoment.momentID);
@@ -219,23 +221,23 @@ public class UploadQueueUploader extends Thread {
 //            Logger.t(TAG).d("finished " + mState);
             setUploadState(UPLOAD_STATE_FINISHED);
 
-            for (LocalMoment.Segment segment : mLocalMoment.mSegments) {
-                URI uri = URI.create(segment.uploadURL.url);
-                File file = new File(uri);
-                file.delete();
-            }
 
-            File file = new File(mLocalMoment.thumbnailPath);
-            file.delete();
         } */
-        onPostExecute(true);
+        mResult = true;
+
     }
 
     private void updateUploadProgress(long byteWritten, long contentLength, int index, int totalSegment) {
-        int progress = (int) ((byteWritten * 100) / contentLength);
-        int percentageInThisClip = progress / totalSegment;
-        int percentage = index * 100 / totalSegment + percentageInThisClip;
-        mReponseListener.updateProgress(mRequest.getKey(), percentage);
+        if (index < totalSegment) {
+            int progress = (int) ((byteWritten * 100) / contentLength);
+            int percentageInThisClip = progress / totalSegment;
+            int percentage = index * 100 / totalSegment + percentageInThisClip;
+            percentage = percentage * 9 / 10;
+            mReponseListener.updateProgress(mRequest.getKey(), percentage);
+        } else {
+            int progress = (int) ((byteWritten * 10) / contentLength);
+            mReponseListener.updateProgress(mRequest.getKey(), progress + 90);
+        }
 
     }
 
@@ -258,11 +260,21 @@ public class UploadQueueUploader extends Thread {
         }
     }
 
-    private void onPostExecute(boolean uploadComplete) {
+    private void onPostExecute(boolean uploadComplete, LocalMoment localMoment) {
         mRequest.setUploading(false);
 
         if (uploadComplete) {
             mReponseListener.onComplete(mRequest.getKey());
+            for (LocalMoment.Segment segment : localMoment.mSegments) {
+                URI uri = URI.create(segment.uploadURL.url);
+                File file = new File(uri);
+                file.delete();
+            }
+
+            File file = new File(localMoment.thumbnailPath);
+            file.delete();
+        } else {
+            mReponseListener.onError(mRequest.getKey(), uploadError);
         }
     }
 }

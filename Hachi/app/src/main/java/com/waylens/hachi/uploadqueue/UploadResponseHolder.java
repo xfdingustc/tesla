@@ -1,6 +1,7 @@
 package com.waylens.hachi.uploadqueue;
 
 import com.waylens.hachi.uploadqueue.interfaces.UploadResponseListener;
+import com.waylens.hachi.uploadqueue.model.UploadError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,12 @@ public class UploadResponseHolder {
     public void onComplete(String key) {
         for (UploadResponseListener listener : mListenerList) {
             listener.onComplete(key);
+        }
+    }
+
+    public void onError(String key, UploadError error) {
+        for (UploadResponseListener listener : mListenerList) {
+            listener.onError(key, error);
         }
     }
 }

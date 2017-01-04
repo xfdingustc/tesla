@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.uploadqueue.interfaces.UploadResponseListener;
+import com.waylens.hachi.uploadqueue.model.UploadError;
 import com.waylens.hachi.uploadqueue.model.UploadQueueActions;
 import com.waylens.hachi.uploadqueue.model.UploadRequest;
 import com.waylens.hachi.uploadqueue.model.UploadStatus;
@@ -144,6 +145,21 @@ public class UploadService extends Service {
             if (mUploadQueueKeysRequestMap != null && mUploadQueueKeysRequestMap.containsKey(key)) {
                 mUploadQueueKeysRequestMap.remove(key);
             }
+        }
+
+        @Override
+        public void onError(String key, UploadError error) {
+            if (mUploadQueueKeysRequestMap != null && mUploadQueueKeysRequestMap.containsKey(key)) {
+                mUploadQueueKeysRequestMap.remove(key);
+            }
+
+            if (mUploadThreadMap.containsKey(key)) {
+                mUploadThreadMap.remove(key);
+            }
+
+            UploadManager.getManager(mContext).errorOccured(mContext, key, error);
+
+            UploadResponseHolder.getHolder().onError(key, error);
         }
     };
 }
