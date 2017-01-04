@@ -6,5 +6,9 @@
         android:title="@string/cancel"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/retry"
+        android:title="@string/retry"
+        app:showAsAction="never"/>
 
 </menu>

@@ -163,7 +163,10 @@ public class UploadingMomentActivity extends BaseActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mUploadItemAdapter.notifyItemChanged(UploadManager.getManager(UploadingMomentActivity.this).getItemPosition(key));
+                    int position = UploadManager.getManager(UploadingMomentActivity.this).getItemPosition(key);
+                    if (position >= 0) {
+                        mUploadItemAdapter.notifyItemChanged(position);
+                    }
                 }
             });
         }

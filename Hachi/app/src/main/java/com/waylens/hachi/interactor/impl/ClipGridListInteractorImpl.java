@@ -69,7 +69,7 @@ public class ClipGridListInteractorImpl implements ClipGridListInteractor {
 
                 @Override
                 public void onNext(ClipSet clipSet) {
-                    Logger.t(TAG).d("Got clip set");
+//                    Logger.t(TAG).d("Got clip set");
                     mLoadListener.onSuccess(clipSet);
                 }
             });
