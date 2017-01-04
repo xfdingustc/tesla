@@ -42,18 +42,20 @@
             android:id="@+id/tag_view_animator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
+
             <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
                 <TextView
                     android:id="@+id/performance_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:text="30"
-                    android:textSize="12sp"
-                    android:textColor="@color/app_text_color_primary_light"
+                    android:layout_margin="4dp"
                     android:background="@drawable/performance_icon_bg"
-                    android:layout_margin="4dp" />
+                    android:textColor="@color/app_text_color_primary_light"
+                    android:textSize="12sp"
+                    tools:text="30"/>
 
                 <TextView
                     android:id="@+id/performance"
@@ -71,10 +73,12 @@
                 android:id="@+id/lap_timer_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/app_text_color_primary_light"
-                android:background="@drawable/laptimer_tag"
                 android:layout_margin="4dp"
+                android:background="@drawable/performance_icon_bg"
+                android:text="@string/lap"
+                android:textAllCaps="true"
+                android:textColor="@color/app_text_color_primary_light"
+                android:textSize="12sp"
                 />
         </ViewAnimator>
 
@@ -86,12 +90,12 @@
 
         <TextView
             android:id="@+id/tvDuration"
-            android:textSize="12sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_margin="4dp"
             android:textColor="@color/app_text_color_primary"
+            android:textSize="12sp"
             tools:text="00:28"/>
 
     </LinearLayout>

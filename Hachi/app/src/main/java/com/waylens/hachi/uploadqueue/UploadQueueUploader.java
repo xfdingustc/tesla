@@ -1,8 +1,10 @@
 package com.waylens.hachi.uploadqueue;
 
 import android.content.Context;
+import android.support.annotation.StringRes;
 
 import com.orhanobut.logger.Logger;
+import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.upload.HachiAuthorizationHelper;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
@@ -99,6 +101,7 @@ public class UploadQueueUploader extends Thread {
 
     private boolean checkCloudStorageAvailable(LocalMoment localMoment) throws IOException, InterruptedException {
         checkIfStopped();
+        updateDescription(localMoment, R.string.upload_des_check_cloud);
         IHachiApi hachiApi = HachiService.createHachiApiService(10, TimeUnit.SECONDS);
         Call<CloudStorageInfo> createMomentResponseCall = hachiApi.getCloudStorageInfo();
         CloudStorageInfo cloudStorageInfo = createMomentResponseCall.execute().body();
@@ -117,11 +120,14 @@ public class UploadQueueUploader extends Thread {
 
     }
 
+
+
     private void doUploadLocalMoment(LocalMoment localMoment) throws IOException, InterruptedException {
         Logger.t(TAG).d("do upload local moment");
         checkIfStopped();
         UploadQueueDBAdapter dbAdapter = UploadQueueDBAdapter.getInstance();
         IHachiApi hachiApi = HachiService.createHachiApiService();
+        updateDescription(localMoment, R.string.update_des_fetch_vehicle_info);
         if (localMoment.withCarInfo && localMoment.vin != null && localMoment.mVehicleMaker == null) {
             Call<VinQueryResponse> vinQueryResponseCall = hachiApi.queryByVin(localMoment.vin);
             Response<VinQueryResponse> response = vinQueryResponseCall.execute();
@@ -139,6 +145,7 @@ public class UploadQueueUploader extends Thread {
         }
 
         checkIfStopped();
+        updateDescription(localMoment, R.string.update_des_fetch_geo_info);
         if (localMoment.withGeoTag && localMoment.geoInfo.country == null) {
             Call<GeoInfoResponse> geoInfoResponseCall = hachiApi.getGeoInfo(localMoment.geoInfo.longitude, localMoment.geoInfo.latitude);
             Response<GeoInfoResponse> response = geoInfoResponseCall.execute();
@@ -177,8 +184,10 @@ public class UploadQueueUploader extends Thread {
         UploadAPI uploadAPI = new UploadAPI(localMoment.cloudInfo.url + "/", date, authorization, -1);
 
 
-        checkIfStopped();
+
         // Step 1: init upload;
+        checkIfStopped();
+        updateDescription(localMoment, R.string.update_des_connect_to_server);
         InitUploadResponse initUploadResponse = uploadAPI.initUploadSync(localMoment.momentID, InitUploadBody.fromLocalMoment(localMoment));
 
         if (initUploadResponse == null) {
@@ -188,11 +197,8 @@ public class UploadQueueUploader extends Thread {
 
 
         // Step2: upload segments;
-
         Logger.t(TAG).d("initUploadResponse: " + initUploadResponse.toString());
-
         final int totalSegments = localMoment.mSegments.size();
-
         for (int i = 0; i < localMoment.mSegments.size(); i++) {
             LocalMoment.Segment segment = localMoment.mSegments.get(i);
             final int index = i;
@@ -215,6 +221,7 @@ public class UploadQueueUploader extends Thread {
 
         // Step3: upload videoThumbnail;
         checkIfStopped();
+        updateDescription(localMoment, R.string.update_des_upload_thumbnail);
         UploadProgressRequestBody newRequest = UploadProgressRequestBody.newInstance(new File(localMoment.thumbnailPath), new UploadProgressListener() {
             @Override
             public void update(long bytesWritten, long contentLength, boolean done) {
@@ -225,19 +232,18 @@ public class UploadQueueUploader extends Thread {
 
         Logger.t(TAG).d("uploadThmbnailResponse: " + uploadDataResponse);
 
+        checkIfStopped();
+        updateDescription(localMoment, R.string.update_des_finish_upload);
         uploadAPI.finishUpload(localMoment.momentID);
 
         Logger.t(TAG).d("upload finished ");
 
-/*
-        if (mState != UPLOAD_STATE_CANCELLED && mState != UPLOAD_STATE_ERROR) {
-//            Logger.t(TAG).d("finished " + mState);
-            setUploadState(UPLOAD_STATE_FINISHED);
-
-
-        } */
         mResult = true;
+    }
 
+    private void updateDescription(LocalMoment localMoment, @StringRes int descriptionId) {
+        localMoment.description = mContext.getString(descriptionId);
+        mReponseListener.updateDescription(mRequest.getKey());
     }
 
     private void checkIfStopped() throws InterruptedException {

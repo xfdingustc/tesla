@@ -9,9 +9,9 @@ import com.waylens.hachi.uploadqueue.model.UploadError;
 public interface UploadResponseListener {
     void onUploadStart(String key);
 
-    void onUploadStart(String key, int totalSize);
-
     void updateProgress(String key, int progress);
+
+    void updateDescription(String key);
 
     void onComplete(String key);
 

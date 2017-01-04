@@ -78,6 +78,8 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         switch (request.getStatus()) {
             case UPLOADING:
+                videoItemViewHolder.description.setVisibility(View.VISIBLE);
+                videoItemViewHolder.description.setText(request.getLocalMoment().description);
                 break;
             case FAILED:
                 videoItemViewHolder.description.setVisibility(View.VISIBLE);
@@ -85,6 +87,8 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     videoItemViewHolder.description.setText(request.getCurrentError().getValue());
                 }
                 break;
+            default:
+                videoItemViewHolder.description.setVisibility(View.GONE);
         }
 
         videoItemViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
