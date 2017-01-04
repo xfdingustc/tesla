@@ -270,8 +270,9 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
     @Override
     public void setupToolbar() {
         super.setupToolbar();
-        getToolbar().setTitle("Lap Timer");
+        getToolbar().setTitle("Lap Timer View");
         getToolbar().getMenu().clear();
+        getToolbar().setNavigationIcon(R.drawable.ic_arrow_back);
         getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -289,23 +290,21 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
                 switch (item.getItemId()) {
                     case R.id.menu_to_share:
                         mMode = SHARE_MODE;
-                        if (mActionMode == null) {
-                            mActionMode = startActionMode(mCallback);
-                            updateActionMode();
-                        }
+                        updateToolbar();
                         break;
                     case R.id.menu_to_download:
                         mMode = EXPORT_MODE;
-                        if (mActionMode == null) {
-                            mActionMode = startActionMode(mCallback);
-                            updateActionMode();
-                        }
+                        updateToolbar();
                         break;
                 }
                 return true;
 
             }
         });
+        mMode = NORMAL_MODE;
+        if (mAdapter != null) {
+            mAdapter.setSelectedMode(false);
+        }
     }
 
     private void parseLapTimerInfo() {
@@ -354,7 +353,8 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
             public void onNext(AvrproLapTimerResult result) {
                 Logger.t(TAG).d("total laps = " + result.lapsHeader.total_laps);
                 mAdapter.setLapDataList(Arrays.asList(result.lapList));
-                mClipPlayFragment.getGaugeView().setLapTimerData(result, mAvrproFilter.getClipInfo());
+                //mClipPlayFragment.getGaugeView().setLapTimerData(result, mAvrproFilter.getClipInfo());
+                mClipPlayFragment.setLapTimerData(result, mAvrproFilter.getClipInfo());
                 mLapTimerResult = result;
             }
         });
@@ -520,15 +520,16 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         } else if (!SessionManager.checkUserVerified(LapTimerActivity.this)) {
             return;
         } else if (lapId < mLapTimerResult.lapList.length){
+            final PlayListEditor shareEditor = new PlayListEditor(mVdbRequestQueue, 0x101);
             AvrproLapData data = mLapTimerResult.lapList[lapId];
             Clip newClip = new Clip(mOriginClip);
-            newClip.editInfo.selectedStartValue = newClip.getStartTimeMs() + data.inclip_start_offset_ms;
-            newClip.editInfo.selectedEndValue = newClip.editInfo.selectedStartValue + data.lap_time_ms;
+            newClip.editInfo.selectedStartValue = newClip.getStartTimeMs() + Math.max(data.inclip_start_offset_ms - 3000, 0);
+            newClip.editInfo.selectedEndValue = Math.min(newClip.getStartTimeMs() + data.inclip_start_offset_ms + data.lap_time_ms + 3000, newClip.getEndTimeMs());
             Logger.t(TAG).d("clip start value:" + newClip.getStartTimeMs());
             Logger.t(TAG).d("clip end value:" + (newClip.getStartTimeMs() + newClip.getDurationMs()));
             Logger.t(TAG).d("edit start value:" + newClip.editInfo.selectedStartValue);
             Logger.t(TAG).d("edit end value:" + newClip.editInfo.selectedEndValue);
-            mPlaylistEditor.buildRx(newClip)
+            shareEditor.buildRx(newClip)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io())
                     .subscribe(new Subscriber<Void>() {
@@ -548,7 +549,7 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
                             Logger.t(TAG).d("origin clip startTimeMs:" + mOriginClip.getStartTimeMs());
                             AvrproLapTimerResult result = new AvrproLapTimerResult(lapsHeader, new AvrproLapData[]{newLap},
                                     gpsList.toArray(new AvrproGpsParsedData[gpsList.size()]));
-                            ShareActivity.launch(LapTimerActivity.this, mPlaylistEditor.getPlaylistId(), getAudioID(), result);
+                            ShareActivity.launch(LapTimerActivity.this, shareEditor.getPlaylistId(), getAudioID(), result);
                         }
 
                         @Override
@@ -569,11 +570,12 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
     }
 
     private void toSeek(int lapId) {
+        mAdapter.setCurrentLap(lapId);
+        Logger.t(TAG).d("seek to lap" + lapId );
         AvrproLapData lapData = Arrays.asList(mLapTimerResult.lapList).get(lapId);
         ClipSetPos newClipSetPos= getClipSet().getClipSetPosByTimeOffset(lapData.inclip_start_offset_ms);
         mClipPlayFragment.enterFastPreview();
         mClipPlayFragment.setClipSetPos(newClipSetPos, true);
-        mEventBus.post(new ClipSetPosChangeEvent(newClipSetPos, ClipPlayFragment.class.getSimpleName()));
         mClipPlayFragment.startPreparingClip(newClipSetPos, false);
     }
 
@@ -637,6 +639,32 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
         return result;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventClipSetPosChanged(ClipSetPosChangeEvent event) {
+        ClipSetPos clipSetPos = event.getClipSetPos();
+        int playingLap = -1;
+        long timeOffset = getClipSet().getTimeOffsetByClipSetPos(clipSetPos);
+        if (mLapTimerResult != null && mLapTimerResult.lapList != null && mLapTimerResult.lapList.length > 0) {
+            List<AvrproLapData> lapDataList = Arrays.asList(mLapTimerResult.lapList);
+            if (timeOffset < lapDataList.get(0).inclip_start_offset_ms) {
+                playingLap = 0;
+            } else if (timeOffset >= lapDataList.get(lapDataList.size() - 1).inclip_start_offset_ms - 1000) {
+                playingLap = lapDataList.size() - 1;
+            } else {
+                for (int i = 0; i < lapDataList.size() - 1; i++) {
+                    AvrproLapData curLap = lapDataList.get(i);
+                    if (curLap.inclip_start_offset_ms - 1000 <= timeOffset && timeOffset < curLap.inclip_start_offset_ms + curLap.lap_time_ms - 1000) {
+                        playingLap = i;
+                        break;
+                    }
+                }
+            }
+        }
+        if (playingLap >= 0 && timeOffset != 0 && mClipPlayFragment.isVideoPlaying()) {
+            mAdapter.setCurrentLap(playingLap);
+        }
+    }
+
 
     private ActionMode.Callback mCallback = new ActionMode.Callback() {
         @Override
@@ -663,8 +691,22 @@ public class LapTimerActivity extends ClipPlayActivity implements LapListAdapter
     };
 
 
-    private void updateActionMode() {
-        mActionMode.setTitle("Select a Lap");
+    private void updateToolbar() {
+        if (mAdapter != null) {
+            mAdapter.setSelectedMode(true);
+        }
+        getToolbar().setTitle("Select A Lap");
+        getToolbar().getMenu().clear();
+        getToolbar().setNavigationIcon(R.drawable.ic_close);
+        getToolbar().setNavigationContentDescription("Cancel");
+        getToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMode = NORMAL_MODE;
+                mAdapter.setSelectedMode(false);
+                setupToolbar();
+            }
+        });
     }
 
 }

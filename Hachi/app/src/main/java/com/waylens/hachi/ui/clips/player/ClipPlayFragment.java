@@ -38,6 +38,9 @@ import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.player.HachiPlayer;
 import com.waylens.hachi.player.HlsRendererBuilder;
 import com.waylens.hachi.player.Utils;
+import com.waylens.hachi.snipe.remix.AvrproClipInfo;
+import com.waylens.hachi.snipe.remix.AvrproLapData;
+import com.waylens.hachi.snipe.remix.AvrproLapTimerResult;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.snipe.vdb.ClipSet;
@@ -58,6 +61,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -120,13 +125,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
 
     private int mVideoType = VIDEO_TYPE_ORIDINARY;
 
+    private List<AvrproLapData> mLapData = new ArrayList<>();
+
     @BindView(R.id.surface_view)
     SurfaceView mSurfaceView;
 
-
     @BindView(R.id.clipCover)
     ImageView mClipCover;
-
 
     @BindView(R.id.progressLoading)
     ProgressBar mProgressLoading;
@@ -197,6 +202,10 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
             }
         }
 
+    }
+
+    public boolean isVideoPlaying() {
+        return mPlayerControl != null && mPlayerControl.isPlaying();
     }
 
     @OnClick(R.id.btnFullscreen)
@@ -589,6 +598,8 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 break;
             case VIDEO_TYPE_LAPTIMER:
                 mWvGauge.initGaugeViewBySetting("rifle");
+                mBtnShowOverlay.setImageResource(R.drawable.ic_btn_gauge_overlay_s);
+                mWvGauge.setVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -873,6 +884,11 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         mControlPanel.setVisibility(View.GONE);
     }
 
+    public void setLapTimerData(AvrproLapTimerResult result, AvrproClipInfo clipInfo) {
+        mLapData.addAll(Arrays.asList(result.lapList));
+        mWvGauge.setLapTimerData(result, clipInfo);
+    }
+
     private static class ControlPanelHandler extends Handler {
         private WeakReference<ClipPlayFragment> mFragmentRef;
 
@@ -922,8 +938,6 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                 refreshProgressBar(0);
                 mNeedSendPlayCompleteEvent = false;
             }
-
-
         }
 
         private void refreshProgressBar(final int currentPos) {

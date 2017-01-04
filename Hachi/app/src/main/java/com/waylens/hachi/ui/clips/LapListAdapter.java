@@ -1,6 +1,7 @@
 package com.waylens.hachi.ui.clips;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
 import com.waylens.hachi.snipe.remix.AvrproLapData;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -36,6 +38,8 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private final Context mContext;
     private OnLapClickListener mOnLapClickListener;
+    private int mCurrentLap = -1;
+    boolean selectedMode = false;
 
     public LapListAdapter(Context context, OnLapClickListener listener) {
         this.mContext = context;
@@ -75,6 +79,20 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+    public void setCurrentLap(int lapIndex) {
+        if (lapIndex < mLapDataList.size()) {
+            if (mCurrentLap != lapIndex) {
+                mCurrentLap = lapIndex;
+                notifyDataSetChanged();
+            } else {
+                notifyItemChanged(lapIndex);
+            }
+        }
+    }
+    public void setSelectedMode(boolean mode) {
+        selectedMode = mode;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemViewType(int position) {
@@ -100,10 +118,12 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mCurrentLap = position;
+                notifyDataSetChanged();
                 if (mOnLapClickListener != null) {
                     mOnLapClickListener.onLapClicked(position);
                 }
@@ -123,6 +143,15 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.lapPbDuration.setProgress((lapData.lap_time_ms * 100) / longestLapTime);
         holder.lapTitle.setText("Lap " + (position + 1));
         holder.lapTvDuration.setText(formatLapTime(lapData.lap_time_ms));
+        if (position == mCurrentLap && !selectedMode) {
+            holder.itemView.setPressed(true);
+            holder.lapTvDuration.setTypeface(null, Typeface.BOLD);
+            holder.lapTitle.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.itemView.setPressed(false);
+            holder.lapTvDuration.setTypeface(null, Typeface.NORMAL);
+            holder.lapTitle.setTypeface(null, Typeface.NORMAL);
+        }
     }
 
 
@@ -131,10 +160,20 @@ public class LapListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         holder.lapPbDuration.setProgress((lapData.lap_time_ms * 100) / longestLapTime);
         holder.lapTitle.setText("Lap " + (position + 1));
         holder.lapTvDuration.setText(formatLapTime(lapData.lap_time_ms));
+        if (position == mCurrentLap && !selectedMode) {
+            holder.itemView.setPressed(true);
+            holder.lapTvDuration.setTypeface(null, Typeface.BOLD);
+            holder.lapTitle.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.itemView.setPressed(false);
+            holder.lapTvDuration.setTypeface(null, Typeface.NORMAL);
+            holder.lapTitle.setTypeface(null, Typeface.NORMAL);
+        }
     }
 
     private String formatLapTime(int timeMs) {
         NumberFormat formatter = new DecimalFormat("#0.00");
+        formatter.setRoundingMode(RoundingMode.HALF_UP);
         return DateUtils.formatElapsedTime(timeMs / 1000) + formatter.format((double)timeMs % 1000 / 1000).substring(1);
     }
 

@@ -143,7 +143,7 @@ public class ShareSettingActivity extends BaseActivity implements CarListAdapter
                     @Override
                     public void onNext(VehicleListResponse vehicleListResponse) {
                         List<Vehicle> localVehicles = mSessionManager.getVehicles();
-                        if (localVehicles.size() != vehicleListResponse.vehicles.size() || !localVehicles.containsAll(vehicleListResponse.vehicles)) {
+                        if (localVehicles == null || localVehicles.size() != vehicleListResponse.vehicles.size() || !localVehicles.containsAll(vehicleListResponse.vehicles)) {
                             mSessionManager.updateVehicles(vehicleListResponse.vehicles);
                             mAdapter.setCarList(vehicleListResponse.vehicles, selectedVehicle);
                         }

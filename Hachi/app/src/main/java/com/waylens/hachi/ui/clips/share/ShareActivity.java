@@ -302,6 +302,20 @@ public class ShareActivity extends ClipPlayActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mPlayListId != 0x100) {
+            mPlaylistEditor.clearRx()
+                    .subscribe(new SimpleSubscribe<Void>() {
+                        @Override
+                        public void onNext(Void aVoid) {
+
+                        }
+                    });
+        }
+    }
+
 
     @Override
     protected void init() {

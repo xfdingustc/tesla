@@ -394,7 +394,7 @@
     <string name="made_comment">made a comment on you</string>
     <string name="in_moment">in Moment</string>
     <string name="start_follow">started following you</string>
-    <string name="notification">Notification</string>
+    <string name="notification">Notifications</string>
     <string name="no_more_notifications">No more notifications</string>
     <string name="comment_notification">%1$s commented your moment \'%2$s\'.</string>
     <string name="like_notification">%1$s liked your moment \'%2$s\'.</string>

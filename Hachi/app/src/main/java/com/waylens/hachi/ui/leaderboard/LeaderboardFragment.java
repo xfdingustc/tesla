@@ -52,7 +52,7 @@ import com.waylens.hachi.utils.ServerErrorHelper;
 import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
-import net.steamcrafted.loadtoast.LoadToast;
+import com.waylens.hachi.ui.views.loadtoast.LoadToast;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -421,15 +421,6 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
                     ServerErrorHelper.showErrorMessage(mRootView, e);
                 }
             });
-        Observable.timer(5, TimeUnit.SECONDS)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<Long>() {
-                @Override
-                public void onNext(Long aLong) {
-                    mLoadToast.error();
-                }
-            });
-
     }
 
     private void onHandleRaceQuery(RaceQueryResponse raceQueryResponse, boolean isRefresh) {
@@ -638,12 +629,16 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
 
     @Override
     public void onSelected() {
-
+        Logger.t(TAG).d("leader board select");
+        if (mLoadToast != null) {
+            mLoadToast.setFragmentVisibility(true);
+        }
     }
 
     @Override
     public void onDeselected() {
-
+        Logger.t(TAG).d("leader board deselect");
+        mLoadToast.setFragmentVisibility(false);
     }
 
 

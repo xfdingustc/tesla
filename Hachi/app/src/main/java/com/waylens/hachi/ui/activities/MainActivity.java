@@ -229,11 +229,11 @@ public class MainActivity extends BaseActivity {
             } else {
                 transaction.hide(mCurrentFragment).show(fragment).commit();
             }
-
-
         }
         mCurrentFragment = fragment;
-
+        if (mCurrentFragment != null && mCurrentFragment instanceof FragmentNavigator) {
+            ((FragmentNavigator) mCurrentFragment).onSelected();
+        }
     }
 
 

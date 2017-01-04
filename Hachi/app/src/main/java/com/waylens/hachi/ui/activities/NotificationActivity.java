@@ -126,6 +126,7 @@ public class NotificationActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
+        mRefreshLayout.setRefreshing(true);
         loadNotificationsRx(true);
     }
 
