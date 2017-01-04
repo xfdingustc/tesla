@@ -185,14 +185,7 @@ public class UploadManager {
             if (request == null) {
                 request = getItemWithStatus(UploadStatus.WAITING);
                 if (request == null) {
-                    if (UploadQueueUtilityNetwork.isNetworkAvailable(context)) {
-                        request = getItemWithStatus(UploadStatus.FAILED);
-                        if (request == null) {
-                            flag = false;
-                        }
-                    } else {
-                        flag = false;
-                    }
+                    flag = false;
                 }
             }
         }
