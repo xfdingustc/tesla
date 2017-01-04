@@ -6,6 +6,7 @@ import android.content.Intent;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.uploadqueue.db.UploadQueueDBAdapter;
+import com.waylens.hachi.uploadqueue.model.UploadError;
 import com.waylens.hachi.uploadqueue.model.UploadQueueActions;
 import com.waylens.hachi.uploadqueue.model.UploadRequest;
 import com.waylens.hachi.uploadqueue.model.UploadStatus;
@@ -95,10 +96,21 @@ public class UploadManager {
         return false;
     }
 
+    public void errorOccured(Context context, String key, UploadError error) {
+        UploadRequest request = getItem(key);
+        if (request != null) {
+            request.setStatus(UploadStatus.FAILED);
+            updateUploadStatus(request);
+        }
+
+        updateDBandQueue(context, key, UploadStatus.FAILED);
+    }
+
     private boolean deleteUploadRequest(UploadRequest itemToBeRemove, Context context) {
-        if (itemToBeRemove != null) {
+        if (itemToBeRemove == null) {
             return false;
         }
+        Logger.t(TAG).d("delete upload request");
         itemToBeRemove.setStatus(UploadStatus.DELETED);
         UploadQueueDBAdapter dbAdapter = UploadQueueDBAdapter.getInstance();
         dbAdapter.delete(itemToBeRemove);
