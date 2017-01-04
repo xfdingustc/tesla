@@ -386,6 +386,9 @@
             android:name=".service.download.DownloadServiceRx"
             android:exported="false"/>
 
+        <service android:name=".uploadqueue.UploadService"
+                 android:exported="false"/>
+
         <service
             android:name=".bgjob.BgJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>

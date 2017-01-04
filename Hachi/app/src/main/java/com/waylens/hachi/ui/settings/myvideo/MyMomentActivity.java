@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.UploadManager;
+import com.waylens.hachi.bgjob.upload.UploadManager2;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MomentListResponse;
@@ -25,7 +25,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Xiaofei on 2016/6/17.
  */
-public class MyMomentActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
+public class MyMomentActivity extends BaseActivity implements UploadManager2.OnUploadJobStateChangeListener {
     private static final String TAG = MyMomentActivity.class.getSimpleName();
 
     private MomentItemAdapter mVideoItemAdapter;
@@ -124,7 +124,7 @@ public class MyMomentActivity extends BaseActivity implements UploadManager.OnUp
         mRvMomentList.setAdapter(mVideoItemAdapter);
 
 
-        UploadManager.getManager().addOnUploadJobStateChangedListener(this);
+        UploadManager2.getManager().addOnUploadJobStateChangedListener(this);
         loadUserMoment(0, false);
     }
 

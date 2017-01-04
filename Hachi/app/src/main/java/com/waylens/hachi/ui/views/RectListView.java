@@ -53,12 +53,14 @@ public class RectListView extends View {
 
     public void showRects(List<Rect> rectList, Rect canvasRect) {
         this.mRectList = rectList;
+        this.mLineList = null;
         this.mCanvasRect = canvasRect;
         invalidate();
     }
 
     public void showLines(List<Line> lineList, Rect canvasRect) {
         this.mLineList = lineList;
+        this.mRectList = null;
         this.mCanvasRect = canvasRect;
         invalidate();
     }

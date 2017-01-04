@@ -17,8 +17,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.UploadManager;
+import com.waylens.hachi.bgjob.upload.UploadManager2;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
+import com.waylens.hachi.uploadqueue.UploadManager;
+import com.waylens.hachi.uploadqueue.UploadResponseHolder;
+import com.waylens.hachi.uploadqueue.interfaces.UploadResponseListener;
+import com.waylens.hachi.uploadqueue.model.UploadRequest;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,13 +32,15 @@ import butterknife.ButterKnife;
 /**
  * Created by Xiaofei on 2016/8/15.
  */
-public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager.OnUploadJobStateChangeListener {
+public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager2.OnUploadJobStateChangeListener {
     private final Activity mActivity;
-    private UploadManager mUploadManager = UploadManager.getManager();
+    private UploadManager mUploadManager;
 
     public UploadItemAdapter(Activity activity) {
         this.mActivity = activity;
-        mUploadManager.addOnUploadJobStateChangedListener(this);
+        //mUploadManager.addOnUploadJobStateChangedListener(this);
+        mUploadManager = UploadManager.getManager(activity);
+
     }
 
     @Override
@@ -44,30 +52,34 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final UploadVideoItemViewHolder videoItemViewHolder = (UploadVideoItemViewHolder) holder;
-        final UploadMomentJob uploadable = mUploadManager.getUploadJob(position);
-        if (TextUtils.isEmpty(uploadable.getMomentTitle())) {
+        UploadRequest request = mUploadManager.getQueuedItemList().get(position);
+        if (TextUtils.isEmpty(request.getTitle())) {
             videoItemViewHolder.momentTitle.setText(R.string.no_title);
         } else {
-            videoItemViewHolder.momentTitle.setText(uploadable.getMomentTitle());
+            videoItemViewHolder.momentTitle.setText(request.getTitle());
         }
-        if (uploadable.getLocalMoment() == null) {
+
+        if (request.getLocalMoment() == null) {
             videoItemViewHolder.imageMoment.setVisibility(View.VISIBLE);
         } else {
             videoItemViewHolder.imageMoment.setVisibility(View.INVISIBLE);
         }
-        videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
-        videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
-        videoItemViewHolder.uploadProgress.setProgress(uploadable.getUploadProgress());
-        videoItemViewHolder.uploadStatus.setText(uploadable.getProgressStatus());
 
-        if (!TextUtils.isEmpty(uploadable.getThumbnail())) {
+        if (!TextUtils.isEmpty(request.getLocalMoment().thumbnailPath)) {
             Glide.with(mActivity)
-                .load(uploadable.getThumbnail())
+                .load(request.getLocalMoment().thumbnailPath)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
                 .placeholder(videoItemViewHolder.videoCover.getDrawable())
                 .into(videoItemViewHolder.videoCover);
         }
+        videoItemViewHolder.uploadStatus.setVisibility(View.VISIBLE);
+        videoItemViewHolder.uploadStatus.setText(request.getStatus().message());
+        videoItemViewHolder.uploadProgress.setVisibility(View.VISIBLE);
+        videoItemViewHolder.uploadProgress.setProgress(request.getProgress());
+        /*
+
+
         if (uploadable.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
             videoItemViewHolder.uploadProgress.setVisibility(View.GONE);
             videoItemViewHolder.uploadStatus.setVisibility(View.GONE);
@@ -105,7 +117,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 });
                 popupMenu.show();
             }
-        });
+        });*/
 
 
     }
@@ -113,7 +125,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mUploadManager.getJobCount();
+        return mUploadManager.getQueuedItemList().size();
     }
 
     @Override

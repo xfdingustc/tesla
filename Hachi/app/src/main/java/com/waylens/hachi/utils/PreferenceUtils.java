@@ -17,6 +17,7 @@ public class PreferenceUtils {
     public static final String AVATAR_URL = "avatar_url";
     public static final String AVATAR_URL_THUMBNAIL = "avatar_url_thumbnail";
     public static final String USER_ID = "user_id";
+    public static final String ANONYMOUS = "anonymous";
     public static final String EMAIL = "email";
     public static final String TOKEN = "token";
     public static final String BIRTHDAY = "birthday";
@@ -45,6 +46,10 @@ public class PreferenceUtils {
     public static final String SOCIAL_YOUTUBE_LINKED = "social_youtube_linked";
 
     public static final String BOOKMARK_NEED_REFRESH = "bookmark_need_refresh";
+
+    public static final String KEY_MAX_PARALLEL_UPLOAD = "key_max_parallel_upload";
+
+    public static final String KEY_ONLY_ON_WIFI = "upload_on_wifi_only";
 
 
 

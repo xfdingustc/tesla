@@ -12,4 +12,8 @@ public enum UploadQueueActions {
     DELETE_ITEM,
     REMOVE_ITEM,
     START_UPLOAD_FROM_PAUSE;
+
+    public static UploadQueueActions get(int i) {
+        return values()[i];
+    }
 }

@@ -14,9 +14,11 @@ import com.squareup.leakcanary.LeakCanary;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.export.ExportManager;
-import com.waylens.hachi.bgjob.upload.UploadManager;
 import com.waylens.hachi.camera.connectivity.VdtCameraConnectivityManager;
 import com.waylens.hachi.session.SessionManager;
+import com.waylens.hachi.uploadqueue.UploadManager;
+import com.waylens.hachi.uploadqueue.model.DaoMaster;
+import com.waylens.hachi.uploadqueue.model.DaoSession;
 import com.waylens.hachi.utils.PreferenceUtils;
 
 
@@ -35,6 +37,26 @@ public class Hachi extends MultiDexApplication {
     private static Context mSharedContext = null;
 
     private static String mUserAgent;
+
+    private static DaoMaster mDaoMaster;
+    private static DaoSession mDaoSession;
+
+    public static DaoMaster getDaoMaster() {
+        if (mDaoMaster == null) {
+            DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(mSharedContext, "upload9", null);
+            mDaoMaster = new DaoMaster(helper.getWritableDatabase());
+        }
+
+        return mDaoMaster;
+    }
+
+    public static DaoSession getDaoSession() {
+        if (mDaoSession == null) {
+            mDaoSession = getDaoMaster().newSession();
+        }
+
+        return mDaoSession;
+    }
 
 
     @Override
@@ -78,13 +100,13 @@ public class Hachi extends MultiDexApplication {
 //        LeakCanary.install(this);
         initLogger();
 
-        UploadManager uploadManager = UploadManager.getManager();
-
         configureJobManager();
 
         ExportManager.getManager();
 
         PreferenceUtils.initialize(this);
+
+        UploadManager uploadManager = UploadManager.getManager(this);
 
         initSessionInfo();
 

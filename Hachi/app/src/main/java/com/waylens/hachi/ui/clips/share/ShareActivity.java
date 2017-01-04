@@ -14,7 +14,6 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -33,12 +32,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
-import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
-import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
-import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.bean.Vehicle;
@@ -71,18 +64,19 @@ import com.waylens.hachi.ui.clips.player.UrlProvider;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.entities.LocalMoment;
 import com.waylens.hachi.ui.settings.ShareSettingActivity;
-import com.waylens.hachi.ui.settings.VehiclePickActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.ui.views.AvatarView;
+import com.waylens.hachi.uploadqueue.UploadManager;
+import com.waylens.hachi.uploadqueue.model.UploadError;
+import com.waylens.hachi.uploadqueue.model.UploadRequest;
+import com.waylens.hachi.uploadqueue.model.UploadStatus;
 import com.waylens.hachi.utils.LocalMomentDownloadHelper;
 import com.waylens.hachi.utils.VersionHelper;
 import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 import com.waylens.hachi.view.gauge.GaugeSettingManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -349,7 +343,7 @@ public class ShareActivity extends ClipPlayActivity {
                         Clip clip = getClipSet().getClip(0);
                         Logger.t(TAG).d("share clip startTimeMs:" + clip.editInfo.selectedStartValue);
                         AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type,
-                                (int) (clip.editInfo.selectedStartValue), (int) (clip.editInfo.selectedStartValue >> 32), clip.editInfo.getSelectedLength());
+                            (int) (clip.editInfo.selectedStartValue), (int) (clip.editInfo.selectedStartValue >> 32), clip.editInfo.getSelectedLength());
                         mClipPlayFragment.getGaugeView().setLapTimerData(mLapTimerResult, clipInfo);
                         mMomentType = "LAP_TIMER";
                     }
@@ -399,40 +393,40 @@ public class ShareActivity extends ClipPlayActivity {
                     ClipDownloadInfo clipDownloadInfo = SnipeApi.getClipDownloadInfo(cid, 0, getClipSet().getTotalLengthMs());
                     subscriber.onNext(clipDownloadInfo);
                 } catch (InterruptedException | ExecutionException e) {
-                        Logger.t(TAG).d("failed");
+                    Logger.t(TAG).d("failed");
                 }
             }
         }).subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
-            @Override
-            public void onNext(ClipDownloadInfo clipDownloadInfo) {
-                ArrayList<Clip> clipList = getClipSet().getClipList();
-                //resolutionList.add(0, clipList.get(0).streams[1].video_height + "P");
-                resolutionList.add(0, 360 + "P");
-                Logger.t(TAG).d(clipList.get(0).streams[1].video_height + "P");
-                Logger.t(TAG).d(clipList.get(0).streams[0].video_height + "P");
-                sizeList.add(0, clipDownloadInfo.sub.size / (1000 * 1000) + " MB");
-                Short highResolution = clipList.get(0).streams[0].video_height;
-                for (int i = 1; i < clipList.size(); i++) {
-                    if (clipList.get(i).streams[0].video_height != highResolution) {
-                        highResolution = -1;
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ClipDownloadInfo>() {
+                @Override
+                public void onNext(ClipDownloadInfo clipDownloadInfo) {
+                    ArrayList<Clip> clipList = getClipSet().getClipList();
+                    //resolutionList.add(0, clipList.get(0).streams[1].video_height + "P");
+                    resolutionList.add(0, 360 + "P");
+                    Logger.t(TAG).d(clipList.get(0).streams[1].video_height + "P");
+                    Logger.t(TAG).d(clipList.get(0).streams[0].video_height + "P");
+                    sizeList.add(0, clipDownloadInfo.sub.size / (1000 * 1000) + " MB");
+                    Short highResolution = clipList.get(0).streams[0].video_height;
+                    for (int i = 1; i < clipList.size(); i++) {
+                        if (clipList.get(i).streams[0].video_height != highResolution) {
+                            highResolution = -1;
+                        }
+                        Logger.t(TAG).d("stream 0 " + clipList.get(i).streams[0].video_height);
                     }
-                    Logger.t(TAG).d("stream 0 " + clipList.get(i).streams[0].video_height);
+                    if (highResolution > 0) {
+                        resolutionList.add(1, clipList.get(0).streams[0].video_height + "P");
+                        sizeList.add(clipDownloadInfo.main.size / (1000 * 1000) + " MB");
+                    }
+                    ArrayAdapter adapter = new ArrayAdapter<>(ShareActivity.this, android.R.layout.simple_spinner_item, resolutionList);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spUploadResolution.setAdapter(adapter);
+                    llResolution.setVisibility(View.VISIBLE);
+                    if (shareMenuItem != null) {
+                        shareMenuItem.setEnabled(true);
+                    }
                 }
-                if (highResolution > 0) {
-                    resolutionList.add(1, clipList.get(0).streams[0].video_height + "P");
-                    sizeList.add(clipDownloadInfo.main.size / (1000 * 1000) + " MB");
-                }
-                ArrayAdapter adapter = new ArrayAdapter<>(ShareActivity.this, android.R.layout.simple_spinner_item, resolutionList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spUploadResolution.setAdapter(adapter);
-                llResolution.setVisibility(View.VISIBLE);
-                if (shareMenuItem != null) {
-                    shareMenuItem.setEnabled(true);
-                }
-            }
-        });
+            });
     }
 
     private void getClipInfo() {
@@ -583,10 +577,10 @@ public class ShareActivity extends ClipPlayActivity {
 
         if (mLapTimerResult != null) {
             mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mPlaylistEditor.getPlaylistId(),
-                    vdtUriProvider, ClipPlayFragment.ClipMode.MULTI, ClipPlayFragment.CoverMode.NORMAL, ClipPlayFragment.VIDEO_TYPE_LAPTIMER);
+                vdtUriProvider, ClipPlayFragment.ClipMode.MULTI, ClipPlayFragment.CoverMode.NORMAL, ClipPlayFragment.VIDEO_TYPE_LAPTIMER);
         } else {
             mClipPlayFragment = ClipPlayFragment.newInstance(mVdtCamera, mPlaylistEditor.getPlaylistId(),
-                    vdtUriProvider, ClipPlayFragment.ClipMode.MULTI, ClipPlayFragment.CoverMode.NORMAL);
+                vdtUriProvider, ClipPlayFragment.ClipMode.MULTI, ClipPlayFragment.CoverMode.NORMAL);
         }
 
         if (transition) {
@@ -694,7 +688,7 @@ public class ShareActivity extends ClipPlayActivity {
                 perLap.checkIntervalMs = lapData.check_interval_ms;
                 perLap.startOffsetMs = lapData.inclip_start_offset_ms;
                 perLap.deltaMsToBest = new ArrayList<>();
-                for(int i = 0; i < lapTimerHeader.bestLapTime / lapData.check_interval_ms; i++) {
+                for (int i = 0; i < lapTimerHeader.bestLapTime / lapData.check_interval_ms; i++) {
                     perLap.deltaMsToBest.add(lapData.delta_ms_to_best[i]);
                 }
                 lapDatas.add(perLap);
@@ -727,15 +721,6 @@ public class ShareActivity extends ClipPlayActivity {
         }
         ToStringUtils.getString(localMoment);
         showDownloadDialog(localMoment);
-        //BgJobHelper.uploadMoment(localMoment);
-/*        CacheUploadMomentService.scheduleJob(getApplicationContext());
-        CacheUploadMomentJob cacheUploadMomentJob = new CacheUploadMomentJob(localMoment);
-        StateJobHolder stateJobHolder = new StateJobHolder(cacheUploadMomentJob.getId(), StateJobHolder.INITIAL_STATE, null, cacheUploadMomentJob);
-        PersistentQueue.getPersistentQueue().insert(stateJobHolder);
-        CacheUploadMomentService.launch(this);*/
-        //UploadingMomentActivity.launch(this);
-        //finish();
-//
     }
 
     private void showDownloadDialog(final LocalMoment localMoment) {
@@ -748,7 +733,15 @@ public class ShareActivity extends ClipPlayActivity {
                     if (mDownloadDialog != null && mDownloadDialog.isShowing()) {
                         mDownloadDialog.dismiss();
                     }
-                    BgJobHelper.uploadCachedMoment(localMoment);
+
+                    UploadRequest request = new UploadRequest();
+                    request.setKey(String.valueOf(System.currentTimeMillis()));
+                    request.setUserId(SessionManager.getInstance().getUserId());
+                    request.setTitle(localMoment.title);
+                    request.setStatus(UploadStatus.UPLOAD_REQUEST);
+                    request.setCurrentError(UploadError.NO_ERROR);
+                    request.setLocalMoment(localMoment);
+                    UploadManager.getManager(ShareActivity.this).addToQueue(request, ShareActivity.this);
                     UploadingMomentActivity.launch(ShareActivity.this);
                     finish();
 

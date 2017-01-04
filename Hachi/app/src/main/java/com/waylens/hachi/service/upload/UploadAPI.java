@@ -123,14 +123,14 @@ public class UploadAPI {
 
 
     public InitUploadResponse initUploadSync(long momentId, InitUploadBody body) throws IOException {
-        Call<InitUploadResponse> initUploadResponseCall = mRetrofit.create(UploadService.class)
+        Call<InitUploadResponse> initUploadResponseCall = mRetrofit.create(IUploadService.class)
             .initUpload(SessionManager.getInstance().getUserId(), "init", momentId, body);
         Logger.t(TAG).d("url: " + initUploadResponseCall.request().url().toString());
         return initUploadResponseCall.execute().body();
     }
 
     public UploadDataResponse uploadChunkSync(RequestBody requestBody, long momentId, LocalMoment.Segment segment) throws IOException {
-        Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(UploadService.class)
+        Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(IUploadService.class)
             .uploadData(SessionManager.getInstance().getUserId(),
                 "transfer",
                 momentId,
@@ -145,7 +145,7 @@ public class UploadAPI {
 
 
     public UploadDataResponse uploadThumbnail(RequestBody requestBody, long momentId) throws IOException {
-        Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(UploadService.class)
+        Call<UploadDataResponse> uploadDataResponseCall = mRetrofit.create(IUploadService.class)
             .uploadData(SessionManager.getInstance().getUserId(),
                 "transfer",
                 momentId,
@@ -156,7 +156,7 @@ public class UploadAPI {
 
 
     public void finishUpload(long momentId) throws IOException {
-        Call<Void> finishUploadResponseCall = mRetrofit.create(UploadService.class)
+        Call<Void> finishUploadResponseCall = mRetrofit.create(IUploadService.class)
             .finishUpload(SessionManager.getInstance().getUserId(),
                 "finish",
                 momentId
@@ -167,7 +167,7 @@ public class UploadAPI {
 
     public UploadDataResponse uploadAvatarSync(RequestBody requestBody, String sha1) {
         try {
-            Call<UploadDataResponse> uploadAvatarCall = mRetrofit.create(UploadService.class)
+            Call<UploadDataResponse> uploadAvatarCall = mRetrofit.create(IUploadService.class)
                 .uploadAvatar(SessionManager.getInstance().getUserId(), sha1, requestBody);
             return uploadAvatarCall.execute().body();
         } catch (IOException e) {
@@ -179,7 +179,7 @@ public class UploadAPI {
     public UploadDataResponse uploadPictureSync(RequestBody requestBody, long momentId, String sha1) {
 
         try {
-            Call<UploadDataResponse> uploadPictureCall = mRetrofit.create(UploadService.class)
+            Call<UploadDataResponse> uploadPictureCall = mRetrofit.create(IUploadService.class)
                 .uploadPicture(SessionManager.getInstance().getUserId(), momentId, sha1, "public", requestBody);
             return uploadPictureCall.execute().body();
         } catch (IOException e) {
@@ -191,7 +191,7 @@ public class UploadAPI {
 
     public UploadDataResponse uploadMp4Sync(RequestBody requestBody, long momentId, String sha1, long resolution, long duration) {
         try {
-            Call<UploadDataResponse> uploadMp4Call = mRetrofit.create(UploadService.class)
+            Call<UploadDataResponse> uploadMp4Call = mRetrofit.create(IUploadService.class)
                     .uploadMp4(SessionManager.getInstance().getUserId(), momentId, sha1, "public", resolution, duration, requestBody);
             return uploadMp4Call.execute().body();
         } catch (IOException e) {

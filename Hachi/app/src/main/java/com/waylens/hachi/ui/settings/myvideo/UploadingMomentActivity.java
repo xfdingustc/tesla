@@ -10,30 +10,21 @@ import android.widget.ViewAnimator;
 
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.export.event.ExportEvent;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
-import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
-import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
-import com.waylens.hachi.bgjob.upload.UploadManager;
+import com.waylens.hachi.bgjob.upload.UploadManager2;
 import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.bgjob.upload.event.UploadMomentEvent;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.adapters.UploadItemAdapter;
 import com.waylens.hachi.ui.settings.adapters.UploadingItemAdapter;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.List;
+import com.waylens.hachi.uploadqueue.UploadManager;
+import com.waylens.hachi.uploadqueue.UploadResponseHolder;
+import com.waylens.hachi.uploadqueue.interfaces.UploadResponseListener;
 
 import butterknife.BindView;
 
 /**
  * Created by Xiaofei on 2016/9/12.
  */
-public class UploadingMomentActivity extends BaseActivity implements UploadManager.OnUploadJobStateChangeListener {
+public class UploadingMomentActivity extends BaseActivity implements UploadManager2.OnUploadJobStateChangeListener {
     private static final String TAG = UploadingMomentActivity.class.getSimpleName();
     private UploadItemAdapter mUploadItemAdapter;
 
@@ -74,14 +65,26 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init();
-        //EventBus.getDefault().register(UploadingMomentActivity.this);
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        UploadResponseHolder.getHolder().addListener(mUploadListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        UploadResponseHolder.getHolder().removeListener(mUploadListener);
+    }
+
 
     @Override
     protected void init() {
         super.init();
         mAutoExit = getIntent().getBooleanExtra(EXTRA_AUTO_EXIT, false);
-        UploadManager.getManager().addOnUploadJobStateChangedListener(this);
+        UploadManager2.getManager().addOnUploadJobStateChangedListener(this);
         initViews();
     }
 
@@ -138,11 +141,46 @@ public class UploadingMomentActivity extends BaseActivity implements UploadManag
         }*/
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        //EventBus.getDefault().unregister(this);
-    }
+    private UploadResponseListener mUploadListener = new UploadResponseListener() {
+        @Override
+        public void onUploadStart(String key) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUploadItemAdapter.notifyDataSetChanged();
+                }
+            });
+
+        }
+
+        @Override
+        public void onUploadStart(String key, int totalSize) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUploadItemAdapter.notifyDataSetChanged();
+                }
+            });
+
+        }
+
+        @Override
+        public void updateProgress(final String key, int progress) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mUploadItemAdapter.notifyItemChanged(UploadManager.getManager(UploadingMomentActivity.this).getItemPosition(key));
+                }
+            });
+
+        }
+
+        @Override
+        public void onComplete(String key) {
+
+        }
+    };
+
 
 
     @Override
