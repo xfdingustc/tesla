@@ -393,10 +393,6 @@
             android:name=".bgjob.BgJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
-        <service
-            android:name=".bgjob.export.statejobqueue.CacheUploadMomentService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
 
         <meta-data
             android:name="BUG_HD_SDK_GENERAL_KEY"

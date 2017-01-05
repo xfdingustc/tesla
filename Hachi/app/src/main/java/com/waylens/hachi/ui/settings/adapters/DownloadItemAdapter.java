@@ -25,15 +25,9 @@ import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.export.ExportManager;
 import com.waylens.hachi.bgjob.export.ExportableJob;
 import com.waylens.hachi.bgjob.export.event.ExportEvent;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentJob;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
-import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
-import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
-import com.waylens.hachi.bgjob.export.statejobqueue.UploadTimelapseJob;
 import com.waylens.hachi.camera.VdtCameraManager;
 import com.waylens.hachi.glide_snipe_integration.SnipeGlideLoader;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 import com.waylens.hachi.utils.FileUtils;
 import com.waylens.hachi.utils.PrettyTimeUtils;
 
