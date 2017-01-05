@@ -880,6 +880,9 @@ public class VdtCamera implements VdtCameraCmdConsts {
                 case VIDEO_FRAMERATE_60FPS:
                     videoResulution = VIDEO_RESOLUTION_720P60;
                     break;
+                case VIDEO_FRAMERATE_120FPS:
+                    videoResulution = VIDEO_RESOLUTION_720P120;
+                    break;
 
             }
         }
