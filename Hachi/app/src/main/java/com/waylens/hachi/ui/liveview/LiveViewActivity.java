@@ -640,15 +640,15 @@ public class LiveViewActivity extends BaseActivity {
         inflateDetailedPanel();
         for (RawDataItem item : itemList) {
             if (item.getType() == RawDataItem.DATA_TYPE_GPS) {
-                ivGpsStatus.setAlpha(1.0f);
-                ivDetailGps.setAlpha(1.0f);
+                ivGpsStatus.setImageResource(R.drawable.gps_on);
+                ivDetailGps.setImageResource(R.drawable.gps_on);
                 tvGpsStatus.setText(strOn);
                 return;
             }
         }
 
-        ivGpsStatus.setAlpha(0.2f);
-        ivDetailGps.setAlpha(0.2f);
+        ivGpsStatus.setImageResource(R.drawable.gps_off);
+        ivDetailGps.setImageResource(R.drawable.gps_off);
         tvGpsStatus.setText(strGpsOff);
 
     }

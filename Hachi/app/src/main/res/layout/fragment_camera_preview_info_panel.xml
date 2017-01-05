@@ -57,7 +57,7 @@
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_gps_fixed"
+            android:src="@drawable/gps_off"
             android:gravity="center_vertical"
             android:tint="@color/app_text_color_primary"/>
 
