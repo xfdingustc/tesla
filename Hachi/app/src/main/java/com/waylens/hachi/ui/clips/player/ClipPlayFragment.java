@@ -556,7 +556,7 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
                     mRawDataAdapter.setRawDataLoader(mInitDataLoader);
                     mWvGauge.setAdapter(mRawDataAdapter);
 //                  Logger.t(TAG).d("init gauge view!");
-                    startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
+                    //startPreparingClip(mMultiSegSeekbar.getCurrentClipSetPos(), true);
                 }
             });
     }

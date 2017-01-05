@@ -60,13 +60,13 @@ public class WebViewActivity extends BaseActivity {
         mWebView.setWebViewClient(new WebViewClient());
         switch (requestCode) {
             case PAGE_LICENSE:
-                mWebView.loadUrl("file:///android_asset/license/license.htm");
+                mWebView.loadUrl("file:///android_asset/about/license.htm");
                 break;
             case PAGE_PRIVACY:
-                mWebView.loadUrl("file:///android_asset/privacy/privacy.html");
+                mWebView.loadUrl("file:///android_asset/about/privacy.htm");
                 break;
             case PAGE_TERMS_OF_USE:
-                mWebView.loadUrl("file:///android_asset/terms/terms.html");
+                mWebView.loadUrl("file:///android_asset/about/terms.htm");
                 break;
             case PAGE_SUPPORT:
                 mWebView.loadUrl("file:///android_asset/guide/index.html");
