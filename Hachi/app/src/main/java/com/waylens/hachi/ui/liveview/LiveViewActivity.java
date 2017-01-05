@@ -439,11 +439,18 @@ public class LiveViewActivity extends BaseActivity {
         });
         mGaugeView.setGaugeMode(GaugeView.MODE_CAMERA);
 
-
-//        Rect jpegRect = new Rect(0, 0, 1024, 768);
-//        List<Rect> rectList = new ArrayList<>();
-//        rectList.add(new Rect(512, 384, 612, 484));
-//        rectListView.showRects(rectList, jpegRect);
+        // Check if firmware need update:
+        FirmwareUpgradeHelper.getNewerFirmwareRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<Firmware>() {
+                @Override
+                public void onNext(Firmware firmware) {
+                    if (firmware != null) {
+                        DialogHelper.showUpgradFirmwareConfirmDialog(LiveViewActivity.this, firmware, null);
+                    }
+                }
+            });
 
     }
 
@@ -511,18 +518,7 @@ public class LiveViewActivity extends BaseActivity {
 
         startPreview();
 
-        // Check if firmware need update:
-        FirmwareUpgradeHelper.getNewerFirmwareRx()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new SimpleSubscribe<Firmware>() {
-                @Override
-                public void onNext(Firmware firmware) {
-                    if (firmware != null) {
-                        DialogHelper.showUpgradFirmwareConfirmDialog(LiveViewActivity.this, firmware, null);
-                    }
-                }
-            });
+
     }
 
 

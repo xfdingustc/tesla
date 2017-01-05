@@ -400,6 +400,8 @@ public class EnhanceActivity extends ClipPlayActivity {
         btnSd = (RadioButton) dialog.findViewById(R.id.sd_stream);
         btnHd = (RadioButton) dialog.findViewById(R.id.hd_stream);
         btnFullHd = (RadioButton) dialog.findViewById(R.id.full_hd_stream);
+        btnHd.setVisibility(!isClipFullHd() ? View.VISIBLE : View.GONE);
+        btnFullHd.setVisibility(isClipFullHd() ? View.VISIBLE : View.GONE);
         mExportTip = (TextView) dialog.findViewById(R.id.download_tip);
         FrameLayout layoutWithOverlay = (FrameLayout) dialog.findViewById(R.id.layout_with_overlay);
         FrameLayout layoutWithoutOverlay = (FrameLayout) dialog.findViewById(R.id.layout_without_overlay);
@@ -425,7 +427,9 @@ public class EnhanceActivity extends ClipPlayActivity {
                 mUnselectMaskWithoutOverlay.setVisibility(View.GONE);
                 mSelectorWithOverlay.setVisibility(View.GONE);
                 mSelectorWithoutOverlay.setVisibility(View.VISIBLE);
-                btnHd.setVisibility(View.GONE);
+                if (isClipFullHd()) {
+                    btnHd.setVisibility(View.GONE);
+                }
                 mExportTip.setText(R.string.tip_without_overlay);
             }
         });
@@ -569,5 +573,10 @@ public class EnhanceActivity extends ClipPlayActivity {
         } else {
             return -1;
         }
+    }
+
+    private boolean isClipFullHd() {
+        Clip clip = getClipSet().getClip(0);
+        return clip.isClipFullHd();
     }
 }

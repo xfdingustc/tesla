@@ -307,6 +307,8 @@ public class PreviewActivity extends ClipPlayActivity {
         btnSd = (RadioButton) dialog.findViewById(R.id.sd_stream);
         btnHd = (RadioButton) dialog.findViewById(R.id.hd_stream);
         btnFullHd = (RadioButton) dialog.findViewById(R.id.full_hd_stream);
+        btnHd.setVisibility(!getClipSet().getClip(0).isClipFullHd() ? View.VISIBLE : View.GONE);
+        btnFullHd.setVisibility(getClipSet().getClip(0).isClipFullHd() ? View.VISIBLE : View.GONE);
         mExportTip = (TextView) dialog.findViewById(R.id.download_tip);
         FrameLayout layoutWithOverlay = (FrameLayout) dialog.findViewById(R.id.layout_with_overlay);
         FrameLayout layoutWithoutOverlay = (FrameLayout) dialog.findViewById(R.id.layout_without_overlay);
@@ -332,7 +334,9 @@ public class PreviewActivity extends ClipPlayActivity {
                 mUnselectMaskWithoutOverlay.setVisibility(View.GONE);
                 mSelectorWithOverlay.setVisibility(View.GONE);
                 mSelectorWithoutOverlay.setVisibility(View.VISIBLE);
-                btnHd.setVisibility(View.GONE);
+                if (getClipSet().getClip(0).isClipFullHd()) {
+                    btnHd.setVisibility(View.GONE);
+                }
                 mExportTip.setText(R.string.tip_without_overlay);
             }
         });
