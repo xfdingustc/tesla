@@ -1,6 +1,7 @@
 package com.waylens.hachi.bgjob;
 
 
+import com.birbit.android.jobqueue.JobManager;
 import com.waylens.hachi.bgjob.export.download.DownloadJob;
 import com.waylens.hachi.bgjob.export.timelapse.TimeLapseJob;
 import com.waylens.hachi.bgjob.social.DeleteCommentJob;
@@ -10,7 +11,6 @@ import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
-import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;

@@ -3,11 +3,12 @@ package com.waylens.hachi.bgjob.export;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.callback.JobManagerCallback;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.export.event.ExportEvent;
-import com.waylens.hachi.jobqueue.Job;
-import com.waylens.hachi.jobqueue.callback.JobManagerCallback;
+
 
 
 import org.greenrobot.eventbus.EventBus;

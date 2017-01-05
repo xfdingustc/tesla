@@ -33,6 +33,7 @@ import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.birbit.android.jobqueue.JobManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -44,7 +45,6 @@ import com.waylens.hachi.bgjob.BgJobHelper;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.event.SocialEvent;
-import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.bean.User;

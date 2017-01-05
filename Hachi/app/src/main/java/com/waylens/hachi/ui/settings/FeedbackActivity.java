@@ -11,12 +11,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.BuildConfig;
 import com.waylens.hachi.R;
 import com.waylens.hachi.bgjob.BgJobManager;
 import com.waylens.hachi.bgjob.social.ReportJob;
-import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.rest.body.ReportFeedbackBody;
 import com.waylens.hachi.ui.activities.BaseActivity;
 

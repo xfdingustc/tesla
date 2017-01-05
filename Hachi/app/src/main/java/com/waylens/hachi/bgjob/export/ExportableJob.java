@@ -1,8 +1,9 @@
 package com.waylens.hachi.bgjob.export;
 
 
-import com.waylens.hachi.jobqueue.Job;
-import com.waylens.hachi.jobqueue.Params;
+
+import com.birbit.android.jobqueue.Job;
+import com.birbit.android.jobqueue.Params;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 
 /**

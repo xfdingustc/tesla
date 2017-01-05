@@ -3,25 +3,22 @@ package com.waylens.hachi.bgjob.export.download;
 import android.media.MediaScannerConnection;
 import android.support.annotation.Nullable;
 
+import com.birbit.android.jobqueue.Params;
+import com.birbit.android.jobqueue.RetryConstraint;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.export.ExportableJob;
-import com.waylens.hachi.jobqueue.Params;
-import com.waylens.hachi.jobqueue.RetryConstraint;
 import com.waylens.hachi.snipe.reative.SnipeApi;
-import com.waylens.hachi.snipe.reative.SnipeApiRx;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipDownloadInfo;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.utils.ClipDownloadHelper;
 import com.waylens.hachi.utils.FileUtils;
-import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.util.concurrent.ExecutionException;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/5/4.

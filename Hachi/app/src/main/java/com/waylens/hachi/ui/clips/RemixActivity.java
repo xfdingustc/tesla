@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.R;
-import com.waylens.hachi.jobqueue.scheduling.Scheduler;
 import com.waylens.hachi.snipe.remix.AvrproClipInfo;
 import com.waylens.hachi.snipe.remix.AvrproFilter;
 import com.waylens.hachi.snipe.remix.AvrproSegmentInfo;
@@ -31,10 +29,10 @@ import com.waylens.hachi.ui.clips.enhance.EnhanceActivity;
 import com.waylens.hachi.ui.clips.player.RawDataLoader;
 import com.waylens.hachi.ui.clips.playlist.PlayListEditor;
 import com.waylens.hachi.ui.dialogs.DialogHelper;
-import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observable;
@@ -45,7 +43,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
-public class RemixActivity extends BaseActivity{
+public class RemixActivity extends BaseActivity {
     private static final String TAG = RemixActivity.class.getSimpleName();
     private static final String EXTRA_CLIP_LIST = "clip_list";
     private static final String EXTRA_REMIX_LENGTH = "remix_length";
@@ -113,23 +111,23 @@ public class RemixActivity extends BaseActivity{
             mPlaylistEditor = new PlayListEditor(mVdbRequestQueue, playlistId);
 
             mPlaylistEditor.buildRx(mClipArrayList)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<Void>(){
-                        @Override
-                        public void onCompleted() {
-                            mRemixProgressBar.setProgress(15);
-                            doSmartRemix();
-                        }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+                        mRemixProgressBar.setProgress(15);
+                        doSmartRemix();
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            mRemixProgressBar.setProgress(0);
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        mRemixProgressBar.setProgress(0);
+                    }
 
-                        @Override
-                        public void onNext(Void aVoid) {
-                        }
-                    });
+                    @Override
+                    public void onNext(Void aVoid) {
+                    }
+                });
 
         }
     }
@@ -145,7 +143,7 @@ public class RemixActivity extends BaseActivity{
         DialogHelper.showLeaveSmartRemixConfirmDialog(this, new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                if(mRemixSubscription != null) {
+                if (mRemixSubscription != null) {
                     mRemixSubscription.unsubscribe();
                 }
                 RemixActivity.this.finish();
@@ -176,80 +174,80 @@ public class RemixActivity extends BaseActivity{
                 subscriber.onCompleted();
             }
         }).subscribeOn(Schedulers.io())
-                .flatMap(new Func1<Integer, Observable<Clip>>() {
-                    @Override
-                    public Observable<Clip> call(Integer integer) {
-                        List<Clip> clips = mRawDataLoader.getClipSet().getClipList();
-                        mOriginClipList = (ArrayList<Clip>) clips;
-                        for(Clip clip : clips) {
-                            Logger.t(TAG).d("clip info:" + clip.getDurationMs());
-                        }
-                        return Observable.from(clips);
-                    }
-                })
-                .map(new Func1<Clip, Boolean>() {
-                    @Override
-                    public Boolean call(Clip clip) {
+            .flatMap(new Func1<Integer, Observable<Clip>>() {
+                @Override
+                public Observable<Clip> call(Integer integer) {
+                    List<Clip> clips = mRawDataLoader.getClipSet().getClipList();
+                    mOriginClipList = (ArrayList<Clip>) clips;
+                    for (Clip clip : clips) {
                         Logger.t(TAG).d("clip info:" + clip.getDurationMs());
-                        boolean isDataParsed = false;
-                        long startTime = clip.getStartTimeMs();
-                        long endTime = clip.getStartTimeMs() + clip.getDurationMs();
-                        Logger.t(TAG).d("start time:" + startTime + "endTime:" + endTime);
-                        for (long start = startTime; start < endTime; start += RawDataUnitDuration) {
-                            long duration = Math.min(RawDataUnitDuration, endTime - start);
-                            RawDataLoader.RawDataBufAll rawData = mRawDataLoader.loadRawDataBuf(clip, start, (int)duration);
-                            Logger.t(TAG).d("start time:" + start);
-                            Logger.t(TAG).d("high:" + (int) (start >> 32) + "low:" + (int) (start & 0xffffffff));
-                            AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type, (int) (start & 0xffffffff), (int) (start >> 32), (int)duration);
-                            isDataParsed = mAvrproFilter.native_avrpro_smart_filter_is_data_parsed(0, clipInfo, (int)(start - startTime), (int)duration);
-                            Logger.t(TAG).d("is data parsed:" + isDataParsed);
-                            if (!isDataParsed) {
-                                Logger.t(TAG).d("got raw data");
-                                if (rawData.gpsDataBuf != null) {
-                                    int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.gpsDataBuf, rawData.gpsDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                                    Logger.t(TAG).d("reed ret = " + ret);
-                                }
-                                if (rawData.iioDataBuf != null) {
-                                    int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.iioDataBuf, rawData.iioDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                                    Logger.t(TAG).d("reed ret = " + ret);
-                                }
-                                if (rawData.obdDataBuf != null) {
-                                    int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.obdDataBuf, rawData.obdDataBuf.length, AvrproFilter.DEVICE_ANDROID);
-                                    Logger.t(TAG).d("reed ret = " + ret);
-                                }
+                    }
+                    return Observable.from(clips);
+                }
+            })
+            .map(new Func1<Clip, Boolean>() {
+                @Override
+                public Boolean call(Clip clip) {
+                    Logger.t(TAG).d("clip info:" + clip.getDurationMs());
+                    boolean isDataParsed = false;
+                    long startTime = clip.getStartTimeMs();
+                    long endTime = clip.getStartTimeMs() + clip.getDurationMs();
+                    Logger.t(TAG).d("start time:" + startTime + "endTime:" + endTime);
+                    for (long start = startTime; start < endTime; start += RawDataUnitDuration) {
+                        long duration = Math.min(RawDataUnitDuration, endTime - start);
+                        RawDataLoader.RawDataBufAll rawData = mRawDataLoader.loadRawDataBuf(clip, start, (int) duration);
+                        Logger.t(TAG).d("start time:" + start);
+                        Logger.t(TAG).d("high:" + (int) (start >> 32) + "low:" + (int) (start & 0xffffffff));
+                        AvrproClipInfo clipInfo = new AvrproClipInfo(clip.cid.extra, clip.cid.subType, clip.cid.type, (int) (start & 0xffffffff), (int) (start >> 32), (int) duration);
+                        isDataParsed = mAvrproFilter.native_avrpro_smart_filter_is_data_parsed(0, clipInfo, (int) (start - startTime), (int) duration);
+                        Logger.t(TAG).d("is data parsed:" + isDataParsed);
+                        if (!isDataParsed) {
+                            Logger.t(TAG).d("got raw data");
+                            if (rawData.gpsDataBuf != null) {
+                                int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.gpsDataBuf, rawData.gpsDataBuf.length, AvrproFilter.DEVICE_ANDROID);
+                                Logger.t(TAG).d("reed ret = " + ret);
+                            }
+                            if (rawData.iioDataBuf != null) {
+                                int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.iioDataBuf, rawData.iioDataBuf.length, AvrproFilter.DEVICE_ANDROID);
+                                Logger.t(TAG).d("reed ret = " + ret);
+                            }
+                            if (rawData.obdDataBuf != null) {
+                                int ret = mAvrproFilter.native_avrpro_smart_filter_feed_data(0, rawData.obdDataBuf, rawData.obdDataBuf.length, AvrproFilter.DEVICE_ANDROID);
+                                Logger.t(TAG).d("reed ret = " + ret);
                             }
                         }
-                        return isDataParsed;
                     }
-                }).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Boolean>() {
-            @Override
-            public void onCompleted() {
-                Logger.t(TAG).d("got raw data");
-                mFilterResult = new ArrayList<>();
-                AvrproSegmentInfo segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, true);
-                if (segmentInfo != null) {
-                    mFilterResult.add(segmentInfo);
+                    return isDataParsed;
                 }
-                Logger.t(TAG).d("read results:" + ToStringUtils.getString(segmentInfo));
-                while( (segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, false)) != null) {
-                    mFilterResult.add(segmentInfo);
-                    Logger.t(TAG).d(ToStringUtils.getString(segmentInfo));
+            }).observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Boolean>() {
+                @Override
+                public void onCompleted() {
+                    Logger.t(TAG).d("got raw data");
+                    mFilterResult = new ArrayList<>();
+                    AvrproSegmentInfo segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, true);
+                    if (segmentInfo != null) {
+                        mFilterResult.add(segmentInfo);
+                    }
+                    Logger.t(TAG).d("read results:" + ToStringUtils.getString(segmentInfo));
+                    while ((segmentInfo = mAvrproFilter.native_avrpro_smart_filter_read_results(0, false)) != null) {
+                        mFilterResult.add(segmentInfo);
+                        Logger.t(TAG).d(ToStringUtils.getString(segmentInfo));
+                    }
+                    mAvrproFilter.native_avrpro_smart_filter_deint(0);
+                    toEnhance();
                 }
-                mAvrproFilter.native_avrpro_smart_filter_deint(0);
-                toEnhance();
-            }
 
-            @Override
-            public void onError(Throwable e) {
-            }
+                @Override
+                public void onError(Throwable e) {
+                }
 
-            @Override
-            public void onNext(Boolean b) {
-                int progress = mRemixProgressBar.getProgress() + 70/mOriginClipList.size();
-                mRemixProgressBar.setProgress(progress);
-            }
-        });
+                @Override
+                public void onNext(Boolean b) {
+                    int progress = mRemixProgressBar.getProgress() + 70 / mOriginClipList.size();
+                    mRemixProgressBar.setProgress(progress);
+                }
+            });
 
     }
 
@@ -264,7 +262,7 @@ public class RemixActivity extends BaseActivity{
             Clip clip = getClipByClipInfo(segmentInfo.parent_clip);
             if (clip != null) {
                 Clip newClip = new Clip(clip);
-                Logger.t(TAG).d("parent clip start time: " + ((long)segmentInfo.parent_clip.start_time_hi << 32 + segmentInfo.parent_clip.start_time_lo) );
+                Logger.t(TAG).d("parent clip start time: " + ((long) segmentInfo.parent_clip.start_time_hi << 32 + segmentInfo.parent_clip.start_time_lo));
                 newClip.editInfo.selectedStartValue = newClip.getStartTimeMs() + segmentInfo.inclip_offset_ms;
                 newClip.editInfo.selectedEndValue = newClip.editInfo.selectedStartValue + segmentInfo.duration_ms;
                 newClipList.add(newClip);
@@ -278,24 +276,24 @@ public class RemixActivity extends BaseActivity{
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(new Subscriber<Void>() {
-            @Override
-            public void onCompleted() {
+                @Override
+                public void onCompleted() {
                     mRemixProgressBar.setProgress(100);
                     Logger.t(TAG).d("play list size:" + ClipSetManager.getManager().getClipSet(mPlaylistEditor.getPlaylistId()).getClipList().size());
                     EnhanceActivity.launch(RemixActivity.this, mPlaylistId);
                     RemixActivity.this.finish();
-            }
+                }
 
-            @Override
-            public void onError(Throwable e) {
+                @Override
+                public void onError(Throwable e) {
 
-            }
+                }
 
-            @Override
-            public void onNext(Void aVoid) {
+                @Override
+                public void onNext(Void aVoid) {
 
-            }
-        });
+                }
+            });
     }
 
     private Clip getClipByClipInfo(AvrproClipInfo clipInfo) {
