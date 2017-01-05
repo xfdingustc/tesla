@@ -79,12 +79,6 @@ public class PublishActivity extends BaseActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.share:
-                        //BgJobHelper.uploadPictureMoment(mTitle.getEditableText().toString(), mPhotoUrl);
-                        //UploadPictureJob uploadPictureJob = new UploadPictureJob(mTitle.getEditableText().toString(), mPhotoUrl);
-                        //StateJobHolder stateJobHolder = new StateJobHolder(uploadPictureJob.getId(), StateJobHolder.INITIAL_STATE, null, uploadPictureJob);
-                        //PersistentQueue.getPersistentQueue().insert(stateJobHolder);
-                        //CacheUploadMomentService.launch(PublishActivity.this);
-
                         showUploadPictureDialog();
                         break;
                 }
@@ -104,6 +98,7 @@ public class PublishActivity extends BaseActivity {
                 public void onCompleted() {
                     if (mUploadDialog != null && mUploadDialog.isShowing()) {
                         mUploadDialog.dismiss();
+                        mUploadDialog = null;
                     }
                     finish();
                 }
@@ -115,7 +110,9 @@ public class PublishActivity extends BaseActivity {
 
                 @Override
                 public void onNext(Integer integer) {
-                    mUploadDialog.setProgress(integer);
+                    if (mUploadDialog != null) {
+                        mUploadDialog.setProgress(integer);
+                    }
                 }
             });
 
@@ -127,7 +124,9 @@ public class PublishActivity extends BaseActivity {
             .onNegative(new MaterialDialog.SingleButtonCallback() {
                 @Override
                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-
+                    if (mPictureUploader != null) {
+                        mPictureUploader.cancel();
+                    }
                 }
             }).show();
 

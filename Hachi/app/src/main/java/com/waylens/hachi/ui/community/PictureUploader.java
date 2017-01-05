@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory;
 import com.orhanobut.logger.Logger;
 import com.waylens.hachi.app.Hachi;
 import com.waylens.hachi.bgjob.upload.HachiAuthorizationHelper;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
-import com.waylens.hachi.bgjob.upload.event.UploadEvent;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.IHachiApi;
 import com.waylens.hachi.rest.body.CreateMomentBody;
@@ -23,8 +21,6 @@ import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.utils.HashUtils;
 import com.waylens.hachi.utils.Hex;
 import com.waylens.hachi.utils.StringUtils;
-
-
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,10 +44,13 @@ public class PictureUploader {
     private final String mPictureUrl;
     private final String mTitle;
     private int mUploadProgress;
+    private boolean mStopUploading;
+    private IHachiApi mHachiApi;
 
     public PictureUploader(String title, String pictureUrl) {
         this.mTitle = title;
         this.mPictureUrl = pictureUrl;
+        this.mHachiApi = HachiService.createHachiApiService();
     }
 
     public Observable<Integer> uploadPictureRx() {
@@ -68,17 +67,14 @@ public class PictureUploader {
         });
     }
 
-    private void doUploadPicture(final Subscriber<? super Integer> subscriber) throws IOException, NoSuchAlgorithmException {
+    public void cancel() {
+        mStopUploading = true;
+    }
+
+    private void doUploadPicture(final Subscriber<? super Integer> subscriber) throws IOException, NoSuchAlgorithmException, InterruptedException {
         mUploadProgress = 0;
-        IHachiApi hachiApi = HachiService.createHachiApiService();
-        CreateMomentBody createMomentBody = new CreateMomentBody();
-        createMomentBody.title = mTitle;
-        createMomentBody.momentType = "PICTURE";
-        createMomentBody.accessLevel = "PUBLIC";
-        Call<CreateMomentResponse> createMomentResponseCall = hachiApi.createMoment(createMomentBody);
 
-
-        CreateMomentResponse response = createMomentResponseCall.execute().body();
+        CreateMomentResponse response = createMoment();
         Logger.t(TAG).d("response: " + response.uploadServer.toString());
 
         File cacheDir = Hachi.getContext().getExternalCacheDir();
@@ -106,7 +102,7 @@ public class PictureUploader {
             date,
             response.uploadServer.privateKey);
 
-
+        checkIfStopped();
         UploadAPI uploadAPI = new UploadAPI(response.uploadServer.url + "/", date, authorization, -1);
 
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), jpeg);
@@ -125,11 +121,12 @@ public class PictureUploader {
 
         Logger.t(TAG).d("response: " + uploadData);
 
+        checkIfStopped();
         if (uploadData.result == 2) {
             FinishUploadBody uploadBody = new FinishUploadBody();
             uploadBody.momentID = response.momentID;
             uploadBody.pictureNum = 1;
-            Call<SimpleBoolResponse> finishUploadResponse = hachiApi.finishUploadPictureMoment(uploadBody);
+            Call<SimpleBoolResponse> finishUploadResponse = mHachiApi.finishUploadPictureMoment(uploadBody);
             finishUploadResponse.execute();
             subscriber.onCompleted();
         } else {
@@ -142,6 +139,22 @@ public class PictureUploader {
         }
 
 
+    }
+
+    private CreateMomentResponse createMoment() throws InterruptedException, IOException {
+        checkIfStopped();
+        CreateMomentBody createMomentBody = new CreateMomentBody();
+        createMomentBody.title = mTitle;
+        createMomentBody.momentType = "PICTURE";
+        createMomentBody.accessLevel = "PUBLIC";
+        Call<CreateMomentResponse> createMomentResponseCall = mHachiApi.createMoment(createMomentBody);
+        return createMomentResponseCall.execute().body();
+    }
+
+    private void checkIfStopped() throws InterruptedException {
+        if (mStopUploading) {
+            throw new InterruptedException();
+        }
     }
 
 
