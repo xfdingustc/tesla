@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+import com.orhanobut.logger.Logger;
 import com.waylens.hachi.snipe.utils.DateTime;
 import com.waylens.hachi.snipe.utils.ToStringUtils;
 
@@ -305,6 +306,14 @@ public class Clip implements Parcelable, Serializable {
 
     public boolean contains(long timeMs) {
         return timeMs >= mStartTimeMs && timeMs < mStartTimeMs + mDurationMs;
+    }
+
+    public boolean isClipFullHd() {
+        if (getStream(0).video_width > 1280) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public String getVin() {
