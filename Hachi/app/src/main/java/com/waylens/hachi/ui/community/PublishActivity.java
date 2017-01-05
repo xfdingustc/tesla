@@ -3,26 +3,24 @@ package com.waylens.hachi.ui.community;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.BinderThread;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.BgJobHelper;
-import com.waylens.hachi.bgjob.export.statejobqueue.CacheUploadMomentService;
-import com.waylens.hachi.bgjob.export.statejobqueue.PersistentQueue;
-import com.waylens.hachi.bgjob.export.statejobqueue.StateJobHolder;
-import com.waylens.hachi.bgjob.export.statejobqueue.UploadPictureJob;
 import com.waylens.hachi.ui.activities.BaseActivity;
-import com.waylens.hachi.ui.entities.LocalMoment;
-import com.waylens.hachi.ui.settings.myvideo.MyMomentActivity;
 import com.waylens.hachi.ui.settings.myvideo.UploadingMomentActivity;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Xiaofei on 2016/9/21.
@@ -31,6 +29,9 @@ public class PublishActivity extends BaseActivity {
     public static final String EXTRA_PHOTO_URI = "extra.photo.uri";
 
     private String mPhotoUrl;
+
+    private PictureUploader mPictureUploader;
+    private MaterialDialog mUploadDialog;
 
     public static void launch(Activity activity, String photUri) {
         Intent intent = new Intent(activity, PublishActivity.class);
@@ -79,17 +80,57 @@ public class PublishActivity extends BaseActivity {
                 switch (item.getItemId()) {
                     case R.id.share:
                         //BgJobHelper.uploadPictureMoment(mTitle.getEditableText().toString(), mPhotoUrl);
-                        UploadPictureJob uploadPictureJob = new UploadPictureJob(mTitle.getEditableText().toString(), mPhotoUrl);
-                        StateJobHolder stateJobHolder = new StateJobHolder(uploadPictureJob.getId(), StateJobHolder.INITIAL_STATE, null, uploadPictureJob);
-                        PersistentQueue.getPersistentQueue().insert(stateJobHolder);
-                        CacheUploadMomentService.launch(PublishActivity.this);
-                        finish();
-                        UploadingMomentActivity.launch(PublishActivity.this, true);
+                        //UploadPictureJob uploadPictureJob = new UploadPictureJob(mTitle.getEditableText().toString(), mPhotoUrl);
+                        //StateJobHolder stateJobHolder = new StateJobHolder(uploadPictureJob.getId(), StateJobHolder.INITIAL_STATE, null, uploadPictureJob);
+                        //PersistentQueue.getPersistentQueue().insert(stateJobHolder);
+                        //CacheUploadMomentService.launch(PublishActivity.this);
+                        showUploadPictureDialog();
+
                         break;
                 }
 
                 return false;
             }
         });
+    }
+
+    private void showUploadPictureDialog() {
+        mPictureUploader = new PictureUploader(mTitle.getEditableText().toString(), mPhotoUrl);
+        mPictureUploader.uploadPictureRx()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Subscriber<Integer>() {
+                @Override
+                public void onCompleted() {
+                    if (mUploadDialog != null && mUploadDialog.isShowing()) {
+                        mUploadDialog.dismiss();
+                    }
+                    finish();
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onNext(Integer integer) {
+                    mUploadDialog.setProgress(integer);
+                }
+            });
+
+        mUploadDialog = new MaterialDialog.Builder(this)
+            .title(R.string.upload_picture)
+            .progress(false, 100)
+            .negativeText(R.string.cancel)
+            .canceledOnTouchOutside(false)
+            .onNegative(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                }
+            }).show();
+
+
     }
 }
