@@ -59,39 +59,39 @@ public class StringUtils {
     }
 
     public static String getSpaceString(long space) {
-        float spaceInM = ((float)space) / (1024 * 1024);
+        float spaceInM = ((float)space) / (1000 * 1000);
 
         String spaceStr;
-        if (spaceInM > 1024) {
-            BigDecimal tmp = new BigDecimal(spaceInM / 1024);
-            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
+        if (spaceInM > 1000) {
+            BigDecimal tmp = new BigDecimal(spaceInM / 1000);
+            spaceStr = String.valueOf(tmp.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue()) + " GB";
         } else {
             BigDecimal tmp = new BigDecimal(spaceInM);
-            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue()) + " MB";
+            spaceStr = String.valueOf(tmp.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue()) + " MB";
         }
         return spaceStr;
     }
 
     public static String getSpaceNumber(long space) {
-        float spaceInM = ((float)space) / (1024 * 1024);
+        float spaceInM = ((float)space) / (1000 * 1000);
 
         String spaceStr;
-        if (spaceInM > 1024) {
-            BigDecimal tmp = new BigDecimal(spaceInM / 1024);
-            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+        if (spaceInM > 1000) {
+            BigDecimal tmp = new BigDecimal(spaceInM / 1000);
+            spaceStr = String.valueOf(tmp.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
         } else {
             BigDecimal tmp = new BigDecimal(spaceInM);
-            spaceStr = String.valueOf(tmp.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue());
+            spaceStr = String.valueOf(tmp.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue());
         }
         return spaceStr;
     }
 
 
     public static String getSpaceUnit(long space) {
-        float spaceInM = ((float)space) / (1024 * 1024);
+        float spaceInM = ((float)space) / (1000 * 1000);
 
         String spaceStr;
-        if (spaceInM > 1024) {
+        if (spaceInM > 1000) {
             spaceStr = "GB";
         } else {
             spaceStr = "MB";
