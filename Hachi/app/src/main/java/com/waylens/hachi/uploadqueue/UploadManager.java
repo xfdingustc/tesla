@@ -147,6 +147,17 @@ public class UploadManager {
 
     }
 
+    public boolean retryUploading(Context context, String key) {
+        UploadRequest itemToRetry = getItem(key);
+        if (itemToRetry == null || itemToRetry.getStatus() != UploadStatus.FAILED) {
+            return true;
+        }
+        itemToRetry.setStatus(UploadStatus.WAITING);
+        updateUploadStatus(itemToRetry);
+        startUploadQueueService(context, UploadQueueActions.START_UPLOAD);
+        return true;
+    }
+
     public boolean stopUploading(Context context, String key) {
         UploadRequest itemToBeStop = getItem(key);
         if (itemToBeStop == null || itemToBeStop.getStatus() == UploadStatus.DELETE_REQUEST || itemToBeStop.getStatus() == UploadStatus.DELETED) {

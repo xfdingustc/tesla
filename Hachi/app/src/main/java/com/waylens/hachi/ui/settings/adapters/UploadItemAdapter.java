@@ -106,6 +106,7 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                                 mUploadManager.stopUploading(mActivity, request.getKey());
                                 break;
                             case R.id.retry:
+                                mUploadManager.retryUploading(mActivity, request.getKey());
                                 break;
                         }
                         return true;

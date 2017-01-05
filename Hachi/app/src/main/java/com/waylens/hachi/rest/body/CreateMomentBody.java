@@ -56,7 +56,7 @@ public class CreateMomentBody {
 
     public CreateMomentBody(LocalMoment localMoment) {
         this.title = localMoment.title;
-        this.desc = localMoment.description;
+        //this.desc = localMoment.description;
         this.accessLevel = localMoment.accessLevel;
         this.overlay = localMoment.gaugeSettings;
 
