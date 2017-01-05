@@ -54,6 +54,7 @@ import com.waylens.hachi.rest.response.CommentListResponse;
 import com.waylens.hachi.rest.response.FollowInfo;
 import com.waylens.hachi.rest.response.MomentInfo;
 import com.waylens.hachi.rest.response.PublishCommentResponse;
+import com.waylens.hachi.rest.response.ShareStatusResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.session.SessionManager;
 import com.waylens.hachi.ui.activities.BaseActivity;
@@ -85,6 +86,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -116,19 +118,17 @@ public class MomentActivity extends BaseActivity {
 
     private User mReplyTo;
 
-
+    private boolean enableToFacebook = false;
+    private boolean enableToYouTube = false;
     private boolean hasUpdates;
 
     private boolean isRequestComment = false;
-
 
     private BottomSheetDialog mBottomSheetDialog;
 
     private MomentPlayFragment mMomentPlayFragment;
 
-
     private SessionManager mSessionManager = SessionManager.getInstance();
-
 
     public static void launch(Activity activity, long momentId, String thumbnail, View transitionView) {
 
@@ -268,10 +268,10 @@ public class MomentActivity extends BaseActivity {
 
     @OnClick(R.id.btn_repost)
     public void onBtnRepostClicked() {
-        MaterialDialog dialog = new MaterialDialog.Builder(this)
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
             .title(R.string.repost)
             .items(R.array.social_provider)
-            .itemsCallbackSingleChoice(0, new MaterialDialog.ListCallbackSingleChoice() {
+            .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
                 @Override
                 public boolean onSelection(MaterialDialog dialog, View itemView, int which, CharSequence text) {
                     return false;
@@ -286,14 +286,23 @@ public class MomentActivity extends BaseActivity {
                     String provider;
                     if (selectIndex == 0) {
                         provider = SocialProvider.FACEBOOK;
+                        enableToFacebook = false;
                     } else {
                         provider = SocialProvider.YOUTUBE;
+                        enableToYouTube = false;
                     }
 
                     repost2SocialMedia(provider);
 
                 }
-            }).show();
+            });
+        if (!enableToFacebook) {
+            builder.itemsDisabledIndices(0);
+        }
+        if (!enableToYouTube) {
+            builder.itemsDisabledIndices(1);
+        }
+        builder.show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -306,6 +315,12 @@ public class MomentActivity extends BaseActivity {
                     Snackbar.make(mBtnRepost, String.format(getString(R.string.repost_success), provider), Snackbar.LENGTH_SHORT).show();
                 } else {
                     Snackbar.make(mBtnRepost, R.string.repost_failed, Snackbar.LENGTH_SHORT).show();
+                    if (provider.toLowerCase().equals("youtube")) {
+                        enableToYouTube = true;
+                    }
+                    if (provider.toLowerCase().equals("facebook")) {
+                        enableToFacebook = true;
+                    }
                 }
         }
     }
@@ -584,7 +599,30 @@ public class MomentActivity extends BaseActivity {
                     }
                 }
             });
+        queryShareStatus();
 
+    }
+
+    private void queryShareStatus() {
+        HachiService.createHachiApiService().getMomentShareStatus(mMomentId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SimpleSubscribe<ShareStatusResponse>() {
+                @Override
+                public void onNext(ShareStatusResponse shareStatusResponse) {
+                    Logger.t(TAG).d("share status Response");
+                    enableToFacebook = true;
+                    enableToYouTube = true;
+                    for (ShareStatusResponse.ShareStatus shareStatus : shareStatusResponse.shareStatuses) {
+                        if (shareStatus.provider.equals("facebook") && (shareStatus.shareStatus == null || !shareStatus.shareStatus.equals("PROCESS_FAILED"))) {
+                            enableToFacebook = false;
+                        }
+                        if (shareStatus.provider.equals("youtube") && (shareStatus.shareStatus == null || !shareStatus.shareStatus.equals("PROCESS_FAILED"))) {
+                            enableToYouTube = false;
+                        }
+                    }
+                }
+            });
     }
 
     private void showMomentInfo() {

@@ -52,10 +52,12 @@ import com.waylens.hachi.rest.response.NotificationResponse;
 import com.waylens.hachi.rest.response.PublishCommentResponse;
 import com.waylens.hachi.rest.response.RaceQueryResponse;
 import com.waylens.hachi.rest.response.RepostResponse;
+import com.waylens.hachi.rest.response.ShareStatusResponse;
 import com.waylens.hachi.rest.response.SimpleBoolResponse;
 import com.waylens.hachi.rest.response.UploadAvatarResponse;
 import com.waylens.hachi.rest.response.UserInfo;
 import com.waylens.hachi.rest.response.VinQueryResponse;
+import com.waylens.hachi.ui.settings.ShareSettingActivity;
 
 import java.util.List;
 
@@ -211,8 +213,6 @@ public interface IHachiApi {
     Call<SimpleBoolResponse> updateMoment(@Path("momentId") long momentId,
                                           @Body MomentUpdateBody momentUpdatebody);
 
-
-
     @GET("/api/musics/categories")
     Observable<MusicCategoryResponse> getMusicCategoriesRx();
 
@@ -282,6 +282,9 @@ public interface IHachiApi {
     @GET("api/moments/search")
     Observable<MomentListResponse> searchMomentRx(@Query("key") String key, @Query("count") int count);
 
+    @GET("api/share/moments/{momentId}")
+    Observable<ShareStatusResponse> getMomentShareStatus(@Path("momentId") long momentId);
+
     @GET("api/comments")
     Observable<CommentListResponse> getCommentsRx(@Query("m") long momentId,
                                                   @Query("cursor") int cursor, @Query("count") int count);
@@ -306,7 +309,6 @@ public interface IHachiApi {
 
     @POST("api/events/mark_read")
     Observable<SimpleBoolResponse> markReadRx(@Body MarkReadBody markReadBody);
-
 
     @GET("api/authenticate/facebook")
     Observable<AuthorizeResponse> authenticateFbRx(@Query("accessToken") String token);
