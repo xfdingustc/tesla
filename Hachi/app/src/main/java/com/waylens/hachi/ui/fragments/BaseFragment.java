@@ -25,6 +25,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by Xiaofei on 2015/8/4.
@@ -37,8 +38,6 @@ public abstract class BaseFragment extends Fragment {
 
     protected VdtCamera mVdtCamera;
     protected VdbRequestQueue mVdbRequestQueue;
-
-
 
     protected IHachiApi mHachi = HachiService.createHachiApiService();
 
@@ -84,7 +83,6 @@ public abstract class BaseFragment extends Fragment {
             }
         } else {
             mRootView = inflater.inflate(layoutResId, container, false);
-
         }
         ButterKnife.bind(this, mRootView);
         setupToolbar();
