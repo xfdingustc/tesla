@@ -576,4 +576,5 @@
     <string name="update_des_connect_to_server">Connecting to server</string>
     <string name="update_des_upload_thumbnail">Uploading moment cover</string>
     <string name="update_des_finish_upload">Finish uploading</string>
+    <string name="upload_picture">Uploading picture</string>
 </resources>
