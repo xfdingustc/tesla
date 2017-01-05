@@ -9,15 +9,12 @@ import com.waylens.hachi.bgjob.social.FollowJob;
 import com.waylens.hachi.bgjob.social.LikeJob;
 import com.waylens.hachi.bgjob.social.ReportJob;
 import com.waylens.hachi.bgjob.social.RepostJob;
-import com.waylens.hachi.bgjob.upload.PictureUploadJob;
 import com.waylens.hachi.bgjob.upload.UploadAvatarJob;
-import com.waylens.hachi.bgjob.upload.UploadCachedMomentJob;
 import com.waylens.hachi.jobqueue.JobManager;
 import com.waylens.hachi.rest.bean.Comment;
 import com.waylens.hachi.rest.body.ReportCommentBody;
 import com.waylens.hachi.rest.body.ReportMomentBody;
 import com.waylens.hachi.snipe.vdb.Clip;
-import com.waylens.hachi.ui.entities.LocalMoment;
 
 
 /**

@@ -9,7 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.UploadManager2;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.settings.adapters.UploadItemAdapter;
 import com.waylens.hachi.uploadqueue.UploadManager;

@@ -10,8 +10,6 @@ import android.view.View;
 import android.widget.ViewAnimator;
 
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.UploadManager2;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
 import com.waylens.hachi.rest.HachiService;
 import com.waylens.hachi.rest.response.MomentListResponse;
 import com.waylens.hachi.session.SessionManager;
@@ -25,7 +23,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Xiaofei on 2016/6/17.
  */
-public class MyMomentActivity extends BaseActivity implements UploadManager2.OnUploadJobStateChangeListener {
+public class MyMomentActivity extends BaseActivity {
     private static final String TAG = MyMomentActivity.class.getSimpleName();
 
     private MomentItemAdapter mVideoItemAdapter;
@@ -79,21 +77,6 @@ public class MyMomentActivity extends BaseActivity implements UploadManager2.OnU
         initViews();
     }
 
-    @Override
-    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-        if (job.getState() == UploadMomentJob.UPLOAD_STATE_FINISHED) {
-            loadUserMoment(0, false);
-        }
-    }
-
-    @Override
-    public void onUploadJobAdded() {
-
-    }
-
-    @Override
-    public void onUploadJobRemoved() {
-    }
 
     private void initViews() {
         setContentView(R.layout.activity_upload);
@@ -123,8 +106,6 @@ public class MyMomentActivity extends BaseActivity implements UploadManager2.OnU
         mVideoItemAdapter = new MomentItemAdapter(this);
         mRvMomentList.setAdapter(mVideoItemAdapter);
 
-
-        UploadManager2.getManager().addOnUploadJobStateChangedListener(this);
         loadUserMoment(0, false);
     }
 

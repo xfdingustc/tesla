@@ -17,8 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.waylens.hachi.R;
-import com.waylens.hachi.bgjob.upload.UploadManager2;
-import com.waylens.hachi.bgjob.upload.UploadMomentJob;
+
 import com.waylens.hachi.uploadqueue.UploadManager;
 import com.waylens.hachi.uploadqueue.model.UploadError;
 import com.waylens.hachi.uploadqueue.model.UploadRequest;
@@ -30,7 +29,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Xiaofei on 2016/8/15.
  */
-public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements UploadManager2.OnUploadJobStateChangeListener {
+public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Activity mActivity;
     private UploadManager mUploadManager;
 
@@ -146,20 +145,6 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return mUploadManager.getQueuedItemList().size();
     }
 
-    @Override
-    public void onUploadJobStateChanged(UploadMomentJob job, int index) {
-        notifyItemChanged(index);
-    }
-
-    @Override
-    public void onUploadJobAdded() {
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void onUploadJobRemoved() {
-        notifyDataSetChanged();
-    }
 
 
     public class UploadVideoItemViewHolder extends RecyclerView.ViewHolder {
