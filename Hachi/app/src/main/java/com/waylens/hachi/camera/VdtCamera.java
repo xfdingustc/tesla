@@ -970,7 +970,7 @@ public class VdtCamera implements VdtCameraCmdConsts {
         if (before < 0 || after < 0) {
             return;
         }
-        mCommunicationBus.sendCommand(CMD_REC_SET_MARK_TIME, before, before);
+        mCommunicationBus.sendCommand(CMD_REC_SET_MARK_TIME, before, after);
     }
 
     public void stopRecording() {

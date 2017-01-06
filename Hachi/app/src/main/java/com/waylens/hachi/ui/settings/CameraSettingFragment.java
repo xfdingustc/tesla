@@ -382,10 +382,27 @@ public class CameraSettingFragment extends PreferenceFragment {
                     .customView(R.layout.dialog_bookmark_change, true)
                     .positiveText(R.string.ok)
                     .negativeText(R.string.cancel)
+                    .neutralText(R.string.reset)
+                    .autoDismiss(false)
+                    .onNeutral(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            mBeforeNumber.setValue(7);
+                            mAfterNumber.setValue(8);
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                        }
+                    })
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            Logger.t(TAG).d("before:" + mBeforeNumber.getValue() + "after:" + mAfterNumber.getValue());
                             mVdtCamera.setMarkTime(mBeforeNumber.getValue(), mAfterNumber.getValue());
+                            dialog.dismiss();
                         }
                     }).show();
 
