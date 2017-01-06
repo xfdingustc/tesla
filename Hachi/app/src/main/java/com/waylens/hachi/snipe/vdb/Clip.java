@@ -335,6 +335,10 @@ public class Clip implements Parcelable, Serializable {
             + "real Clip id: " + realCid.toString();
     }
 
+    public boolean isRaceClip() {
+        return (typeRace & Clip.TYPE_RACE) > 0;
+    }
+
     public long getRaceTime030() {
         return raceTimingPoints.get(2) - getRaceStartTime();
     }

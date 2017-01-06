@@ -195,7 +195,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             .crossFade()
             .into(viewHolder.ivClipCover);
 
-        if ((clip.typeRace & Clip.TYPE_RACE) > 0) {
+        if (clip.isRaceClip()) {
             viewHolder.vaVideoTag.setVisibility(View.VISIBLE);
             viewHolder.vaVideoTag.setDisplayedChild(0);
 
