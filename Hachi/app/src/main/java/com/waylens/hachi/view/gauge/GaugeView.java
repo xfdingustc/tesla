@@ -363,8 +363,8 @@ public class GaugeView extends FrameLayout {
     }
 
     public void setPlayTime(int msecs) {
-        String playTime = "javascript:setPlayTime(" + msecs + ")";
-        mWebView.loadUrl(playTime);
+        mWebView.loadUrl(GaugeJsHelper.jsSetPlayTime(msecs));
+        mWebView.loadUrl(GaugeJsHelper.jsUpdate());
     }
 
     public void updateRawDateItem(List<RawDataItem> itemList) {

@@ -164,4 +164,8 @@ public class GaugeJsHelper {
     public static String jsResizeMap() {
         return "javascript:fixRenderingsByResizeMap()";
     }
+
+    public static String jsSetPlayTime(int msecs) {
+        return "javascript:setState({playTime:" + msecs + "})";
+    }
 }
