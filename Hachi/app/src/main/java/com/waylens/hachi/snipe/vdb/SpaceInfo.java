@@ -12,7 +12,7 @@ public class SpaceInfo {
     public long marked;
 
     public long getLoopedSpace() {
-        return total - marked;
+        return used - marked;
     }
 
     @Override

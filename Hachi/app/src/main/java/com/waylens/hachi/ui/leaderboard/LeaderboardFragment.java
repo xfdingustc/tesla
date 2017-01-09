@@ -57,6 +57,7 @@ import com.waylens.hachi.ui.views.loadtoast.LoadToast;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -427,6 +428,13 @@ public class LeaderboardFragment extends BaseFragment implements SwipeRefreshLay
         llFilter.collapse();
         if (raceQueryResponse.leaderboard == null) {
             return;
+        }
+        Iterator<LeaderBoardItem> it = raceQueryResponse.leaderboard.iterator();
+        while (it.hasNext()) {
+            LeaderBoardItem item = it.next();
+            if (MomentRaceTimeHelper.getRaceTime(item.moment, getRaceType(), mModeAdapter.getSelectedIndex()) <= 0) {
+                it.remove();
+            }
         }
 
         if (isRefresh) {
