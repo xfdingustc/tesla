@@ -84,6 +84,8 @@ public class UploadItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 videoItemViewHolder.description.setVisibility(View.VISIBLE);
                 if (request.getCurrentError() != UploadError.NO_ERROR) {
                     videoItemViewHolder.description.setText(request.getCurrentError().getValue());
+                } else {
+                    videoItemViewHolder.description.setVisibility(View.GONE);
                 }
                 break;
             default:

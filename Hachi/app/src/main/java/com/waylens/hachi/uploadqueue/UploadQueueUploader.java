@@ -53,6 +53,8 @@ public class UploadQueueUploader extends Thread {
 
     private boolean mStopUploading = false;
 
+    private long mStartTime;
+
     public UploadQueueUploader(Context context, UploadRequest request, UploadResponseListener listener) {
         this.mContext = context;
         this.mRequest = request;
@@ -121,7 +123,6 @@ public class UploadQueueUploader extends Thread {
     }
 
 
-
     private void doUploadLocalMoment(LocalMoment localMoment) throws IOException, InterruptedException {
         Logger.t(TAG).d("do upload local moment");
         checkIfStopped();
@@ -184,7 +185,6 @@ public class UploadQueueUploader extends Thread {
         UploadAPI uploadAPI = new UploadAPI(localMoment.cloudInfo.url + "/", date, authorization, -1);
 
 
-
         // Step 1: init upload;
         checkIfStopped();
         updateDescription(localMoment, R.string.update_des_connect_to_server);
@@ -197,6 +197,7 @@ public class UploadQueueUploader extends Thread {
 
 
         // Step2: upload segments;
+        mStartTime = System.currentTimeMillis();
         Logger.t(TAG).d("initUploadResponse: " + initUploadResponse.toString());
         final int totalSegments = localMoment.mSegments.size();
         for (int i = 0; i < localMoment.mSegments.size(); i++) {
@@ -242,8 +243,10 @@ public class UploadQueueUploader extends Thread {
     }
 
     private void updateDescription(LocalMoment localMoment, @StringRes int descriptionId) {
-        localMoment.description = mContext.getString(descriptionId);
-        mReponseListener.updateDescription(mRequest.getKey());
+        if (localMoment != null) {
+            localMoment.description = mContext.getString(descriptionId);
+            mReponseListener.updateDescription(mRequest.getKey());
+        }
     }
 
     private void checkIfStopped() throws InterruptedException {
@@ -254,16 +257,21 @@ public class UploadQueueUploader extends Thread {
     }
 
     private void updateUploadProgress(long byteWritten, long contentLength, int index, int totalSegment) {
+        int percentage = 0;
         if (index < totalSegment) {
             int progress = (int) ((byteWritten * 100) / contentLength);
             int percentageInThisClip = progress / totalSegment;
-            int percentage = index * 100 / totalSegment + percentageInThisClip;
+            percentage = index * 100 / totalSegment + percentageInThisClip;
             percentage = percentage * 9 / 10;
-            mReponseListener.updateProgress(mRequest.getKey(), percentage);
         } else {
-            int progress = (int) ((byteWritten * 10) / contentLength);
-            mReponseListener.updateProgress(mRequest.getKey(), progress + 90);
+            percentage = (int) ((byteWritten * 10) / contentLength) + 90;
         }
+        if (percentage != 0) {
+            long timeUsed = System.currentTimeMillis() - mStartTime;
+            long timeLeft = timeUsed * (100 - percentage) / percentage;
+            mRequest.getLocalMoment().description = mContext.getString(R.string.about_time_left, timeLeft / 1000);
+        }
+        mReponseListener.updateProgress(mRequest.getKey(), percentage);
 
     }
 
@@ -300,6 +308,7 @@ public class UploadQueueUploader extends Thread {
             File file = new File(localMoment.thumbnailPath);
             file.delete();
         } else {
+            mRequest.setCurrentError(uploadError);
             mReponseListener.onError(mRequest.getKey(), uploadError);
         }
     }

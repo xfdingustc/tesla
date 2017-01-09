@@ -43,7 +43,7 @@ public class Hachi extends MultiDexApplication {
 
     public static DaoMaster getDaoMaster() {
         if (mDaoMaster == null) {
-            DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(mSharedContext, "upload14", null);
+            DaoMaster.OpenHelper helper = new DaoMaster.DevOpenHelper(mSharedContext, "upload", null);
             mDaoMaster = new DaoMaster(helper.getWritableDatabase());
         }
 

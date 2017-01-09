@@ -126,7 +126,11 @@ public class UploadManager {
         dbAdapter.updateUploadStatus();
         List<UploadRequest> requestList = dbAdapter.listUploadRequestByUserId(userId);
         if (requestList != null && !requestList.isEmpty()) {
-            mUploadQueue.addAll(requestList);
+            for (UploadRequest request : requestList) {
+                if (request.getLocalMoment() != null) {
+                    mUploadQueue.add(request);
+                }
+            }
         }
 
         Logger.t(TAG).d("upload queue size: " + mUploadQueue.size());
