@@ -51,6 +51,7 @@ import com.waylens.hachi.snipe.vdb.urls.VdbUrl;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.clips.player.multisegseekbar.MultiSegSeekbar;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.ViewUtils;
 import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
 
@@ -231,13 +232,13 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
         super.onConfigurationChanged(newConfig);
         if (isFullScreen()) {
             mBtnFullscreen.setImageResource(R.drawable.ic_fullscreen_exit);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewUtils.dp2px(48));
             params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mControlPanel.setLayoutParams(params);
 //            mControlPanel.setBackgroundColor(Color.argb(0x7f, 0, 0, 0));
 
         } else {
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewUtils.dp2px(48));
             params.addRule(RelativeLayout.BELOW, mFragmentView.getId());
             mControlPanel.setLayoutParams(params);
             mBtnFullscreen.setImageResource(R.drawable.ic_fullscreen);

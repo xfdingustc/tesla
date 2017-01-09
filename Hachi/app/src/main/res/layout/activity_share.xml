@@ -23,312 +23,215 @@
                 android:id="@+id/player_fragment_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:layout_height="202dp"></FrameLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/separateColor"/>
-
+                tools:layout_height="275dp"/>
 
             <LinearLayout
+                android:id="@+id/ll_detail_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-
-                <com.waylens.hachi.ui.views.AvatarView
-                    android:id="@+id/user_avatar"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.9"
-                    android:orientation="vertical"
-                    android:paddingTop="16dp">
-
-                    <TextView
-                        android:id="@+id/user_name"
-                        style="@style/HachiTextViewTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="xfding"/>
-
-                    <TextView
-                        android:id="@+id/user_email"
-                        style="@style/HachiTextViewSubHeader"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/appTextColorSecondary"
-                        android:textSize="14sp"
-                        tools:text="xfdingustc@gmail.com"/>
-                </LinearLayout>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/separateColor"/>
-
-            <LinearLayout
-                android:id="@+id/place_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/where_i_drove"
-                        android:textColor="?attr/appTextColorPrimary"
-                        android:textSize="16sp"/>
-
-                    <TextView
-                        android:id="@+id/tv_place"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        tools:text="Shanghai"
-                        android:visibility="gone"
-                        android:textColor="?attr/appTextColorSecondary"
-                        android:textSize="14sp"/>
-
-                </LinearLayout>
-
-
-                <Switch
-                    android:id="@+id/switch_show_place"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginRight="16dp"
-                    android:paddingLeft="16dp"
-                    android:checked="false"/>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_vehicle_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        android:text="@string/vehicle"
-                        android:textColor="?attr/appTextColorPrimary"
-                        android:drawableRight="@drawable/ic_edit"
-                        android:drawablePadding="16dp"
-                        android:textSize="16sp"/>
-
-
-
-                    <TextView
-                        android:id="@+id/tv_vehicle_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_gravity="center_vertical"
-                        tools:text="Shanghai"
-                        android:visibility="gone"
-                        android:textColor="?attr/appTextColorSecondary"
-                        android:textSize="14sp"/>
-
-                </LinearLayout>
-
-
-                <Switch
-                    android:id="@+id/switch_upload_vehicle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginEnd="16dp"
-                    android:paddingLeft="16dp"
-                    android:checked="false"/>
-
-            </LinearLayout>
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?attr/separateColor"/>
-
-            <LinearLayout
-                android:id="@+id/ll_resolution"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:visibility="gone"
                 android:orientation="vertical">
-            
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/resolution"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"/>
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <Spinner
-                        android:id="@+id/spinner_upload_resolution"
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="16dp" />
-
-                    <TextView
-                        android:id="@+id/moment_size"
-                        android:layout_height="wrap_content"
-                        android:layout_width="wrap_content"
-                        android:layout_marginEnd="24dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        tools:text="400 MB"/>
-
-                </RelativeLayout>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?attr/separateColor"/>
 
-            </LinearLayout>
-
-
-            <android.support.design.widget.TextInputLayout
-                style="@style/TextAppearance.AppCompat.Body2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/moment_title"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/share_hint"/>
+                    android:orientation="horizontal">
 
 
-            </android.support.design.widget.TextInputLayout>
+                    <com.waylens.hachi.ui.views.AvatarView
+                        android:id="@+id/user_avatar"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="16dp"/>
 
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9"
+                        android:orientation="vertical"
+                        android:paddingTop="16dp">
 
-            <!--<android.support.design.widget.TextInputLayout-->
-            <!--style="@style/TextAppearance.AppCompat.Body2"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--android:orientation="vertical">-->
+                        <TextView
+                            android:id="@+id/user_name"
+                            style="@style/HachiTextViewTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            tools:text="xfding"/>
 
+                        <TextView
+                            android:id="@+id/user_email"
+                            style="@style/HachiTextViewSubHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"
+                            tools:text="xfdingustc@gmail.com"/>
+                    </LinearLayout>
+                </LinearLayout>
 
-            <!--<android.support.design.widget.TextInputEditText-->
-            <!--android:id="@+id/moment_description"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:hint="@string/description"/>-->
-
-
-            <!--</android.support.design.widget.TextInputLayout>-->
-
-            <android.support.design.widget.TextInputLayout
-                style="@style/TextAppearance.AppCompat.Body2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
-
-                <android.support.v7.widget.AppCompatSpinner
-                    android:id="@+id/spinner_social_privacy"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
+                    android:layout_height="1dp"
+                    android:background="?attr/separateColor"/>
+
+                <LinearLayout
+                    android:id="@+id/place_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/where_i_drove"
+                            android:textColor="?attr/appTextColorPrimary"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_place"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            tools:text="Shanghai"
+                            android:visibility="gone"
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+
+                    <Switch
+                        android:id="@+id/switch_show_place"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginRight="16dp"
+                        android:paddingLeft="16dp"
+                        android:checked="false"/>
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_vehicle_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            android:text="@string/vehicle"
+                            android:textColor="?attr/appTextColorPrimary"
+                            android:drawableRight="@drawable/ic_edit"
+                            android:drawablePadding="16dp"
+                            android:textSize="16sp"/>
+
+
+
+                        <TextView
+                            android:id="@+id/tv_vehicle_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_gravity="center_vertical"
+                            tools:text="Shanghai"
+                            android:visibility="gone"
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+
+                    <Switch
+                        android:id="@+id/switch_upload_vehicle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:layout_marginEnd="16dp"
+                        android:paddingLeft="16dp"
+                        android:checked="false"/>
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?attr/separateColor"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_resolution"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
                     android:visibility="gone"
-                    />
-            </android.support.design.widget.TextInputLayout>
-
-            <LinearLayout
-                android:id="@+id/race_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/detected_performance_test"
-                    android:textColor="@color/style_color_accent"
-                    android:textSize="15sp"
-                    />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="16dp"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_vehicle"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:fadingEdge="horizontal"
-                        android:singleLine="true"
-                        android:text="@string/vehicle_information"
-                        android:textColor="?attr/appTextColorPrimary"
-                        android:textSize="16sp"/>
+                        android:text="@string/resolution"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"/>
 
-                    <TextView
-                        android:id="@+id/tv_vehicleInfo"
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Spinner
+                            android:id="@+id/spinner_upload_resolution"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginEnd="16dp" />
+
+                        <TextView
+                            android:id="@+id/moment_size"
+                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_marginEnd="24dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            tools:text="400 MB"/>
+
+                    </RelativeLayout>
+
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/tv_vehicle"
-                        android:text=""
-                        android:textColor="?attr/appTextColorSecondary"
-                        android:textSize="14sp"/>
+                        android:layout_height="1dp"
+                        android:background="?attr/separateColor"/>
 
-                </RelativeLayout>
+                </LinearLayout>
+
 
                 <android.support.design.widget.TextInputLayout
                     style="@style/TextAppearance.AppCompat.Body2"
@@ -340,58 +243,161 @@
                     android:orientation="vertical">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/vehicle_desc"
+                        android:id="@+id/moment_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/vehicle_description"/>
+                        android:hint="@string/share_hint"/>
+
+
                 </android.support.design.widget.TextInputLayout>
 
-            </LinearLayout>
+
+                <!--<android.support.design.widget.TextInputLayout-->
+                <!--style="@style/TextAppearance.AppCompat.Body2"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:layout_marginRight="16dp"-->
+                <!--android:layout_marginTop="16dp"-->
+                <!--android:orientation="vertical">-->
 
 
-            <TextView
-                android:id="@+id/other_social"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/also_post_on"
-                android:textColor="@color/style_color_accent"
-                android:textSize="15sp"
-                />
+                <!--<android.support.design.widget.TextInputEditText-->
+                <!--android:id="@+id/moment_description"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:hint="@string/description"/>-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/btn_facebook"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginBottom="32dp"
+                <!--</android.support.design.widget.TextInputLayout>-->
+
+                <android.support.design.widget.TextInputLayout
+                    style="@style/TextAppearance.AppCompat.Body2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.AppCompatSpinner
+                        android:id="@+id/spinner_social_privacy"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:visibility="gone"
+                        />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/race_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/detected_performance_test"
+                        android:textColor="@color/style_color_accent"
+                        android:textSize="15sp"
+                        />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_vehicle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:fadingEdge="horizontal"
+                            android:singleLine="true"
+                            android:text="@string/vehicle_information"
+                            android:textColor="?attr/appTextColorPrimary"
+                            android:textSize="16sp"/>
+
+                        <TextView
+                            android:id="@+id/tv_vehicleInfo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_vehicle"
+                            android:text=""
+                            android:textColor="?attr/appTextColorSecondary"
+                            android:textSize="14sp"/>
+
+                    </RelativeLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        style="@style/TextAppearance.AppCompat.Body2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/vehicle_desc"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/vehicle_description"/>
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/other_social"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="16dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_facebook_disable"
+                    android:text="@string/also_post_on"
+                    android:textColor="@color/style_color_accent"
+                    android:textSize="15sp"
                     />
 
-                <ImageView
-                    android:id="@+id/btn_youtube"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginBottom="32dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:contentDescription="@null"
-                    android:src="@drawable/ic_youtube_disable"
-                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/btn_facebook"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="32dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_facebook_disable"
+                        />
+
+                    <ImageView
+                        android:id="@+id/btn_youtube"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="32dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_youtube_disable"
+                        />
 
 
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

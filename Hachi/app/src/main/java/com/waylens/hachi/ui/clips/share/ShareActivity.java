@@ -2,6 +2,7 @@ package com.waylens.hachi.ui.clips.share;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Outline;
 import android.graphics.Rect;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -170,6 +172,9 @@ public class ShareActivity extends ClipPlayActivity {
     @BindView(R.id.root_scroll_view)
     ScrollView mRootScrollView;
 
+    @BindView(R.id.ll_detail_info)
+    LinearLayout llDetailInfo;
+
     @BindView(R.id.moment_title)
     TextInputEditText mEtMomentTitle;
 
@@ -313,6 +318,19 @@ public class ShareActivity extends ClipPlayActivity {
 
                         }
                     });
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            getToolbar().setVisibility(View.GONE);
+            llDetailInfo.setVisibility(View.GONE);
+
+        } else {
+            getToolbar().setVisibility(View.VISIBLE);
+            llDetailInfo.setVisibility(View.VISIBLE);
         }
     }
 
