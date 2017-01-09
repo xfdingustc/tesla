@@ -347,6 +347,14 @@ public class Clip implements Parcelable, Serializable {
         return raceTimingPoints.get(4) - getRaceStartTime();
     }
 
+    public long getRaceTime50() {
+        return raceTimingPoints.get(3) - getRaceStartTime();
+    }
+
+    public long getRaceTime100() {
+        return raceTimingPoints.get(5) - getRaceStartTime();
+    }
+
     private long getRaceStartTime() {
         if ((typeRace & MASK_RACE) == TYPE_RACE_CD3T
             || (typeRace & MASK_RACE) == TYPE_RACE_CD6T) {

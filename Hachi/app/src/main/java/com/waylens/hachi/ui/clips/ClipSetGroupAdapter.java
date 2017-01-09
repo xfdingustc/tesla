@@ -23,6 +23,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.StringUtils;
 
 
@@ -199,16 +200,30 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             viewHolder.vaVideoTag.setVisibility(View.VISIBLE);
             viewHolder.vaVideoTag.setDisplayedChild(0);
 
-            if (clip.getRaceTime060() > 0) {
-                viewHolder.performanceIcon.setText("60");
-                viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime060()));
-            } else if (clip.getRaceTime030() > 0) {
-                viewHolder.performanceIcon.setText("30");
-                viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime030()));
+            if (!SettingHelper.isMetricUnit()) {
+                if (clip.getRaceTime060() > 0) {
+                    viewHolder.performanceIcon.setText("60");
+                    viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime060()));
+                } else if (clip.getRaceTime030() > 0) {
+                    viewHolder.performanceIcon.setText("30");
+                    viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime030()));
+                } else {
+                    viewHolder.performanceIcon.setVisibility(View.GONE);
+                    viewHolder.performance.setVisibility(View.GONE);
+                }
             } else {
-                viewHolder.performanceIcon.setVisibility(View.GONE);
-                viewHolder.performance.setVisibility(View.GONE);
+                if (clip.getRaceTime100() > 0) {
+                    viewHolder.performanceIcon.setText("100");
+                    viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime100()));
+                } else if (clip.getRaceTime50() > 0) {
+                    viewHolder.performanceIcon.setText("50");
+                    viewHolder.performance.setText(StringUtils.getRaceTime(clip.getRaceTime50()));
+                } else {
+                    viewHolder.performanceIcon.setVisibility(View.GONE);
+                    viewHolder.performance.setVisibility(View.GONE);
+                }
             }
+
         } else if(clip.lapTimerData != null) {
             viewHolder.vaVideoTag.setVisibility(View.VISIBLE);
             viewHolder.vaVideoTag.setDisplayedChild(1);
