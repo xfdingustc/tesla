@@ -491,14 +491,12 @@ public class ClipPlayFragment extends BaseFragment implements SurfaceHolder.Call
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Logger.t(TAG).d("on view created");
         initRawDataView();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Logger.t(TAG).d("on start");
         mTimer = new Timer();
         mUpdatePlayTimeTask = new UpdatePlayTimeTask();
         mTimer.schedule(mUpdatePlayTimeTask, 0, 100);

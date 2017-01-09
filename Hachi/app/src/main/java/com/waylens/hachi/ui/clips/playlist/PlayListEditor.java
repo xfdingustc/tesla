@@ -200,7 +200,7 @@ public class PlayListEditor {
     }
 
     private void adjustClipSet(ClipSet clipSet) {
-        Logger.t(TAG).d("origin count: " + mClipSet.getCount() + " new clip: " + clipSet.getCount());
+//        Logger.t(TAG).d("origin count: " + mClipSet.getCount() + " new clip: " + clipSet.getCount());
         for (int i = 0; i < mClipSet.getCount(); i++) {
             Clip originClip = mClipSet.getClip(i);
             Clip newClip = clipSet.getClip(i);
