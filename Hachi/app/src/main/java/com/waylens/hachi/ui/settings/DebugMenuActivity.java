@@ -43,6 +43,9 @@ public class DebugMenuActivity extends BaseActivity {
     @BindView(R.id.host_server_group)
     RadioGroup hostServerGroup;
 
+    @BindView(R.id.switch_lap_timer)
+    Switch switchEnableLapTimer;
+
     @BindArray(R.array.server_list)
     String[] serverList;
 
@@ -65,6 +68,14 @@ public class DebugMenuActivity extends BaseActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 DebugHelper.setShowMomentSource(b);
+            }
+        });
+
+        switchEnableLapTimer.setChecked(DebugHelper.showLapTimer());
+        switchEnableLapTimer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                DebugHelper.setShowLapTimer(b);
             }
         });
 

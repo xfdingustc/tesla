@@ -36,6 +36,7 @@ public class GetSpaceInfoRequest extends VdbRequest<SpaceInfo> {
         spaceInfo.total = response.readi64();
         spaceInfo.used = response.readi64();
         spaceInfo.marked = response.readi64();
+        spaceInfo.clip = response.readi64();
 
         return VdbResponse.success(spaceInfo);
     }

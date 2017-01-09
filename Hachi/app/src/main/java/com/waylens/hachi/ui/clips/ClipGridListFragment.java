@@ -45,6 +45,7 @@ import com.waylens.hachi.ui.dialogs.DialogHelper;
 import com.waylens.hachi.ui.fragments.BaseLazyFragment;
 import com.waylens.hachi.ui.fragments.FragmentNavigator;
 import com.waylens.hachi.utils.ClipSetGroupHelper;
+import com.waylens.hachi.utils.DebugHelper;
 import com.waylens.hachi.utils.PreferenceUtils;
 import com.waylens.hachi.utils.rxjava.RxBus;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
@@ -714,7 +715,7 @@ public class ClipGridListFragment extends BaseLazyFragment implements FragmentNa
                     mLoadToast.success();
                     mLoadToast = null;
 //                    Logger.t(TAG).d("type race:" + clip.typeRace);
-                    if (clip.lapTimerData != null) {
+                    if (clip.lapTimerData != null && DebugHelper.showLapTimer()) {
                         LapTimerActivity.launch(getActivity(), playlistId, transitionView);
                     } else {
                         PreviewActivity.launch(getActivity(), playlistId, transitionView);

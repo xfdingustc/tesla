@@ -159,7 +159,7 @@ public class MomentsListAdapter extends AbsMomentListAdapter {
             holder.racingInfo.setVisibility(View.VISIBLE);
             holder.raceType.setTitleText(momentAbstract.getRaceType());
             holder.raceTime.setText(momentAbstract.getRaceTime());
-        } else if (momentAbstract.isLapTimerMoment() && momentAbstract.lapTimer != null) {
+        } else if (momentAbstract.isLapTimerMoment() && momentAbstract.lapTimer != null && DebugHelper.showLapTimer()) {
             holder.tagsViewAnimator.setVisibility(View.VISIBLE);
             holder.tagsViewAnimator.setDisplayedChild(1);
             holder.bestLapTime.setText(formatLapTime((int)momentAbstract.lapTimer.bestLapTime) + "s");

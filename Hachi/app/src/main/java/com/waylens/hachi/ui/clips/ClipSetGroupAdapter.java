@@ -23,6 +23,7 @@ import com.waylens.hachi.snipe.VdbRequestQueue;
 import com.waylens.hachi.snipe.vdb.Clip;
 import com.waylens.hachi.snipe.vdb.ClipPos;
 import com.waylens.hachi.snipe.vdb.ClipSet;
+import com.waylens.hachi.utils.DebugHelper;
 import com.waylens.hachi.utils.SettingHelper;
 import com.waylens.hachi.utils.StringUtils;
 
@@ -224,7 +225,7 @@ public class ClipSetGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 }
             }
 
-        } else if(clip.lapTimerData != null) {
+        } else if(clip.lapTimerData != null && DebugHelper.showLapTimer()) {
             viewHolder.vaVideoTag.setVisibility(View.VISIBLE);
             viewHolder.vaVideoTag.setDisplayedChild(1);
         } else {

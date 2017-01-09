@@ -263,6 +263,7 @@ public class ShareActivity extends ClipPlayActivity {
         intent.putExtra(EXTRA_PLAYLIST_ID, playListId);
         intent.putExtra(EXTRA_AUDIO_ID, audioId);
         intent.putExtra(EXTRA_LAP_RESULT, lapTimerResult);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         activity.startActivity(intent);
     }
 

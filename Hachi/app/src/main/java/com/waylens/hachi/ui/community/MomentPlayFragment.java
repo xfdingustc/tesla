@@ -53,6 +53,7 @@ import com.waylens.hachi.snipe.vdb.rawdata.RawDataItem;
 import com.waylens.hachi.snipe.vdb.rawdata.WeatherData;
 import com.waylens.hachi.ui.activities.BaseActivity;
 import com.waylens.hachi.ui.fragments.BaseFragment;
+import com.waylens.hachi.utils.DebugHelper;
 import com.waylens.hachi.view.gauge.GaugeView;
 import com.waylens.hachi.utils.ServerMessage;
 import com.waylens.hachi.utils.rxjava.SimpleSubscribe;
@@ -545,7 +546,9 @@ public class MomentPlayFragment extends BaseFragment implements SurfaceHolder.Ca
 
 
     private void onLoadRawDataSuccessfully() {
-        mGaugeView.setLapInfo(mLapInfo, mRawDataAdapter.mGPSData);
+        if (DebugHelper.showLapTimer()) {
+            mGaugeView.setLapInfo(mLapInfo, mRawDataAdapter.mGPSData);
+        }
         mRawDataState = RAW_DATA_STATE_READY;
         Logger.t(TAG).d("Raw data load finished");
         mProgressLoading.setVisibility(View.GONE);
