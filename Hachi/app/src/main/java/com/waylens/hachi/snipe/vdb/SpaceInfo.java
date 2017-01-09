@@ -10,9 +10,10 @@ public class SpaceInfo {
     public long total;
     public long used;
     public long marked;
+    public long clip;
 
     public long getLoopedSpace() {
-        return used - marked;
+        return (clip - marked) + (total - used);
     }
 
     @Override

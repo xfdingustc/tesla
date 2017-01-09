@@ -7,6 +7,7 @@ package com.waylens.hachi.utils;
 public class DebugHelper {
     private static final String DEBUG_MODE = "debug.mode";
     private static final String SHOW_MOMENT_SOURCE = "show.moment.source";
+    private static final String SHOW_LAP_TIMER = "show.lap.timer";
 
     public static boolean isInDebugMode() {
         return PreferenceUtils.getBoolean(DEBUG_MODE, false);
@@ -22,5 +23,13 @@ public class DebugHelper {
 
     public static void setShowMomentSource(boolean show) {
         PreferenceUtils.putBoolean(SHOW_MOMENT_SOURCE, show);
+    }
+
+    public static boolean showLapTimer() {
+        return  PreferenceUtils.getBoolean(SHOW_LAP_TIMER, false);
+    }
+
+    public static void setShowLapTimer(boolean show) {
+        PreferenceUtils.putBoolean(SHOW_LAP_TIMER, show);
     }
 }

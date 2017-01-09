@@ -123,6 +123,9 @@ public class FeedbackActivity extends BaseActivity {
                         jobManager.addJobInBackground(job);
                     }
                 });
+        } else {
+            ReportJob job = new ReportJob(reportFeedbackBody, ReportJob.REPORT_TYPE_FEEDBACK);
+            jobManager.addJobInBackground(job);
         }
     }
 
