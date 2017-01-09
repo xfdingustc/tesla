@@ -49,7 +49,7 @@
      *
      * @param { {ifRotate: Boolean} } -this should set true when the camera is upside down
      * @param { {showMap: Boolean} }  -use only for desktop
-     * @param { {isMetric: String} } -转换公英制 value of acceptance:["kmh","mph"]
+     * @param { {isMetric: Boolean} } -转换公英制
      * @param { {perUnit: String} }  -@deprecated we should replace it by isMetric
      *
      * @param { {totalLaps: number} }
@@ -125,7 +125,7 @@
      */
     var setState = hachi.gauge.setBuffer.bind(hachi.gauge);
     /**
-     * @method set the params to the buffer, not take effect immediately
+     * @method
      * @requires this method should called after setState({...})
      * @param null
      * @return {null}
